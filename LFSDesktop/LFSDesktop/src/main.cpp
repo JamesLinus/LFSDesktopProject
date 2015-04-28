@@ -35,6 +35,7 @@ GC				gc;
 Region			rg;
 XdbeBackBuffer	buffer;
 XdbeSwapInfo	swapInfo;
+Drawable		drawOnThis;
 
 Visual			*visual=NULL;
 int				depth=0;
@@ -150,67 +151,10 @@ void createDesktopWindow(void)
 			swapInfo.swap_window=rootWin;
 			swapInfo.swap_action=XdbeBackground;
 			XdbeSwapBuffers(display,&swapInfo,1);
-//			if((XdbeSwapBuffers(display,&swapInfo,1)) && (useDBOveride==true))
-//				{
-//					useBuffer=true;
-//					drawOnThis=buffer;
-//				}
-//			else
-//				{
-//					printf("no double buffering\n");
-//					useBuffer=false;
-//					drawOnThis=rootWin;
-//				}
+			drawOnThis=buffer;
 		}
 
 }
-
-#if 0
-void blitToMonitorPos(int mode,char* path,int x,int y,int w,int h)
-{
-	Imlib_Image	image;
-	int			imagew,imageh;
-
-	imlib_context_set_blend(1);
-
-	image=imlib_load_image_immediately_without_cache(path);
-	if(image==NULL)
-		return;
-	imlib_context_set_image(image);
-	imagew=imlib_image_get_width();
-	imageh=imlib_image_get_height();
-
-	switch(mode)
-		{
-		case STRETCH:
-			imlib_context_set_image(buffer);
-			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x,y,w,h);
-			break;
-		case TILE:
-			int	numx,numy;
-
-			numx=(w/imagew)+1;
-			numy=(h/imageh)+1;
-			imlib_context_set_image(buffer);
-			for(int yy=0; yy<numy; yy++)
-				{
-					for(int xx=0; xx<numx; xx++)
-						imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,(xx*imagew)+x,(yy*imageh)+y,imagew,imageh);
-				}
-			break;
-		case CENTRE:
-			int xoffset,yoffset;
-			xoffset=(w/2)-(imagew/2);
-			yoffset=(h/2)-(imageh/2);
-
-			imlib_context_set_image(buffer);
-			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,xoffset+x,yoffset+y,imagew,imageh);
-			break;
-		}
-	imlib_context_set_image(image);
-	imlib_free_image();
-}
-#endif
 
 void getDiskList(void)
 {
@@ -219,9 +163,12 @@ void getDiskList(void)
 	char	line[2048];
 	int		diskx=10;
 	int		disky=100;
-printf("111111111\n");
 	imlib_context_set_blend(1);
-	asprintf(&command,"blkid -o device");
+	
+//XClearWindow(display,rootWin);
+//XClearArea(display,drawOnThis,0,0,displayWidth,displayHeight,False);
+//	asprintf(&command,"blkid -o device");
+	asprintf(&command,"readlink /dev/disk/by-label/*|awk -F '/' '{print \"/dev/\"$3}'");
 	fp=popen(command,"r");
 	if(fp!=NULL)
 		{
@@ -229,11 +176,13 @@ printf("111111111\n");
 				{
 					XSetClipMask(display,gc,diskPixmapMask);
 					XSetClipOrigin(display,gc,diskx,disky);
-					XCopyArea(display,diskPixmap,rootWin,gc,0,0,48,48,diskx,disky);
+					XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
 					diskx=diskx+50;
+					//printf("line=%s",line);
 				}
 			fclose(fp);
 		}
+	free(command);
 }
 
 int main(int argc,char **argv)
@@ -295,40 +244,45 @@ int main(int argc,char **argv)
 	visual=DefaultVisual(display,screen);
 
 	createDesktopWindow();
-	gc=XCreateGC(display,buffer,0,NULL);
+
+	gc=XCreateGC(display,drawOnThis,0,NULL);
 	XSetFillStyle(display,gc,FillSolid);
 	XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask);
+
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
 
-
-//	diskImage=imlib_load_image(diskImagePath);
-//	imlib_context_set_drawable(rootWin);
-//	imlib_image_set_has_alpha(0);
-//	imlib_render_pixmaps_for_whole_image(&backDropPixmap,NULL);
-//	imlib_free_image();
 	imlib_context_set_dither(0);
 	imlib_context_set_display(display);
 	imlib_context_set_visual(visual);
 	diskImage=imlib_load_image(diskImagePath);
 	imlib_context_set_image(diskImage);
-	imlib_context_set_drawable(rootWin);
+	imlib_context_set_drawable(drawOnThis);
 	imlib_image_set_has_alpha(1);
-printf("2222222222222\n");
 	imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
-printf("33333333\n");
 	imlib_free_image();
 
-#if 0
-	if(diskImage!=NULL)
-		{
-			imlib_context_set_image(diskImage);
-			imlib_image_set_has_alpha(1);
-			imlib_context_set_drawable(rootWin);
-			imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
-			imlib_free_image();
-		}
-#endif
+//XClearWindow(display,drawOnThis);
+//	XSetForeground(display,gc,blackColor);
+//	XSetFillStyle(display,gc,FillSolid);
+//	XFillRectangle(display,drawOnThis,gc,0,0,displayWidth,displayHeight);
+//	XFillRectangle(display,rootWin,gc,0,0,displayWidth,displayHeight);
+//
+//	gc=XCreateGC(display,drawOnThis,0,NULL);
+//	XSetFillStyle(display,gc,FillSolid);
+//	XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask);
+//
+//	XSetClipMask(display,gc,0);
+//	XSetClipOrigin(display,gc,0,0);
+//
+//	XSetForeground(display,gc,blackColor);
+//	XSetFillStyle(display,gc,FillSolid);
+//	XFillRectangle(display,rootWin,gc,0,0,displayWidth,displayHeight);
+
+//XSetBackground(display,gc,blackColor);
+//XClearWindow(display,rootWin);
+//XClearArea(display,drawOnThis,0,0,displayWidth,displayHeight,true);
+
 	while (done)
 		{
 			while (XPending(display))
@@ -344,10 +298,10 @@ printf("33333333\n");
 					break;
 				}
 
-			usleep(1000000);
+			usleep(100000);
 
 			getDiskList();
-			//XdbeSwapBuffers(display,&swapInfo,1);
+			XdbeSwapBuffers(display,&swapInfo,1);
 
 		}
 
