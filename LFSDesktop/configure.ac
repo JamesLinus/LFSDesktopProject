@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSDesktop],[0.0],[PROJ],[LFSDesktop])
+AC_INIT([LFSDesktop],[0.0.1],[LFSDesktop],[LFSDesktop])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -17,5 +17,5 @@ AC_SUBST(LDFLAGS)
 CFLAGS=-Wall
 AC_SUBST(CFLAGS)
 
-AC_OUTPUT(Makefile LFSDesktop/app/Makefile LFSDesktop/debug/Makefile)
+AC_OUTPUT(Makefile LFSDesktop/app/Makefile)
 

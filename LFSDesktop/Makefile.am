@@ -1,5 +1,5 @@
 
-SUBDIRS = LFSDesktop/app LFSDesktop/debug
+SUBDIRS = LFSDesktop/app
 
 remake:
 	$(shell ./remakesourcelist)
