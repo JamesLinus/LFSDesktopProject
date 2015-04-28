@@ -44,7 +44,9 @@ int				whiteColor;
 
 bool			done=true;
 Pixmap			diskPixmap;
+Pixmap			diskPixmapMask;
 Imlib_Image		diskImage;
+const char		*diskImagePath="/usr/share/icons/gnome/48x48/devices/drive-harddisk.png";
 
 struct Hints
 {
@@ -147,6 +149,7 @@ void createDesktopWindow(void)
 			buffer=XdbeAllocateBackBufferName(display,rootWin,XdbeBackground);
 			swapInfo.swap_window=rootWin;
 			swapInfo.swap_action=XdbeBackground;
+			XdbeSwapBuffers(display,&swapInfo,1);
 //			if((XdbeSwapBuffers(display,&swapInfo,1)) && (useDBOveride==true))
 //				{
 //					useBuffer=true;
@@ -162,19 +165,72 @@ void createDesktopWindow(void)
 
 }
 
+#if 0
+void blitToMonitorPos(int mode,char* path,int x,int y,int w,int h)
+{
+	Imlib_Image	image;
+	int			imagew,imageh;
+
+	imlib_context_set_blend(1);
+
+	image=imlib_load_image_immediately_without_cache(path);
+	if(image==NULL)
+		return;
+	imlib_context_set_image(image);
+	imagew=imlib_image_get_width();
+	imageh=imlib_image_get_height();
+
+	switch(mode)
+		{
+		case STRETCH:
+			imlib_context_set_image(buffer);
+			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x,y,w,h);
+			break;
+		case TILE:
+			int	numx,numy;
+
+			numx=(w/imagew)+1;
+			numy=(h/imageh)+1;
+			imlib_context_set_image(buffer);
+			for(int yy=0; yy<numy; yy++)
+				{
+					for(int xx=0; xx<numx; xx++)
+						imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,(xx*imagew)+x,(yy*imageh)+y,imagew,imageh);
+				}
+			break;
+		case CENTRE:
+			int xoffset,yoffset;
+			xoffset=(w/2)-(imagew/2);
+			yoffset=(h/2)-(imageh/2);
+
+			imlib_context_set_image(buffer);
+			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,xoffset+x,yoffset+y,imagew,imageh);
+			break;
+		}
+	imlib_context_set_image(image);
+	imlib_free_image();
+}
+#endif
+
 void getDiskList(void)
 {
 	FILE	*fp;
 	char	*command;
 	char	line[2048];
-
+	int		diskx=10;
+	int		disky=100;
+printf("111111111\n");
+	imlib_context_set_blend(1);
 	asprintf(&command,"blkid -o device");
 	fp=popen(command,"r");
 	if(fp!=NULL)
 		{
 			while(fgets(line,2048,fp))
 				{
-					
+					XSetClipMask(display,gc,diskPixmapMask);
+					XSetClipOrigin(display,gc,diskx,disky);
+					XCopyArea(display,diskPixmap,rootWin,gc,0,0,48,48,diskx,disky);
+					diskx=diskx+50;
 				}
 			fclose(fp);
 		}
@@ -245,6 +301,34 @@ int main(int argc,char **argv)
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
 
+
+//	diskImage=imlib_load_image(diskImagePath);
+//	imlib_context_set_drawable(rootWin);
+//	imlib_image_set_has_alpha(0);
+//	imlib_render_pixmaps_for_whole_image(&backDropPixmap,NULL);
+//	imlib_free_image();
+	imlib_context_set_dither(0);
+	imlib_context_set_display(display);
+	imlib_context_set_visual(visual);
+	diskImage=imlib_load_image(diskImagePath);
+	imlib_context_set_image(diskImage);
+	imlib_context_set_drawable(rootWin);
+	imlib_image_set_has_alpha(1);
+printf("2222222222222\n");
+	imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
+printf("33333333\n");
+	imlib_free_image();
+
+#if 0
+	if(diskImage!=NULL)
+		{
+			imlib_context_set_image(diskImage);
+			imlib_image_set_has_alpha(1);
+			imlib_context_set_drawable(rootWin);
+			imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
+			imlib_free_image();
+		}
+#endif
 	while (done)
 		{
 			while (XPending(display))
@@ -263,7 +347,7 @@ int main(int argc,char **argv)
 			usleep(1000000);
 
 			getDiskList();
-			XdbeSwapBuffers(display,&swapInfo,1);
+			//XdbeSwapBuffers(display,&swapInfo,1);
 
 		}
 
