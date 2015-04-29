@@ -186,27 +186,78 @@ void getDiskListXX(void)
 	free(command);
 }
 
+int chartreuse;
+
 void getDiskList(void)
 {
 	FILE	*fp;
+	FILE	*fd;
+	char	*diskfilepath;
 	char	*command;
 	char	line[2048];
 	int		diskx=10;
 	int		disky=100;
 	imlib_context_set_blend(1);
-	
+	char	dataline[256];
+	char	label[256];
+	XColor	colour;
+
 //XClearWindow(display,rootWin);
 //XClearArea(display,drawOnThis,0,0,displayWidth,displayHeight,False);
 //	asprintf(&command,"blkid -o device");
-	asprintf(&command,"readlink /dev/disk/by-label/*|awk -F '/' '{print \"/dev/\"$3}'");
+	asprintf(&command,"lsblk -n --output=UUID -lpds");
 	fp=popen(command,"r");
 	if(fp!=NULL)
 		{
 			while(fgets(line,2048,fp))
 				{
+					line[strlen(line)-1]=0;
+					asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
+					fd=fopen(diskfilepath,"r");
+						if(fd!=NULL)
+							{
+								fgets(label,256,fd);//name
+								fgets(dataline,256,fd);//uuid
+								fgets(dataline,256,fd);//x
+								diskx=atoi(dataline);
+								fgets(dataline,256,fd);//y
+								disky=atoi(dataline);
+								fclose(fd);
+								free(diskfilepath);
+							}
 					XSetClipMask(display,gc,diskPixmapMask);
 					XSetClipOrigin(display,gc,diskx,disky);
 					XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+	
+					XSetClipMask(display,gc,0);
+					XSetClipOrigin(display,gc,0,0);
+
+	XParseColor(display, DefaultColormap(display,screen), "gray60", &colour);
+	XAllocColor(display,DefaultColormap(display,screen),&colour);
+					XSetForeground(display,gc,colour.pixel);
+					XSetFillStyle(display,gc,FillSolid);
+					XFillRectangle(display,drawOnThis,gc,diskx,disky+48,48,20);
+//	XFillRectangle(display,rootWin,gc,0,0,displayWidth,displayHeight);
+//gc.function=1;
+GC  ggcc;
+int cc=(int)GXcopyInverted;
+ggcc=XCreateGC(display,drawOnThis,GCFunction,(XGCValues*) &cc);
+XChangeGC(display, ggcc, GCFunction,(XGCValues*) &cc);
+	XColor tmp;
+
+	XParseColor(display, DefaultColormap(display,screen), "white", &tmp);
+	XAllocColor(display,DefaultColormap(display,screen),&tmp);
+
+XSetForeground(display,ggcc,tmp.pixel);
+XSetBackground(display,ggcc,blackColor);
+
+					XDrawString(display,drawOnThis,ggcc,diskx,disky+48+20,label,strlen(label)-1);
+//      Display *display;
+ //     Drawable d;
+  //    GC gc;
+   //   int x, y;
+    //  char *string;
+     // int length; 
 					diskx=diskx+50;
 					//printf("line=%s",line);
 				}
@@ -265,6 +316,14 @@ void createDiskInfo(void)
 		}
 	free(command);
 }
+
+void get_colors() {
+	XColor tmp;
+
+	XParseColor(display, DefaultColormap(display,screen), "blue", &tmp);
+	XAllocColor(display,DefaultColormap(display,screen),&tmp);
+	chartreuse=tmp.pixel;
+};
 
 int main(int argc,char **argv)
 {
@@ -337,7 +396,7 @@ int main(int argc,char **argv)
 
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
-
+get_colors();
 	imlib_context_set_dither(0);
 	imlib_context_set_display(display);
 	imlib_context_set_visual(visual);
