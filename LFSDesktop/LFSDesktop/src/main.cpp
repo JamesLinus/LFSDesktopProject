@@ -70,6 +70,7 @@ char			*diskInfoPath;
 unsigned long	labelBackground;
 unsigned long	labelForeground;
 GC				labelGC;
+XFontStruct		*labelFont;
 
 struct Hints
 {
@@ -105,7 +106,7 @@ void createColours(void)
 	XColor	colour;
 	int		cc=(int)GXcopyInverted;
 
-	XParseColor(display,DefaultColormap(display,screen),"gray40",&colour);
+	XParseColor(display,DefaultColormap(display,screen),"grey40",&colour);
 	XAllocColor(display,DefaultColormap(display,screen),&colour);
 	labelBackground=colour.pixel;
 	XParseColor(display,DefaultColormap(display,screen),"white",&colour);
@@ -113,6 +114,29 @@ void createColours(void)
 	labelForeground=colour.pixel;
 
 	labelGC=XCreateGC(display,drawOnThis,GCFunction,(XGCValues*) &cc);
+
+//int cnt;
+//char **fnts=XListFonts(display, "*", 10000, &cnt);
+//for (int j=0;j<cnt;j++)
+//printf("font=%s\n",fnts[j]);
+//XFontStruct* font_info;
+//
+///* try to load the given font. */
+//char* font_name = "*-bitstream-charter-bold-r-normal-*-18-*";
+//font_info = XLoadQueryFont(display, font_name);
+//if (!font_info) {
+//    fprintf(stderr, "XLoadQueryFont: failed loading font '%s'\n", font_name);
+//}
+//else
+//XSetFont(display, labelGC, font_info->fid);
+	labelFont=XLoadQueryFont(display,"fixed");
+//Font font=0;
+//XGetGCValues(display,gc,GCFont,(XGCValues*)&font);
+//XLoadQueryFont(display, font_name);
+//labelFont=XQueryFont(display,(XID)gc);
+//if (!labelFont) {
+//   fprintf(stderr, "XLoadQueryFont: failed loading font '%i'\n",font);
+//}
 }
 
 int get_argb_visual(Visual** vis,int *depth)
@@ -190,7 +214,6 @@ void createDesktopWindow(void)
 			XdbeSwapBuffers(display,&swapInfo,1);
 			drawOnThis=buffer;
 		}
-
 }
 
 void getDiskList(void)
@@ -200,12 +223,15 @@ void getDiskList(void)
 	char	*diskfilepath;
 	char	*command;
 	char	line[2048];
-	int		diskx=10;
-	int		disky=100;
-	imlib_context_set_blend(1);
+	int		diskx;
+	int		disky;
 	char	dataline[256];
 	char	label[256];
 	XColor	colour;
+	int		fontheight;
+	int		stringwidth;
+
+	int		boxx,boxy,boxw,boxh;
 
 	asprintf(&command,"lsblk -n --output=UUID -lpds");
 	fp=popen(command,"r");
@@ -214,33 +240,48 @@ void getDiskList(void)
 			while(fgets(line,2048,fp))
 				{
 					line[strlen(line)-1]=0;
-					asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
-					fd=fopen(diskfilepath,"r");
-						if(fd!=NULL)
-							{
-								fgets(label,256,fd);//name
-								fgets(dataline,256,fd);//uuid
-								fgets(dataline,256,fd);//x
-								diskx=atoi(dataline);
-								fgets(dataline,256,fd);//y
-								disky=atoi(dataline);
-								fclose(fd);
-								free(diskfilepath);
+					if(strlen(line)>0)
+						{
+							asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
+							fd=fopen(diskfilepath,"r");
+							if(fd!=NULL)
+								{
+									fgets(label,256,fd);//name
+									fgets(dataline,256,fd);//uuid
+									fgets(dataline,256,fd);//x
+									diskx=atoi(dataline);
+									fgets(dataline,256,fd);//y
+									disky=atoi(dataline);
+									fclose(fd);
+									free(diskfilepath);
+								}
+							if(strcmp(label,"IGNOREDISK\n")!=0)
+								{
+									XSetClipMask(display,gc,diskPixmapMask);
+									XSetClipOrigin(display,gc,diskx,disky);
+									XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+
+									XSetClipMask(display,gc,0);
+
+									fontheight=labelFont->ascent+labelFont->descent;
+									stringwidth=XTextWidth(labelFont,label,strlen(label)-1);
+
+									boxx=diskx+(48/2)-(stringwidth/2)-1;
+									boxy=disky+48+1;
+									boxw=stringwidth+2;
+									boxh=fontheight-2;
+
+									XSetForeground(display,gc,labelBackground);
+									XSetFillStyle(display,gc,FillSolid);
+									XFillRectangle(display,drawOnThis,gc,boxx,disky+48,boxw,boxh);
+
+									XSetForeground(display,labelGC,labelForeground);
+									XSetBackground(display,labelGC,labelBackground);
+
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
+									disky=disky+50;
 							}
-					XSetClipMask(display,gc,diskPixmapMask);
-					XSetClipOrigin(display,gc,diskx,disky);
-					XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
-	
-					XSetClipMask(display,gc,0);
-
-					XSetForeground(display,gc,labelBackground);
-					XSetFillStyle(display,gc,FillSolid);
-					XFillRectangle(display,drawOnThis,gc,diskx,disky+48,48,20);
-
-					XSetForeground(display,labelGC,labelForeground);
-					XSetBackground(display,labelGC,labelBackground);
-					XDrawString(display,drawOnThis,labelGC,diskx,disky+48+20,label,strlen(label)-1);
-					diskx=diskx+50;
+						}
 				}
 			fclose(fp);
 		}
@@ -258,8 +299,8 @@ void createDiskInfo(void)
 	char	*label;
 	char	*uuid;
 	char	*diskfilepath;
-	int		posx=10;
-	int		posy=10;
+	int		posx=48;
+	int		posy=48;
 
 	asprintf(&command,"lsblk -n --output=NAME,UUID,LABEL -lpds");
 	fp=popen(command,"r");
@@ -271,25 +312,42 @@ void createDiskInfo(void)
 					label=NULL;
 					uuid=NULL;
 					sscanf(line,"%as %as %a[^\n]s",&devname,&uuid,&label);
-//					printf(">>%s<< >>%s<< >>%s<<\n",devname,label,uuid);
-					asprintf(&diskfilepath,"%s/%s",diskInfoPath,uuid);
-					fd=fopen(diskfilepath,"r");
-					if(fd==NULL)
+					if((devname!=NULL) && (strcmp(devname,"/dev/sr0")==0))
 						{
-							fd=fopen(diskfilepath,"w");
+							asprintf(&uuid,"CDROM");
+							asprintf(&label,"CDROM");
+						}
+
+					if(label==NULL)
+						asprintf(&label,"IGNOREDISK");
+
+					asprintf(&diskfilepath,"%s/%s",diskInfoPath,uuid);
+
+					if((uuid!=NULL) && (strlen(uuid)>1))
+						{
+							fd=fopen(diskfilepath,"r");
 							if(fd==NULL)
 								{
-									printf("Can't open disk folder ...\n");
-									return;
+									fd=fopen(diskfilepath,"w");
+									if(fd==NULL)
+										{
+											printf("Can't open disk folder ...\n");
+											return;
+										}
+									fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
+									posy=posy+64;
+									if(posy>512-64)
+										{
+											posy=48;
+											posx=posx+128;
+										}
+									fclose(fd);
 								}
-							fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
-							posx=posx+50;
-							fclose(fd);
+							free(diskfilepath);
+							free(devname);
+							free(uuid);
+							free(label);
 						}
-					free(diskfilepath);
-					free(devname);
-					free(uuid);
-					free(label);
 					line[0]=0;
 				}
 			pclose(fp);
