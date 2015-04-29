@@ -48,6 +48,7 @@ Pixmap			diskPixmap;
 Pixmap			diskPixmapMask;
 Imlib_Image		diskImage;
 const char		*diskImagePath="/usr/share/icons/gnome/48x48/devices/drive-harddisk.png";
+char			*diskInfoPath;
 
 struct Hints
 {
@@ -156,6 +157,35 @@ void createDesktopWindow(void)
 
 }
 
+void getDiskListXX(void)
+{
+	FILE	*fp;
+	char	*command;
+	char	line[2048];
+	int		diskx=10;
+	int		disky=100;
+	imlib_context_set_blend(1);
+	
+//XClearWindow(display,rootWin);
+//XClearArea(display,drawOnThis,0,0,displayWidth,displayHeight,False);
+//	asprintf(&command,"blkid -o device");
+	asprintf(&command,"readlink /dev/disk/by-label/*|awk -F '/' '{print \"/dev/\"$3}'");
+	fp=popen(command,"r");
+	if(fp!=NULL)
+		{
+			while(fgets(line,2048,fp))
+				{
+					XSetClipMask(display,gc,diskPixmapMask);
+					XSetClipOrigin(display,gc,diskx,disky);
+					XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+					diskx=diskx+50;
+					//printf("line=%s",line);
+				}
+			fclose(fp);
+		}
+	free(command);
+}
+
 void getDiskList(void)
 {
 	FILE	*fp;
@@ -185,12 +215,68 @@ void getDiskList(void)
 	free(command);
 }
 
+
+void createDiskInfo(void)
+{
+	FILE	*fp;
+	FILE	*fd;
+
+	char	*command;
+	char	line[1024];
+	char	*devname;
+	char	*label;
+	char	*uuid;
+	char	*diskfilepath;
+	int		posx=10;
+	int		posy=10;
+
+	asprintf(&command,"lsblk -n --output=NAME,UUID,LABEL -lpds");
+	fp=popen(command,"r");
+	if(fp!=NULL)
+		{
+			while(fgets(line,1024,fp))
+				{
+					devname=NULL;
+					label=NULL;
+					uuid=NULL;
+					sscanf(line,"%as %as %a[^\n]s",&devname,&uuid,&label);
+//					printf(">>%s<< >>%s<< >>%s<<\n",devname,label,uuid);
+					asprintf(&diskfilepath,"%s/%s",diskInfoPath,uuid);
+					fd=fopen(diskfilepath,"r");
+					if(fd==NULL)
+						{
+							fd=fopen(diskfilepath,"w");
+							if(fd==NULL)
+								{
+									printf("Can't open disk folder ...\n");
+									return;
+								}
+							fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
+							posx=posx+50;
+							fclose(fd);
+						}
+					free(diskfilepath);
+					free(devname);
+					free(uuid);
+					free(label);
+					line[0]=0;
+				}
+			pclose(fp);
+		}
+	free(command);
+}
+
 int main(int argc,char **argv)
 {
-	int c;
+	int		c;
 	XEvent	ev;
+	char	*command;
 
 	done=true;
+	asprintf(&diskInfoPath,"%s/.config/LFS/disks",getenv("HOME"));
+	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",diskInfoPath);
+	system(command);
+	free(command);
 
 	while (1)
 		{
@@ -282,6 +368,8 @@ int main(int argc,char **argv)
 //XSetBackground(display,gc,blackColor);
 //XClearWindow(display,rootWin);
 //XClearArea(display,drawOnThis,0,0,displayWidth,displayHeight,true);
+
+	createDiskInfo();
 
 	while (done)
 		{
