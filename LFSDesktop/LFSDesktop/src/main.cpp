@@ -114,29 +114,9 @@ void createColours(void)
 	labelForeground=colour.pixel;
 
 	labelGC=XCreateGC(display,drawOnThis,GCFunction,(XGCValues*) &cc);
-
-//int cnt;
-//char **fnts=XListFonts(display, "*", 10000, &cnt);
-//for (int j=0;j<cnt;j++)
-//printf("font=%s\n",fnts[j]);
-//XFontStruct* font_info;
-//
-///* try to load the given font. */
-//char* font_name = "*-bitstream-charter-bold-r-normal-*-18-*";
-//font_info = XLoadQueryFont(display, font_name);
-//if (!font_info) {
-//    fprintf(stderr, "XLoadQueryFont: failed loading font '%s'\n", font_name);
-//}
-//else
-//XSetFont(display, labelGC, font_info->fid);
-	labelFont=XLoadQueryFont(display,"fixed");
-//Font font=0;
-//XGetGCValues(display,gc,GCFont,(XGCValues*)&font);
-//XLoadQueryFont(display, font_name);
-//labelFont=XQueryFont(display,(XID)gc);
-//if (!labelFont) {
-//   fprintf(stderr, "XLoadQueryFont: failed loading font '%i'\n",font);
-//}
+	labelFont=XQueryFont(display,XGContextFromGC(gc));
+	if(!labelFont)
+		fprintf(stderr,"XLoadQueryFont: failed loading default font");
 }
 
 int get_argb_visual(Visual** vis,int *depth)
@@ -182,8 +162,9 @@ void createDesktopWindow(void)
 			attr.border_pixel=0;
 			attr.background_pixel=0;
 
-			rootWin=XCreateWindow(display,DefaultRootWindow(display),0,0,displayWidth,displayHeight,0,depth,InputOutput,visual,CWColormap | CWBorderPixel | CWBackPixel,&attr);
-			XSelectInput(display,rootWin,StructureNotifyMask);
+			rootWin=XCreateWindow(display,DefaultRootWindow(display),0,0,displayWidth,displayHeight,0,depth,InputOutput,visual,CWEventMask |CWColormap | CWBorderPixel | CWBackPixel ,&attr);
+			//XSelectInput(display,rootWin,StructureNotifyMask);
+			//XSelectInput(display,rootWin,StructureNotifyMask| ButtonPress| ButtonReleaseMask|PointerMotionMask);
 
 			xa=XInternAtom(display,"_NET_WM_STATE",False);
 			xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
@@ -206,7 +187,18 @@ void createDesktopWindow(void)
 			XSync(display,False);
 
 			XMoveWindow(display,rootWin,0,0);
-			XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
+/*
+Region rgx=XCreateRegion();
+XRectangle rect;
+rect.x=0;
+rect.y=0;
+rect.width=400;
+rect.height=400;
+
+XUnionRectWithRegion(&rect,rg, rg);
+XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
+*/
+			//XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 
 			buffer=XdbeAllocateBackBufferName(display,rootWin,XdbeBackground);
 			swapInfo.swap_window=rootWin;
@@ -218,21 +210,26 @@ void createDesktopWindow(void)
 
 void getDiskList(void)
 {
-	FILE	*fp;
-	FILE	*fd;
-	char	*diskfilepath;
-	char	*command;
-	char	line[2048];
-	int		diskx;
-	int		disky;
-	char	dataline[256];
-	char	label[256];
-	XColor	colour;
-	int		fontheight;
-	int		stringwidth;
+	FILE		*fp;
+	FILE		*fd;
+	char		*diskfilepath;
+	char		*command;
+	char		line[2048];
+	int			diskx;
+	int			disky;
+	char		dataline[256];
+	char		label[256];
+	XColor		colour;
+	int			fontheight;
+	int			stringwidth;
 
-	int		boxx,boxy,boxw,boxh;
+	int			boxx,boxy,boxw,boxh;
+	Region		rg;
+	XRectangle	rect;
 
+	rg=XDestroyRegion();
+	rg=XCreateRegion();
+	
 	asprintf(&command,"lsblk -n --output=UUID -lpds");
 	fp=popen(command,"r");
 	if(fp!=NULL)
@@ -261,6 +258,12 @@ void getDiskList(void)
 									XSetClipOrigin(display,gc,diskx,disky);
 									XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
 
+									rect.x=diskx;
+									rect.y=disky;
+									rect.width=48;
+									rect.height=48;
+									XUnionRectWithRegion(&rect,rg, rg);
+
 									XSetClipMask(display,gc,0);
 
 									fontheight=labelFont->ascent+labelFont->descent;
@@ -286,6 +289,7 @@ void getDiskList(void)
 			fclose(fp);
 		}
 	free(command);
+	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 
 void createDiskInfo(void)
@@ -422,8 +426,14 @@ int main(int argc,char **argv)
 
 	gc=XCreateGC(display,drawOnThis,0,NULL);
 	XSetFillStyle(display,gc,FillSolid);
-	XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask);
-
+	//XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask| ButtonPress| ButtonReleaseMask|PointerMotionMask);
+	//XSelectInput(display,rootWin,ExposureMask | ButtonPress| ButtonReleaseMask|PointerMotionMask);
+	XSelectInput(display,rootWin,ExposureMask | KeyPressMask | ButtonPress |
+                          StructureNotifyMask | ButtonReleaseMask |
+                          KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
+                          PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
+                          ColormapChangeMask);
+//XSelectInput(display,rootWin,NoEventMask);
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
 
@@ -460,26 +470,88 @@ int main(int argc,char **argv)
 
 	createColours();
 	createDiskInfo();
+int cnt=0;
+unsigned long  timer=0;
 
+			getDiskList();
+			XdbeSwapBuffers(display,&swapInfo,1);
 	while (done)
 		{
-			while (XPending(display))
+			//getDiskList();
+			//XdbeSwapBuffers(display,&swapInfo,1);
+			//while (XPending(display))
 				XNextEvent(display,&ev);
 
 			switch(ev.type)
 				{
-				case ClientMessage:
-					if (ev.xclient.message_type == XInternAtom(display,"WM_PROTOCOLS",1) && (Atom)ev.xclient.data.l[0] == XInternAtom(display,"WM_DELETE_WINDOW",1))
-						done=false;
-					continue;
+//				case ClientMessage:
+//					if (ev.xclient.message_type == XInternAtom(display,"WM_PROTOCOLS",1) && (Atom)ev.xclient.data.l[0] == XInternAtom(display,"WM_DELETE_WINDOW",1))
+//						done=false;
+//					continue;
+//
+//					break;
 
+				case MapNotify:
+                    break;
+                case Expose:
+                     printf("expose\n");
+                   // If this is not the last expose event break
+                    if (ev.xexpose.count != 0)
+                        break;
+                    else
+                    {
+                    printf("expose\n");
+                    getDiskList();
+			XdbeSwapBuffers(display,&swapInfo,1);
+                        break;
+                        }
+                case ConfigureNotify:
+                    break;
+                case VisibilityNotify:
+                    break;
+				case ButtonPress:
+					//ev.type=-1;
+					printf("bdown\n");
+					//XSetInputFocus(display, PointerRoot, RevertToPointerRoot, CurrentTime);
+					//XPutBackEvent(display,&ev);
+//XSendEvent(display,DefaultRootWindow(display),false,ExposureMask | KeyPressMask | ButtonPress |
+//                          StructureNotifyMask | ButtonReleaseMask |
+ //                         KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
+  //                        PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
+   //                       ColormapChangeMask,&ev);
 					break;
-				}
-
-			usleep(100000);
-
+				case ButtonRelease:
+					cnt++;
+					printf("bup %i\n",cnt);
+					//ev.type=-1;
+					//XSync(display,true);
+					break;
+				case MotionNotify:
+					//printf("bmove\n");
+					break;
+				default:
+			//printf("default\n");
+			timer++;
+			if(timer>20)
+			{
+			printf("default\n");
+			timer=0;
 			getDiskList();
 			XdbeSwapBuffers(display,&swapInfo,1);
+			}
+				//	printf("xxx\n");
+				break;
+				}
+//XSendEvent(display,DefaultRootWindow(display),false,ExposureMask | KeyPressMask | ButtonPress |
+//                          StructureNotifyMask | ButtonReleaseMask |
+ //                         KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
+  //                        PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
+   //                       ColormapChangeMask,&ev);
+
+//			usleep(100000);
+
+			//getDiskList();
+			//XdbeSwapBuffers(display,&swapInfo,1);
 
 		}
 
