@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSDesktop],[0.0.1],[LFSDesktop],[LFSDesktop])
+AC_INIT([LFSDesktop],[0.0.3],[LFSDesktop],[LFSDesktop])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
