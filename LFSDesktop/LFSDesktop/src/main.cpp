@@ -349,6 +349,67 @@ void createDiskInfo(void)
 Time time=0;
 bool	firstclick=false;
 
+void mountDisk(int x, int y)
+{
+	FILE	*fp;
+	FILE	*fd;
+	char	*command;
+	char	line[2048];
+	int		dx,dy;
+	char	label[256];
+	char	uuid[256];
+	char	dataline[256];
+
+	asprintf(&command,"find %s",diskInfoPath);
+	fp=popen(command,"r");
+	free(command);
+	if(fp!=NULL)
+		{
+			while(fgets(line,2048,fp))
+				{
+					line[strlen(line)-1]=0;
+					if(strlen(line)>0)
+						{
+							//asprintf(&command,"%s",line);
+							fd=fopen(line,"r");
+							//printf("line=%s\n",line);
+							//free(command);
+							if(fd!=NULL)
+								{
+									label[0]=0;
+									uuid[0]=0;
+									dataline[0]=0;
+									fgets(label,256,fd);//name
+									label[strlen(label)-1]=0;
+									fgets(uuid,256,fd);//uuid
+									uuid[strlen(uuid)-1]=0;
+									fgets(dataline,256,fd);//x
+									dataline[strlen(dataline)-1]=0;
+									dx=atoi(dataline);
+									fgets(dataline,256,fd);//y
+									dataline[strlen(dataline)-1]=0;
+									dy=atoi(dataline);
+									fclose(fd);
+								//printf("uuid=%s label=%s dx=%i dy=%i\n",uuid,label,dx,dy);
+								}
+							if(strlen(uuid)>1)
+								{
+								if((x>=dx)&&(x<=dx+48)&&(y>=dy)&&(y<=dy+48))
+								{
+									//asprintf(&command,"sudo -A mkdir -p /media/%s 2>&1 >/dev/null;sudo -A mount -U %s /media/%s",label,uuid,label);
+									asprintf(&command,"udevil mount `findfs UUID=%s`",uuid);
+									system(command);
+									printf("uuid=%s label=%s\n",uuid,label);
+									pclose(fp);
+									return;
+								}
+								}
+						}
+				}
+			pclose(fp);
+		}
+}
+
 int main(int argc,char **argv)
 {
 	int		c;
@@ -509,8 +570,12 @@ unsigned long  timer=0;
 						{
 							printf("t1=%i t2=%i tot=%i\n",time,ev.xbutton.time,ev.xbutton.time-time);
 							firstclick=false;
-							if(ev.xbutton.time-time<500)
+							if(ev.xbutton.time-time<800)
+								{
+									printf("x=%i y=%i\n",ev.xbutton.x,ev.xbutton.y);
 								printf("double click\n");
+								mountDisk(ev.xbutton.x,ev.xbutton.y);
+								}
 							time=ev.xbutton.time;
 						}
 					//ev.type=-1;
