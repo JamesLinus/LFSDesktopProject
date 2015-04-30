@@ -187,18 +187,6 @@ void createDesktopWindow(void)
 			XSync(display,False);
 
 			XMoveWindow(display,rootWin,0,0);
-/*
-Region rgx=XCreateRegion();
-XRectangle rect;
-rect.x=0;
-rect.y=0;
-rect.width=400;
-rect.height=400;
-
-XUnionRectWithRegion(&rect,rg, rg);
-XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
-*/
-			//XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 
 			buffer=XdbeAllocateBackBufferName(display,rootWin,XdbeBackground);
 			swapInfo.swap_window=rootWin;
@@ -224,10 +212,9 @@ void getDiskList(void)
 	int			stringwidth;
 
 	int			boxx,boxy,boxw,boxh;
-	Region		rg;
 	XRectangle	rect;
 
-	rg=XDestroyRegion();
+	XDestroyRegion(rg);
 	rg=XCreateRegion();
 	
 	asprintf(&command,"lsblk -n --output=UUID -lpds");
@@ -359,6 +346,9 @@ void createDiskInfo(void)
 	free(command);
 }
 
+Time time=0;
+bool	firstclick=false;
+
 int main(int argc,char **argv)
 {
 	int		c;
@@ -427,12 +417,12 @@ int main(int argc,char **argv)
 	gc=XCreateGC(display,drawOnThis,0,NULL);
 	XSetFillStyle(display,gc,FillSolid);
 	//XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask| ButtonPress| ButtonReleaseMask|PointerMotionMask);
-	//XSelectInput(display,rootWin,ExposureMask | ButtonPress| ButtonReleaseMask|PointerMotionMask);
-	XSelectInput(display,rootWin,ExposureMask | KeyPressMask | ButtonPress |
-                          StructureNotifyMask | ButtonReleaseMask |
-                          KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
-                          PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
-                          ColormapChangeMask);
+	XSelectInput(display,rootWin,StructureNotifyMask |ExposureMask | ButtonPress| ButtonReleaseMask|PointerMotionMask | EnterWindowMask | LeaveWindowMask);
+//	XSelectInput(display,rootWin,ExposureMask | KeyPressMask | ButtonPress |
+ //                         StructureNotifyMask | ButtonReleaseMask |
+   //                       KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
+     //                     PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
+       //                   ColormapChangeMask);
 //XSelectInput(display,rootWin,NoEventMask);
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
@@ -510,21 +500,25 @@ unsigned long  timer=0;
                 case VisibilityNotify:
                     break;
 				case ButtonPress:
+					if(firstclick==false)
+						{
+							firstclick=true;
+							time=ev.xbutton.time;
+						}
+					else
+						{
+							printf("t1=%i t2=%i tot=%i\n",time,ev.xbutton.time,ev.xbutton.time-time);
+							firstclick=false;
+							if(ev.xbutton.time-time<500)
+								printf("double click\n");
+							time=ev.xbutton.time;
+						}
 					//ev.type=-1;
-					printf("bdown\n");
-					//XSetInputFocus(display, PointerRoot, RevertToPointerRoot, CurrentTime);
-					//XPutBackEvent(display,&ev);
-//XSendEvent(display,DefaultRootWindow(display),false,ExposureMask | KeyPressMask | ButtonPress |
-//                          StructureNotifyMask | ButtonReleaseMask |
- //                         KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
-  //                        PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
-   //                       ColormapChangeMask,&ev);
+					//printf("bdown\n");
 					break;
 				case ButtonRelease:
-					cnt++;
-					printf("bup %i\n",cnt);
-					//ev.type=-1;
-					//XSync(display,true);
+					//cnt++;
+					//printf("bup %i\n",cnt);
 					break;
 				case MotionNotify:
 					//printf("bmove\n");
@@ -532,7 +526,7 @@ unsigned long  timer=0;
 				default:
 			//printf("default\n");
 			timer++;
-			if(timer>20)
+			if(timer>19)
 			{
 			printf("default\n");
 			timer=0;
