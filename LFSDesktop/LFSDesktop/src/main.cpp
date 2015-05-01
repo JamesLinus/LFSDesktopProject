@@ -22,27 +22,15 @@
 #include <getopt.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "config.h"
 
-/*
-GC  ggcc;
-int cc=(int)GXcopyInverted;
-ggcc=XCreateGC(display,drawOnThis,GCFunction,(XGCValues*) &cc);
-XChangeGC(display, gc, GCFunction,(XGCValues*) &cc);
-	XColor tmp;
-
-	XParseColor(display, DefaultColormap(display,screen), "white", &tmp);
-	XAllocColor(display,DefaultColormap(display,screen),&tmp);
-
-XSetForeground(display,gc,tmp.pixel);
-XSetBackground(display,gc,blackColor);
-
-					XDrawString(display,drawOnThis,gc,diskx,disky+48+20,label,strlen(label)-1);
-
-*/
-
 #define UNKNOWNARG -100
+#define REFRESHRATE 2
+#define GRIDSIZE 80
+#define MAXGRIDY 4
+#define GRIDBORDER 32
 
 Display			*display;
 Window			rootWin;
@@ -77,6 +65,12 @@ unsigned long	labelBackground;
 unsigned long	labelForeground;
 GC				labelGC;
 XFontStruct		*labelFont;
+
+int				*xPos;
+int				*yPos;
+int				xCnt;
+int				yCnt;
+int				*xySlot;
 
 bool			needsRefresh=true;
 
@@ -204,113 +198,6 @@ void createDesktopWindow(void)
 		}
 }
 
-void getDiskList(void)
-{
-	FILE		*fp;
-	FILE		*fd;
-	char		*diskfilepath;
-	char		*command;
-	char		line[2048];
-	int			diskx;
-	int			disky;
-	char		dataline[256];
-	char		uuid[256];
-	char		label[256];
-	XColor		colour;
-	int			fontheight;
-	int			stringwidth;
-
-	int			boxx,boxy,boxw,boxh;
-	XRectangle	rect;
-
-	XDestroyRegion(rg);
-	rg=XCreateRegion();
-	
-	asprintf(&command,"lsblk -n --output=UUID -lpds");
-	fp=popen(command,"r");
-	if(fp!=NULL)
-		{
-			while(fgets(line,2048,fp))
-				{
-					line[strlen(line)-1]=0;
-					if(strlen(line)>0)
-						{
-							asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
-							fd=fopen(diskfilepath,"r");
-							if(fd!=NULL)
-								{
-									fgets(label,256,fd);//name
-									fgets(uuid,256,fd);//uuid
-									uuid[strlen(uuid)-1]=0;
-									fgets(dataline,256,fd);//x
-									diskx=atoi(dataline);
-									fgets(dataline,256,fd);//y
-									disky=atoi(dataline);
-									fclose(fd);
-									free(diskfilepath);
-								}
-							if(strcmp(label,"IGNOREDISK\n")!=0)
-								{
-									XSetClipMask(display,gc,diskPixmapMask);
-									XSetClipOrigin(display,gc,diskx,disky);
-									
-									//XSetForeground(display,gc,labelBackground);
-									//XSetFillStyle(display,gc,FillSolid);
-									//XSetForeground(display,labelGC,labelForeground);
-									//XSetBackground(display,labelGC,labelBackground);
-
-									
-									FILE	*tp;
-									char	*com;
-
-									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",uuid);
-									line[0]=0;
-									tp=popen(com,"r");
-									free(com);
-									fgets(line,2048,tp);
-									pclose(tp);
-									if(strlen(line)>0)
-										XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
-									else
-										XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,48,48,diskx,disky);
-									//XSetForeground(display,gc,labelBackground);
-									//XFillRectangle(display,drawOnThis,gc,diskx,disky,48,48);
-
-
-									rect.x=diskx;
-									rect.y=disky;
-									rect.width=48;
-									rect.height=48;
-									XUnionRectWithRegion(&rect,rg, rg);
-
-									XSetClipMask(display,gc,0);
-
-									fontheight=labelFont->ascent+labelFont->descent;
-									stringwidth=XTextWidth(labelFont,label,strlen(label)-1);
-
-									boxx=diskx+(48/2)-(stringwidth/2)-1;
-									boxy=disky+48+1;
-									boxw=stringwidth+2;
-									boxh=fontheight-2;
-
-									XSetForeground(display,gc,labelBackground);
-									XSetFillStyle(display,gc,FillSolid);
-									XFillRectangle(display,drawOnThis,gc,boxx,disky+48,boxw,boxh);
-
-									XSetForeground(display,labelGC,labelForeground);
-									XSetBackground(display,labelGC,labelBackground);
-
-									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
-									disky=disky+50;
-							}
-						}
-				}
-			fclose(fp);
-		}
-	free(command);
-	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
-}
-
 void createDiskInfo(void)
 {
 	FILE	*fp;
@@ -322,8 +209,18 @@ void createDiskInfo(void)
 	char	*label;
 	char	*uuid;
 	char	*diskfilepath;
-	int		posx=48;
-	int		posy=48;
+	int		posx;
+	int		posy;
+
+	posx=0;
+	posy=0;
+
+for(int yy=0;yy<yCnt;yy++)
+	{
+		for(int xx=0;xx<xCnt;xx++)
+			printf("%i",xPos[xx]);
+		printf("\n");
+	}
 
 	asprintf(&command,"lsblk -n --output=NAME,UUID,LABEL -lpds");
 	fp=popen(command,"r");
@@ -357,13 +254,48 @@ void createDiskInfo(void)
 											printf("Can't open disk folder ...\n");
 											return;
 										}
-									fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
-									posy=posy+64;
-									if(posy>512-64)
+int cnt=0;
+//									while((yPos[posy]!=0) && (xPos[posx]!=0))
+									while((xySlot[(posy*yCnt)+posx]!=0))
 										{
-											posy=48;
-											posx=posx+128;
+											posy++;
+											if(posy>MAXGRIDY)
+												{
+													posy=0;
+													posx++;
+												}
 										}
+											cnt++;
+											printf("cnt=%i ypos %i=%i xpos %i=%i\n",cnt,posy,yPos[posy],posx,xPos[posx]);
+
+									fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
+									xySlot[(posy*yCnt)+posx]=1;
+									//xPos[posx]=1;
+									//yPos[posy]=1;
+									//posy++;
+									//while((yPos[posy]!=0) && (xPos[posx]!=0))
+									//	{
+									//		posy++;
+									//		if(posy>MAXGRIDY)
+									//			{
+									//				posy=0;
+									//				posx++;
+									//			}
+									//	}
+									//if(posy>MAXGRIDY)
+									//	{
+									//		posy=0;
+									//		posx++;
+									//	}
+									//posx++;
+									//if(xPos[posx]=0)
+										
+									//posy=posy+64;
+									//if(posy>512-64)
+									//	{
+									//		posy=48;
+									//		posx=posx+128;
+									//	}
 									fclose(fd);
 								}
 							free(diskfilepath);
@@ -376,6 +308,123 @@ void createDiskInfo(void)
 			pclose(fp);
 		}
 	free(command);
+	
+for(int yy=0;yy<yCnt;yy++)
+	printf("%i",yPos[yy]);
+printf("\n");
+		for(int xx=0;xx<xCnt;xx++)
+			printf("%i",xPos[xx]);
+printf("\n");
+
+//	exit(0);
+}
+
+void getDiskList(void)
+{
+	FILE		*fp;
+	FILE		*fd;
+	char		*diskfilepath;
+	char		*command;
+	char		line[2048];
+	int			diskx;
+	int			disky;
+	char		dataline[256];
+	char		uuid[256];
+	char		label[256];
+	XColor		colour;
+	int			fontheight;
+	int			stringwidth;
+
+	int			boxx,boxy,boxw,boxh;
+	XRectangle	rect;
+
+	XDestroyRegion(rg);
+	rg=XCreateRegion();
+
+	asprintf(&command,"lsblk -n --output=UUID -lpds");
+	fp=popen(command,"r");
+	if(fp!=NULL)
+		{
+			while(fgets(line,2048,fp))
+				{
+					line[strlen(line)-1]=0;
+					if(strlen(line)>0)
+						{
+							asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
+							fd=fopen(diskfilepath,"r");
+							if(fd==NULL)
+								{
+									createDiskInfo();
+									fd=fopen(diskfilepath,"r");
+								}
+							if(fd!=NULL)
+								{
+									fgets(label,256,fd);//name
+									fgets(uuid,256,fd);//uuid
+									uuid[strlen(uuid)-1]=0;
+									fgets(dataline,256,fd);//x
+									diskx=atoi(dataline)*GRIDSIZE+GRIDBORDER;
+									fgets(dataline,256,fd);//y
+									disky=atoi(dataline)*GRIDSIZE+GRIDBORDER;
+									fclose(fd);
+									free(diskfilepath);
+								}
+							//else
+							//	{
+							//	printf("no disk file\n");
+							//	createDiskInfo();
+							//	}
+							if(strcmp(label,"IGNOREDISK\n")!=0)
+								{
+									XSetClipMask(display,gc,diskPixmapMask);
+									XSetClipOrigin(display,gc,diskx,disky);
+
+									FILE	*tp;
+									char	*com;
+
+									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",uuid);
+									line[0]=0;
+									tp=popen(com,"r");
+									free(com);
+									fgets(line,2048,tp);
+									pclose(tp);
+									if(strlen(line)>0)
+										XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+									else
+										XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,48,48,diskx,disky);
+
+									rect.x=diskx;
+									rect.y=disky;
+									rect.width=48;
+									rect.height=48;
+									XUnionRectWithRegion(&rect,rg, rg);
+
+									XSetClipMask(display,gc,0);
+
+									fontheight=labelFont->ascent+labelFont->descent;
+									stringwidth=XTextWidth(labelFont,label,strlen(label)-1);
+
+									boxx=diskx+(48/2)-(stringwidth/2)-1;
+									boxy=disky+48+1;
+									boxw=stringwidth+2;
+									boxh=fontheight-2;
+
+									XSetForeground(display,gc,labelBackground);
+									XSetFillStyle(display,gc,FillSolid);
+									XFillRectangle(display,drawOnThis,gc,boxx,disky+48,boxw,boxh);
+
+									XSetForeground(display,labelGC,labelForeground);
+									XSetBackground(display,labelGC,labelBackground);
+
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
+									disky=disky+50;
+								}
+						}
+				}
+			fclose(fp);
+		}
+	free(command);
+	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 
 Time time=0;
@@ -402,10 +451,7 @@ void mountDisk(int x, int y)
 					line[strlen(line)-1]=0;
 					if(strlen(line)>0)
 						{
-							//asprintf(&command,"%s",line);
 							fd=fopen(line,"r");
-							//printf("line=%s\n",line);
-							//free(command);
 							if(fd!=NULL)
 								{
 									label[0]=0;
@@ -422,19 +468,17 @@ void mountDisk(int x, int y)
 									dataline[strlen(dataline)-1]=0;
 									dy=atoi(dataline);
 									fclose(fd);
-								//printf("uuid=%s label=%s dx=%i dy=%i\n",uuid,label,dx,dy);
 								}
 							if(strlen(uuid)>1)
 								{
-								if((x>=dx)&&(x<=dx+48)&&(y>=dy)&&(y<=dy+48))
-								{
-									//asprintf(&command,"sudo -A mkdir -p /media/%s 2>&1 >/dev/null;sudo -A mount -U %s /media/%s",label,uuid,label);
-									asprintf(&command,"udevil mount `findfs UUID=%s`",uuid);
-									system(command);
-									printf("uuid=%s label=%s\n",uuid,label);
-									pclose(fp);
-									return;
-								}
+									if((x>=dx)&&(x<=dx+48)&&(y>=dy)&&(y<=dy+48))
+										{
+											asprintf(&command,"udevil mount `findfs UUID=%s`",uuid);
+											system(command);
+											printf("uuid=%s label=%s\n",uuid,label);
+											pclose(fp);
+											return;
+										}
 								}
 						}
 				}
@@ -442,11 +486,23 @@ void mountDisk(int x, int y)
 		}
 }
 
+void  alarmCallBack(int sig)
+{
+	signal(SIGALRM,SIG_IGN);
+	needsRefresh=true;
+	signal(SIGALRM,alarmCallBack);
+	alarm(REFRESHRATE);
+}
+
 int main(int argc,char **argv)
 {
-	int		c;
-	XEvent	ev;
-	char	*command;
+	int				c;
+	XEvent			ev;
+	char			*command;
+	unsigned long	timer=0;
+
+	signal(SIGALRM,alarmCallBack);
+	alarm(REFRESHRATE);
 
 	done=true;
 	asprintf(&diskInfoPath,"%s/.config/LFS/disks",getenv("HOME"));
@@ -531,15 +587,30 @@ int main(int argc,char **argv)
 	imlib_render_pixmaps_for_whole_image(&diskPixmapOffline,&diskPixmapMaskOffline);
 	imlib_free_image();
 
-
 	createColours();
-	createDiskInfo();
-int cnt=0;
-unsigned long  timer=0;
 
-			getDiskList();
-			XdbeSwapBuffers(display,&swapInfo,1);
-	while (done)
+	xCnt=displayWidth/GRIDSIZE;
+	yCnt=displayHeight/GRIDSIZE;
+	xPos=(int*)malloc(sizeof(int)*xCnt);
+	yPos=(int*)malloc(sizeof(int)*yCnt);
+
+	xySlot=(int*)malloc(sizeof(int)*xCnt*yCnt);
+	
+	
+	for(int j=0;j<xCnt;j++)
+		xPos[j]=0;
+	for(int j=0;j<yCnt;j++)
+		yPos[j]=0;
+	for(int j=0;j<(xCnt*yCnt);j++)
+		xySlot[j]=0;
+
+//printf("%i %i\n",xCnt,yCnt);
+	createDiskInfo();
+
+	getDiskList();
+	XdbeSwapBuffers(display,&swapInfo,1);
+
+	while(done)
 		{
 			if(needsRefresh==true)
 				{
@@ -547,36 +618,19 @@ unsigned long  timer=0;
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;
 				}
-			//while (XPending(display))
-				XNextEvent(display,&ev);
+
+			XCheckWindowEvent(display,rootWin,StructureNotifyMask |ExposureMask | ButtonPress| ButtonReleaseMask|PointerMotionMask | EnterWindowMask | LeaveWindowMask,&ev);
 
 			switch(ev.type)
 				{
-//				case ClientMessage:
-//					if (ev.xclient.message_type == XInternAtom(display,"WM_PROTOCOLS",1) && (Atom)ev.xclient.data.l[0] == XInternAtom(display,"WM_DELETE_WINDOW",1))
-//						done=false;
-//					continue;
-//
-//					break;
-
 				case MapNotify:
-                    break;
-                case Expose:
-                     printf("expose\n");
-                   // If this is not the last expose event break
-                    if (ev.xexpose.count != 0)
-                        break;
-                    else
-                    {
-                    printf("expose\n");
-                    getDiskList();
-			XdbeSwapBuffers(display,&swapInfo,1);
-                        break;
-                        }
-                case ConfigureNotify:
-                    break;
-                case VisibilityNotify:
-                    break;
+					break;
+				case Expose:
+					break;
+				case ConfigureNotify:
+					break;
+				case VisibilityNotify:
+					break;
 				case ButtonPress:
 					if(firstclick==false)
 						{
@@ -589,56 +643,22 @@ unsigned long  timer=0;
 							firstclick=false;
 							if(ev.xbutton.time-time<800)
 								{
-									printf("x=%i y=%i\n",ev.xbutton.x,ev.xbutton.y);
-								printf("double click\n");
-								mountDisk(ev.xbutton.x,ev.xbutton.y);
-								needsRefresh=true;
+									printf("double click\n");
+									mountDisk(ev.xbutton.x,ev.xbutton.y);
+									needsRefresh=true;
 								}
 							time=0;
 						}
-					//ev.type=-1;
-					//printf("bdown\n");
 					break;
 				case ButtonRelease:
-					//cnt++;
-					//printf("bup %i\n",cnt);
 					break;
 				case MotionNotify:
-					//printf("bmove\n");
 					break;
+
 				default:
-			//printf("default\n");
-/*
-			timer++;
-			if(timer>19)
-			{
-			printf("default\n");
-			timer=0;
-			getDiskList();
-			XdbeSwapBuffers(display,&swapInfo,1);
-			}
-				//	printf("xxx\n");
-*/
-				break;
+					break;
 				}
-//XSendEvent(display,DefaultRootWindow(display),false,ExposureMask | KeyPressMask | ButtonPress |
-//                          StructureNotifyMask | ButtonReleaseMask |
- //                         KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
-  //                        PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
-   //                       ColormapChangeMask,&ev);
-
-//			usleep(100000);
-
-			//getDiskList();
-			//XdbeSwapBuffers(display,&swapInfo,1);
-			timer++;
-			if(timer>1000)
-			{
-			printf("default\n");
-			timer=0;
-			needsRefresh=true;
-			}
-
+			ev.type=-1;
 		}
 
 	XClearWindow(display,rootWin);
