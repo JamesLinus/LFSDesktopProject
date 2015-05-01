@@ -212,6 +212,7 @@ void getDiskList(void)
 	int			diskx;
 	int			disky;
 	char		dataline[256];
+	char		uuid[256];
 	char		label[256];
 	XColor		colour;
 	int			fontheight;
@@ -237,7 +238,8 @@ void getDiskList(void)
 							if(fd!=NULL)
 								{
 									fgets(label,256,fd);//name
-									fgets(dataline,256,fd);//uuid
+									fgets(uuid,256,fd);//uuid
+									uuid[strlen(uuid)-1]=0;
 									fgets(dataline,256,fd);//x
 									diskx=atoi(dataline);
 									fgets(dataline,256,fd);//y
@@ -256,8 +258,19 @@ void getDiskList(void)
 									//XSetBackground(display,labelGC,labelBackground);
 
 									
-									
-									XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,48,48,diskx,disky);
+									FILE	*tp;
+									char	*com;
+
+									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",uuid);
+									line[0]=0;
+									tp=popen(com,"r");
+									free(com);
+									fgets(line,2048,tp);
+									pclose(tp);
+									if(strlen(line)>0)
+										XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+									else
+										XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,48,48,diskx,disky);
 									//XSetForeground(display,gc,labelBackground);
 									//XFillRectangle(display,drawOnThis,gc,diskx,disky,48,48);
 
