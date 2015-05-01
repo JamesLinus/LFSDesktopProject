@@ -53,6 +53,7 @@ Region			rg;
 XdbeBackBuffer	buffer;
 XdbeSwapInfo	swapInfo;
 Drawable		drawOnThis;
+Colormap cm;
 
 Visual			*visual=NULL;
 int				depth=0;
@@ -63,8 +64,13 @@ int				whiteColor;
 bool			done=true;
 Pixmap			diskPixmap;
 Pixmap			diskPixmapMask;
+Pixmap			diskPixmapOffline;
+Pixmap			diskPixmapMaskOffline;
 Imlib_Image		diskImage;
-const char		*diskImagePath="/usr/share/icons/gnome/48x48/devices/drive-harddisk.png";
+Imlib_Image		diskImageOffline;
+//const char		*diskImagePath="/usr/share/icons/gnome/48x48/devices/drive-harddisk.png";
+const char		*diskImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/drive-removable-media.png";
+const char		*diskImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/drive-removable-media-offline.png";
 char			*diskInfoPath;
 
 unsigned long	labelBackground;
@@ -243,7 +249,18 @@ void getDiskList(void)
 								{
 									XSetClipMask(display,gc,diskPixmapMask);
 									XSetClipOrigin(display,gc,diskx,disky);
-									XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+									
+									//XSetForeground(display,gc,labelBackground);
+									//XSetFillStyle(display,gc,FillSolid);
+									//XSetForeground(display,labelGC,labelForeground);
+									//XSetBackground(display,labelGC,labelBackground);
+
+									
+									
+									XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,48,48,diskx,disky);
+									//XSetForeground(display,gc,labelBackground);
+									//XFillRectangle(display,drawOnThis,gc,diskx,disky,48,48);
+
 
 									rect.x=diskx;
 									rect.y=disky;
@@ -477,47 +494,28 @@ int main(int argc,char **argv)
 
 	gc=XCreateGC(display,drawOnThis,0,NULL);
 	XSetFillStyle(display,gc,FillSolid);
-	//XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask| ButtonPress| ButtonReleaseMask|PointerMotionMask);
 	XSelectInput(display,rootWin,StructureNotifyMask |ExposureMask | ButtonPress| ButtonReleaseMask|PointerMotionMask | EnterWindowMask | LeaveWindowMask);
-//	XSelectInput(display,rootWin,ExposureMask | KeyPressMask | ButtonPress |
- //                         StructureNotifyMask | ButtonReleaseMask |
-   //                       KeyReleaseMask | EnterWindowMask | LeaveWindowMask |
-     //                     PointerMotionMask | Button1MotionMask | VisibilityChangeMask |
-       //                   ColormapChangeMask);
-//XSelectInput(display,rootWin,NoEventMask);
+
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
 
 	imlib_context_set_dither(0);
 	imlib_context_set_display(display);
 	imlib_context_set_visual(visual);
+	imlib_context_set_drawable(drawOnThis);
+
 	diskImage=imlib_load_image(diskImagePath);
 	imlib_context_set_image(diskImage);
-	imlib_context_set_drawable(drawOnThis);
 	imlib_image_set_has_alpha(1);
 	imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
 	imlib_free_image();
 
-//XClearWindow(display,drawOnThis);
-//	XSetForeground(display,gc,blackColor);
-//	XSetFillStyle(display,gc,FillSolid);
-//	XFillRectangle(display,drawOnThis,gc,0,0,displayWidth,displayHeight);
-//	XFillRectangle(display,rootWin,gc,0,0,displayWidth,displayHeight);
-//
-//	gc=XCreateGC(display,drawOnThis,0,NULL);
-//	XSetFillStyle(display,gc,FillSolid);
-//	XSelectInput(display,rootWin,ExposureMask | SubstructureNotifyMask);
-//
-//	XSetClipMask(display,gc,0);
-//	XSetClipOrigin(display,gc,0,0);
-//
-//	XSetForeground(display,gc,blackColor);
-//	XSetFillStyle(display,gc,FillSolid);
-//	XFillRectangle(display,rootWin,gc,0,0,displayWidth,displayHeight);
+	diskImageOffline=imlib_load_image(diskImagePathOffline);
+	imlib_context_set_image(diskImageOffline);
+	imlib_image_set_has_alpha(1);
+	imlib_render_pixmaps_for_whole_image(&diskPixmapOffline,&diskPixmapMaskOffline);
+	imlib_free_image();
 
-//XSetBackground(display,gc,blackColor);
-//XClearWindow(display,rootWin);
-//XClearArea(display,drawOnThis,0,0,displayWidth,displayHeight,true);
 
 	createColours();
 	createDiskInfo();
