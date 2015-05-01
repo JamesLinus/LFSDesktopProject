@@ -608,6 +608,7 @@ unsigned long  timer=0;
 					break;
 				default:
 			//printf("default\n");
+/*
 			timer++;
 			if(timer>19)
 			{
@@ -617,6 +618,7 @@ unsigned long  timer=0;
 			XdbeSwapBuffers(display,&swapInfo,1);
 			}
 				//	printf("xxx\n");
+*/
 				break;
 				}
 //XSendEvent(display,DefaultRootWindow(display),false,ExposureMask | KeyPressMask | ButtonPress |
@@ -629,6 +631,13 @@ unsigned long  timer=0;
 
 			//getDiskList();
 			//XdbeSwapBuffers(display,&swapInfo,1);
+			timer++;
+			if(timer>1000)
+			{
+			printf("default\n");
+			timer=0;
+			needsRefresh=true;
+			}
 
 		}
 
