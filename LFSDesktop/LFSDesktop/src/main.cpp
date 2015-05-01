@@ -78,6 +78,8 @@ unsigned long	labelForeground;
 GC				labelGC;
 XFontStruct		*labelFont;
 
+bool			needsRefresh=true;
+
 struct Hints
 {
 	unsigned long   flags;
@@ -539,8 +541,12 @@ unsigned long  timer=0;
 			XdbeSwapBuffers(display,&swapInfo,1);
 	while (done)
 		{
-			//getDiskList();
-			//XdbeSwapBuffers(display,&swapInfo,1);
+			if(needsRefresh==true)
+				{
+					getDiskList();
+					XdbeSwapBuffers(display,&swapInfo,1);
+					needsRefresh=false;
+				}
 			//while (XPending(display))
 				XNextEvent(display,&ev);
 
@@ -586,8 +592,9 @@ unsigned long  timer=0;
 									printf("x=%i y=%i\n",ev.xbutton.x,ev.xbutton.y);
 								printf("double click\n");
 								mountDisk(ev.xbutton.x,ev.xbutton.y);
+								needsRefresh=true;
 								}
-							time=ev.xbutton.time;
+							time=0;
 						}
 					//ev.type=-1;
 					//printf("bdown\n");
