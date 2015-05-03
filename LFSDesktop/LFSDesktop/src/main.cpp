@@ -26,6 +26,8 @@
 
 #include "config.h"
 
+#include "prefs.h"
+
 #define UNKNOWNARG -100
 #define REFRESHRATE 2
 #define GRIDSIZE 80
@@ -66,12 +68,12 @@ unsigned long	labelForeground;
 GC				labelGC;
 XFontStruct		*labelFont;
 
-//int				*xPos;
-//int				*yPos;
 int				xCnt;
 int				yCnt;
 int				**xySlot;
-//int				*slot;
+
+Time			time=0;
+bool			firstClick=false;
 
 bool			needsRefresh=true;
 
@@ -199,6 +201,16 @@ void createDesktopWindow(void)
 		}
 }
 
+void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y)
+{
+	diskName=label;
+	diskUUID=uuid;
+	diskXPos=x;
+	diskYPos=y;
+
+	saveVarsToFile(diskfilepath,diskData);
+}
+
 void createDiskInfo(void)
 {
 	FILE	*fp;
@@ -216,16 +228,6 @@ void createDiskInfo(void)
 	posx=0;
 	posy=0;
 
-/*
-for(int yy=0;yy<yCnt;yy++)
-	{
-		for(int xx=0;xx<xCnt;xx++)
-//			printf("%i",xySlot[xx+(xCnt*yy)]);
-			printf("%i",xySlot[xx][yy]);
-		printf("\n");
-	}
-//exit(0);
-*/
 	asprintf(&command,"lsblk -n --output=NAME,UUID,LABEL -lpds");
 	fp=popen(command,"r");
 	if(fp!=NULL)
@@ -269,8 +271,8 @@ for(int yy=0;yy<yCnt;yy++)
 													posx++;
 												}
 										}
-
-									fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
+									makeDiskInfofile(diskfilepath,label,uuid,posx,posy);
+									//fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
 									xySlot[posx][posy]=1;
 									fclose(fd);
 								}
@@ -324,6 +326,8 @@ void getDiskList(void)
 									createDiskInfo();
 									fd=fopen(diskfilepath,"r");
 								}
+							fclose(fd);
+							/*
 							if(fd!=NULL)
 								{
 									fgets(label,256,fd);//name
@@ -336,11 +340,16 @@ void getDiskList(void)
 									fclose(fd);
 									free(diskfilepath);
 								}
-							xySlot[diskx][disky]=1;
-							diskx=diskx*GRIDSIZE+GRIDBORDER;
-							disky=disky*GRIDSIZE+GRIDBORDER;
+							*/
+							loadVarsFromFile(diskfilepath,diskData);
+							xySlot[diskXPos][diskYPos]=1;
+							//diskx=diskx*GRIDSIZE+GRIDBORDER;
+							diskx=diskXPos*GRIDSIZE+GRIDBORDER;
+							//disky=disky*GRIDSIZE+GRIDBORDER;
+							disky=diskYPos*GRIDSIZE+GRIDBORDER;
 
-							if(strcmp(label,"IGNOREDISK\n")!=0)
+//							if(strcmp(label,"IGNOREDISK\n")!=0)
+							if(strcmp(diskName,"IGNOREDISK\n")!=0)
 								{
 									XSetClipMask(display,gc,diskPixmapMask);
 									XSetClipOrigin(display,gc,diskx,disky);
@@ -348,7 +357,8 @@ void getDiskList(void)
 									FILE	*tp;
 									char	*com;
 
-									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",uuid);
+//									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",uuid);
+									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",diskUUID);
 									line[0]=0;
 									tp=popen(com,"r");
 									free(com);
@@ -368,7 +378,8 @@ void getDiskList(void)
 									XSetClipMask(display,gc,0);
 
 									fontheight=labelFont->ascent+labelFont->descent;
-									stringwidth=XTextWidth(labelFont,label,strlen(label)-1);
+								//	stringwidth=XTextWidth(labelFont,label,strlen(label)-1);
+									stringwidth=XTextWidth(labelFont,label,strlen(diskName));
 
 									boxx=diskx+(48/2)-(stringwidth/2)-1;
 									boxy=disky+48+1;
@@ -382,7 +393,8 @@ void getDiskList(void)
 									XSetForeground(display,labelGC,labelForeground);
 									XSetBackground(display,labelGC,labelBackground);
 
-									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
+//									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(diskName));
 								}
 						}
 				}
@@ -391,9 +403,6 @@ void getDiskList(void)
 	free(command);
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
-
-Time time=0;
-bool	firstclick=false;
 
 void mountDisk(int x, int y)
 {
@@ -406,16 +415,24 @@ void mountDisk(int x, int y)
 	char	uuid[256];
 	char	dataline[256];
 
-	asprintf(&command,"find %s",diskInfoPath);
+	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
+	printf("%s\n",diskInfoPath);
+//	exit(0);
 	fp=popen(command,"r");
 	free(command);
 	if(fp!=NULL)
 		{
 			while(fgets(line,2048,fp))
 				{
+					printf(">>>%s<<\n",line);
 					line[strlen(line)-1]=0;
+							printf("%s\n",line);
+							loadVarsFromFile(line,diskData);
 					if(strlen(line)>0)
 						{
+						printf("11111111111111111\n");
+						//exit(0);
+							/*
 							fd=fopen(line,"r");
 							if(fd!=NULL)
 								{
@@ -434,13 +451,16 @@ void mountDisk(int x, int y)
 									dy=atoi(dataline);
 									fclose(fd);
 								}
-							if(strlen(uuid)>1)
+							*/
+							//if(strlen(uuid)>1)
+							
+							if(strlen(diskUUID)>1)
 								{
-									if((x>=(dx*GRIDSIZE+GRIDBORDER))&&(x<=(dx*GRIDSIZE+GRIDBORDER)+48)&&(y>=(dy*GRIDSIZE+GRIDBORDER))&&(y<=(dy*GRIDSIZE+GRIDBORDER)+48))
+									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+48)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+48))
 										{
-											asprintf(&command,"udevil mount `findfs UUID=%s`",uuid);
+											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
 											system(command);
-											printf("uuid=%s label=%s\n",uuid,label);
+											printf("uuid=%s label=%s\n",diskUUID,diskName);
 											pclose(fp);
 											return;
 										}
@@ -592,27 +612,32 @@ int main(int argc,char **argv)
 				case VisibilityNotify:
 					break;
 				case ButtonPress:
-					printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
-					if(firstclick==false)
+					//printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
+					if(firstClick==false)
 						{
-							firstclick=true;
+							firstClick=true;
 							time=ev.xbutton.time;
 						}
 					else
 						{
-							printf("t1=%i t2=%i tot=%i\n",time,ev.xbutton.time,ev.xbutton.time-time);
-							firstclick=false;
+						//	printf("t1=%i t2=%i tot=%i\n",time,ev.xbutton.time,ev.xbutton.time-time);
+							firstClick=false;
 							if(ev.xbutton.time-time<800)
 								{
 									printf("double click\n");
 									mountDisk(ev.xbutton.x,ev.xbutton.y);
 									needsRefresh=true;
 								}
-							time=0;
+							else
+								{
+									time=ev.xbutton.time;
+									firstClick=true;
+								}
+							//time=0;
 						}
 					break;
 				case ButtonRelease:
-					printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
+					//printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
 					break;
 				case MotionNotify:
 					break;
