@@ -66,11 +66,12 @@ unsigned long	labelForeground;
 GC				labelGC;
 XFontStruct		*labelFont;
 
-int				*xPos;
-int				*yPos;
+//int				*xPos;
+//int				*yPos;
 int				xCnt;
 int				yCnt;
-int				*xySlot;
+int				**xySlot;
+//int				*slot;
 
 bool			needsRefresh=true;
 
@@ -215,13 +216,16 @@ void createDiskInfo(void)
 	posx=0;
 	posy=0;
 
+/*
 for(int yy=0;yy<yCnt;yy++)
 	{
 		for(int xx=0;xx<xCnt;xx++)
-			printf("%i",xPos[xx]);
+//			printf("%i",xySlot[xx+(xCnt*yy)]);
+			printf("%i",xySlot[xx][yy]);
 		printf("\n");
 	}
-
+//exit(0);
+*/
 	asprintf(&command,"lsblk -n --output=NAME,UUID,LABEL -lpds");
 	fp=popen(command,"r");
 	if(fp!=NULL)
@@ -234,8 +238,8 @@ for(int yy=0;yy<yCnt;yy++)
 					sscanf(line,"%as %as %a[^\n]s",&devname,&uuid,&label);
 					if((devname!=NULL) && (strcmp(devname,"/dev/sr0")==0))
 						{
-							asprintf(&uuid,"CDROM");
-							asprintf(&label,"CDROM");
+							if(label==NULL)
+								asprintf(&label,"CDROM");
 						}
 
 					if(label==NULL)
@@ -254,10 +258,10 @@ for(int yy=0;yy<yCnt;yy++)
 											printf("Can't open disk folder ...\n");
 											return;
 										}
-int cnt=0;
-//									while((yPos[posy]!=0) && (xPos[posx]!=0))
-									while((xySlot[(posy*yCnt)+posx]!=0))
+
+									while(xySlot[posx][posy]!=0)
 										{
+											printf("posy=%i posx=%i\n",posy,posx);
 											posy++;
 											if(posy>MAXGRIDY)
 												{
@@ -265,37 +269,9 @@ int cnt=0;
 													posx++;
 												}
 										}
-											cnt++;
-											printf("cnt=%i ypos %i=%i xpos %i=%i\n",cnt,posy,yPos[posy],posx,xPos[posx]);
 
 									fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
-									xySlot[(posy*yCnt)+posx]=1;
-									//xPos[posx]=1;
-									//yPos[posy]=1;
-									//posy++;
-									//while((yPos[posy]!=0) && (xPos[posx]!=0))
-									//	{
-									//		posy++;
-									//		if(posy>MAXGRIDY)
-									//			{
-									//				posy=0;
-									//				posx++;
-									//			}
-									//	}
-									//if(posy>MAXGRIDY)
-									//	{
-									//		posy=0;
-									//		posx++;
-									//	}
-									//posx++;
-									//if(xPos[posx]=0)
-										
-									//posy=posy+64;
-									//if(posy>512-64)
-									//	{
-									//		posy=48;
-									//		posx=posx+128;
-									//	}
+									xySlot[posx][posy]=1;
 									fclose(fd);
 								}
 							free(diskfilepath);
@@ -308,15 +284,6 @@ int cnt=0;
 			pclose(fp);
 		}
 	free(command);
-	
-for(int yy=0;yy<yCnt;yy++)
-	printf("%i",yPos[yy]);
-printf("\n");
-		for(int xx=0;xx<xCnt;xx++)
-			printf("%i",xPos[xx]);
-printf("\n");
-
-//	exit(0);
 }
 
 void getDiskList(void)
@@ -363,17 +330,16 @@ void getDiskList(void)
 									fgets(uuid,256,fd);//uuid
 									uuid[strlen(uuid)-1]=0;
 									fgets(dataline,256,fd);//x
-									diskx=atoi(dataline)*GRIDSIZE+GRIDBORDER;
+									diskx=atoi(dataline);
 									fgets(dataline,256,fd);//y
-									disky=atoi(dataline)*GRIDSIZE+GRIDBORDER;
+									disky=atoi(dataline);
 									fclose(fd);
 									free(diskfilepath);
 								}
-							//else
-							//	{
-							//	printf("no disk file\n");
-							//	createDiskInfo();
-							//	}
+							xySlot[diskx][disky]=1;
+							diskx=diskx*GRIDSIZE+GRIDBORDER;
+							disky=disky*GRIDSIZE+GRIDBORDER;
+
 							if(strcmp(label,"IGNOREDISK\n")!=0)
 								{
 									XSetClipMask(display,gc,diskPixmapMask);
@@ -417,7 +383,6 @@ void getDiskList(void)
 									XSetBackground(display,labelGC,labelBackground);
 
 									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
-									disky=disky+50;
 								}
 						}
 				}
@@ -471,7 +436,7 @@ void mountDisk(int x, int y)
 								}
 							if(strlen(uuid)>1)
 								{
-									if((x>=dx)&&(x<=dx+48)&&(y>=dy)&&(y<=dy+48))
+									if((x>=(dx*GRIDSIZE+GRIDBORDER))&&(x<=(dx*GRIDSIZE+GRIDBORDER)+48)&&(y>=(dy*GRIDSIZE+GRIDBORDER))&&(y<=(dy*GRIDSIZE+GRIDBORDER)+48))
 										{
 											asprintf(&command,"udevil mount `findfs UUID=%s`",uuid);
 											system(command);
@@ -502,7 +467,6 @@ int main(int argc,char **argv)
 	unsigned long	timer=0;
 
 	signal(SIGALRM,alarmCallBack);
-	alarm(REFRESHRATE);
 
 	done=true;
 	asprintf(&diskInfoPath,"%s/.config/LFS/disks",getenv("HOME"));
@@ -591,22 +555,18 @@ int main(int argc,char **argv)
 
 	xCnt=displayWidth/GRIDSIZE;
 	yCnt=displayHeight/GRIDSIZE;
-	xPos=(int*)malloc(sizeof(int)*xCnt);
-	yPos=(int*)malloc(sizeof(int)*yCnt);
 
-	xySlot=(int*)malloc(sizeof(int)*xCnt*yCnt);
-	
-	
+	xySlot=(int**)malloc(xCnt*sizeof(int*));
 	for(int j=0;j<xCnt;j++)
-		xPos[j]=0;
-	for(int j=0;j<yCnt;j++)
-		yPos[j]=0;
-	for(int j=0;j<(xCnt*yCnt);j++)
-		xySlot[j]=0;
+		xySlot[j]=(int*)malloc(yCnt*sizeof(int));
 
-//printf("%i %i\n",xCnt,yCnt);
+	for(int yy=0;yy<yCnt;yy++)
+		for(int xx=0;xx<xCnt;xx++)
+			xySlot[xx][yy]=0;
+
+	alarm(REFRESHRATE);
+
 	createDiskInfo();
-
 	getDiskList();
 	XdbeSwapBuffers(display,&swapInfo,1);
 
@@ -632,6 +592,7 @@ int main(int argc,char **argv)
 				case VisibilityNotify:
 					break;
 				case ButtonPress:
+					printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
 					if(firstclick==false)
 						{
 							firstclick=true;
@@ -651,6 +612,7 @@ int main(int argc,char **argv)
 						}
 					break;
 				case ButtonRelease:
+					printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
 					break;
 				case MotionNotify:
 					break;
@@ -663,6 +625,8 @@ int main(int argc,char **argv)
 
 	XClearWindow(display,rootWin);
 	XCloseDisplay(display);
+	for(int j=0;j<xCnt;j++)
+		free(xySlot[j]);
 
 	return 0;
 }
