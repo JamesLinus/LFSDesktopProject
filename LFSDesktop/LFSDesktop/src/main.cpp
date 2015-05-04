@@ -293,7 +293,7 @@ void createDiskInfo(void)
 	free(command);
 }
 
-void getDiskList(void)
+void getDiskList(args *diskdata)
 {
 	FILE		*fp;
 	FILE		*fd;
@@ -328,7 +328,7 @@ void getDiskList(void)
 							if(fileExists(diskfilepath)!=0)
 								createDiskInfo();
 
-							loadVarsFromFile(diskfilepath,diskData);
+							loadVarsFromFile(diskfilepath,diskdata);
 							xySlot[diskXPos][diskYPos]=1;
 							diskx=diskXPos*GRIDSIZE+GRIDBORDER;
 							disky=diskYPos*GRIDSIZE+GRIDBORDER;
@@ -575,7 +575,7 @@ int main(int argc,char **argv)
 
 	alarm(REFRESHRATE);
 
-	getDiskList();
+	getDiskList(diskData);
 	createDiskInfo();
 	XdbeSwapBuffers(display,&swapInfo,1);
 
@@ -583,18 +583,19 @@ int main(int argc,char **argv)
 	char	*fdiskuuid=NULL;
 	int		oldx=-1,oldy=-1;
 	bool	buttonDown=false;
+	int	oldboxx=-1,oldboxy=-1;
 
 	while(done)
 		{
-			if((buttonDown==true) && (foundIcon==true))
-			{
+			//if((buttonDown==true) && (foundIcon==true))
+			//{
 			//getDiskList();
-					XdbeSwapBuffers(display,&swapInfo,1);
-			}
+			//		XdbeSwapBuffers(display,&swapInfo,1);
+			//}
 			//	needsRefresh=true;
 			if(needsRefresh==true)
 				{
-					getDiskList();
+					getDiskList(diskData);
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;
 				}
@@ -650,6 +651,8 @@ int main(int argc,char **argv)
 							fdiskuuid=strdup(diskUUID);
 							oldx=diskXPos;
 							oldy=diskYPos;
+							oldboxx=ev.xbutton.x;
+							oldboxy=ev.xbutton.y;
 						}
 					else
 						{
@@ -696,6 +699,39 @@ int main(int argc,char **argv)
 
 					break;
 				case MotionNotify:
+					if(foundIcon==true && buttonDown==true)
+						{
+							if((ev.xmotion.x>oldboxx+48) || (ev.xmotion.x<oldboxx-48) || (ev.xmotion.y>oldboxy+48) || (ev.xmotion.y<oldboxy-48))
+							{
+							int newboxx,newboxy;
+							oldboxx=ev.xmotion.x;
+							oldboxy=ev.xmotion.y;
+							char	*dn=NULL;
+							char	*du=NULL;
+							int		dx=0;
+							int dy	=0;
+							args			diskdata[]=
+{
+	{"diskname",TYPESTRING,&dn},
+	{"diskuuid",TYPESTRING,&du},
+	{"diskx",TYPEINT,&dx},
+	{"disky",TYPEINT,&dy},
+
+	{NULL,0,NULL}
+};
+
+
+							//oldboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE;
+							XSetForeground(display,gc,labelBackground);
+							XSetFillStyle(display,gc,FillSolid);
+							newboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
+							newboxy=((ev.xmotion.y-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
+							XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,GRIDSIZE,GRIDSIZE);
+							getDiskList(diskData);
+							XdbeSwapBuffers(display,&swapInfo,1);
+}
+						//printf("xxxx\n");
+						}
 					break;
 
 				default:
