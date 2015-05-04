@@ -325,15 +325,38 @@ void getDiskList(args *diskdata)
 					if(strlen(line)>0)
 						{
 							asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
-							if(fileExists(diskfilepath)!=0)
-								createDiskInfo();
+							//if(fileExists(diskfilepath)!=0)
+							//	createDiskInfo();
 
 							loadVarsFromFile(diskfilepath,diskdata);
-							xySlot[diskXPos][diskYPos]=1;
-							diskx=diskXPos*GRIDSIZE+GRIDBORDER;
-							disky=diskYPos*GRIDSIZE+GRIDBORDER;
+							//xySlot[diskXPos][diskYPos]=1;
+							//diskx=diskXPos*GRIDSIZE+GRIDBORDER;
+							//disky=diskYPos*GRIDSIZE+GRIDBORDER;
+int xxx,yyy;
+char *dname,*duid;
 
-							if(strcmp(diskName,"IGNOREDISK")!=0)
+args ag;
+ag=diskdata[2];
+diskx=(int)(*(int*)(ag.data));
+
+ag=diskdata[3];
+disky=(int)(*(int*)(ag.data));
+
+xySlot[diskx][disky]=1;
+diskx=diskx*GRIDSIZE+GRIDBORDER;
+disky=disky*GRIDSIZE+GRIDBORDER;
+
+ag=diskdata[0];
+dname=strdup((char*)(*((char**)ag.data)));
+ag=diskdata[1];
+duid=strdup((char*)(*((char**)ag.data)));
+
+//printf("dname=%s duid=%s\n",dname,duid);
+
+//diskx=(int)(((diskdata[1][2])*)*GRIDSIZE+GRIDBORDER;
+//disky=diskYPos*GRIDSIZE+GRIDBORDER;
+
+							if(strcmp(dname,"IGNOREDISK")!=0)
 								{
 									XSetClipMask(display,gc,diskPixmapMask);
 									XSetClipOrigin(display,gc,diskx,disky);
@@ -341,7 +364,8 @@ void getDiskList(args *diskdata)
 									FILE	*tp;
 									char	*com;
 
-									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",diskUUID);
+									//asprintf(&com,"findmnt -fn $(findfs UUID=%s)",diskUUID);
+									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",duid);
 									line[0]=0;
 									tp=popen(com,"r");
 									free(com);
@@ -361,7 +385,8 @@ void getDiskList(args *diskdata)
 									XSetClipMask(display,gc,0);
 
 									fontheight=labelFont->ascent+labelFont->descent;
-									stringwidth=XTextWidth(labelFont,label,strlen(diskName));
+									//stringwidth=XTextWidth(labelFont,label,strlen(diskName));
+									stringwidth=XTextWidth(labelFont,label,strlen(dname));
 
 									boxx=diskx+(48/2)-(stringwidth/2)-1;
 									boxy=disky+48+1;
@@ -375,7 +400,8 @@ void getDiskList(args *diskdata)
 									XSetForeground(display,labelGC,labelForeground);
 									XSetBackground(display,labelGC,labelBackground);
 
-									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,diskName,strlen(diskName));
+									//XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,diskName,strlen(diskName));
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,dname,strlen(dname));
 								}
 						}
 				}
@@ -643,6 +669,9 @@ int main(int argc,char **argv)
 
 					if(foundIcon==true)
 						{
+						//printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
+						//printf("name=%s uid=%s,x=%i,y=%i\n",diskName,diskUUID,diskXPos,diskYPos);
+						//printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 							if(fdiskname!=NULL)
 								free(fdiskname);
 							fdiskname=strdup(diskName);
@@ -680,8 +709,9 @@ int main(int argc,char **argv)
 							foundIcon=false;
 							if(xySlot[newx][newy]==0)
 								{
-									if((oldx!=-1) && (oldy!=-1))
-										xySlot[diskXPos][diskYPos]=0;
+								//xySlot[diskXPos][diskYPos]=0;
+								//	if((oldx!=-1) && (oldy!=-1))
+										xySlot[oldx][oldy]=0;
 									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy);
 									needsRefresh=true;
 								}
@@ -727,7 +757,7 @@ int main(int argc,char **argv)
 							newboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
 							newboxy=((ev.xmotion.y-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
 							XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,GRIDSIZE,GRIDSIZE);
-							getDiskList(diskData);
+							getDiskList(diskdata);
 							XdbeSwapBuffers(display,&swapInfo,1);
 }
 						//printf("xxxx\n");
