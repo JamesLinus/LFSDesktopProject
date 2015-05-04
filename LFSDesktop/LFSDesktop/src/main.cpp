@@ -568,11 +568,11 @@ int main(int argc,char **argv)
 	yCnt=displayHeight/GRIDSIZE;
 
 	xySlot=(int**)malloc(xCnt*sizeof(int*));
-	for(int j=0;j<xCnt;j++)
+	for(int j=0; j<xCnt; j++)
 		xySlot[j]=(int*)malloc(yCnt*sizeof(int));
 
-	for(int yy=0;yy<yCnt;yy++)
-		for(int xx=0;xx<xCnt;xx++)
+	for(int yy=0; yy<yCnt; yy++)
+		for(int xx=0; xx<xCnt; xx++)
 			xySlot[xx][yy]=0;
 
 	alarm(REFRESHRATE);
@@ -622,44 +622,44 @@ int main(int argc,char **argv)
 								}
 							else
 								{
-										time=ev.xbutton.time;
+									time=ev.xbutton.time;
 									firstClick=true;
 								}
 						}
-						
-						if(foundIcon==false)
-							{
+
+					if(foundIcon==false)
+						{
 							oldx=-1;
 							oldy=-1;
 							foundIcon=findIcon(ev.xbutton.x,ev.xbutton.y);
-							}
-						if(foundIcon==true)
-							{
-								if(fdiskname!=NULL)
-									free(fdiskname);
-								fdiskname=strdup(diskName);
-								if(fdiskuuid!=NULL)
-									free(fdiskuuid);
-								fdiskuuid=strdup(diskUUID);
-								oldx=diskXPos;
-								oldy=diskYPos;
-							}
-						else
-							{
-								if(fdiskname!=NULL)
-									free(fdiskname);
-								fdiskname=NULL;
-								if(fdiskuuid!=NULL)
-									free(fdiskuuid);
-								fdiskuuid=NULL;
-								diskName=NULL;
-								diskUUID=NULL;
+						}
+					if(foundIcon==true)
+						{
+							if(fdiskname!=NULL)
+								free(fdiskname);
+							fdiskname=strdup(diskName);
+							if(fdiskuuid!=NULL)
+								free(fdiskuuid);
+							fdiskuuid=strdup(diskUUID);
+							oldx=diskXPos;
+							oldy=diskYPos;
+						}
+					else
+						{
+							if(fdiskname!=NULL)
+								free(fdiskname);
+							fdiskname=NULL;
+							if(fdiskuuid!=NULL)
+								free(fdiskuuid);
+							fdiskuuid=NULL;
+							diskName=NULL;
+							diskUUID=NULL;
 							oldx=-1;
 							oldy=-1;
-							}
-						
+						}
+
 					break;
-				case ButtonRelease:				
+				case ButtonRelease:
 					if(foundIcon==true)
 						{
 							int newx,newy;
@@ -674,18 +674,18 @@ int main(int argc,char **argv)
 									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy);
 									needsRefresh=true;
 								}
-								if(fdiskname!=NULL)
-									free(fdiskname);
-								fdiskname=NULL;
-								if(fdiskuuid!=NULL)
-									free(fdiskuuid);
-								fdiskuuid=NULL;
-								diskName=NULL;
-								diskUUID=NULL;
+							if(fdiskname!=NULL)
+								free(fdiskname);
+							fdiskname=NULL;
+							if(fdiskuuid!=NULL)
+								free(fdiskuuid);
+							fdiskuuid=NULL;
+							diskName=NULL;
+							diskUUID=NULL;
 							oldx=-1;
 							oldy=-1;
 						}
-						
+
 					break;
 				case MotionNotify:
 					break;
@@ -698,7 +698,7 @@ int main(int argc,char **argv)
 
 	XClearWindow(display,rootWin);
 	XCloseDisplay(display);
-	for(int j=0;j<xCnt;j++)
+	for(int j=0; j<xCnt; j++)
 		free(xySlot[j]);
 
 	return 0;
