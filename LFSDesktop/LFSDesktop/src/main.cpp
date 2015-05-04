@@ -333,7 +333,7 @@ void getDiskList(void)
 							diskx=diskXPos*GRIDSIZE+GRIDBORDER;
 							disky=diskYPos*GRIDSIZE+GRIDBORDER;
 
-							if(strcmp(diskName,"IGNOREDISK\n")!=0)
+							if(strcmp(diskName,"IGNOREDISK")!=0)
 								{
 									XSetClipMask(display,gc,diskPixmapMask);
 									XSetClipOrigin(display,gc,diskx,disky);
@@ -411,8 +411,6 @@ bool findIcon(int x, int y)
 								{
 									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+48)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+48))
 										{
-											//asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
-											//system(command);
 											pclose(fp);
 											return(true);
 										}
@@ -583,10 +581,13 @@ int main(int argc,char **argv)
 
 	char	*fdiskname=NULL;
 	char	*fdiskuuid=NULL;
-	int		oldx,oldy;
+	int		oldx=-1,oldy=-1;
+	bool	buttonDown=false;
 
 	while(done)
 		{
+			//if((buttonDown==true) && (foundIcon==true))
+			//	needsRefresh=true;
 			if(needsRefresh==true)
 				{
 					getDiskList();
@@ -607,6 +608,7 @@ int main(int argc,char **argv)
 				case VisibilityNotify:
 					break;
 				case ButtonPress:
+					buttonDown=true;
 					if(firstClick==false)
 						{
 							firstClick=true;
@@ -633,6 +635,7 @@ int main(int argc,char **argv)
 							oldy=-1;
 							foundIcon=findIcon(ev.xbutton.x,ev.xbutton.y);
 						}
+
 					if(foundIcon==true)
 						{
 							if(fdiskname!=NULL)
@@ -660,6 +663,7 @@ int main(int argc,char **argv)
 
 					break;
 				case ButtonRelease:
+					buttonDown=false;
 					if(foundIcon==true)
 						{
 							int newx,newy;
