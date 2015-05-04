@@ -263,7 +263,6 @@ void createDiskInfo(void)
 
 									while(xySlot[posx][posy]!=0)
 										{
-											printf("posy=%i posx=%i\n",posy,posx);
 											posy++;
 											if(posy>MAXGRIDY)
 												{
@@ -272,14 +271,10 @@ void createDiskInfo(void)
 												}
 										}
 									makeDiskInfofile(diskfilepath,label,uuid,posx,posy);
-									//fprintf(fd,"%s\n%s\n%i\n%i\n",label,uuid,posx,posy);
 									xySlot[posx][posy]=1;
 									fclose(fd);
 								}
 							free(diskfilepath);
-							free(devname);
-							free(uuid);
-							free(label);
 						}
 					line[0]=0;
 				}
@@ -327,28 +322,11 @@ void getDiskList(void)
 									fd=fopen(diskfilepath,"r");
 								}
 							fclose(fd);
-							/*
-							if(fd!=NULL)
-								{
-									fgets(label,256,fd);//name
-									fgets(uuid,256,fd);//uuid
-									uuid[strlen(uuid)-1]=0;
-									fgets(dataline,256,fd);//x
-									diskx=atoi(dataline);
-									fgets(dataline,256,fd);//y
-									disky=atoi(dataline);
-									fclose(fd);
-									free(diskfilepath);
-								}
-							*/
 							loadVarsFromFile(diskfilepath,diskData);
 							xySlot[diskXPos][diskYPos]=1;
-							//diskx=diskx*GRIDSIZE+GRIDBORDER;
 							diskx=diskXPos*GRIDSIZE+GRIDBORDER;
-							//disky=disky*GRIDSIZE+GRIDBORDER;
 							disky=diskYPos*GRIDSIZE+GRIDBORDER;
 
-//							if(strcmp(label,"IGNOREDISK\n")!=0)
 							if(strcmp(diskName,"IGNOREDISK\n")!=0)
 								{
 									XSetClipMask(display,gc,diskPixmapMask);
@@ -357,7 +335,6 @@ void getDiskList(void)
 									FILE	*tp;
 									char	*com;
 
-//									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",uuid);
 									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",diskUUID);
 									line[0]=0;
 									tp=popen(com,"r");
@@ -378,7 +355,6 @@ void getDiskList(void)
 									XSetClipMask(display,gc,0);
 
 									fontheight=labelFont->ascent+labelFont->descent;
-								//	stringwidth=XTextWidth(labelFont,label,strlen(label)-1);
 									stringwidth=XTextWidth(labelFont,label,strlen(diskName));
 
 									boxx=diskx+(48/2)-(stringwidth/2)-1;
@@ -393,8 +369,7 @@ void getDiskList(void)
 									XSetForeground(display,labelGC,labelForeground);
 									XSetBackground(display,labelGC,labelBackground);
 
-//									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(label)-1);
-									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,label,strlen(diskName));
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,diskName,strlen(diskName));
 								}
 						}
 				}
@@ -416,51 +391,23 @@ void mountDisk(int x, int y)
 	char	dataline[256];
 
 	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
-	printf("%s\n",diskInfoPath);
-//	exit(0);
 	fp=popen(command,"r");
 	free(command);
 	if(fp!=NULL)
 		{
 			while(fgets(line,2048,fp))
 				{
-					printf(">>>%s<<\n",line);
 					line[strlen(line)-1]=0;
 							printf("%s\n",line);
 							loadVarsFromFile(line,diskData);
 					if(strlen(line)>0)
 						{
-						printf("11111111111111111\n");
-						//exit(0);
-							/*
-							fd=fopen(line,"r");
-							if(fd!=NULL)
-								{
-									label[0]=0;
-									uuid[0]=0;
-									dataline[0]=0;
-									fgets(label,256,fd);//name
-									label[strlen(label)-1]=0;
-									fgets(uuid,256,fd);//uuid
-									uuid[strlen(uuid)-1]=0;
-									fgets(dataline,256,fd);//x
-									dataline[strlen(dataline)-1]=0;
-									dx=atoi(dataline);
-									fgets(dataline,256,fd);//y
-									dataline[strlen(dataline)-1]=0;
-									dy=atoi(dataline);
-									fclose(fd);
-								}
-							*/
-							//if(strlen(uuid)>1)
-							
 							if(strlen(diskUUID)>1)
 								{
 									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+48)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+48))
 										{
 											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
 											system(command);
-											printf("uuid=%s label=%s\n",diskUUID,diskName);
 											pclose(fp);
 											return;
 										}
@@ -586,8 +533,8 @@ int main(int argc,char **argv)
 
 	alarm(REFRESHRATE);
 
-	createDiskInfo();
 	getDiskList();
+	createDiskInfo();
 	XdbeSwapBuffers(display,&swapInfo,1);
 
 	while(done)
@@ -624,7 +571,6 @@ int main(int argc,char **argv)
 							firstClick=false;
 							if(ev.xbutton.time-time<800)
 								{
-									printf("double click\n");
 									mountDisk(ev.xbutton.x,ev.xbutton.y);
 									needsRefresh=true;
 								}
