@@ -75,6 +75,7 @@ int				**xySlot;
 
 Time			time=0;
 bool			firstClick=false;
+bool			foundIcon=false;
 
 bool			needsRefresh=true;
 
@@ -204,12 +205,20 @@ void createDesktopWindow(void)
 
 void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y)
 {
+	char	*filepath;
+
 	diskName=label;
 	diskUUID=uuid;
 	diskXPos=x;
 	diskYPos=y;
-
-	saveVarsToFile(diskfilepath,diskData);
+	if(diskfilepath==NULL)
+		{
+			asprintf(&filepath,"%s/%s",diskInfoPath,uuid);
+			saveVarsToFile(filepath,diskData);
+			free(filepath);
+		}
+	else
+		saveVarsToFile(diskfilepath,diskData);
 }
 
 void createDiskInfo(void)
@@ -376,6 +385,45 @@ void getDiskList(void)
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 
+bool findIcon(int x, int y)
+{
+	FILE	*fp;
+	FILE	*fd;
+	char	*command;
+	char	line[2048];
+	int		dx,dy;
+	char	label[256];
+	char	uuid[256];
+	char	dataline[256];
+
+	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
+	fp=popen(command,"r");
+	free(command);
+	if(fp!=NULL)
+		{
+			while(fgets(line,2048,fp))
+				{
+					line[strlen(line)-1]=0;
+					loadVarsFromFile(line,diskData);
+					if(strlen(line)>0)
+						{
+							if(strlen(diskUUID)>1)
+								{
+									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+48)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+48))
+										{
+											//asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
+											//system(command);
+											pclose(fp);
+											return(true);
+										}
+								}
+						}
+				}
+			pclose(fp);
+		}
+	return(false);
+}
+
 void mountDisk(int x, int y)
 {
 	FILE	*fp;
@@ -533,6 +581,10 @@ int main(int argc,char **argv)
 	createDiskInfo();
 	XdbeSwapBuffers(display,&swapInfo,1);
 
+	char	*fdiskname=NULL;
+	char	*fdiskuuid=NULL;
+	int		oldx,oldy;
+
 	while(done)
 		{
 			if(needsRefresh==true)
@@ -555,7 +607,6 @@ int main(int argc,char **argv)
 				case VisibilityNotify:
 					break;
 				case ButtonPress:
-					//printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
 					if(firstClick==false)
 						{
 							firstClick=true;
@@ -563,7 +614,6 @@ int main(int argc,char **argv)
 						}
 					else
 						{
-						//	printf("t1=%i t2=%i tot=%i\n",time,ev.xbutton.time,ev.xbutton.time-time);
 							firstClick=false;
 							if(ev.xbutton.time-time<800)
 								{
@@ -572,14 +622,70 @@ int main(int argc,char **argv)
 								}
 							else
 								{
-									time=ev.xbutton.time;
+										time=ev.xbutton.time;
 									firstClick=true;
 								}
-							//time=0;
 						}
+						
+						if(foundIcon==false)
+							{
+							oldx=-1;
+							oldy=-1;
+							foundIcon=findIcon(ev.xbutton.x,ev.xbutton.y);
+							}
+						if(foundIcon==true)
+							{
+								if(fdiskname!=NULL)
+									free(fdiskname);
+								fdiskname=strdup(diskName);
+								if(fdiskuuid!=NULL)
+									free(fdiskuuid);
+								fdiskuuid=strdup(diskUUID);
+								oldx=diskXPos;
+								oldy=diskYPos;
+							}
+						else
+							{
+								if(fdiskname!=NULL)
+									free(fdiskname);
+								fdiskname=NULL;
+								if(fdiskuuid!=NULL)
+									free(fdiskuuid);
+								fdiskuuid=NULL;
+								diskName=NULL;
+								diskUUID=NULL;
+							oldx=-1;
+							oldy=-1;
+							}
+						
 					break;
-				case ButtonRelease:
-					//printf("t1=%i x=%i\n",ev.xbutton.time,ev.xbutton.x);
+				case ButtonRelease:				
+					if(foundIcon==true)
+						{
+							int newx,newy;
+							newx=(ev.xbutton.x-GRIDBORDER)/GRIDSIZE;
+							newy=(ev.xbutton.y-GRIDBORDER)/GRIDSIZE;
+							//printf("t1=%i x=%i name=%s slot x=%i sloty=%i xyslot=%i\n",ev.xbutton.time,ev.xbutton.x,fdiskname,newx,newy,xySlot[newx][newy]);
+							foundIcon=false;
+							if(xySlot[newx][newy]==0)
+								{
+									if((oldx!=-1) && (oldy!=-1))
+										xySlot[diskXPos][diskYPos]=0;
+									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy);
+									needsRefresh=true;
+								}
+								if(fdiskname!=NULL)
+									free(fdiskname);
+								fdiskname=NULL;
+								if(fdiskuuid!=NULL)
+									free(fdiskuuid);
+								fdiskuuid=NULL;
+								diskName=NULL;
+								diskUUID=NULL;
+							oldx=-1;
+							oldy=-1;
+						}
+						
 					break;
 				case MotionNotify:
 					break;
