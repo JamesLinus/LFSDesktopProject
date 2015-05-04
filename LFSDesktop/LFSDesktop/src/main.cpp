@@ -588,7 +588,7 @@ int main(int argc,char **argv)
 		{
 			if((buttonDown==true) && (foundIcon==true))
 			{
-			getDiskList();
+			//getDiskList();
 					XdbeSwapBuffers(display,&swapInfo,1);
 			}
 			//	needsRefresh=true;
