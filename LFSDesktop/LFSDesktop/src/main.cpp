@@ -586,7 +586,11 @@ int main(int argc,char **argv)
 
 	while(done)
 		{
-			//if((buttonDown==true) && (foundIcon==true))
+			if((buttonDown==true) && (foundIcon==true))
+			{
+			getDiskList();
+					XdbeSwapBuffers(display,&swapInfo,1);
+			}
 			//	needsRefresh=true;
 			if(needsRefresh==true)
 				{
