@@ -27,6 +27,7 @@
 #include "config.h"
 
 #include "prefs.h"
+#include "files.h"
 
 #define UNKNOWNARG -100
 #define REFRESHRATE 2
@@ -315,13 +316,9 @@ void getDiskList(void)
 					if(strlen(line)>0)
 						{
 							asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
-							fd=fopen(diskfilepath,"r");
-							if(fd==NULL)
-								{
-									createDiskInfo();
-									fd=fopen(diskfilepath,"r");
-								}
-							fclose(fd);
+							if(fileExists(diskfilepath)!=0)
+								createDiskInfo();
+
 							loadVarsFromFile(diskfilepath,diskData);
 							xySlot[diskXPos][diskYPos]=1;
 							diskx=diskXPos*GRIDSIZE+GRIDBORDER;
@@ -398,8 +395,7 @@ void mountDisk(int x, int y)
 			while(fgets(line,2048,fp))
 				{
 					line[strlen(line)-1]=0;
-							printf("%s\n",line);
-							loadVarsFromFile(line,diskData);
+					loadVarsFromFile(line,diskData);
 					if(strlen(line)>0)
 						{
 							if(strlen(diskUUID)>1)
