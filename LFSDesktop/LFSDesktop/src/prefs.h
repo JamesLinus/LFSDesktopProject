@@ -10,6 +10,12 @@
 #ifndef _PREFS_
 #define _PREFS_
 
+#define REFRESHRATE 2
+#define MAXGRIDY 4
+#define GRIDBORDER 32
+#define ICONSIZE 48
+#define GRIDSIZE 80
+
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 struct args

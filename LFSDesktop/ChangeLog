@@ -1,0 +1,12 @@
+0.0.3
+Double click also uses xdg-open to open folder when  mounting.
+Box indicator around target position.
+Simple drag icons to position.
+Snap to grid done.
+Double click mounts via udevil.
+Shows mounted/unmounted. 
+Shaped window, passes through events.
+Displays disks.
+
+0.0.1-0.0.2
+First commits.

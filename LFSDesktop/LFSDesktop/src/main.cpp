@@ -30,10 +30,6 @@
 #include "files.h"
 
 #define UNKNOWNARG -100
-#define REFRESHRATE 2
-#define GRIDSIZE 80
-#define MAXGRIDY 4
-#define GRIDBORDER 32
 
 Display			*display;
 Window			rootWin;
@@ -76,7 +72,6 @@ int				**xySlot;
 Time			time=0;
 bool			firstClick=false;
 bool			foundIcon=false;
-
 bool			needsRefresh=true;
 
 struct Hints
@@ -170,7 +165,6 @@ void createDesktopWindow(void)
 			attr.background_pixel=0;
 
 			rootWin=XCreateWindow(display,DefaultRootWindow(display),0,0,displayWidth,displayHeight,0,depth,InputOutput,visual,CWEventMask |CWColormap | CWBorderPixel | CWBackPixel ,&attr);
-			//XSelectInput(display,rootWin,StructureNotifyMask);
 			//XSelectInput(display,rootWin,StructureNotifyMask| ButtonPress| ButtonReleaseMask|PointerMotionMask);
 
 			xa=XInternAtom(display,"_NET_WM_STATE",False);
@@ -325,36 +319,28 @@ void getDiskList(args *diskdata)
 					if(strlen(line)>0)
 						{
 							asprintf(&diskfilepath,"%s/%s",diskInfoPath,line);
-							//if(fileExists(diskfilepath)!=0)
-							//	createDiskInfo();
+							if(fileExists(diskfilepath)!=0)
+								createDiskInfo();
 
 							loadVarsFromFile(diskfilepath,diskdata);
-							//xySlot[diskXPos][diskYPos]=1;
-							//diskx=diskXPos*GRIDSIZE+GRIDBORDER;
-							//disky=diskYPos*GRIDSIZE+GRIDBORDER;
-int xxx,yyy;
-char *dname,*duid;
+							int xxx,yyy;
+							char *dname,*duid;
 
-args ag;
-ag=diskdata[2];
-diskx=(int)(*(int*)(ag.data));
+							args ag;
+							ag=diskdata[2];
+							diskx=(int)(*(int*)(ag.data));
 
-ag=diskdata[3];
-disky=(int)(*(int*)(ag.data));
+							ag=diskdata[3];
+							disky=(int)(*(int*)(ag.data));
 
-xySlot[diskx][disky]=1;
-diskx=diskx*GRIDSIZE+GRIDBORDER;
-disky=disky*GRIDSIZE+GRIDBORDER;
+							xySlot[diskx][disky]=1;
+							diskx=diskx*GRIDSIZE+GRIDBORDER;
+							disky=disky*GRIDSIZE+GRIDBORDER;
 
-ag=diskdata[0];
-dname=strdup((char*)(*((char**)ag.data)));
-ag=diskdata[1];
-duid=strdup((char*)(*((char**)ag.data)));
-
-//printf("dname=%s duid=%s\n",dname,duid);
-
-//diskx=(int)(((diskdata[1][2])*)*GRIDSIZE+GRIDBORDER;
-//disky=diskYPos*GRIDSIZE+GRIDBORDER;
+							ag=diskdata[0];
+							dname=strdup((char*)(*((char**)ag.data)));
+							ag=diskdata[1];
+							duid=strdup((char*)(*((char**)ag.data)));
 
 							if(strcmp(dname,"IGNOREDISK")!=0)
 								{
@@ -364,7 +350,6 @@ duid=strdup((char*)(*((char**)ag.data)));
 									FILE	*tp;
 									char	*com;
 
-									//asprintf(&com,"findmnt -fn $(findfs UUID=%s)",diskUUID);
 									asprintf(&com,"findmnt -fn $(findfs UUID=%s)",duid);
 									line[0]=0;
 									tp=popen(com,"r");
@@ -372,36 +357,34 @@ duid=strdup((char*)(*((char**)ag.data)));
 									fgets(line,2048,tp);
 									pclose(tp);
 									if(strlen(line)>0)
-										XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,48,48,diskx,disky);
+										XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,diskx,disky);
 									else
-										XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,48,48,diskx,disky);
+										XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,diskx,disky);
 
 									rect.x=diskx;
 									rect.y=disky;
-									rect.width=48;
-									rect.height=48;
+									rect.width=ICONSIZE;
+									rect.height=ICONSIZE;
 									XUnionRectWithRegion(&rect,rg, rg);
 
 									XSetClipMask(display,gc,0);
 
 									fontheight=labelFont->ascent+labelFont->descent;
-									//stringwidth=XTextWidth(labelFont,label,strlen(diskName));
 									stringwidth=XTextWidth(labelFont,label,strlen(dname));
 
-									boxx=diskx+(48/2)-(stringwidth/2)-1;
-									boxy=disky+48+1;
+									boxx=diskx+(ICONSIZE/2)-(stringwidth/2)-1;
+									boxy=disky+ICONSIZE+1;
 									boxw=stringwidth+2;
 									boxh=fontheight-2;
 
 									XSetForeground(display,gc,labelBackground);
 									XSetFillStyle(display,gc,FillSolid);
-									XFillRectangle(display,drawOnThis,gc,boxx,disky+48,boxw,boxh);
+									XFillRectangle(display,drawOnThis,gc,boxx,disky+ICONSIZE,boxw,boxh);
 
 									XSetForeground(display,labelGC,labelForeground);
 									XSetBackground(display,labelGC,labelBackground);
 
-									//XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,diskName,strlen(diskName));
-									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+48+boxh-1,dname,strlen(dname));
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+ICONSIZE+boxh-1,dname,strlen(dname));
 								}
 						}
 				}
@@ -435,7 +418,7 @@ bool findIcon(int x, int y)
 						{
 							if(strlen(diskUUID)>1)
 								{
-									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+48)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+48))
+									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+ICONSIZE)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+ICONSIZE))
 										{
 											pclose(fp);
 											return(true);
@@ -472,10 +455,15 @@ void mountDisk(int x, int y)
 						{
 							if(strlen(diskUUID)>1)
 								{
-									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+48)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+48))
+									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+ICONSIZE)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+ICONSIZE))
 										{
 											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
 											system(command);
+											free(command);
+											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
+											system(command);
+											free(command);
+											
 											pclose(fp);
 											return;
 										}
@@ -613,12 +601,6 @@ int main(int argc,char **argv)
 
 	while(done)
 		{
-			//if((buttonDown==true) && (foundIcon==true))
-			//{
-			//getDiskList();
-			//		XdbeSwapBuffers(display,&swapInfo,1);
-			//}
-			//	needsRefresh=true;
 			if(needsRefresh==true)
 				{
 					getDiskList(diskData);
@@ -669,9 +651,6 @@ int main(int argc,char **argv)
 
 					if(foundIcon==true)
 						{
-						//printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
-						//printf("name=%s uid=%s,x=%i,y=%i\n",diskName,diskUUID,diskXPos,diskYPos);
-						//printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 							if(fdiskname!=NULL)
 								free(fdiskname);
 							fdiskname=strdup(diskName);
@@ -705,13 +684,10 @@ int main(int argc,char **argv)
 							int newx,newy;
 							newx=(ev.xbutton.x-GRIDBORDER)/GRIDSIZE;
 							newy=(ev.xbutton.y-GRIDBORDER)/GRIDSIZE;
-							//printf("t1=%i x=%i name=%s slot x=%i sloty=%i xyslot=%i\n",ev.xbutton.time,ev.xbutton.x,fdiskname,newx,newy,xySlot[newx][newy]);
 							foundIcon=false;
 							if(xySlot[newx][newy]==0)
 								{
-								//xySlot[diskXPos][diskYPos]=0;
-								//	if((oldx!=-1) && (oldy!=-1))
-										xySlot[oldx][oldy]=0;
+									xySlot[oldx][oldy]=0;
 									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy);
 									needsRefresh=true;
 								}
@@ -725,43 +701,46 @@ int main(int argc,char **argv)
 							diskUUID=NULL;
 							oldx=-1;
 							oldy=-1;
+							alarm(REFRESHRATE);
 						}
 
 					break;
 				case MotionNotify:
-					if(foundIcon==true && buttonDown==true)
-						{
-							if((ev.xmotion.x>oldboxx+48) || (ev.xmotion.x<oldboxx-48) || (ev.xmotion.y>oldboxy+48) || (ev.xmotion.y<oldboxy-48))
+					{
+						int newboxx,newboxy;
+						char	*dn=NULL;
+						char	*du=NULL;
+						int		dx=0;
+						int		dy=0;
+						args	diskdata[]=
 							{
-							int newboxx,newboxy;
-							oldboxx=ev.xmotion.x;
-							oldboxy=ev.xmotion.y;
-							char	*dn=NULL;
-							char	*du=NULL;
-							int		dx=0;
-							int dy	=0;
-							args			diskdata[]=
-{
-	{"diskname",TYPESTRING,&dn},
-	{"diskuuid",TYPESTRING,&du},
-	{"diskx",TYPEINT,&dx},
-	{"disky",TYPEINT,&dy},
+								{"diskname",TYPESTRING,&dn},
+								{"diskuuid",TYPESTRING,&du},
+								{"diskx",TYPEINT,&dx},
+								{"disky",TYPEINT,&dy},
+								{NULL,0,NULL}
+							};
 
-	{NULL,0,NULL}
-};
+						if(foundIcon==true && buttonDown==true)
+							{
+								alarm(0);
+								if((ev.xmotion.x>oldboxx+ICONSIZE) || (ev.xmotion.x<oldboxx-ICONSIZE) || (ev.xmotion.y>oldboxy+ICONSIZE) || (ev.xmotion.y<oldboxy-ICONSIZE))
+									{
+										oldboxx=ev.xmotion.x;
+										oldboxy=ev.xmotion.y;
+										dx=0;
+										dy=0;
 
-
-							//oldboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE;
-							XSetForeground(display,gc,labelBackground);
-							XSetFillStyle(display,gc,FillSolid);
-							newboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
-							newboxy=((ev.xmotion.y-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
-							XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,GRIDSIZE,GRIDSIZE);
-							getDiskList(diskdata);
-							XdbeSwapBuffers(display,&swapInfo,1);
-}
-						//printf("xxxx\n");
-						}
+										XSetForeground(display,gc,labelBackground);
+										XSetFillStyle(display,gc,FillSolid);
+										newboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
+										newboxy=((ev.xmotion.y-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
+										XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,GRIDSIZE,GRIDSIZE);
+										getDiskList(diskdata);
+										XdbeSwapBuffers(display,&swapInfo,1);
+									}
+							}
+					}
 					break;
 
 				default:
