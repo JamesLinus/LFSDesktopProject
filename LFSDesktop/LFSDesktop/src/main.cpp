@@ -565,13 +565,15 @@ int main(int argc,char **argv)
 	diskImage=imlib_load_image(diskImagePath);
 	imlib_context_set_image(diskImage);
 	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
+//	imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
+	imlib_render_pixmaps_for_whole_image_at_size(&diskPixmap,&diskPixmapMask,ICONSIZE,ICONSIZE);
 	imlib_free_image();
 
 	diskImageOffline=imlib_load_image(diskImagePathOffline);
 	imlib_context_set_image(diskImageOffline);
 	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image(&diskPixmapOffline,&diskPixmapMaskOffline);
+//	imlib_render_pixmaps_for_whole_image(&diskPixmapOffline,&diskPixmapMaskOffline);
+	imlib_render_pixmaps_for_whole_image_at_size(&diskPixmapOffline,&diskPixmapMaskOffline,ICONSIZE,ICONSIZE);
 	imlib_free_image();
 
 	createColours();
