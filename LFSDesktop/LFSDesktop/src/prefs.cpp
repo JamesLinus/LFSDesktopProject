@@ -9,13 +9,39 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/Intrinsic.h>
+#include <X11/Xutil.h>
+#include <X11/xpm.h>
+
+#include <X11/extensions/Xinerama.h>
+#include <X11/extensions/shape.h>
+#include <X11/extensions/Xdbe.h>
 
 #include "prefs.h"
 
-char	*diskName;
-char	*diskUUID;
-int		diskXPos;
-int		diskYPos;
+char			*diskName;
+char			*diskUUID;
+int				diskXPos;
+int				diskYPos;
+char			*diskType;
+
+Display			*display;
+Window			rootWin;
+int				displayWidth;
+int				displayHeight;
+GC				gc;
+Region			rg;
+XdbeBackBuffer	buffer;
+XdbeSwapInfo	swapInfo;
+Drawable		drawOnThis;
+Colormap		cm;
+Visual			*visual=NULL;
+int				depth=0;
+int				screen;
+int				blackColor;
+int				whiteColor;
 
 args			diskData[]=
 {
@@ -23,6 +49,7 @@ args			diskData[]=
 	{"diskuuid",TYPESTRING,&diskUUID},
 	{"diskx",TYPEINT,&diskXPos},
 	{"disky",TYPEINT,&diskYPos},
+	{"type",TYPESTRING,&diskType},
 
 	{NULL,0,NULL}
 };

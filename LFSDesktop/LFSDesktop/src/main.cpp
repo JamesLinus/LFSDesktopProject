@@ -28,36 +28,25 @@
 
 #include "prefs.h"
 #include "files.h"
+#include "graphics.h"
 
 #define UNKNOWNARG -100
 
-Display			*display;
-Window			rootWin;
-int				displayWidth;
-int				displayHeight;
-GC				gc;
-Region			rg;
-XdbeBackBuffer	buffer;
-XdbeSwapInfo	swapInfo;
-Drawable		drawOnThis;
-Colormap cm;
 
-Visual			*visual=NULL;
-int				depth=0;
-int				screen;
-int				blackColor;
-int				whiteColor;
 
 bool			done=true;
-Pixmap			diskPixmap;
-Pixmap			diskPixmapMask;
-Pixmap			diskPixmapOffline;
-Pixmap			diskPixmapMaskOffline;
-Imlib_Image		diskImage;
-Imlib_Image		diskImageOffline;
-//const char		*diskImagePath="/usr/share/icons/gnome/48x48/devices/drive-harddisk.png";
-const char		*diskImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/drive-removable-media.png";
-const char		*diskImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/drive-removable-media-offline.png";
+
+//const char		*diskImagePath=DATADIR "harddrive.png";
+const char		*diskImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/" "harddrive.png";
+//const char		*diskImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/drive-removable-media-offline.png";
+const char		*diskImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/" "harddrive-offline.png";
+//const char		*diskImagePathOffline=DATADIR "harddrive-offline.png";
+
+const char		*usbImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/usb.png";
+const char		*usbImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/usb-offline.png";
+const char		*cdromImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/cdrom.png";
+const char		*cdromImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/cdrom-ofline.png";
+
 char			*diskInfoPath;
 
 unsigned long	labelBackground;
@@ -86,7 +75,7 @@ struct Hints
 
 struct option long_options[] =
 {
-	{"long1",1,0,'l'},
+	{"clean",0,0,'c'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
 	{0,0,0,0}
@@ -96,7 +85,7 @@ void printhelp(void)
 {
 	printf("Usage: lfsdesktop [OPTION]\n"
 	       "A CLI application\n"
-	       " -l,--long1	Do somthing good\n"
+	       " -c,--clean		Clean disk info data\n"
 	       " -v,--version	output version information and exit\n"
 	       " -h,-?,--help	print this help\n\n"
 	       "Report bugs to kdhedger@yahoo.co.uk\n"
@@ -197,7 +186,7 @@ void createDesktopWindow(void)
 		}
 }
 
-void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y)
+void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type)
 {
 	char	*filepath;
 
@@ -205,6 +194,8 @@ void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y)
 	diskUUID=uuid;
 	diskXPos=x;
 	diskYPos=y;
+	diskType=type;
+
 	if(diskfilepath==NULL)
 		{
 			asprintf(&filepath,"%s/%s",diskInfoPath,uuid);
@@ -225,6 +216,8 @@ void createDiskInfo(void)
 	char	*devname;
 	char	*label;
 	char	*uuid;
+	char	*type;
+	char	*disktype;
 	char	*diskfilepath;
 	int		posx;
 	int		posy;
@@ -232,7 +225,7 @@ void createDiskInfo(void)
 	posx=0;
 	posy=0;
 
-	asprintf(&command,"lsblk -n --output=NAME,UUID,LABEL -lpds");
+	asprintf(&command,"lsblk -n --output=TYPE,NAME,UUID,LABEL,TRAN -lps");
 	fp=popen(command,"r");
 	if(fp!=NULL)
 		{
@@ -241,9 +234,21 @@ void createDiskInfo(void)
 					devname=NULL;
 					label=NULL;
 					uuid=NULL;
-					sscanf(line,"%as %as %a[^\n]s",&devname,&uuid,&label);
-					if((devname!=NULL) && (strcmp(devname,"/dev/sr0")==0))
+					type=NULL;
+					disktype=NULL;
+					sscanf(line,"%as %as %as %a[^\n^\t^ ]s",&disktype,&devname,&uuid,&label);
+					//printf("line=>>%s<<\n",line);
+					fgets(line,1024,fp);
+					sscanf(line,"%*s %*s %a[^\n]s",&type);
+					//printf("line=>>%s<< type=>>%s<<\n",line,type);
+					//if((devname!=NULL) && (strcmp(devname,"/dev/sr0")==0))
+					if((disktype!=NULL) && (strcmp(disktype,"rom")==0))
 						{
+							if(type!=NULL)
+								{
+									free(type);
+									asprintf(&type,"cdrom");
+								}
 							if(label==NULL)
 								asprintf(&label,"CDROM");
 						}
@@ -274,11 +279,12 @@ void createDiskInfo(void)
 													posx++;
 												}
 										}
-									makeDiskInfofile(diskfilepath,label,uuid,posx,posy);
+									makeDiskInfofile(diskfilepath,label,uuid,posx,posy,type);
 									xySlot[posx][posy]=1;
 									fclose(fd);
 								}
 							free(diskfilepath);
+							free(disktype);
 						}
 					line[0]=0;
 				}
@@ -299,6 +305,7 @@ void getDiskList(args *diskdata)
 	char		dataline[256];
 	char		uuid[256];
 	char		label[256];
+
 	XColor		colour;
 	int			fontheight;
 	int			stringwidth;
@@ -324,7 +331,7 @@ void getDiskList(args *diskdata)
 
 							loadVarsFromFile(diskfilepath,diskdata);
 							int xxx,yyy;
-							char *dname,*duid;
+							char *dname,*duid,*dtype;
 
 							args ag;
 							ag=diskdata[2];
@@ -341,6 +348,8 @@ void getDiskList(args *diskdata)
 							dname=strdup((char*)(*((char**)ag.data)));
 							ag=diskdata[1];
 							duid=strdup((char*)(*((char**)ag.data)));
+							ag=diskdata[4];
+							dtype=strdup((char*)(*((char**)ag.data)));
 
 							if(strcmp(dname,"IGNOREDISK")!=0)
 								{
@@ -356,10 +365,12 @@ void getDiskList(args *diskdata)
 									free(com);
 									fgets(line,2048,tp);
 									pclose(tp);
+
+
 									if(strlen(line)>0)
-										XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,diskx,disky);
+										drawImage(dtype,dname,diskx,disky,true);
 									else
-										XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,diskx,disky);
+										drawImage(dtype,dname,diskx,disky,false);
 
 									rect.x=diskx;
 									rect.y=disky;
@@ -488,6 +499,7 @@ int main(int argc,char **argv)
 	XEvent			ev;
 	char			*command;
 	unsigned long	timer=0;
+	Imlib_Image		diskimage;
 
 	signal(SIGALRM,alarmCallBack);
 
@@ -500,14 +512,16 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?h:l:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?h:c",long_options,&option_index);
 			if (c==-1)
 				break;
 
 			switch (c)
 				{
-				case 'l':
-					printf("Arg=%s\n",optarg);
+				case 'c':
+					asprintf(&command,"rm %s/*",diskInfoPath);
+					system(command);
+					free(command);
 					break;
 
 				case 'v':
@@ -562,18 +576,43 @@ int main(int argc,char **argv)
 	imlib_context_set_visual(visual);
 	imlib_context_set_drawable(drawOnThis);
 
-	diskImage=imlib_load_image(diskImagePath);
-	imlib_context_set_image(diskImage);
+//sata
+	diskimage=imlib_load_image(diskImagePath);
+	imlib_context_set_image(diskimage);
 	imlib_image_set_has_alpha(1);
-//	imlib_render_pixmaps_for_whole_image(&diskPixmap,&diskPixmapMask);
 	imlib_render_pixmaps_for_whole_image_at_size(&diskPixmap,&diskPixmapMask,ICONSIZE,ICONSIZE);
 	imlib_free_image();
 
-	diskImageOffline=imlib_load_image(diskImagePathOffline);
-	imlib_context_set_image(diskImageOffline);
+	diskimage=imlib_load_image(diskImagePathOffline);
+	imlib_context_set_image(diskimage);
 	imlib_image_set_has_alpha(1);
-//	imlib_render_pixmaps_for_whole_image(&diskPixmapOffline,&diskPixmapMaskOffline);
 	imlib_render_pixmaps_for_whole_image_at_size(&diskPixmapOffline,&diskPixmapMaskOffline,ICONSIZE,ICONSIZE);
+	imlib_free_image();
+
+//usb
+	diskimage=imlib_load_image(usbImagePath);
+	imlib_context_set_image(diskimage);
+	imlib_image_set_has_alpha(1);
+	imlib_render_pixmaps_for_whole_image_at_size(&usbPixmap,&usbPixmapMask,ICONSIZE,ICONSIZE);
+	imlib_free_image();
+
+	diskimage=imlib_load_image(usbImagePathOffline);
+	imlib_context_set_image(diskimage);
+	imlib_image_set_has_alpha(1);
+	imlib_render_pixmaps_for_whole_image_at_size(&usbPixmapOffline,&usbPixmapMaskOffline,ICONSIZE,ICONSIZE);
+	imlib_free_image();
+
+//cdrom
+	diskimage=imlib_load_image(cdromImagePath);
+	imlib_context_set_image(diskimage);
+	imlib_image_set_has_alpha(1);
+	imlib_render_pixmaps_for_whole_image_at_size(&cdromPixmap,&cdromPixmapMask,ICONSIZE,ICONSIZE);
+	imlib_free_image();
+
+	diskimage=imlib_load_image(cdromImagePathOffline);
+	imlib_context_set_image(diskimage);
+	imlib_image_set_has_alpha(1);
+	imlib_render_pixmaps_for_whole_image_at_size(&cdromPixmapOffline,&cdromPixmapMaskOffline,ICONSIZE,ICONSIZE);
 	imlib_free_image();
 
 	createColours();
@@ -597,6 +636,7 @@ int main(int argc,char **argv)
 
 	char	*fdiskname=NULL;
 	char	*fdiskuuid=NULL;
+	char	*fdisktype=NULL;
 	int		oldx=-1,oldy=-1;
 	bool	buttonDown=false;
 	int	oldboxx=-1,oldboxy=-1;
@@ -659,6 +699,9 @@ int main(int argc,char **argv)
 							if(fdiskuuid!=NULL)
 								free(fdiskuuid);
 							fdiskuuid=strdup(diskUUID);
+							if(fdisktype!=NULL)
+								free(fdisktype);
+							fdisktype=strdup(diskType);
 							oldx=diskXPos;
 							oldy=diskYPos;
 							oldboxx=ev.xbutton.x;
@@ -671,9 +714,13 @@ int main(int argc,char **argv)
 							fdiskname=NULL;
 							if(fdiskuuid!=NULL)
 								free(fdiskuuid);
+							if(fdisktype!=NULL)
+								free(fdisktype);
+							fdisktype=NULL;
 							fdiskuuid=NULL;
 							diskName=NULL;
 							diskUUID=NULL;
+							diskType=NULL;
 							oldx=-1;
 							oldy=-1;
 						}
@@ -690,7 +737,7 @@ int main(int argc,char **argv)
 							if(xySlot[newx][newy]==0)
 								{
 									xySlot[oldx][oldy]=0;
-									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy);
+									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
 									needsRefresh=true;
 								}
 							if(fdiskname!=NULL)
@@ -698,9 +745,13 @@ int main(int argc,char **argv)
 							fdiskname=NULL;
 							if(fdiskuuid!=NULL)
 								free(fdiskuuid);
+							if(fdisktype!=NULL)
+								free(fdisktype);
+							fdisktype=NULL;
 							fdiskuuid=NULL;
 							diskName=NULL;
 							diskUUID=NULL;
+							diskType=NULL;
 							oldx=-1;
 							oldy=-1;
 							alarm(REFRESHRATE);
@@ -714,12 +765,14 @@ int main(int argc,char **argv)
 						char	*du=NULL;
 						int		dx=0;
 						int		dy=0;
+						char	*dtype=NULL;
 						args	diskdata[]=
 							{
 								{"diskname",TYPESTRING,&dn},
 								{"diskuuid",TYPESTRING,&du},
 								{"diskx",TYPEINT,&dx},
 								{"disky",TYPEINT,&dy},
+								{"type",TYPESTRING,&dtype},
 								{NULL,0,NULL}
 							};
 
