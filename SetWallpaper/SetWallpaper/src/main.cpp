@@ -300,7 +300,7 @@ int main(int argc,char **argv)
 	int c;
 	char				*command;
 
-	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
+	asprintf(&prefsPath,"%s/.config/LFS/setwallpaper.rc",getenv("HOME"));
 	asprintf(&command,"mkdir -vp %s/.config/LFS/ 2>&1 >/dev/null",getenv("HOME"));
 	system(command);
 	free(command);
