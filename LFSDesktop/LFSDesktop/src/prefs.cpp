@@ -42,6 +42,8 @@ int				depth=0;
 int				screen;
 int				blackColor;
 int				whiteColor;
+unsigned long	labelBackground;
+unsigned long	labelForeground;
 
 args			diskData[]=
 {

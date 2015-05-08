@@ -26,6 +26,7 @@
 #define ICONSIZE 32
 #define GRIDSIZE (ICONSIZE+32)
 
+enum {SATA=0,USB,CDROM};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 struct args
@@ -57,6 +58,8 @@ extern int				depth;
 extern int				screen;
 extern int				blackColor;
 extern int				whiteColor;
+extern unsigned long	labelBackground;
+extern unsigned long	labelForeground;
 
 void saveVarsToFile(const char* filepath,args* dataptr);
 void loadVarsFromFile(char* filepath,args* dataptr);

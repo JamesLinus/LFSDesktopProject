@@ -14,13 +14,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-/*
-inline bool fileExists(char *name)
-{
-	struct stat buffer;
-	return (stat(name,&buffer)==0);
-}
-*/
-extern bool fileExists(char *name);
+extern char		*diskInfoPath;
+extern char		*cachePath;
+extern Pixmap	diskIconsPixmap[20][2];
+extern Pixmap	diskIconsPixmapMask[20][2];
+
+bool fileExists(char *name);
+void makeImage(char *imagepath,char *destname,int disktype);
 
 #endif

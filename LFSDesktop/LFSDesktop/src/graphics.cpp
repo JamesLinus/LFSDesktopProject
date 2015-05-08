@@ -13,7 +13,9 @@
 #include <stdlib.h>
 
 #include "prefs.h"
+#include "files.h"
 
+/*
 Pixmap	diskPixmap;
 Pixmap	diskPixmapMask;
 Pixmap	diskPixmapOffline;
@@ -28,50 +30,50 @@ Pixmap	cdromPixmap;
 Pixmap	cdromPixmapMask;
 Pixmap	cdromPixmapOffline;
 Pixmap	cdromPixmapMaskOffline;
+*/
 
 void drawImage(char *type,char *label,int x,int y,bool mounted)
 {
 	if(mounted==true)
 		{
-					//					printf(">>%s >>%s<<<<\n",dtype,dname);
 			if(strcasecmp(type,"sata")==0)
 				{
-					XSetClipMask(display,gc,diskPixmapMask);
+					XSetClipMask(display,gc,diskIconsPixmapMask[SATA][0]);
 					XSetClipOrigin(display,gc,x,y);
-					XCopyArea(display,diskPixmap,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
+					XCopyArea(display,diskIconsPixmap[SATA][0],drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
 				}
 			if(strcasecmp(type,"usb")==0)
 				{
-					XSetClipMask(display,gc,usbPixmapMask);
+					XSetClipMask(display,gc,diskIconsPixmapMask[USB][0]);
 					XSetClipOrigin(display,gc,x,y);
-					XCopyArea(display,usbPixmap,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
+					XCopyArea(display,diskIconsPixmap[USB][0],drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
 				}
 			if(strcasecmp(type,"cdrom")==0)
 				{
-					XSetClipMask(display,gc,cdromPixmapMask);
+					XSetClipMask(display,gc,diskIconsPixmapMask[CDROM][0]);
 					XSetClipOrigin(display,gc,x,y);
-					XCopyArea(display,cdromPixmap,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
+					XCopyArea(display,diskIconsPixmap[CDROM][0],drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
 				}
 			}
 		else
 			{
 				if(strcasecmp(type,"sata")==0)
 					{
-						XSetClipMask(display,gc,diskPixmapMask);
+						XSetClipMask(display,gc,diskIconsPixmapMask[SATA][1]);
 						XSetClipOrigin(display,gc,x,y);
-						XCopyArea(display,diskPixmapOffline,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
+						XCopyArea(display,diskIconsPixmap[SATA][1],drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
 					}
 				if(strcasecmp(type,"usb")==0)
 					{
-						XSetClipMask(display,gc,usbPixmapMask);
+						XSetClipMask(display,gc,diskIconsPixmapMask[USB][1]);
 						XSetClipOrigin(display,gc,x,y);
-						XCopyArea(display,usbPixmapOffline,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
+						XCopyArea(display,diskIconsPixmap[USB][1],drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
 					}
 				if(strcasecmp(type,"cdrom")==0)
 					{
-						XSetClipMask(display,gc,cdromPixmapMask);
+						XSetClipMask(display,gc,diskIconsPixmapMask[CDROM][1]);
 						XSetClipOrigin(display,gc,x,y);
-						XCopyArea(display,cdromPixmapOffline,drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
+						XCopyArea(display,diskIconsPixmap[CDROM][1],drawOnThis,gc,0,0,ICONSIZE,ICONSIZE,x,y);
 					}
 			}
 }

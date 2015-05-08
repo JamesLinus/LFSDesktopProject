@@ -12,6 +12,7 @@
 
 #include <X11/Xlib.h>
 
+/*
 extern Pixmap	diskPixmap;
 extern Pixmap	diskPixmapMask;
 extern Pixmap	diskPixmapOffline;
@@ -26,7 +27,7 @@ extern Pixmap	cdromPixmap;
 extern Pixmap	cdromPixmapMask;
 extern Pixmap	cdromPixmapOffline;
 extern Pixmap	cdromPixmapMaskOffline;
-
+*/
 void drawImage(char *type,char *label,int x,int y,bool mounted);
 
 #endif
