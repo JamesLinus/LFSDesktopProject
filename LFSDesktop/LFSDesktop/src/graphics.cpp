@@ -15,23 +15,6 @@
 #include "prefs.h"
 #include "files.h"
 
-/*
-Pixmap	diskPixmap;
-Pixmap	diskPixmapMask;
-Pixmap	diskPixmapOffline;
-Pixmap	diskPixmapMaskOffline;
-
-Pixmap	usbPixmap;
-Pixmap	usbPixmapMask;
-Pixmap	usbPixmapOffline;
-Pixmap	usbPixmapMaskOffline;
-
-Pixmap	cdromPixmap;
-Pixmap	cdromPixmapMask;
-Pixmap	cdromPixmapOffline;
-Pixmap	cdromPixmapMaskOffline;
-*/
-
 void drawImage(char *type,char *label,int x,int y,bool mounted)
 {
 	if(mounted==true)

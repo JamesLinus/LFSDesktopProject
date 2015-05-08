@@ -23,7 +23,7 @@
 #define REFRESHRATE 2
 #define MAXGRIDY 4
 #define GRIDBORDER 32
-#define ICONSIZE 32
+#define ICONSIZE 40
 #define GRIDSIZE (ICONSIZE+32)
 
 enum {SATA=0,USB,CDROM};

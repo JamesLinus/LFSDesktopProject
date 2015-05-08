@@ -349,9 +349,6 @@ void getDiskList(args *diskdata)
 
 							if(strcmp(dname,"IGNOREDISK")!=0)
 								{
-									//XSetClipMask(display,gc,diskPixmapMask);
-									//XSetClipOrigin(display,gc,diskx,disky);
-
 									FILE	*tp;
 									char	*com;
 
@@ -578,50 +575,11 @@ int main(int argc,char **argv)
 	imlib_context_set_drawable(drawOnThis);
 
 //sata
-/*
-	diskimage=imlib_load_image(diskImagePath);
-	imlib_context_set_image(diskimage);
-	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&diskPixmap,&diskPixmapMask,ICONSIZE,ICONSIZE);
-	imlib_free_image();
-
-	diskimage=imlib_load_image(diskImagePathOffline);
-	imlib_context_set_image(diskimage);
-	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&diskPixmapOffline,&diskPixmapMaskOffline,ICONSIZE,ICONSIZE);
-	imlib_free_image();
-*/
 	makeImage((char*)diskImagePath,(char*)"sata",SATA);
 //usb
-/*
-	diskimage=imlib_load_image(usbImagePath);
-	imlib_context_set_image(diskimage);
-	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&usbPixmap,&usbPixmapMask,ICONSIZE,ICONSIZE);
-	imlib_free_image();
-
-	diskimage=imlib_load_image(usbImagePathOffline);
-	imlib_context_set_image(diskimage);
-	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&usbPixmapOffline,&usbPixmapMaskOffline,ICONSIZE,ICONSIZE);
-	imlib_free_image();
-*/
 	makeImage((char*)usbImagePath,(char*)"usb",USB);
 
 //cdrom
-/*
-	diskimage=imlib_load_image(cdromImagePath);
-	imlib_context_set_image(diskimage);
-	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&cdromPixmap,&cdromPixmapMask,ICONSIZE,ICONSIZE);
-	imlib_free_image();
-
-	diskimage=imlib_load_image(cdromImagePathOffline);
-	imlib_context_set_image(diskimage);
-	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&cdromPixmapOffline,&cdromPixmapMaskOffline,ICONSIZE,ICONSIZE);
-	imlib_free_image();
-*/
 	makeImage((char*)cdromImagePath,(char*)"cdrom",CDROM);
 
 	createColours();

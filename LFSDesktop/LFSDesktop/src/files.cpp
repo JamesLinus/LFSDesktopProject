@@ -25,9 +25,10 @@ char	*cachePath;
 Pixmap	diskIconsPixmap[20][2];
 Pixmap	diskIconsPixmapMask[20][2];
 
-bool fileExists(char *name)
+int fileExists(char *name)
 {
 	struct stat buffer;
+	//printf("------%s------\n",name);
 	return (stat(name,&buffer));
 }
 
@@ -62,15 +63,13 @@ void makeImage(char *imagepath,char *destname,int disktype)
 			imlib_context_set_anti_alias(1);
 			imlib_render_pixmaps_for_whole_image(&diskpixmap,&diskpixmapmask);
 
-//	diskimage=imlib_load_image(diskImagePath);
-//	imlib_context_set_image(diskimage);
-//	imlib_image_set_has_alpha(1);
-	imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][0],&diskIconsPixmapMask[disktype][0],ICONSIZE,ICONSIZE);
-//	imlib_free_image();
-			
 			asprintf(&destpath,"%s/%s.png",cachePath,destname);
-			imlib_save_image(destpath);
+			if(fileExists(destpath)!=0)
+				imlib_save_image(destpath);
+
+			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][0],&diskIconsPixmapMask[disktype][0],ICONSIZE,ICONSIZE);
 			free(destpath);
+			imlib_free_image();
 
 			rpf.type=PictTypeDirect;
 			rpf.depth=8;
@@ -104,7 +103,8 @@ void makeImage(char *imagepath,char *destname,int disktype)
 			
 			imlib_context_set_image(imfinal);
 			asprintf(&destpath,"%s/%s-offline.png",cachePath,destname);
-			imlib_save_image(destpath);
+			if(fileExists(destpath)!=0)
+				imlib_save_image(destpath);
 
 			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][1],&diskIconsPixmapMask[disktype][1],ICONSIZE,ICONSIZE);
 
