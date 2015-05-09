@@ -27,6 +27,13 @@ int				diskXPos;
 int				diskYPos;
 char			*diskType;
 
+char			*iconTheme;
+
+int				iconSize=40;
+int				gridBorder=32;
+int				gridSize=iconSize+gridBorder;
+int				refreshRate=2;
+
 Display			*display;
 Window			rootWin;
 int				displayWidth;
@@ -52,6 +59,17 @@ args			diskData[]=
 	{"diskx",TYPEINT,&diskXPos},
 	{"disky",TYPEINT,&diskYPos},
 	{"type",TYPESTRING,&diskType},
+
+	{NULL,0,NULL}
+};
+
+args			desktopPrefs[]=
+{
+	{"icontheme",TYPESTRING,&iconTheme},
+	{"iconsize",TYPEINT,&iconSize},
+	{"gridsize",TYPEINT,&gridSize},
+	{"gridborder",TYPEINT,&gridBorder},
+	{"refreshrate",TYPEINT,&refreshRate},
 
 	{NULL,0,NULL}
 };

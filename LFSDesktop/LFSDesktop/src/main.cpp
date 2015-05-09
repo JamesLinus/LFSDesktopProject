@@ -337,8 +337,8 @@ void getDiskList(args *diskdata)
 							disky=(int)(*(int*)(ag.data));
 
 							xySlot[diskx][disky]=1;
-							diskx=diskx*GRIDSIZE+GRIDBORDER;
-							disky=disky*GRIDSIZE+GRIDBORDER;
+							diskx=diskx*gridSize+gridBorder;
+							disky=disky*gridSize+gridBorder;
 
 							ag=diskdata[0];
 							dname=strdup((char*)(*((char**)ag.data)));
@@ -367,8 +367,8 @@ void getDiskList(args *diskdata)
 
 									rect.x=diskx;
 									rect.y=disky;
-									rect.width=ICONSIZE;
-									rect.height=ICONSIZE;
+									rect.width=iconSize;
+									rect.height=iconSize;
 									XUnionRectWithRegion(&rect,rg, rg);
 
 									XSetClipMask(display,gc,0);
@@ -376,19 +376,19 @@ void getDiskList(args *diskdata)
 									fontheight=labelFont->ascent+labelFont->descent;
 									stringwidth=XTextWidth(labelFont,label,strlen(dname));
 
-									boxx=diskx+(ICONSIZE/2)-(stringwidth/2)-1;
-									boxy=disky+ICONSIZE+1;
+									boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+									boxy=disky+iconSize+1;
 									boxw=stringwidth+2;
 									boxh=fontheight-2;
 
 									XSetForeground(display,gc,labelBackground);
 									XSetFillStyle(display,gc,FillSolid);
-									XFillRectangle(display,drawOnThis,gc,boxx,disky+ICONSIZE,boxw,boxh);
+									XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
 
 									XSetForeground(display,labelGC,labelForeground);
 									XSetBackground(display,labelGC,labelBackground);
 
-									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+ICONSIZE+boxh-1,dname,strlen(dname));
+									XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,dname,strlen(dname));
 								}
 						}
 				}
@@ -422,7 +422,7 @@ bool findIcon(int x, int y)
 						{
 							if(strlen(diskUUID)>1)
 								{
-									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+ICONSIZE)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+ICONSIZE))
+									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
 										{
 											pclose(fp);
 											return(true);
@@ -459,7 +459,7 @@ void mountDisk(int x, int y)
 						{
 							if(strlen(diskUUID)>1)
 								{
-									if((x>=(diskXPos*GRIDSIZE+GRIDBORDER))&&(x<=(diskXPos*GRIDSIZE+GRIDBORDER)+ICONSIZE)&&(y>=(diskYPos*GRIDSIZE+GRIDBORDER))&&(y<=(diskYPos*GRIDSIZE+GRIDBORDER)+ICONSIZE))
+									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
 										{
 											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
 											system(command);
@@ -483,7 +483,7 @@ void  alarmCallBack(int sig)
 	signal(SIGALRM,SIG_IGN);
 	needsRefresh=true;
 	signal(SIGALRM,alarmCallBack);
-	alarm(REFRESHRATE);
+	alarm(refreshRate);
 }
 
 int main(int argc,char **argv)
@@ -506,6 +506,9 @@ int main(int argc,char **argv)
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
 	system(command);
 	free(command);
+
+	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
+	loadVarsFromFile(prefsPath,desktopPrefs);
 
 	while (1)
 		{
@@ -574,18 +577,47 @@ int main(int argc,char **argv)
 	imlib_context_set_visual(visual);
 	imlib_context_set_drawable(drawOnThis);
 
+	hcreate(100);
+
+	char	*tstr;
+//	ENTRY	testentry={"sata",NULL};
+//	ENTRY	*retentry=NULL;
+
 //sata
-	makeImage((char*)diskImagePath,(char*)"sata",SATA);
+//	retentry=hsearch(testentry,ENTER);
+//	if(retentry==NULL)
+//		printf(">>NULL<<\n");
+//	else
+//		{
+//		printf(">>%s<<>>%s<<\n",retentry->key,"XX");
+//		retentry->data=malloc(sizeof(diskIconStruct));
+//		((diskIconStruct*)(retentry->data))->pixmap=-666;
+//	}
+	
+	
+	//makeImage((char*)diskImagePath,(char*)"sata",SATA);
+//	tstr=pathToIcon("harddisk");
+//	printf(">>%s<<\n",tstr);
+//	makeImage((char*)tstr,(char*)"sata",SATA,(diskIconStruct*)(retentry->data));
+//	free(tstr);
 //usb
-	makeImage((char*)usbImagePath,(char*)"usb",USB);
+//	makeImage((char*)usbImagePath,(char*)"usb",USB);
+	tstr=pathToIcon("disk-usb");
+//	printf(">>%s<<\n",tstr);
+	makeImage((char*)tstr,(char*)"usb",USB,NULL);
+	free(tstr);
 
 //cdrom
-	makeImage((char*)cdromImagePath,(char*)"cdrom",CDROM);
+//	makeImage((char*)cdromImagePath,(char*)"cdrom",CDROM);
+	tstr=pathToIcon("cdrom");
+//	printf(">>%s<<\n",tstr);
+	makeImage((char*)tstr,(char*)"cdrom",CDROM,NULL);
+	free(tstr);
 
 	createColours();
 
-	xCnt=displayWidth/GRIDSIZE;
-	yCnt=displayHeight/GRIDSIZE;
+	xCnt=displayWidth/gridSize;
+	yCnt=displayHeight/gridSize;
 
 	xySlot=(int**)malloc(xCnt*sizeof(int*));
 	for(int j=0; j<xCnt; j++)
@@ -595,7 +627,7 @@ int main(int argc,char **argv)
 		for(int xx=0; xx<xCnt; xx++)
 			xySlot[xx][yy]=0;
 
-	alarm(REFRESHRATE);
+	alarm(refreshRate);
 
 	getDiskList(diskData);
 	createDiskInfo();
@@ -698,8 +730,8 @@ int main(int argc,char **argv)
 					if(foundIcon==true)
 						{
 							int newx,newy;
-							newx=(ev.xbutton.x-GRIDBORDER)/GRIDSIZE;
-							newy=(ev.xbutton.y-GRIDBORDER)/GRIDSIZE;
+							newx=(ev.xbutton.x-gridBorder)/gridSize;
+							newy=(ev.xbutton.y-gridBorder)/gridSize;
 							foundIcon=false;
 							if(xySlot[newx][newy]==0)
 								{
@@ -721,7 +753,7 @@ int main(int argc,char **argv)
 							diskType=NULL;
 							oldx=-1;
 							oldy=-1;
-							alarm(REFRESHRATE);
+							alarm(refreshRate);
 						}
 
 					break;
@@ -746,7 +778,7 @@ int main(int argc,char **argv)
 						if(foundIcon==true && buttonDown==true)
 							{
 								alarm(0);
-								if((ev.xmotion.x>oldboxx+ICONSIZE) || (ev.xmotion.x<oldboxx-ICONSIZE) || (ev.xmotion.y>oldboxy+ICONSIZE) || (ev.xmotion.y<oldboxy-ICONSIZE))
+								if((ev.xmotion.x>oldboxx+iconSize) || (ev.xmotion.x<oldboxx-iconSize) || (ev.xmotion.y>oldboxy+iconSize) || (ev.xmotion.y<oldboxy-iconSize))
 									{
 										oldboxx=ev.xmotion.x;
 										oldboxy=ev.xmotion.y;
@@ -755,9 +787,9 @@ int main(int argc,char **argv)
 
 										XSetForeground(display,gc,labelBackground);
 										XSetFillStyle(display,gc,FillSolid);
-										newboxx=((ev.xmotion.x-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
-										newboxy=((ev.xmotion.y-GRIDBORDER)/GRIDSIZE)*GRIDSIZE+(GRIDBORDER/2);
-										XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,GRIDSIZE,GRIDSIZE);
+										newboxx=((ev.xmotion.x-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+										newboxy=((ev.xmotion.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+										XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,gridSize,gridSize);
 										getDiskList(diskdata);
 										XdbeSwapBuffers(display,&swapInfo,1);
 									}

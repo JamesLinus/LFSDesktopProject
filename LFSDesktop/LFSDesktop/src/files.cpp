@@ -17,22 +17,48 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <search.h>
 
 #include "prefs.h"
+#include "graphics.h"
 
 char	*diskInfoPath;
 char	*cachePath;
+char	*prefsPath;
+
 Pixmap	diskIconsPixmap[20][2];
 Pixmap	diskIconsPixmapMask[20][2];
+
+struct hsearch_data	hashtab;
 
 int fileExists(char *name)
 {
 	struct stat buffer;
-	//printf("------%s------\n",name);
 	return (stat(name,&buffer));
 }
 
-void makeImage(char *imagepath,char *destname,int disktype)
+char* pathToIcon(char* name)
+{
+	char	*command;
+	FILE	*fp;
+	char	buffer[2048];
+	char	*retstr=NULL;
+
+	asprintf(&command,"find /usr/share/icons/%s %s/.icons/%s -iname \"*%s*\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name);
+
+	fp=popen(command,"r");
+	free(command);
+	if(fp!=NULL)
+		{
+			fgets(buffer,2048,fp);
+			sscanf(buffer,"%as",&retstr);
+			pclose(fp);
+		}
+	return(retstr);
+}
+	Pixmap						pmhash,pmhashmask;
+
+void makeImage(char *imagepath,char *destname,int disktype,diskIconStruct *hashdata)
 {
 	Imlib_Image					image;
 	Pixmap						diskpixmap,diskpixmapmask;
@@ -48,7 +74,7 @@ void makeImage(char *imagepath,char *destname,int disktype)
 	Pixmap						destpixmap;
 	Imlib_Image					imfinal;
 	int							w,h;
-	char						*destpath;
+	Pixmap						pmhash,pmhashmask;
 
 	image=imlib_load_image(imagepath);
 	if (image)
@@ -63,12 +89,26 @@ void makeImage(char *imagepath,char *destname,int disktype)
 			imlib_context_set_anti_alias(1);
 			imlib_render_pixmaps_for_whole_image(&diskpixmap,&diskpixmapmask);
 
-			asprintf(&destpath,"%s/%s.png",cachePath,destname);
-			if(fileExists(destpath)!=0)
-				imlib_save_image(destpath);
+//Pixmap holdPixmapx;
+//if(hashdata!=NULL)
+//{
+//printf("--%i--\n",hashdata->pixmap);
+//Pixmap pm;
+//	imlib_render_pixmaps_for_whole_image(&pmhash,&pmhashmask);
+//((diskIconStruct*)hashdata)->pixmap=diskpixmap;
+//hashdata->pixmap=pmhash;
+//hashdata->mask=diskpixmapmask;
+//printf("==%i == %i==\n",hashdata->pixmap,pmhash);
+//}
+			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][0],&diskIconsPixmapMask[disktype][0],iconSize,iconSize);
 
-			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][0],&diskIconsPixmapMask[disktype][0],ICONSIZE,ICONSIZE);
-			free(destpath);
+			if(hashdata!=NULL)
+				{
+					imlib_render_pixmaps_for_whole_image_at_size(&pmhash,&pmhashmask,iconSize,iconSize);
+					hashdata->pixmap=pmhash;
+					hashdata->mask=pmhashmask;
+				}
+
 			imlib_free_image();
 
 			rpf.type=PictTypeDirect;
@@ -79,10 +119,11 @@ void makeImage(char *imagepath,char *destname,int disktype)
 			clr.red=0x8000;
 			clr.green=0x8000;
 			clr.blue=0x8000;
+
 			xformat=XRenderFindFormat(display,PictFormatType | PictFormatDepth | PictFormatAlphaMask,&rpf,0);
+
 			alphapixmap=XCreatePixmap(display,rootWin,1,1,8);
 			alphapicture=XRenderCreatePicture(display,alphapixmap,xformat,CPRepeat,&rpa);
-
 			XRenderFillRectangle(display,PictOpSrc,alphapicture,&clr,0,0,1,1);
 			format=XRenderFindVisualFormat(display,visual);
 
@@ -95,6 +136,7 @@ void makeImage(char *imagepath,char *destname,int disktype)
 
 			src_pic=XRenderCreatePicture(display,diskpixmap,format,0,0);
 			dst_pic=XRenderCreatePicture(display,destpixmap,xformat,0,0);
+
 			XRenderFillRectangle(display,PictOpSrc,dst_pic,&clr,0,0,w,h);
 			XRenderComposite(display,PictOpOver,src_pic,alphapicture,dst_pic,0,0,0,0,0,0,w,h);
 
@@ -102,12 +144,7 @@ void makeImage(char *imagepath,char *destname,int disktype)
 			imfinal=imlib_create_image_from_drawable(diskpixmapmask,0,0,w,h,1);
 			
 			imlib_context_set_image(imfinal);
-			asprintf(&destpath,"%s/%s-offline.png",cachePath,destname);
-			if(fileExists(destpath)!=0)
-				imlib_save_image(destpath);
+			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][1],&diskIconsPixmapMask[disktype][1],iconSize,iconSize);
 
-			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][1],&diskIconsPixmapMask[disktype][1],ICONSIZE,ICONSIZE);
-
-			free(destpath);
 		}
 }

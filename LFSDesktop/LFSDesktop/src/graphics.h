@@ -10,6 +10,13 @@
 #ifndef _GRAPHICS_
 #define _GRAPHICS_
 
+struct	diskIconStruct
+	{
+		Pixmap	pixmap;
+		Pixmap	mask;
+	};
+
+
 void drawImage(char *type,char *label,int x,int y,bool mounted);
 
 #endif

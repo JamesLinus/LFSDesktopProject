@@ -20,11 +20,7 @@
 #include <X11/extensions/shape.h>
 #include <X11/extensions/Xdbe.h>
 
-#define REFRESHRATE 2
 #define MAXGRIDY 4
-#define GRIDBORDER 32
-#define ICONSIZE 40
-#define GRIDSIZE (ICONSIZE+32)
 
 enum {SATA=0,USB,CDROM};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
@@ -37,11 +33,19 @@ struct args
 };
 
 extern args				diskData[];
+extern args				desktopPrefs[];
+
 extern char				*diskName;
 extern char				*diskUUID;
 extern int				diskXPos;
 extern int				diskYPos;
 extern char				*diskType;
+
+extern char				*iconTheme;
+extern int				iconSize;
+extern int				gridSize;
+extern int				gridBorder;
+extern int				refreshRate;
 
 extern Display			*display;
 extern Window			rootWin;
