@@ -60,7 +60,7 @@ void drawImage(char *type,char *label,int x,int y,bool mounted)
 			}
 		else
 			{
-				if(strcasecmp(type,"satax")==0)
+				if(strcasecmp(type,"sata")==0)
 					{
 						XSetClipMask(display,gc,diskIconsPixmapMask[SATA][1]);
 						XSetClipOrigin(display,gc,x,y);
