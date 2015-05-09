@@ -23,23 +23,27 @@ void drawImage(char *type,char *label,int x,int y,bool mounted)
 	ENTRY	*retentry=NULL;
 	char	*tstr;
 
-	if(strcasecmp(type,"sata")==0)
-		{
-			testentry.key=(char*)"sata";
+//	if(strcasecmp(type,"sata")==0)
+//		{
+			testentry.key=(char*)type;
 			testentry.data=NULL;
 			retentry=hsearch(testentry,ENTER);
 			if(retentry->data==NULL)
 				{
 					retentry->data=malloc(sizeof(diskIconStruct));
-					tstr=pathToIcon("harddisk");
-					makeImage((char*)tstr,(char*)"sata",SATA,(diskIconStruct*)(retentry->data));
+					tstr=pathToIcon(type);
+					makeImage((char*)tstr,(char*)type,SATA,(diskIconStruct*)(retentry->data));
 					free(tstr);
 				}
-		}
+//		}
 
 	if(mounted==true)
 		{
-			if(strcasecmp(type,"sata")==0)
+					XSetClipMask(display,gc,((diskIconStruct*)retentry->data)->mask);
+					XSetClipOrigin(display,gc,x,y);
+					XCopyArea(display,((diskIconStruct*)retentry->data)->pixmap,drawOnThis,gc,0,0,iconSize,iconSize,x,y);
+#if 0
+			if(strcasecmp(type,"harddisk")==0)
 				{
 					XSetClipMask(display,gc,((diskIconStruct*)retentry->data)->mask);
 					XSetClipOrigin(display,gc,x,y);
@@ -57,10 +61,11 @@ void drawImage(char *type,char *label,int x,int y,bool mounted)
 					XSetClipOrigin(display,gc,x,y);
 					XCopyArea(display,diskIconsPixmap[CDROM][0],drawOnThis,gc,0,0,iconSize,iconSize,x,y);
 				}
+#endif
 			}
 		else
 			{
-				if(strcasecmp(type,"sata")==0)
+				if(strcasecmp(type,"harddisk")==0)
 					{
 						XSetClipMask(display,gc,diskIconsPixmapMask[SATA][1]);
 						XSetClipOrigin(display,gc,x,y);

@@ -248,6 +248,17 @@ void createDiskInfo(void)
 							if(label==NULL)
 								asprintf(&label,"CDROM");
 						}
+					if((type!=NULL) && (strcmp(type,"sata")==0))
+						{
+							free(type);
+							asprintf(&type,"harddisk");
+						}
+
+					if((type!=NULL) && (strcmp(type,"usb")==0))
+						{
+							free(type);
+							asprintf(&type,"disk-usb");
+						}
 
 					if(label==NULL)
 						asprintf(&label,"IGNOREDISK");
