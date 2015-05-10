@@ -22,7 +22,6 @@
 
 #define MAXGRIDY 4
 
-enum {SATA=0,USB,CDROM};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 struct args

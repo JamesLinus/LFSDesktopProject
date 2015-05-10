@@ -23,65 +23,50 @@ void drawImage(char *type,char *label,int x,int y,bool mounted)
 	ENTRY	*retentry=NULL;
 	char	*tstr;
 
-//	if(strcasecmp(type,"sata")==0)
-//		{
-			testentry.key=(char*)type;
-			testentry.data=NULL;
-			retentry=hsearch(testentry,ENTER);
-			if(retentry->data==NULL)
-				{
-					retentry->data=malloc(sizeof(diskIconStruct));
-					tstr=pathToIcon(type);
-					makeImage((char*)tstr,(char*)type,SATA,(diskIconStruct*)(retentry->data));
-					free(tstr);
-				}
-//		}
+	testentry.key=(char*)type;
+	testentry.data=NULL;
+	retentry=hsearch(testentry,ENTER);
+	if(retentry->data==NULL)
+		{
+			retentry->data=malloc(sizeof(diskIconStruct));
+			tstr=pathToIcon(type);
+			makeImage((char*)tstr,(char*)type,(diskIconStruct*)(retentry->data));
+			free(tstr);
+		}
 
 	if(mounted==true)
 		{
-					XSetClipMask(display,gc,((diskIconStruct*)retentry->data)->mask);
+imlib_context_set_mask_alpha_threshold(15);	
+				XSetClipMask(display,gc,((diskIconStruct*)retentry->data)->mask);
 					XSetClipOrigin(display,gc,x,y);
 					XCopyArea(display,((diskIconStruct*)retentry->data)->pixmap,drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-#if 0
-			if(strcasecmp(type,"harddisk")==0)
-				{
-					XSetClipMask(display,gc,((diskIconStruct*)retentry->data)->mask);
-					XSetClipOrigin(display,gc,x,y);
-					XCopyArea(display,((diskIconStruct*)retentry->data)->pixmap,drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-				}
-			if(strcasecmp(type,"usb")==0)
-				{
-					XSetClipMask(display,gc,diskIconsPixmapMask[USB][0]);
-					XSetClipOrigin(display,gc,x,y);
-					XCopyArea(display,diskIconsPixmap[USB][0],drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-				}
-			if(strcasecmp(type,"cdrom")==0)
-				{
-					XSetClipMask(display,gc,diskIconsPixmapMask[CDROM][0]);
-					XSetClipOrigin(display,gc,x,y);
-					XCopyArea(display,diskIconsPixmap[CDROM][0],drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-				}
-#endif
+/*
+					imlib_context_set_image(((diskIconStruct*)retentry->data)->image);
+					imlib_context_set_colormap(cm);
+					imlib_context_set_anti_alias(1);
+					imlib_image_set_has_alpha(1);
+					imlib_context_set_blend(1);
+					imlib_context_set_dither(1);
+					imlib_context_set_mask(((diskIconStruct*)retentry->data)->mask);
+					imlib_context_set_cliprect(x, y,iconSize,iconSize);
+					imlib_context_set_display(display);
+			//w=imlib_image_get_width();
+		//	h=imlib_image_get_height();
+					imlib_context_set_visual(visual);
+					imlib_context_set_drawable(drawOnThis);
+
+//XSetBackground(display, gc,whiteColor);
+imlib_context_set_mask_alpha_threshold(0);
+//XImage *xim=XGetImage(display,((diskIconStruct*)retentry->data)->pixmap,0, 0,iconSize, iconSize, AllPlanes,ZPixmap);
+//XPutImage(display,drawOnThis,  gc, xim, 0, 0,x, y, iconSize, iconSize);
+					imlib_render_image_on_drawable_at_size(x,y,iconSize,iconSize);
+*/
 			}
 		else
 			{
-				if(strcasecmp(type,"harddisk")==0)
-					{
-						XSetClipMask(display,gc,diskIconsPixmapMask[SATA][1]);
-						XSetClipOrigin(display,gc,x,y);
-						XCopyArea(display,diskIconsPixmap[SATA][1],drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-					}
-				if(strcasecmp(type,"usb")==0)
-					{
-						XSetClipMask(display,gc,diskIconsPixmapMask[USB][1]);
-						XSetClipOrigin(display,gc,x,y);
-						XCopyArea(display,diskIconsPixmap[USB][1],drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-					}
-				if(strcasecmp(type,"cdrom")==0)
-					{
-						XSetClipMask(display,gc,diskIconsPixmapMask[CDROM][1]);
-						XSetClipOrigin(display,gc,x,y);
-						XCopyArea(display,diskIconsPixmap[CDROM][1],drawOnThis,gc,0,0,iconSize,iconSize,x,y);
-					}
+
+					XSetClipMask(display,gc,((diskIconStruct*)retentry->data)->maskOffline);
+					XSetClipOrigin(display,gc,x,y);
+					XCopyArea(display,((diskIconStruct*)retentry->data)->pixmapOffline,drawOnThis,gc,0,0,iconSize,iconSize,x,y);
 			}
 }

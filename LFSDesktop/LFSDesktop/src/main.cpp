@@ -257,7 +257,7 @@ void createDiskInfo(void)
 					if((type!=NULL) && (strcmp(type,"usb")==0))
 						{
 							free(type);
-							asprintf(&type,"disk-usb");
+							asprintf(&type,"-usb");
 						}
 
 					if(label==NULL)
@@ -574,6 +574,7 @@ int main(int argc,char **argv)
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
 
+	cm    = DefaultColormap(display,screen);
 	createDesktopWindow();
 
 	gc=XCreateGC(display,drawOnThis,0,NULL);
@@ -583,47 +584,14 @@ int main(int argc,char **argv)
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
 
-	imlib_context_set_dither(0);
-	imlib_context_set_display(display);
-	imlib_context_set_visual(visual);
-	imlib_context_set_drawable(drawOnThis);
+//imlib_context_set_mask_alpha_threshold(1);	
+
+//	imlib_context_set_dither(0);
+//	imlib_context_set_display(display);
+//	imlib_context_set_visual(visual);
+//	imlib_context_set_drawable(drawOnThis);
 
 	hcreate(100);
-
-	char	*tstr;
-//	ENTRY	testentry={"sata",NULL};
-//	ENTRY	*retentry=NULL;
-
-//sata
-//	retentry=hsearch(testentry,ENTER);
-//	if(retentry==NULL)
-//		printf(">>NULL<<\n");
-//	else
-//		{
-//		printf(">>%s<<>>%s<<\n",retentry->key,"XX");
-//		retentry->data=malloc(sizeof(diskIconStruct));
-//		((diskIconStruct*)(retentry->data))->pixmap=-666;
-//	}
-	
-	
-	//makeImage((char*)diskImagePath,(char*)"sata",SATA);
-//	tstr=pathToIcon("harddisk");
-//	printf(">>%s<<\n",tstr);
-//	makeImage((char*)tstr,(char*)"sata",SATA,(diskIconStruct*)(retentry->data));
-//	free(tstr);
-//usb
-//	makeImage((char*)usbImagePath,(char*)"usb",USB);
-	tstr=pathToIcon("disk-usb");
-//	printf(">>%s<<\n",tstr);
-	makeImage((char*)tstr,(char*)"usb",USB,NULL);
-	free(tstr);
-
-//cdrom
-//	makeImage((char*)cdromImagePath,(char*)"cdrom",CDROM);
-	tstr=pathToIcon("cdrom");
-//	printf(">>%s<<\n",tstr);
-	makeImage((char*)tstr,(char*)"cdrom",CDROM,NULL);
-	free(tstr);
 
 	createColours();
 

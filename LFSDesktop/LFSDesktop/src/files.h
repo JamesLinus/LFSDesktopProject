@@ -21,12 +21,10 @@ extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;
 
-extern Pixmap	diskIconsPixmap[20][2];
-extern Pixmap	diskIconsPixmapMask[20][2];
 extern hsearch_data	hashtab;
 
 int fileExists(char *name);
-void makeImage(char *imagepath,char *destname,int disktype,diskIconStruct *hashdata);
+void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata);
 char* pathToIcon(char* name);
 
 #endif

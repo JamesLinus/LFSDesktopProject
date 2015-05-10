@@ -26,9 +26,6 @@ char	*diskInfoPath;
 char	*cachePath;
 char	*prefsPath;
 
-Pixmap	diskIconsPixmap[20][2];
-Pixmap	diskIconsPixmapMask[20][2];
-
 struct hsearch_data	hashtab;
 
 int fileExists(char *name)
@@ -52,13 +49,14 @@ char* pathToIcon(char* name)
 		{
 			fgets(buffer,2048,fp);
 			sscanf(buffer,"%as",&retstr);
+			printf(">>%s--%s<<\n",name,retstr);
 			pclose(fp);
 		}
 	return(retstr);
 }
 	Pixmap						pmhash,pmhashmask;
 
-void makeImage(char *imagepath,char *destname,int disktype,diskIconStruct *hashdata)
+void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata)
 {
 	Imlib_Image					image;
 	Pixmap						diskpixmap,diskpixmapmask;
@@ -87,29 +85,33 @@ void makeImage(char *imagepath,char *destname,int disktype,diskIconStruct *hashd
 			imlib_context_set_visual(visual);
 			imlib_context_set_drawable(rootWin);
 			imlib_context_set_anti_alias(1);
+			imlib_context_set_mask_alpha_threshold(7);
+			//imlib_context_set_dither(0);
+			//imlib_context_set_dither_mask(0);
 			imlib_render_pixmaps_for_whole_image(&diskpixmap,&diskpixmapmask);
-
-//Pixmap holdPixmapx;
-//if(hashdata!=NULL)
-//{
-//printf("--%i--\n",hashdata->pixmap);
-//Pixmap pm;
-//	imlib_render_pixmaps_for_whole_image(&pmhash,&pmhashmask);
-//((diskIconStruct*)hashdata)->pixmap=diskpixmap;
-//hashdata->pixmap=pmhash;
-//hashdata->mask=diskpixmapmask;
-//printf("==%i == %i==\n",hashdata->pixmap,pmhash);
-//}
-			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][0],&diskIconsPixmapMask[disktype][0],iconSize,iconSize);
 
 			if(hashdata!=NULL)
 				{
 					imlib_render_pixmaps_for_whole_image_at_size(&pmhash,&pmhashmask,iconSize,iconSize);
 					hashdata->pixmap=pmhash;
 					hashdata->mask=pmhashmask;
+				//	hashdata->image=image;
 				}
 
-			imlib_free_image();
+			imlib_context_set_mask_alpha_threshold(1);
+			imlib_render_pixmaps_for_whole_image(&diskpixmap,&diskpixmapmask);
+
+//			if(hashdata!=NULL)
+//				{
+//					imlib_render_pixmaps_for_whole_image_at_size(&pmhash,&pmhashmask,iconSize,iconSize);
+//					hashdata->pixmapOffline=pmhash;
+//					hashdata->maskOffline=pmhashmask;
+//				//	hashdata->image=image;
+//				}
+
+
+
+			//imlib_free_image();
 
 			rpf.type=PictTypeDirect;
 			rpf.depth=8;
@@ -141,10 +143,26 @@ void makeImage(char *imagepath,char *destname,int disktype,diskIconStruct *hashd
 			XRenderComposite(display,PictOpOver,src_pic,alphapicture,dst_pic,0,0,0,0,0,0,w,h);
 
 			imlib_context_set_drawable(destpixmap);
+
 			imfinal=imlib_create_image_from_drawable(diskpixmapmask,0,0,w,h,1);
 			
 			imlib_context_set_image(imfinal);
-			imlib_render_pixmaps_for_whole_image_at_size(&diskIconsPixmap[disktype][1],&diskIconsPixmapMask[disktype][1],iconSize,iconSize);
+			imlib_image_set_has_alpha(1);
+			imlib_context_set_display(display);
+			//w=imlib_image_get_width();
+			//h=imlib_image_get_height();
+			imlib_context_set_visual(visual);
+			imlib_context_set_drawable(rootWin);
+			imlib_context_set_anti_alias(1);
+			imlib_context_set_mask_alpha_threshold(190);	
+
+			if(hashdata!=NULL)
+				{
+					imlib_render_pixmaps_for_whole_image_at_size(&pmhash,&pmhashmask,iconSize,iconSize);
+					hashdata->pixmapOffline=pmhash;
+					hashdata->maskOffline=pmhashmask;
+				}
+
 
 		}
 }
