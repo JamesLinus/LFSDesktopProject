@@ -11,6 +11,7 @@
 #define _GRAPHICS_
 
 #include <Imlib2.h>
+#include <cairo.h>
 
 struct	diskIconStruct
 	{
@@ -19,8 +20,11 @@ struct	diskIconStruct
 		Pixmap	pixmapOffline;
 		Pixmap	maskOffline;
 		Imlib_Image	image;
+		GC		gc;
+		cairo_surface_t	*cairoImage;
 	};
 
+extern cairo_t	*cr;
 
 void drawImage(char *type,char *label,int x,int y,bool mounted);
 

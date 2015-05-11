@@ -24,6 +24,9 @@
 #include <unistd.h>
 #include <signal.h>
 
+#include <cairo.h>
+#include <cairo-xlib.h>
+
 #include "config.h"
 
 #include "prefs.h"
@@ -504,6 +507,7 @@ int main(int argc,char **argv)
 	char			*command;
 	unsigned long	timer=0;
 	Imlib_Image		diskimage;
+	cairo_surface_t *sfc;
 
 	signal(SIGALRM,alarmCallBack);
 
@@ -573,9 +577,13 @@ int main(int argc,char **argv)
 	screen=DefaultScreen(display);
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
-
 	cm    = DefaultColormap(display,screen);
+
 	createDesktopWindow();
+
+	sfc=cairo_xlib_surface_create(display,drawOnThis,visual,displayWidth,displayHeight);
+	cairo_xlib_surface_set_size(sfc,displayWidth,displayHeight);
+	cr=cairo_create(sfc);
 
 	gc=XCreateGC(display,drawOnThis,0,NULL);
 	XSetFillStyle(display,gc,FillSolid);
