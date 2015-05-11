@@ -316,7 +316,7 @@ void getDiskList(args *diskdata)
 								createDiskInfo();
 
 							loadVarsFromFile(diskfilepath,diskdata);
-							int xxx,yyy;
+
 							char *dname,*duid,*dtype;
 
 							args ag;
@@ -482,6 +482,54 @@ int main(int argc,char **argv)
 	XEvent			ev;
 	char			*command;
 	unsigned long	timer=0;
+
+	pid_t pid,sid;
+	pid = fork();// fork a new child process
+
+	if (pid < 0) // A check to see if fork() succeeded?
+		{
+        printf("fork failed!\n");
+        exit(1);
+    }
+
+    if (pid > 0)// its the parent process
+    {
+       printf("pid of child process %d \n", pid);
+kill(pid,-9);
+       exit(0); //terminate the parent process succesfully
+    }
+
+//sid = setsid();//set new session
+ //   if(sid < 0)
+  //  {
+ //       exit(1);
+ //   }
+
+ //   close(STDIN_FILENO);
+ //   close(STDOUT_FILENO);
+ //   close(STDERR_FILENO);
+
+	FILE	*fw;
+	char	*path;
+	int		thepid;
+	char	buffer[100];
+
+	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
+	fw=fopen(path,"r");
+	if(fw!=NULL)
+		{
+			fgets(buffer,100,fw);
+			kill(atoi(buffer),-9);
+			fclose(fw);
+		}
+
+	fw=fopen(path,"w");
+	if(fw!=NULL)
+		{
+			fprintf(fw,"%i",pid);
+			fclose(fw);
+		}
+
 
 	cairo_surface_t *sfc;
 
@@ -695,6 +743,13 @@ int main(int argc,char **argv)
 									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
 									needsRefresh=true;
 								}
+
+							XSetForeground(display,gc,0);
+							XSetFillStyle(display,gc,FillSolid);
+							newx=((ev.xbutton.x-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+							newy=((ev.xbutton.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+							XDrawRectangle(display,rootWin,gc,newx,newy,gridSize,gridSize);
+
 							if(fdiskname!=NULL)
 								free(fdiskname);
 							fdiskname=NULL;
@@ -736,6 +791,14 @@ int main(int argc,char **argv)
 								alarm(0);
 								if((ev.xmotion.x>oldboxx+iconSize) || (ev.xmotion.x<oldboxx-iconSize) || (ev.xmotion.y>oldboxy+iconSize) || (ev.xmotion.y<oldboxy-iconSize))
 									{
+										int obx,oby;
+
+										XSetForeground(display,gc,0);
+										XSetFillStyle(display,gc,FillSolid);
+										obx=((oldboxx-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+										oby=((oldboxy-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+										XDrawRectangle(display,rootWin,gc,obx,oby,gridSize,gridSize);
+
 										oldboxx=ev.xmotion.x;
 										oldboxy=ev.xmotion.y;
 										dx=0;
@@ -745,9 +808,7 @@ int main(int argc,char **argv)
 										XSetFillStyle(display,gc,FillSolid);
 										newboxx=((ev.xmotion.x-gridBorder)/gridSize)*gridSize+(gridBorder/2);
 										newboxy=((ev.xmotion.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
-										XDrawRectangle(display,drawOnThis,gc,newboxx,newboxy,gridSize,gridSize);
-										getDiskList(diskdata);
-										XdbeSwapBuffers(display,&swapInfo,1);
+										XDrawRectangle(display,rootWin,gc,newboxx,newboxy,gridSize,gridSize);
 									}
 							}
 					}
