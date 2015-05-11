@@ -11,13 +11,7 @@
 #define _PREFS_
 
 #include <X11/Xlib.h>
-#include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
-#include <X11/Xutil.h>
-#include <X11/xpm.h>
-
-#include <X11/extensions/Xinerama.h>
-#include <X11/extensions/shape.h>
 #include <X11/extensions/Xdbe.h>
 
 #define MAXGRIDY 4
@@ -33,12 +27,6 @@ struct args
 
 extern args				diskData[];
 extern args				desktopPrefs[];
-
-extern char				*diskName;
-extern char				*diskUUID;
-extern int				diskXPos;
-extern int				diskYPos;
-extern char				*diskType;
 
 extern char				*iconTheme;
 extern int				iconSize;

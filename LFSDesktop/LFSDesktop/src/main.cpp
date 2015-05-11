@@ -7,14 +7,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
-#include <X11/Xutil.h>
-#include <X11/xpm.h>
-
-#include <X11/extensions/Xinerama.h>
 #include <X11/extensions/shape.h>
-#include <X11/extensions/Xdbe.h>
-
-#include <Imlib2.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -37,19 +30,6 @@
 
 bool			done=true;
 
-//const char		*diskImagePath=DATADIR "harddrive.png";
-const char		*diskImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/" "harddrive.png";
-//const char		*diskImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/drive-removable-media-offline.png";
-const char		*diskImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/" "harddrive-offline.png";
-//const char		*diskImagePathOffline=DATADIR "harddrive-offline.png";
-
-const char		*usbImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/usb.png";
-const char		*usbImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/usb-offline.png";
-const char		*cdromImagePath="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/cdrom.png";
-const char		*cdromImagePathOffline="/media/LinuxData/Development/Projects/LFSDesktopProject/LFSDesktop/LFSDesktop/resources/pixmaps/cdrom-ofline.png";
-
-//unsigned long	labelBackground;
-//unsigned long	labelForeground;
 GC				labelGC;
 XFontStruct		*labelFont;
 
@@ -153,7 +133,6 @@ void createDesktopWindow(void)
 			attr.background_pixel=0;
 
 			rootWin=XCreateWindow(display,DefaultRootWindow(display),0,0,displayWidth,displayHeight,0,depth,InputOutput,visual,CWEventMask |CWColormap | CWBorderPixel | CWBackPixel ,&attr);
-			//XSelectInput(display,rootWin,StructureNotifyMask| ButtonPress| ButtonReleaseMask|PointerMotionMask);
 
 			xa=XInternAtom(display,"_NET_WM_STATE",False);
 			xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
@@ -236,11 +215,8 @@ void createDiskInfo(void)
 					type=NULL;
 					disktype=NULL;
 					sscanf(line,"%as %as %as %a[^\n^\t^ ]s",&disktype,&devname,&uuid,&label);
-					//printf("line=>>%s<<\n",line);
 					fgets(line,1024,fp);
 					sscanf(line,"%*s %*s %a[^\n]s",&type);
-					//printf("line=>>%s<< type=>>%s<<\n",line,type);
-					//if((devname!=NULL) && (strcmp(devname,"/dev/sr0")==0))
 					if((disktype!=NULL) && (strcmp(disktype,"rom")==0))
 						{
 							if(type!=NULL)
@@ -506,7 +482,7 @@ int main(int argc,char **argv)
 	XEvent			ev;
 	char			*command;
 	unsigned long	timer=0;
-	Imlib_Image		diskimage;
+
 	cairo_surface_t *sfc;
 
 	signal(SIGALRM,alarmCallBack);
@@ -577,7 +553,7 @@ int main(int argc,char **argv)
 	screen=DefaultScreen(display);
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
-	cm    = DefaultColormap(display,screen);
+	cm=DefaultColormap(display,screen);
 
 	createDesktopWindow();
 
@@ -591,13 +567,6 @@ int main(int argc,char **argv)
 
 	blackColor=BlackPixel(display,screen);
 	whiteColor=WhitePixel(display,screen);
-
-//imlib_context_set_mask_alpha_threshold(1);	
-
-//	imlib_context_set_dither(0);
-//	imlib_context_set_display(display);
-//	imlib_context_set_visual(visual);
-//	imlib_context_set_drawable(drawOnThis);
 
 	hcreate(100);
 
@@ -625,7 +594,7 @@ int main(int argc,char **argv)
 	char	*fdisktype=NULL;
 	int		oldx=-1,oldy=-1;
 	bool	buttonDown=false;
-	int	oldboxx=-1,oldboxy=-1;
+	int		oldboxx=-1,oldboxy=-1;
 
 	while(done)
 		{

@@ -9,23 +9,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Intrinsic.h>
-#include <X11/Xutil.h>
-#include <X11/xpm.h>
-
-#include <X11/extensions/Xinerama.h>
-#include <X11/extensions/shape.h>
-#include <X11/extensions/Xdbe.h>
 
 #include "prefs.h"
-
-char			*diskName;
-char			*diskUUID;
-int				diskXPos;
-int				diskYPos;
-char			*diskType;
+#include "files.h"
 
 char			*iconTheme;
 

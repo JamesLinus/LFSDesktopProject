@@ -10,17 +10,11 @@
 #ifndef _GRAPHICS_
 #define _GRAPHICS_
 
-#include <Imlib2.h>
 #include <cairo.h>
 
 struct	diskIconStruct
 	{
-		Pixmap	pixmap;
-		Pixmap	mask;
-		Pixmap	pixmapOffline;
-		Pixmap	maskOffline;
-		Imlib_Image	image;
-		GC		gc;
+		double			scale;
 		cairo_surface_t	*cairoImage;
 	};
 
