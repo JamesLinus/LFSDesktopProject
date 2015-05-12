@@ -12,6 +12,15 @@
 
 #include <cairo.h>
 
+struct Hints
+{
+	unsigned long   flags;
+	unsigned long   functions;
+	unsigned long   decorations;
+	long            inputMode;
+	unsigned long   status;
+};
+
 struct	diskIconStruct
 	{
 		double			scale;
@@ -21,5 +30,9 @@ struct	diskIconStruct
 extern cairo_t	*cr;
 
 void drawImage(char *type,char *label,int x,int y,bool mounted);
+
+void createColours(void);
+int get_argb_visual(Visual** vis,int *depth);
+void createDesktopWindow(void);
 
 #endif

@@ -11,5 +11,7 @@
 #define _DISKS_
 
 void mountDisk(int x, int y);
+void createDiskInfo(void);
+void getDiskList(args *diskdata);
 
 #endif

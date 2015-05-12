@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+#©keithhedger Mon 11 May 17:44:08 BST 2015 kdhedger68713@gmail.com
+
+prefs="$(cat ${HOME}/.config/LFS/lfsdesktop.rc|sed 's/ /=/g')"
+eval "$prefs"
+
+theme=$(xfconf-query -c "xsettings" -p "/Net/IconThemeName")
+iconsize=${iconsize:-32}
+gridborder=${gridborder:-32}
+refreshrate=${refreshrate:-2}
+
+MON0=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-path")
+MON1=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor1/image-path")
+
+echo "icontheme $theme" > ${HOME}/.config/LFS/lfsdesktop.rc
+echo "iconsize $iconsize" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "gridborder $gridborder" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "refreshrate $refreshrate" >> ${HOME}/.config/LFS/lfsdesktop.rc
+
+echo "0" > "${HOME}/.config/LFS/monitors.rc"
+echo $MON0 >> "${HOME}/.config/LFS/monitors.rc"
+echo "0" >> "${HOME}/.config/LFS/monitors.rc"
+echo $MON1 >> "${HOME}/.config/LFS/monitors.rc"
+
+echo "backdrop	${HOME}/Wallpapers/2000 AD 0304 [manwolf1]0000 (~Cclay~).jpg" > "${HOME}/.config/LFS/setwallpaper.rc"
+echo "mainmode	2" >> "${HOME}/.config/LFS/setwallpaper.rc"
+echo "colour	4210752" >> "${HOME}/.config/LFS/setwallpaper.rc"
+echo "multimode	1" >> "${HOME}/.config/LFS/setwallpaper.rc"
+
+setwallpaper
+lfsdesktop  &

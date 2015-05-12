@@ -35,8 +35,14 @@ int				depth=0;
 int				screen;
 int				blackColor;
 int				whiteColor;
+
+GC				labelGC;
+XFontStruct		*labelFont;
+
 unsigned long	labelBackground;
 unsigned long	labelForeground;
+
+int				**xySlot;
 
 args			diskData[]=
 {

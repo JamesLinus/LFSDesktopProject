@@ -49,8 +49,14 @@ extern int				depth;
 extern int				screen;
 extern int				blackColor;
 extern int				whiteColor;
+
+extern GC				labelGC;
+extern XFontStruct		*labelFont;
+
 extern unsigned long	labelBackground;
 extern unsigned long	labelForeground;
+
+extern int				**xySlot;
 
 void saveVarsToFile(const char* filepath,args* dataptr);
 void loadVarsFromFile(char* filepath,args* dataptr);
