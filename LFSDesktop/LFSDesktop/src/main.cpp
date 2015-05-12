@@ -236,7 +236,7 @@ void createDiskInfo(void)
 					if((type!=NULL) && (strcmp(type,"usb")==0))
 						{
 							free(type);
-							asprintf(&type,"-usb");
+							asprintf(&type,"harddisk-usb");
 						}
 
 					if(label==NULL)
@@ -482,44 +482,18 @@ int main(int argc,char **argv)
 	XEvent			ev;
 	char			*command;
 	unsigned long	timer=0;
-
-	pid_t pid,sid;
-	pid = fork();// fork a new child process
-
-	if (pid < 0) // A check to see if fork() succeeded?
-		{
-        printf("fork failed!\n");
-        exit(1);
-    }
-
-    if (pid > 0)// its the parent process
-    {
-       printf("pid of child process %d \n", pid);
-kill(pid,-9);
-       exit(0); //terminate the parent process succesfully
-    }
-
-//sid = setsid();//set new session
- //   if(sid < 0)
-  //  {
- //       exit(1);
- //   }
-
- //   close(STDIN_FILENO);
- //   close(STDOUT_FILENO);
- //   close(STDERR_FILENO);
-
-	FILE	*fw;
-	char	*path;
-	int		thepid;
-	char	buffer[100];
+	FILE			*fw;
+	char			*path;
+	char			buffer[100];
+	pid_t			pid=getpid();
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
 	if(fw!=NULL)
 		{
 			fgets(buffer,100,fw);
-			kill(atoi(buffer),-9);
+			printf(">>%i<<\n",atoi(buffer));
+			kill(atoi(buffer),SIGKILL);
 			fclose(fw);
 		}
 
@@ -529,7 +503,6 @@ kill(pid,-9);
 			fprintf(fw,"%i",pid);
 			fclose(fw);
 		}
-
 
 	cairo_surface_t *sfc;
 
