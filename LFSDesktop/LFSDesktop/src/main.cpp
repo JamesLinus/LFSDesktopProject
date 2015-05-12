@@ -111,8 +111,7 @@ int main(int argc,char **argv)
 	Time			time=0;
 	bool			firstClick=false;
 	bool			foundIcon=false;
-printf(">>%s<<\n",HELPERDIR);
-printf(">>%s<<\n",HELPERAPP);
+
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
 	if(fw!=NULL)

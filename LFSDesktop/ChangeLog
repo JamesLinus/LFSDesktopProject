@@ -1,5 +1,7 @@
 0.0.4
-Added mount helper app.
+Mounted disks with helper mounts as user.
+Added config option ( --enable-suidhelper ) ( default ) to use helper or udevil.
+Added suid mount helper app.
 Switched to cairo.
 
 0.0.3

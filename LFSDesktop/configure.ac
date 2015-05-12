@@ -37,5 +37,14 @@ PKG_CHECK_MODULES(CAIRO, $CAIRO_MODULES)
 AC_SUBST(CAIRO_LIBS)
 AC_SUBST(CAIRO_CFLAGS)
 
+AC_MSG_CHECKING(Use SUID Helper)
+
+AC_ARG_ENABLE(suidhelper,AS_HELP_STRING([--enable-suidhelper],[Enable suid helper]),[enable_suidhelper=$enableval],[enable_suidhelper="yes"])
+
+if test $enable_suidhelper = "yes" ;then
+	AC_DEFINE([_USESUIDHELPER_], [], [Use suid helper])
+fi
+AC_MSG_RESULT($enable_suidhelper)
+
 AC_OUTPUT(Makefile LFSDesktop/app/Makefile LFSDesktop/helper/Makefile)
 

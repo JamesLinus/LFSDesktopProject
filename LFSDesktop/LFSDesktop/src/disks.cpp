@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
+
 #include "prefs.h"
 #include "files.h"
 
@@ -41,7 +43,11 @@ void mountDisk(int x, int y)
 								{
 									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
 										{
+#ifdef _USESUIDHELPER_
+											asprintf(&command,"%s %s /media/%s",HELPERAPP,diskUUID,diskName);
+#else
 											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
+#endif
 											system(command);
 											free(command);
 											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
