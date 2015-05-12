@@ -37,5 +37,5 @@ PKG_CHECK_MODULES(CAIRO, $CAIRO_MODULES)
 AC_SUBST(CAIRO_LIBS)
 AC_SUBST(CAIRO_CFLAGS)
 
-AC_OUTPUT(Makefile LFSDesktop/app/Makefile)
+AC_OUTPUT(Makefile LFSDesktop/app/Makefile LFSDesktop/helper/Makefile)
 

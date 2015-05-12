@@ -1,3 +1,7 @@
+0.0.4
+Added mount helper app.
+Switched to cairo.
+
 0.0.3
 Double click also uses xdg-open to open folder when  mounting.
 Box indicator around target position.
