@@ -24,6 +24,7 @@
 
 #include "prefs.h"
 #include "files.h"
+#include "disks.h"
 #include "graphics.h"
 
 #define UNKNOWNARG -100
@@ -162,26 +163,6 @@ void createDesktopWindow(void)
 			XdbeSwapBuffers(display,&swapInfo,1);
 			drawOnThis=buffer;
 		}
-}
-
-void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type)
-{
-	char	*filepath;
-
-	diskName=label;
-	diskUUID=uuid;
-	diskXPos=x;
-	diskYPos=y;
-	diskType=type;
-
-	if(diskfilepath==NULL)
-		{
-			asprintf(&filepath,"%s/%s",diskInfoPath,uuid);
-			saveVarsToFile(filepath,diskData);
-			free(filepath);
-		}
-	else
-		saveVarsToFile(diskfilepath,diskData);
 }
 
 void createDiskInfo(void)
@@ -425,49 +406,6 @@ bool findIcon(int x, int y)
 	return(false);
 }
 
-void mountDisk(int x, int y)
-{
-	FILE	*fp;
-	FILE	*fd;
-	char	*command;
-	char	line[2048];
-	int		dx,dy;
-	char	label[256];
-	char	uuid[256];
-	char	dataline[256];
-
-	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
-	fp=popen(command,"r");
-	free(command);
-	if(fp!=NULL)
-		{
-			while(fgets(line,2048,fp))
-				{
-					line[strlen(line)-1]=0;
-					loadVarsFromFile(line,diskData);
-					if(strlen(line)>0)
-						{
-							if(strlen(diskUUID)>1)
-								{
-									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
-										{
-											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
-											system(command);
-											free(command);
-											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
-											system(command);
-											free(command);
-											
-											pclose(fp);
-											return;
-										}
-								}
-						}
-				}
-			pclose(fp);
-		}
-}
-
 void  alarmCallBack(int sig)
 {
 	signal(SIGALRM,SIG_IGN);
@@ -492,7 +430,6 @@ int main(int argc,char **argv)
 	if(fw!=NULL)
 		{
 			fgets(buffer,100,fw);
-			printf(">>%i<<\n",atoi(buffer));
 			kill(atoi(buffer),SIGKILL);
 			fclose(fw);
 		}

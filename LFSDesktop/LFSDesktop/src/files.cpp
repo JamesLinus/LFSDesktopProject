@@ -62,6 +62,26 @@ void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata)
 	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
 }
 
+void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type)
+{
+	char	*filepath;
+
+	diskName=label;
+	diskUUID=uuid;
+	diskXPos=x;
+	diskYPos=y;
+	diskType=type;
+
+	if(diskfilepath==NULL)
+		{
+			asprintf(&filepath,"%s/%s",diskInfoPath,uuid);
+			saveVarsToFile(filepath,diskData);
+			free(filepath);
+		}
+	else
+		saveVarsToFile(diskfilepath,diskData);
+}
+
 
 
 

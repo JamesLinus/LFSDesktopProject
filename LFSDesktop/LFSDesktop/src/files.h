@@ -32,5 +32,6 @@ extern hsearch_data	hashtab;
 int fileExists(char *name);
 void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata);
 char* pathToIcon(char* name);
+void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type);
 
 #endif
