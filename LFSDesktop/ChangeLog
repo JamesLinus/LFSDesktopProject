@@ -1,4 +1,5 @@
 0.0.4
+Added fix for ntfs disks not mounting properly with suid helper.
 Mounted disks with helper mounts as user.
 Added config option ( --enable-suidhelper ) ( default ) to use helper or udevil.
 Added suid mount helper app.
