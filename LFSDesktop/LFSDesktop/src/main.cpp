@@ -241,7 +241,7 @@ int main(int argc,char **argv)
 	int		oldx=-1,oldy=-1;
 	bool	buttonDown=false;
 	int		oldboxx=-1,oldboxy=-1;
-
+	bool	dragging=false;
 	while(done)
 		{
 			if(needsRefresh==true)
@@ -251,19 +251,15 @@ int main(int argc,char **argv)
 					needsRefresh=false;
 				}
 
-			XCheckWindowEvent(display,rootWin,StructureNotifyMask |ExposureMask | ButtonPress| ButtonReleaseMask|PointerMotionMask | EnterWindowMask | LeaveWindowMask,&ev);
+			if(dragging==false)
+				usleep(10000);
+
+			XCheckWindowEvent(display,rootWin,ButtonPress|ButtonReleaseMask|PointerMotionMask,&ev);
 
 			switch(ev.type)
 				{
-				case MapNotify:
-					break;
-				case Expose:
-					break;
-				case ConfigureNotify:
-					break;
-				case VisibilityNotify:
-					break;
 				case ButtonPress:
+					dragging=true;
 					buttonDown=true;
 					if(firstClick==false)
 						{
@@ -328,6 +324,7 @@ int main(int argc,char **argv)
 
 					break;
 				case ButtonRelease:
+					dragging=false;
 					buttonDown=false;
 					if(foundIcon==true)
 						{
@@ -367,50 +364,50 @@ int main(int argc,char **argv)
 
 					break;
 				case MotionNotify:
+				{
+					int newboxx,newboxy;
+					char	*dn=NULL;
+					char	*du=NULL;
+					int		dx=0;
+					int		dy=0;
+					char	*dtype=NULL;
+					args	diskdata[]=
 					{
-						int newboxx,newboxy;
-						char	*dn=NULL;
-						char	*du=NULL;
-						int		dx=0;
-						int		dy=0;
-						char	*dtype=NULL;
-						args	diskdata[]=
-							{
-								{"diskname",TYPESTRING,&dn},
-								{"diskuuid",TYPESTRING,&du},
-								{"diskx",TYPEINT,&dx},
-								{"disky",TYPEINT,&dy},
-								{"type",TYPESTRING,&dtype},
-								{NULL,0,NULL}
-							};
+						{"diskname",TYPESTRING,&dn},
+						{"diskuuid",TYPESTRING,&du},
+						{"diskx",TYPEINT,&dx},
+						{"disky",TYPEINT,&dy},
+						{"type",TYPESTRING,&dtype},
+						{NULL,0,NULL}
+					};
 
-						if(foundIcon==true && buttonDown==true)
-							{
-								alarm(0);
-								if((ev.xmotion.x>oldboxx+iconSize) || (ev.xmotion.x<oldboxx-iconSize) || (ev.xmotion.y>oldboxy+iconSize) || (ev.xmotion.y<oldboxy-iconSize))
-									{
-										int obx,oby;
+					if(foundIcon==true && buttonDown==true)
+						{
+							alarm(0);
+							if((ev.xmotion.x>oldboxx+iconSize) || (ev.xmotion.x<oldboxx-iconSize) || (ev.xmotion.y>oldboxy+iconSize) || (ev.xmotion.y<oldboxy-iconSize))
+								{
+									int obx,oby;
 
-										XSetForeground(display,gc,0);
-										XSetFillStyle(display,gc,FillSolid);
-										obx=((oldboxx-gridBorder)/gridSize)*gridSize+(gridBorder/2);
-										oby=((oldboxy-gridBorder)/gridSize)*gridSize+(gridBorder/2);
-										XDrawRectangle(display,rootWin,gc,obx,oby,gridSize,gridSize);
+									XSetForeground(display,gc,0);
+									XSetFillStyle(display,gc,FillSolid);
+									obx=((oldboxx-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+									oby=((oldboxy-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+									XDrawRectangle(display,rootWin,gc,obx,oby,gridSize,gridSize);
 
-										oldboxx=ev.xmotion.x;
-										oldboxy=ev.xmotion.y;
-										dx=0;
-										dy=0;
+									oldboxx=ev.xmotion.x;
+									oldboxy=ev.xmotion.y;
+									dx=0;
+									dy=0;
 
-										XSetForeground(display,gc,labelBackground);
-										XSetFillStyle(display,gc,FillSolid);
-										newboxx=((ev.xmotion.x-gridBorder)/gridSize)*gridSize+(gridBorder/2);
-										newboxy=((ev.xmotion.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
-										XDrawRectangle(display,rootWin,gc,newboxx,newboxy,gridSize,gridSize);
-									}
-							}
-					}
-					break;
+									XSetForeground(display,gc,labelBackground);
+									XSetFillStyle(display,gc,FillSolid);
+									newboxx=((ev.xmotion.x-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+									newboxy=((ev.xmotion.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
+									XDrawRectangle(display,rootWin,gc,newboxx,newboxy,gridSize,gridSize);
+								}
+						}
+				}
+				break;
 
 				default:
 					break;

@@ -64,6 +64,23 @@ void mountDisk(int x, int y)
 		}
 }
 
+char* getUSBData(char *device)
+{
+	char	*newdevice=NULL;
+
+	if((device!=NULL) && (strstr(device,"iPod")!=NULL))
+		{
+			asprintf(&newdevice,"multimedia-player");
+			return(newdevice);
+		}
+	if((device!=NULL) && (strstr(device,"SD/MMC")!=NULL))
+		{
+			asprintf(&newdevice,"media-sm");
+			return(newdevice);
+		}
+	return(newdevice);
+}
+
 void createDiskInfo(void)
 {
 	FILE	*fp;
@@ -75,6 +92,7 @@ void createDiskInfo(void)
 	char	*label;
 	char	*uuid;
 	char	*type;
+	char	*model;
 	char	*disktype;
 	char	*diskfilepath;
 	int		posx;
@@ -83,7 +101,7 @@ void createDiskInfo(void)
 	posx=0;
 	posy=0;
 
-	asprintf(&command,"lsblk -n --output=TYPE,NAME,UUID,LABEL,TRAN -lps");
+	asprintf(&command,"lsblk -n --output=TYPE,NAME,UUID,LABEL,TRAN,MODEL -lps");
 	fp=popen(command,"r");
 	if(fp!=NULL)
 		{
@@ -96,7 +114,7 @@ void createDiskInfo(void)
 					disktype=NULL;
 					sscanf(line,"%as %as %as %a[^\n^\t^ ]s",&disktype,&devname,&uuid,&label);
 					fgets(line,1024,fp);
-					sscanf(line,"%*s %*s %a[^\n]s",&type);
+					sscanf(line,"%*s %*s %as %a[^\n]s",&type,&model);
 					if((disktype!=NULL) && (strcmp(disktype,"rom")==0))
 						{
 							if(type!=NULL)
@@ -115,8 +133,13 @@ void createDiskInfo(void)
 
 					if((type!=NULL) && (strcmp(type,"usb")==0))
 						{
+							char *extrainfo=NULL;
+							extrainfo=getUSBData(model);
 							free(type);
-							asprintf(&type,"harddisk-usb");
+							if(extrainfo!=NULL)
+								asprintf(&type,extrainfo);
+							else
+								asprintf(&type,"harddisk-usb");
 						}
 
 					if(label==NULL)

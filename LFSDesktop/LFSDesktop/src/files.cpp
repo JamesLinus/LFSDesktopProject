@@ -36,6 +36,33 @@ int fileExists(char *name)
 	return (stat(name,&buffer));
 }
 
+char* defaultIcon(char *theme,char *name)
+{
+	char	*command;
+	FILE	*fp;
+	char	buffer[2048];
+	char	*retstr=NULL;
+
+	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*harddisk*.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name);
+
+	fp=popen(command,"r");
+	free(command);
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,2048,fp);
+			sscanf(buffer,"%as",&retstr);
+			pclose(fp);
+		}
+	if((retstr==NULL) || (strlen(retstr)==0))
+		{
+			if(retstr!=NULL)
+				free(retstr);
+			return(defaultIcon((char*)"gnome",name));
+		}
+	return(retstr);
+}
+
 char* pathToIcon(char* name)
 {
 	char	*command;
@@ -43,15 +70,22 @@ char* pathToIcon(char* name)
 	char	buffer[2048];
 	char	*retstr=NULL;
 
-	asprintf(&command,"find /usr/share/icons/%s %s/.icons/%s -iname \"*%s*.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name);
+	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name);
 
 	fp=popen(command,"r");
 	free(command);
 	if(fp!=NULL)
 		{
+			buffer[0]=0;
 			fgets(buffer,2048,fp);
 			sscanf(buffer,"%as",&retstr);
 			pclose(fp);
+		}
+	if((retstr==NULL) || (strlen(retstr)==0))
+		{
+			if(retstr!=NULL)
+				free(retstr);
+			return(defaultIcon(iconTheme,name));
 		}
 	return(retstr);
 }

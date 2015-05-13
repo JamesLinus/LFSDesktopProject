@@ -1,4 +1,7 @@
 0.0.4
+Let the system have some CPU cycles!
+Uses default icons for missing disk icons.
+USB type ( card/ipod ) now detected.
 Added fix for ntfs disks not mounting properly with suid helper.
 Mounted disks with helper mounts as user.
 Added config option ( --enable-suidhelper ) ( default ) to use helper or udevil.
