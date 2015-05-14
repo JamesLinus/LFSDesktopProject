@@ -32,6 +32,7 @@
 struct option long_options[] =
 {
 	{"clean",0,0,'c'},
+	{"theme",1,0,'t'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
 	{0,0,0,0}
@@ -44,6 +45,7 @@ void printhelp(void)
 	printf("Usage: lfsdesktop [OPTION]\n"
 	       "A CLI application\n"
 	       " -c,--clean		Clean disk info data\n"
+	       " -t,--theme		Set theme\n"
 	       " -v,--version	output version information and exit\n"
 	       " -h,-?,--help	print this help\n\n"
 	       "Report bugs to kdhedger@yahoo.co.uk\n"
@@ -128,6 +130,7 @@ int main(int argc,char **argv)
 			fclose(fw);
 		}
 	free(path);
+	nice(15);
 
 	cairo_surface_t *sfc;
 
@@ -150,7 +153,7 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?h:c",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hct:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -160,6 +163,12 @@ int main(int argc,char **argv)
 					asprintf(&command,"rm %s/*",diskInfoPath);
 					system(command);
 					free(command);
+					break;
+
+				case 't':
+					if(iconTheme!=NULL)
+						free(iconTheme);
+					iconTheme=strdup(optarg);
 					break;
 
 				case 'v':

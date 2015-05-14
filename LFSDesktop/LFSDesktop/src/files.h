@@ -17,6 +17,17 @@
 
 #include "graphics.h"
 
+struct diskInfo
+{
+	char		*name;
+	char		*uuid;
+	int			x;
+	int			y;
+	char		*type;
+};
+
+extern diskInfo	*disksDataPtr;
+
 extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;

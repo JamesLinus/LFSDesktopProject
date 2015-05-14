@@ -17,16 +17,19 @@
 
 #include "prefs.h"
 #include "graphics.h"
+#include "files.h"
 
-char	*diskInfoPath;
-char	*cachePath;
-char	*prefsPath;
+char		*diskInfoPath;
+char		*cachePath;
+char		*prefsPath;
 
-char	*diskName;
-char	*diskUUID;
-int		diskXPos;
-int		diskYPos;
-char	*diskType;
+char		*diskName;
+char		*diskUUID;
+int			diskXPos;
+int			diskYPos;
+char		*diskType;
+
+diskInfo	*disksDataPtr;
 
 struct hsearch_data	hashtab;
 
