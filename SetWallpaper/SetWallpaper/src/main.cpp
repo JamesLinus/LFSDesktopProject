@@ -98,7 +98,7 @@ void printhelp(void)
 	       " -a,--mainmode		Main Mode (Stretch=0,Tile=1,Centre=2) N\n"
 	       " -o,--monitormode	Mode for individual monitors (as above) N\n"
 	       " -m,--monitor		Monitor number N\n"
-	       " -y,--monitormode	Multi monitor image mode 0=Single image,1=Multi image N\n"
+	       " -y,--multimode		Multi monitor image mode 0=Single image,1=Multi image N\n"
 	       " -v,--version		output version information and exit\n"
 	       " -h,-?,--help		print this help\n\n"
 	       "Report bugs to kdhedger68713@gmail.com\n"
