@@ -37,6 +37,11 @@ PKG_CHECK_MODULES(CAIRO, $CAIRO_MODULES)
 AC_SUBST(CAIRO_LIBS)
 AC_SUBST(CAIRO_CFLAGS)
 
+LIBUDEV_MODULES="libudev >= 216"
+PKG_CHECK_MODULES(LIBUDEV, $LIBUDEV_MODULES)
+AC_SUBST(LIBUDEV_LIBS)
+AC_SUBST(LIBUDEV_CFLAGS)
+
 AC_MSG_CHECKING(Use SUID Helper)
 
 AC_ARG_ENABLE(suidhelper,AS_HELP_STRING([--enable-suidhelper],[Enable suid helper]),[enable_suidhelper=$enableval],[enable_suidhelper="yes"])

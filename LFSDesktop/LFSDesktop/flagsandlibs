@@ -3,6 +3,7 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 			$(X11_CFLAGS) \
 			$(XINERAMA_CFLAGS) \
 			$(XEXT_CFLAGS) \
+			$(LIBUDEV_CFLAGS) \
 			$(CAIRO_CFLAGS) \
 			-DPREFIX=\""${prefix}\"" \
 			-DDATADIR=\""${pkgdatadir}"\" \
@@ -14,5 +15,6 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 LIBS =		$(X11_LIBS) \
 			$(XINERAMA_LIBS) \
 			$(XEXT_LIBS) \
+			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS)
 

@@ -20,6 +20,8 @@
 #include <cairo.h>
 #include <cairo-xlib.h>
 
+#include <libudev.h>
+
 #include "config.h"
 
 #include "prefs.h"
@@ -113,6 +115,8 @@ int main(int argc,char **argv)
 	Time			time=0;
 	bool			firstClick=false;
 	bool			foundIcon=false;
+
+//	scanForMountableDisks();
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -240,8 +244,10 @@ int main(int argc,char **argv)
 
 	alarm(refreshRate);
 
-	getDiskList(diskData);
-	createDiskInfo();
+//	scanForMountableDisks();
+
+	//getDiskList(diskData);
+	//createDiskInfo();
 	XdbeSwapBuffers(display,&swapInfo,1);
 
 	char	*fdiskname=NULL;
@@ -255,7 +261,10 @@ int main(int argc,char **argv)
 		{
 			if(needsRefresh==true)
 				{
-					getDiskList(diskData);
+					scanForMountableDisks();
+					drawIcons();
+//printf("XXXXXXX\n");
+					//getDiskList(diskData);
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;
 				}

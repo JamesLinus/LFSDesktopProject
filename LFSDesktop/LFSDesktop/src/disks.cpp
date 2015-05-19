@@ -12,10 +12,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <libudev.h>
+
 #include "config.h"
 
 #include "prefs.h"
 #include "files.h"
+#include "disks.h"
+
+disks	*attached;
+int		numberOfDisksAttached=-1000;
 
 void mountDisk(int x, int y)
 {
@@ -290,3 +296,194 @@ void getDiskList(args *diskdata)
 	free(command);
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
+
+void deleteDiskInfo(void)
+{
+	for(int j=0;j<numberOfDisksAttached;j++)
+		{
+			if(attached[j].uuid!=NULL)
+				free(attached[j].uuid);
+			if(attached[j].label!=NULL)
+				free(attached[j].label);
+			if(attached[j].mountpoint!=NULL)
+				free(attached[j].mountpoint);
+			if(attached[j].dev!=NULL)
+				free(attached[j].dev);
+			if(attached[j].sysname!=NULL)
+				free(attached[j].sysname);
+		}
+	free(attached);
+
+}
+
+void drawIcons(void)
+{
+	FILE	*tp;
+	char	*com;
+	char	line[BUFFERSIZE];
+	XColor		colour;
+	int			fontheight;
+	int			stringwidth;
+
+	int			boxx,boxy,boxw,boxh;
+	XRectangle	rect;
+	int			diskx,disky;
+	
+	XDestroyRegion(rg);
+	rg=XCreateRegion();
+
+	for(int j=0; j<numberOfDisksAttached; j++)
+		{
+			if(attached[j].ignore==false)
+				{
+				printf("j=%i,uuid=%s , dev=%s , label=%s , sysname=%s , x=%i , y=%i\n",j,attached[j].uuid,attached[j].dev,attached[j].label,attached[j].sysname,attached[j].x,attached[j].y);
+				
+
+					asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
+					line[0]=0;
+					tp=popen(com,"r");
+					free(com);
+					fgets(line,BUFFERSIZE,tp);
+					pclose(tp);
+
+					diskx=attached[j].x*gridSize+gridBorder;
+					disky=attached[j].y*gridSize+gridBorder;
+
+bool	mounted=false;
+					if(strlen(line)>0)
+						mounted=true;
+
+					if(attached[j].dvd==true)
+						drawImage("dev-dvd",attached[j].label,diskx,disky,mounted);
+					else if(attached[j].usb==true)
+						drawImage("harddisk-usb",attached[j].label,diskx,disky,mounted);
+					else
+						drawImage("harddisk",attached[j].label,diskx,disky,mounted);
+
+						rect.x=diskx;
+						rect.y=disky;
+						rect.width=iconSize;
+						rect.height=iconSize;
+						XUnionRectWithRegion(&rect,rg, rg);
+
+						XSetClipMask(display,gc,0);
+
+						fontheight=labelFont->ascent+labelFont->descent;
+						stringwidth=XTextWidth(labelFont,attached[j].label,strlen(attached[j].label));
+
+						boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+						boxy=disky+iconSize+1;
+						boxw=stringwidth+2;
+						boxh=fontheight-2;
+
+						XSetForeground(display,gc,labelBackground);
+						XSetFillStyle(display,gc,FillSolid);
+						XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
+
+						XSetForeground(display,labelGC,labelForeground);
+						XSetBackground(display,labelGC,labelBackground);
+
+						XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,attached[j].label,strlen(attached[j].label));
+					}
+				}
+}
+
+void scanForMountableDisks(void)
+{
+	struct udev *udev;
+	char		buffer[BUFFERSIZE];
+	FILE		*fp;
+	int			numofdisks;
+	const char	*ptr;
+	int			xpos=0,ypos=0;
+	udev_device *usbdev;
+
+	/* Create the udev object */
+	udev=udev_new();
+	if (!udev)
+		{
+			printf("Can't create udev\n");
+			exit(1);
+		}
+
+	fp=popen(READFROM "|wc -l","r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,BUFFERSIZE,fp);
+			numofdisks=atoi(buffer);
+			pclose(fp);
+		}
+
+	if(numberOfDisksAttached<numofdisks)
+		{
+			deleteDiskInfo();
+			attached=(disks*)calloc(numofdisks,sizeof(disks));
+			numberOfDisksAttached=numofdisks;
+		}
+
+	fp=popen(READFROM,"r");
+	if(fp!=NULL)
+	{
+	for(int j=0; j<numofdisks; j++)
+		{
+			buffer[0]=0;
+			fgets(buffer,BUFFERSIZE,fp);
+			buffer[strlen(buffer)-1]=0;
+			udev_device	*thedev=udev_device_new_from_subsystem_sysname(udev,"block",buffer);
+			if(thedev!=NULL)
+				{
+					attached[j].ignore=true;
+					if(udev_device_get_property_value(thedev,"ID_FS_UUID")!=NULL)
+						{
+//get uuid
+							attached[j].uuid=strdup(udev_device_get_property_value(thedev,"ID_FS_UUID"));
+//partname
+							attached[j].sysname=strdup(buffer);
+							asprintf(&attached[j].dev,"/dev/%s",buffer);
+
+//is a file system
+							if(strcmp(udev_device_get_property_value(thedev,"ID_FS_USAGE"),"filesystem")==0)
+								{
+									attached[j].x=xpos;
+									attached[j].y=ypos;
+									ypos++;
+									if(ypos>MAXGRIDY)
+										{
+											ypos=0;
+											xpos++;
+										}
+									attached[j].ignore=false;
+									ptr=udev_device_get_property_value(thedev,"ID_FS_LABEL");
+									if(ptr!=NULL)
+										attached[j].label=strdup(ptr);
+									else
+										{
+											ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
+											attached[j].label=strndup(ptr,16);
+										}
+									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
+										attached[j].dvd=true;
+									
+									usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
+									if(usbdev!=NULL)
+										attached[j].usb=true;
+								
+								}
+						}
+					udev_device_unref (thedev);
+				}
+		}
+	pclose(fp);
+	}
+	udev_unref(udev);
+/*
+	for(int j=0; j<numberOfDisksAttached; j++)
+		{
+			if(attached[j].ignore==false)
+				printf("j=%i,uuid=%s , dev=%s , label=%s , sysname=%s , x=%i , y=%i\n",j,attached[j].uuid,attached[j].dev,attached[j].label,attached[j].sysname,attached[j].x,attached[j].y);
+		}
+*/
+
+}
+
