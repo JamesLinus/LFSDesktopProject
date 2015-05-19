@@ -20,8 +20,9 @@
 #include "files.h"
 #include "disks.h"
 
-disks	*attached;
-int		numberOfDisksAttached=-1000;
+disks		*attached;
+int			numberOfDisksAttached=-1000;
+const char	*iconDiskType[]={"harddisk","harddisk-usb","dev-dvd","dev-dvd","harddisk-usb"};
 
 void mountDisk(int x, int y)
 {
@@ -328,6 +329,7 @@ void drawIcons(void)
 	int			boxx,boxy,boxw,boxh;
 	XRectangle	rect;
 	int			diskx,disky;
+	bool		mounted=false;
 	
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
@@ -349,43 +351,39 @@ void drawIcons(void)
 					diskx=attached[j].x*gridSize+gridBorder;
 					disky=attached[j].y*gridSize+gridBorder;
 
-bool	mounted=false;
 					if(strlen(line)>0)
 						mounted=true;
-
-					if(attached[j].dvd==true)
-						drawImage("dev-dvd",attached[j].label,diskx,disky,mounted);
-					else if(attached[j].usb==true)
-						drawImage("harddisk-usb",attached[j].label,diskx,disky,mounted);
 					else
-						drawImage("harddisk",attached[j].label,diskx,disky,mounted);
+						mounted=false;
 
-						rect.x=diskx;
-						rect.y=disky;
-						rect.width=iconSize;
-						rect.height=iconSize;
-						XUnionRectWithRegion(&rect,rg, rg);
+					drawImage((char*)iconDiskType[attached[j].type],attached[j].label,diskx,disky,mounted);
 
-						XSetClipMask(display,gc,0);
+					rect.x=diskx;
+					rect.y=disky;
+					rect.width=iconSize;
+					rect.height=iconSize;
+					XUnionRectWithRegion(&rect,rg, rg);
 
-						fontheight=labelFont->ascent+labelFont->descent;
-						stringwidth=XTextWidth(labelFont,attached[j].label,strlen(attached[j].label));
+					XSetClipMask(display,gc,0);
 
-						boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-						boxy=disky+iconSize+1;
-						boxw=stringwidth+2;
-						boxh=fontheight-2;
+					fontheight=labelFont->ascent+labelFont->descent;
+					stringwidth=XTextWidth(labelFont,attached[j].label,strlen(attached[j].label));
 
-						XSetForeground(display,gc,labelBackground);
-						XSetFillStyle(display,gc,FillSolid);
-						XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
+					boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+					boxy=disky+iconSize+1;
+					boxw=stringwidth+2;
+					boxh=fontheight-2;
 
-						XSetForeground(display,labelGC,labelForeground);
-						XSetBackground(display,labelGC,labelBackground);
+					XSetForeground(display,gc,labelBackground);
+					XSetFillStyle(display,gc,FillSolid);
+					XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
 
-						XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,attached[j].label,strlen(attached[j].label));
-					}
+					XSetForeground(display,labelGC,labelForeground);
+					XSetBackground(display,labelGC,labelBackground);
+
+					XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,attached[j].label,strlen(attached[j].label));
 				}
+		}
 }
 
 void scanForMountableDisks(void)
@@ -462,13 +460,19 @@ void scanForMountableDisks(void)
 											ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
 											attached[j].label=strndup(ptr,16);
 										}
+
 									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
-										attached[j].dvd=true;
+										{
+											attached[j].dvd=true;
+											attached[j].type=DVD;
+										}
 									
 									usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
 									if(usbdev!=NULL)
-										attached[j].usb=true;
-								
+										{
+											attached[j].usb=true;
+											attached[j].type=USB;
+										}
 								}
 						}
 					udev_device_unref (thedev);
