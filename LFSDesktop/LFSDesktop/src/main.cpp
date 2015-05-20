@@ -40,19 +40,6 @@ struct	option long_options[] =
 	{0,0,0,0}
 };
 
-char	*savedDiskUUID;
-int		savedDiskX;
-int		savedDiskY;
-
-args	savedDiskData[]
-{
-	{"diskuuid",TYPESTRING,&savedDiskUUID},
-	{"diskx",TYPEINT,&savedDiskX},
-	{"disky",TYPEINT,&savedDiskY},
-
-	{NULL,0,NULL}
-};
-
 bool	needsRefresh=true;
 
 void printhelp(void)
@@ -86,10 +73,10 @@ bool findIcon(int x, int y)
 			while(fgets(line,2048,fp))
 				{
 					line[strlen(line)-1]=0;
-					loadVarsFromFile(line,diskData);
 					if(strlen(line)>0)
 						{
-							if(strlen(diskUUID)>1)
+							loadVarsFromFile(line,diskData);
+							if((diskUUID!=NULL) && (strlen(diskUUID)>1))
 								{
 									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
 										{
@@ -110,53 +97,6 @@ void  alarmCallBack(int sig)
 	needsRefresh=true;
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
-}
-
-void getSavedDiskData(void)
-{
-	FILE	*fp;
-	char	buffer[BUFFERSIZE];
-	int		cnt;
-
-	if(saved!=NULL)
-		{
-			for(int j=0;j<savedFileCount;j++)
-				{
-					if(saved[j].uuid!=NULL)
-						free(saved[j].uuid);
-				}
-			free(saved);
-			saved=NULL;
-		}
-
-	sprintf(buffer,"ls -1 %s|wc -l",diskInfoPath);
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,BUFFERSIZE,fp);
-			savedFileCount=atoi(buffer);
-			pclose(fp);
-		}
-
-	saved=(saveDisks*)calloc(savedFileCount,sizeof(saveDisks));
-	cnt=0;
-	sprintf(buffer,"find %s -mindepth 1",diskInfoPath);
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			while(fgets(buffer,BUFFERSIZE,fp))
-				{
-					buffer[strlen(buffer)-1]=0;
-					loadVarsFromFile(buffer,savedDiskData);
-					saved[cnt].uuid=strdup(savedDiskUUID);
-					saved[cnt].x=savedDiskX;
-					saved[cnt].y=savedDiskY;
-					xySlot[savedDiskX][savedDiskY]=1;
-					cnt++;
-				}
-			pclose(fp);
-		}
 }
 
 int main(int argc,char **argv)
@@ -301,13 +241,9 @@ int main(int argc,char **argv)
 			xySlot[xx][yy]=0;
 
 	getSavedDiskData();
-
+	scanForMountableDisks();
 	alarm(refreshRate);
 
-//	scanForMountableDisks();
-
-	//getDiskList(diskData);
-	//createDiskInfo();
 	XdbeSwapBuffers(display,&swapInfo,1);
 
 	char	*fdiskname=NULL;
@@ -317,14 +253,13 @@ int main(int argc,char **argv)
 	bool	buttonDown=false;
 	int		oldboxx=-1,oldboxy=-1;
 	bool	dragging=false;
+
 	while(done)
 		{
 			if(needsRefresh==true)
 				{
 					scanForMountableDisks();
 					drawIcons();
-//printf("XXXXXXX\n");
-					//getDiskList(diskData);
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;
 				}
@@ -446,20 +381,6 @@ int main(int argc,char **argv)
 				case MotionNotify:
 				{
 					int newboxx,newboxy;
-					char	*dn=NULL;
-					char	*du=NULL;
-					int		dx=0;
-					int		dy=0;
-					char	*dtype=NULL;
-					args	diskdata[]=
-					{
-						{"diskname",TYPESTRING,&dn},
-						{"diskuuid",TYPESTRING,&du},
-						{"diskx",TYPEINT,&dx},
-						{"disky",TYPEINT,&dy},
-						{"type",TYPESTRING,&dtype},
-						{NULL,0,NULL}
-					};
 
 					if(foundIcon==true && buttonDown==true)
 						{
@@ -476,8 +397,6 @@ int main(int argc,char **argv)
 
 									oldboxx=ev.xmotion.x;
 									oldboxy=ev.xmotion.y;
-									dx=0;
-									dy=0;
 
 									XSetForeground(display,gc,labelBackground);
 									XSetFillStyle(display,gc,FillSolid);

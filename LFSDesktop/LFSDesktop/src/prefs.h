@@ -25,7 +25,6 @@ struct args
 	void*		data;
 };
 
-extern args				diskData[];
 extern args				desktopPrefs[];
 
 extern char				*iconTheme;

@@ -11,7 +11,6 @@
 #define _DISKS_
 
 #define READFROM "ls -1 /sys/class/block"
-#define BUFFERSIZE 256
 
 enum {HARDDIVE=0,USB,CDROM,DVD,STICK};
 
@@ -46,9 +45,6 @@ extern int			numberOfDisksAttached;
 extern const char	*iconDiskType[];
 
 void mountDisk(int x,int y);
-void createDiskInfo(void);
-//void getDiskList(args *diskdata);
 void scanForMountableDisks(void);
-void drawIcons(void);
 
 #endif

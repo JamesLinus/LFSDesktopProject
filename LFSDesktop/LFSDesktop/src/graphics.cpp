@@ -20,6 +20,7 @@
 
 #include "prefs.h"
 #include "files.h"
+#include "disks.h"
 #include "graphics.h"
 
 cairo_t	*cr;
@@ -61,6 +62,72 @@ void drawImage(char *type,char *label,int x,int y,bool mounted)
 				cairo_set_source_surface(cr,((diskIconStruct*)retentry->data)->cairoImage,0,0);
 				cairo_paint_with_alpha(cr,0.5);
 			cairo_restore(cr);
+		}
+}
+
+void drawIcons(void)
+{
+	FILE	*tp;
+	char	*com;
+	char	line[BUFFERSIZE];
+	XColor		colour;
+	int			fontheight;
+	int			stringwidth;
+
+	int			boxx,boxy,boxw,boxh;
+	XRectangle	rect;
+	int			diskx,disky;
+	bool		mounted=false;
+
+	XDestroyRegion(rg);
+	rg=XCreateRegion();
+
+	for(int j=0; j<numberOfDisksAttached; j++)
+		{
+			if(attached[j].ignore==false)
+				{
+					asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
+					line[0]=0;
+					tp=popen(com,"r");
+					free(com);
+					fgets(line,BUFFERSIZE,tp);
+					pclose(tp);
+
+					diskx=attached[j].x*gridSize+gridBorder;
+					disky=attached[j].y*gridSize+gridBorder;
+
+					if(strlen(line)>0)
+						mounted=true;
+					else
+						mounted=false;
+
+					drawImage((char*)iconDiskType[attached[j].type],attached[j].label,diskx,disky,mounted);
+
+					rect.x=diskx;
+					rect.y=disky;
+					rect.width=iconSize;
+					rect.height=iconSize;
+					XUnionRectWithRegion(&rect,rg, rg);
+
+					XSetClipMask(display,gc,0);
+
+					fontheight=labelFont->ascent+labelFont->descent;
+					stringwidth=XTextWidth(labelFont,attached[j].label,strlen(attached[j].label));
+
+					boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+					boxy=disky+iconSize+1;
+					boxw=stringwidth+2;
+					boxh=fontheight-2;
+
+					XSetForeground(display,gc,labelBackground);
+					XSetFillStyle(display,gc,FillSolid);
+					XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
+
+					XSetForeground(display,labelGC,labelForeground);
+					XSetBackground(display,labelGC,labelBackground);
+
+					XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,attached[j].label,strlen(attached[j].label));
+				}
 		}
 }
 

@@ -44,17 +44,6 @@ unsigned long	labelForeground;
 
 int				**xySlot;
 
-args			diskData[]=
-{
-	{"diskname",TYPESTRING,&diskName},
-	{"diskuuid",TYPESTRING,&diskUUID},
-	{"diskx",TYPEINT,&diskXPos},
-	{"disky",TYPEINT,&diskYPos},
-	{"type",TYPESTRING,&diskType},
-
-	{NULL,0,NULL}
-};
-
 args			desktopPrefs[]=
 {
 	{"icontheme",TYPESTRING,&iconTheme},

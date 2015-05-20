@@ -17,6 +17,7 @@
 
 #include "prefs.h"
 #include "graphics.h"
+#include "disks.h"
 #include "files.h"
 
 char		*diskInfoPath;
@@ -24,15 +25,27 @@ char		*cachePath;
 char		*prefsPath;
 int			savedFileCount;
 
-char		*diskName;
-char		*diskUUID;
-int			diskXPos;
-int			diskYPos;
-char		*diskType;
+char		*diskName=NULL;
+char		*diskUUID=NULL;
+int			diskXPos=-1;
+int			diskYPos=-1;
+char		*diskType=NULL;
 
 diskInfo	*disksDataPtr;
 
 struct hsearch_data	hashtab;
+
+args			diskData[]=
+{
+	{"diskname",TYPESTRING,&diskName},
+	{"diskuuid",TYPESTRING,&diskUUID},
+	{"diskx",TYPEINT,&diskXPos},
+	{"disky",TYPEINT,&diskYPos},
+	{"type",TYPESTRING,&diskType},
+
+	{NULL,0,NULL}
+};
+
 
 int fileExists(char *name)
 {
@@ -108,7 +121,7 @@ void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char
 	diskUUID=uuid;
 	diskXPos=x;
 	diskYPos=y;
-	diskType=type;
+	diskType=type;;
 
 	if(diskfilepath==NULL)
 		{
@@ -118,8 +131,60 @@ void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char
 		}
 	else
 		saveVarsToFile(diskfilepath,diskData);
+
+	diskName=NULL;
+	diskUUID=NULL;
+	diskXPos=-1;
+	diskYPos=-1;
+	diskType=NULL;
 }
 
+void getSavedDiskData(void)
+{
+	FILE	*fp;
+	char	buffer[BUFFERSIZE];
+	int		cnt;
+
+	if(saved!=NULL)
+		{
+			for(int j=0;j<savedFileCount;j++)
+				{
+					if(saved[j].uuid!=NULL)
+						free(saved[j].uuid);
+				}
+			free(saved);
+			saved=NULL;
+		}
+
+	sprintf(buffer,"ls -1 %s|wc -l",diskInfoPath);
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,BUFFERSIZE,fp);
+			savedFileCount=atoi(buffer);
+			pclose(fp);
+		}
+
+	saved=(saveDisks*)calloc(savedFileCount,sizeof(saveDisks));
+	cnt=0;
+	sprintf(buffer,"find %s -mindepth 1",diskInfoPath);
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			while(fgets(buffer,BUFFERSIZE,fp))
+				{
+					buffer[strlen(buffer)-1]=0;
+					loadVarsFromFile(buffer,diskData);
+					saved[cnt].uuid=strdup(diskUUID);
+					saved[cnt].x=diskXPos;
+					saved[cnt].y=diskYPos;
+					xySlot[diskXPos][diskYPos]=1;
+					cnt++;
+				}
+			pclose(fp);
+		}
+}
 
 
 

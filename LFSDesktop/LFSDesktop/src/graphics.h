@@ -12,6 +12,8 @@
 
 #include <cairo.h>
 
+#define BUFFERSIZE 256
+
 struct Hints
 {
 	unsigned long   flags;
@@ -34,5 +36,6 @@ void drawImage(char *type,char *label,int x,int y,bool mounted);
 void createColours(void);
 int get_argb_visual(Visual** vis,int *depth);
 void createDesktopWindow(void);
+void drawIcons(void);
 
 #endif

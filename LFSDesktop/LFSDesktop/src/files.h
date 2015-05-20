@@ -26,6 +26,7 @@ struct diskInfo
 	char		*type;
 };
 
+
 extern diskInfo	*disksDataPtr;
 
 extern char		*diskInfoPath;
@@ -33,6 +34,7 @@ extern char		*cachePath;
 extern char		*prefsPath;
 extern int		savedFileCount;
 
+extern args		diskData[];
 extern char		*diskName;
 extern char		*diskUUID;
 extern int		diskXPos;
@@ -45,5 +47,6 @@ int fileExists(char *name);
 void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata);
 char* pathToIcon(char* name);
 void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type);
+void getSavedDiskData(void);
 
 #endif
