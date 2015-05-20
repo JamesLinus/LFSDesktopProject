@@ -31,7 +31,7 @@
 
 #define UNKNOWNARG -100
 
-struct option long_options[] =
+struct	option long_options[] =
 {
 	{"clean",0,0,'c'},
 	{"theme",1,0,'t'},
@@ -40,7 +40,20 @@ struct option long_options[] =
 	{0,0,0,0}
 };
 
-bool			needsRefresh=true;
+char	*savedDiskUUID;
+int		savedDiskX;
+int		savedDiskY;
+
+args	savedDiskData[]
+{
+	{"diskuuid",TYPESTRING,&savedDiskUUID},
+	{"diskx",TYPEINT,&savedDiskX},
+	{"disky",TYPEINT,&savedDiskY},
+
+	{NULL,0,NULL}
+};
+
+bool	needsRefresh=true;
 
 void printhelp(void)
 {
@@ -99,6 +112,53 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
+void getSavedDiskData(void)
+{
+	FILE	*fp;
+	char	buffer[BUFFERSIZE];
+	int		cnt;
+
+	if(saved!=NULL)
+		{
+			for(int j=0;j<savedFileCount;j++)
+				{
+					if(saved[j].uuid!=NULL)
+						free(saved[j].uuid);
+				}
+			free(saved);
+			saved=NULL;
+		}
+
+	sprintf(buffer,"ls -1 %s|wc -l",diskInfoPath);
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,BUFFERSIZE,fp);
+			savedFileCount=atoi(buffer);
+			pclose(fp);
+		}
+
+	saved=(saveDisks*)calloc(savedFileCount,sizeof(saveDisks));
+	cnt=0;
+	sprintf(buffer,"find %s -mindepth 1",diskInfoPath);
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			while(fgets(buffer,BUFFERSIZE,fp))
+				{
+					buffer[strlen(buffer)-1]=0;
+					loadVarsFromFile(buffer,savedDiskData);
+					saved[cnt].uuid=strdup(savedDiskUUID);
+					saved[cnt].x=savedDiskX;
+					saved[cnt].y=savedDiskY;
+					xySlot[savedDiskX][savedDiskY]=1;
+					cnt++;
+				}
+			pclose(fp);
+		}
+}
+
 int main(int argc,char **argv)
 {
 	int				c;
@@ -115,8 +175,6 @@ int main(int argc,char **argv)
 	Time			time=0;
 	bool			firstClick=false;
 	bool			foundIcon=false;
-
-//	scanForMountableDisks();
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -242,6 +300,8 @@ int main(int argc,char **argv)
 		for(int xx=0; xx<xCnt; xx++)
 			xySlot[xx][yy]=0;
 
+	getSavedDiskData();
+
 	alarm(refreshRate);
 
 //	scanForMountableDisks();
@@ -355,6 +415,8 @@ int main(int argc,char **argv)
 									xySlot[oldx][oldy]=0;
 									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
 									needsRefresh=true;
+									getSavedDiskData();
+									scanForMountableDisks();
 								}
 
 							XSetForeground(display,gc,0);

@@ -4,7 +4,7 @@
 *     kdhedger68713@gmail.com
 *
 *     disks.cpp
-* 
+*
 ******************************************************/
 
 #include <X11/extensions/shape.h>
@@ -20,9 +20,10 @@
 #include "files.h"
 #include "disks.h"
 
-disks		*attached;
+disks		*attached=NULL;
+saveDisks	*saved=NULL;
 int			numberOfDisksAttached=-1000;
-const char	*iconDiskType[]={"harddisk","harddisk-usb","dev-dvd","dev-dvd","harddisk-usb"};
+const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-dvd","dev-dvd","harddisk-usb"};
 
 void mountDisk(int x, int y)
 {
@@ -60,7 +61,7 @@ void mountDisk(int x, int y)
 											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
 											system(command);
 											free(command);
-											
+
 											pclose(fp);
 											return;
 										}
@@ -189,6 +190,7 @@ void createDiskInfo(void)
 	free(command);
 }
 
+#if 0
 void getDiskList(args *diskdata)
 {
 	FILE		*fp;
@@ -297,10 +299,10 @@ void getDiskList(args *diskdata)
 	free(command);
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
-
+#endif
 void deleteDiskInfo(void)
 {
-	for(int j=0;j<numberOfDisksAttached;j++)
+	for(int j=0; j<numberOfDisksAttached; j++)
 		{
 			if(attached[j].uuid!=NULL)
 				free(attached[j].uuid);
@@ -330,7 +332,7 @@ void drawIcons(void)
 	XRectangle	rect;
 	int			diskx,disky;
 	bool		mounted=false;
-	
+
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
 
@@ -338,9 +340,6 @@ void drawIcons(void)
 		{
 			if(attached[j].ignore==false)
 				{
-				printf("j=%i,uuid=%s , dev=%s , label=%s , sysname=%s , x=%i , y=%i\n",j,attached[j].uuid,attached[j].dev,attached[j].label,attached[j].sysname,attached[j].x,attached[j].y);
-				
-
 					asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
 					line[0]=0;
 					tp=popen(com,"r");
@@ -386,6 +385,19 @@ void drawIcons(void)
 		}
 }
 
+void getDiskPos(char* uuid,int* xptr,int* yptr)
+{
+	for (int j=0;j<savedFileCount;j++)
+		{
+			if(strcmp(uuid,saved[j].uuid)==0)
+				{
+					*xptr=saved[j].x;
+					*yptr=saved[j].y;
+					return;
+				}
+		}
+}
+
 void scanForMountableDisks(void)
 {
 	struct udev *udev;
@@ -422,72 +434,72 @@ void scanForMountableDisks(void)
 
 	fp=popen(READFROM,"r");
 	if(fp!=NULL)
-	{
-	for(int j=0; j<numofdisks; j++)
 		{
-			buffer[0]=0;
-			fgets(buffer,BUFFERSIZE,fp);
-			buffer[strlen(buffer)-1]=0;
-			udev_device	*thedev=udev_device_new_from_subsystem_sysname(udev,"block",buffer);
-			if(thedev!=NULL)
+			for(int j=0; j<numofdisks; j++)
 				{
-					attached[j].ignore=true;
-					if(udev_device_get_property_value(thedev,"ID_FS_UUID")!=NULL)
+					buffer[0]=0;
+					fgets(buffer,BUFFERSIZE,fp);
+					buffer[strlen(buffer)-1]=0;
+					udev_device	*thedev=udev_device_new_from_subsystem_sysname(udev,"block",buffer);
+					if(thedev!=NULL)
 						{
-//get uuid
-							attached[j].uuid=strdup(udev_device_get_property_value(thedev,"ID_FS_UUID"));
-//partname
-							attached[j].sysname=strdup(buffer);
-							asprintf(&attached[j].dev,"/dev/%s",buffer);
-
-//is a file system
-							if(strcmp(udev_device_get_property_value(thedev,"ID_FS_USAGE"),"filesystem")==0)
+							attached[j].ignore=true;
+							if(udev_device_get_property_value(thedev,"ID_FS_UUID")!=NULL)
 								{
-									attached[j].x=xpos;
-									attached[j].y=ypos;
-									ypos++;
-									if(ypos>MAXGRIDY)
+//get uuid
+									attached[j].uuid=strdup(udev_device_get_property_value(thedev,"ID_FS_UUID"));
+//partname
+									attached[j].sysname=strdup(buffer);
+									asprintf(&attached[j].dev,"/dev/%s",buffer);
+//is a file system
+									if(strcmp(udev_device_get_property_value(thedev,"ID_FS_USAGE"),"filesystem")==0)
 										{
-											ypos=0;
-											xpos++;
-										}
-									attached[j].ignore=false;
-									ptr=udev_device_get_property_value(thedev,"ID_FS_LABEL");
-									if(ptr!=NULL)
-										attached[j].label=strdup(ptr);
-									else
-										{
-											ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
-											attached[j].label=strndup(ptr,16);
-										}
+											getDiskPos(attached[j].uuid,&xpos,&ypos);
+											attached[j].x=xpos;
+											attached[j].y=ypos;
+											//ypos++;
+											//if(ypos>MAXGRIDY)
+											//	{
+											//		ypos=0;
+											//		xpos++;
+											//	}
+											attached[j].ignore=false;
+											ptr=udev_device_get_property_value(thedev,"ID_FS_LABEL");
+											if(ptr!=NULL)
+												attached[j].label=strdup(ptr);
+											else
+												{
+													ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
+													attached[j].label=strndup(ptr,16);
+												}
 
-									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
-										{
-											attached[j].dvd=true;
-											attached[j].type=DVD;
-										}
-									
-									usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
-									if(usbdev!=NULL)
-										{
-											attached[j].usb=true;
-											attached[j].type=USB;
+											if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
+												{
+													attached[j].dvd=true;
+													attached[j].type=DVD;
+												}
+
+											usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
+											if(usbdev!=NULL)
+												{
+													attached[j].usb=true;
+													attached[j].type=USB;
+												}
 										}
 								}
+							udev_device_unref (thedev);
 						}
-					udev_device_unref (thedev);
 				}
+			pclose(fp);
 		}
-	pclose(fp);
-	}
 	udev_unref(udev);
-/*
-	for(int j=0; j<numberOfDisksAttached; j++)
-		{
-			if(attached[j].ignore==false)
-				printf("j=%i,uuid=%s , dev=%s , label=%s , sysname=%s , x=%i , y=%i\n",j,attached[j].uuid,attached[j].dev,attached[j].label,attached[j].sysname,attached[j].x,attached[j].y);
-		}
-*/
+	/*
+		for(int j=0; j<numberOfDisksAttached; j++)
+			{
+				if(attached[j].ignore==false)
+					printf("j=%i,uuid=%s , dev=%s , label=%s , sysname=%s , x=%i , y=%i\n",j,attached[j].uuid,attached[j].dev,attached[j].label,attached[j].sysname,attached[j].x,attached[j].y);
+			}
+	*/
 
 }
 

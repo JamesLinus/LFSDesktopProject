@@ -22,6 +22,7 @@
 char		*diskInfoPath;
 char		*cachePath;
 char		*prefsPath;
+int			savedFileCount;
 
 char		*diskName;
 char		*diskUUID;

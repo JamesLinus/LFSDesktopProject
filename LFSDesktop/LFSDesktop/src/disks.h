@@ -33,13 +33,21 @@ struct disks
 	int				type;
 };
 
+struct	saveDisks
+{
+	char			*uuid;
+	int				x;
+	int				y;
+};
+
 extern disks		*attached;
+extern saveDisks	*saved;
 extern int			numberOfDisksAttached;
 extern const char	*iconDiskType[];
 
 void mountDisk(int x,int y);
 void createDiskInfo(void);
-void getDiskList(args *diskdata);
+//void getDiskList(args *diskdata);
 void scanForMountableDisks(void);
 void drawIcons(void);
 

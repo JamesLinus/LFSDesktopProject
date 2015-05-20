@@ -31,6 +31,7 @@ extern diskInfo	*disksDataPtr;
 extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;
+extern int		savedFileCount;
 
 extern char		*diskName;
 extern char		*diskUUID;
