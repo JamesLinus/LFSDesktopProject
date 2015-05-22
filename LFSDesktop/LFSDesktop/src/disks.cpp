@@ -46,19 +46,25 @@ void mountDisk(int x, int y)
 					line[strlen(line)-1]=0;
 					if(strlen(line)>0)
 						{
-							loadVarsFromFile(line,diskData);
-							if(strlen(diskUUID)>1)
+							//loadVarsFromFile(line,diskData);
+							loadVarsFromFile(line,globalFileData);
+							//if(strlen(diskUUID)>1)
+							if(strlen(fileDiskUUID)>1)
 								{
-									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
+									//if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
+									if((x>=(fileDiskXPos*gridSize+gridBorder))&&(x<=(fileDiskXPos*gridSize+gridBorder)+iconSize)&&(y>=(fileDiskYPos*gridSize+gridBorder))&&(y<=(fileDiskYPos*gridSize+gridBorder)+iconSize))
 										{
 #ifdef _USESUIDHELPER_
-											asprintf(&command,"%s %s /media/%s",HELPERAPP,diskUUID,diskName);
+											//asprintf(&command,"%s %s /media/%s",HELPERAPP,diskUUID,diskName);
+											asprintf(&command,"%s %s /media/%s",HELPERAPP,fileDiskUUID,fileDiskLabel);
 #else
-											asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
+											//asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
+											asprintf(&command,"udevil mount `findfs UUID=%s`",fileDiskUUID);
 #endif
 											system(command);
 											free(command);
-											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
+											//asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
+											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",fileDiskUUID);
 											system(command);
 											free(command);
 
@@ -145,6 +151,7 @@ void scanForMountableDisks(void)
 	const char	*ptr;
 	int			xpos=0,ypos=0;
 	udev_device *usbdev;
+	udev_device	*thedev;
 
 	/* Create the udev object */
 	udev=udev_new();
@@ -173,12 +180,12 @@ void scanForMountableDisks(void)
 	fp=popen(READFROM,"r");
 	if(fp!=NULL)
 		{
-			for(int j=0;j<numofdisks;j++)
+			for(int j=0;j<numberOfDisksAttached;j++)
 				{
 					buffer[0]=0;
 					fgets(buffer,BUFFERSIZE,fp);
 					buffer[strlen(buffer)-1]=0;
-					udev_device	*thedev=udev_device_new_from_subsystem_sysname(udev,"block",buffer);
+					thedev=udev_device_new_from_subsystem_sysname(udev,"block",buffer);
 					if(thedev!=NULL)
 						{
 							attached[j].ignore=true;
@@ -244,12 +251,14 @@ void scanForMountableDisks(void)
 													attached[j].x=xpos;
 													attached[j].y=ypos;
 													sprintf(buffer,"%s/%s",diskInfoPath,attached[j].uuid);
-													makeDiskInfofile(buffer,attached[j].label,attached[j].uuid,attached[j].x,attached[j].y,(char*)iconDiskType[attached[j].type]);
+													DEBUGSTR(attached[j].uuid);
+													saveInfofile(DISKFOLDER,attached[j].label,NULL,NULL,attached[j].uuid,(char*)iconDiskType[attached[j].type],attached[j].x,attached[j].y);
+													//makeDiskInfofile(buffer,attached[j].label,attached[j].uuid,attached[j].x,attached[j].y,(char*)iconDiskType[attached[j].type]);
 													getSavedDiskData();
 												}
 										}
 								}
-							udev_device_unref (thedev);
+							udev_device_unref(thedev);
 						}
 				}
 			pclose(fp);

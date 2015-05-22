@@ -75,7 +75,8 @@ void saveVarsToFile(const char* filepath,args* dataptr)
 							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
 							break;
 						case TYPESTRING:
-							fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
+							if(*(char**)(dataptr[cnt].data)!=NULL)
+								fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
 							break;
 						case TYPEBOOL:
 							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);

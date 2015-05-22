@@ -55,7 +55,8 @@ void printhelp(void)
 	      );
 }
 
-int	foundDiskNumber=-1;
+int		foundDiskNumber=-1;
+bool	isDisk=false;
 
 bool findIcon(int x, int y)
 {
@@ -72,74 +73,34 @@ bool findIcon(int x, int y)
 		{
 			if((x>=(attached[j].x*gridSize+gridBorder))&&(x<=(attached[j].x*gridSize+gridBorder)+iconSize)&&(y>=(attached[j].y*gridSize+gridBorder))&&(y<=(attached[j].y*gridSize+gridBorder)+iconSize))
 				{
-					diskXPos=attached[j].x;
-					diskYPos=attached[j].y;
+					if(attached[j].uuid!=NULL)
+						{
+							//diskXPos=attached[j].x;
+							//diskYPos=attached[j].y;
+							fileDiskXPos=attached[j].x;
+							fileDiskYPos=attached[j].y;
+							foundDiskNumber=j;
+							isDisk=true;
+							return(true);
+					}
+				}
+		}
+
+	for(int j=0;j<desktopFilesCnt;j++)
+		{
+			if((x>=(fileInfoPtr[j].x*gridSize+gridBorder))&&(x<=(fileInfoPtr[j].x*gridSize+gridBorder)+iconSize)&&(y>=(fileInfoPtr[j].y*gridSize+gridBorder))&&(y<=(fileInfoPtr[j].y*gridSize+gridBorder)+iconSize))
+				{
+				//	diskXPos=fileInfoPtr[j].x;
+				//	diskYPos=fileInfoPtr[j].y;
+					fileDiskXPos=fileInfoPtr[j].x;
+					fileDiskYPos=fileInfoPtr[j].y;
 					foundDiskNumber=j;
+					isDisk=false;
 					return(true);
 				}
 		}
-return(false);
 
-	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
-	fp=popen(command,"r");
-	free(command);
-	if(fp!=NULL)
-		{
-			while(fgets(line,2048,fp))
-				{
-					line[strlen(line)-1]=0;
-					if(strlen(line)>0)
-						{
-							loadVarsFromFile(line,diskData);
-							if((diskUUID!=NULL) && (strlen(diskUUID)>1))
-								{
-									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
-										{
-											pclose(fp);
-											return(true);
-										}
-								}
-						}
-				}
-			pclose(fp);
-		}
-	return(false);
-}
 
-bool findIconXX(int x, int y)
-{
-	FILE	*fp;
-	FILE	*fd;
-	char	*command;
-	char	line[2048];
-	int		dx,dy;
-	char	label[256];
-	char	uuid[256];
-	char	dataline[256];
-
-	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
-	fp=popen(command,"r");
-	free(command);
-	if(fp!=NULL)
-		{
-			while(fgets(line,2048,fp))
-				{
-					line[strlen(line)-1]=0;
-					if(strlen(line)>0)
-						{
-							loadVarsFromFile(line,diskData);
-							if((diskUUID!=NULL) && (strlen(diskUUID)>1))
-								{
-									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
-										{
-											pclose(fp);
-											return(true);
-										}
-								}
-						}
-				}
-			pclose(fp);
-		}
 	return(false);
 }
 
@@ -293,37 +254,28 @@ int main(int argc,char **argv)
 			xySlot[xx][yy]=0;
 
 	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
-	asprintf(&command,"%s/home.rc",cachePath);
+	asprintf(&command,"%s/Home",cachePath);
 	desktopFilesCnt=0;
 	if(fileExists(command)!=0)
 		{
-			fw=fopen(command,"w");
-			if(fw!=NULL)
-				{
-					desktopFilesCnt=1;
-					fileInfoPtr[0].x=0;
-					fileInfoPtr[0].y=0;
-					fileInfoPtr[0].label=strdup("Home");
-					fileInfoPtr[0].mime=strdup("inode/directory");
-					fileInfoPtr[0].path=strdup(getenv("HOME"));
-
-					fprintf(fw,"label	%s\n",fileInfoPtr[0].label);
-					fprintf(fw,"mime	%s\n",fileInfoPtr[0].mime);
-					fprintf(fw,"path	%s\n",fileInfoPtr[0].path);
-					fprintf(fw,"xpos	%i\n",fileInfoPtr[0].x);
-					fprintf(fw,"ypos	%i\n",fileInfoPtr[0].y);
-					fclose(fw);
-				}
+			desktopFilesCnt=1;
+			fileInfoPtr[0].x=0;
+			fileInfoPtr[0].y=0;
+			fileInfoPtr[0].label=strdup("Home");
+			fileInfoPtr[0].mime=strdup("inode/directory");
+			fileInfoPtr[0].path=strdup(getenv("HOME"));
+			saveInfofile(CACHEFOLDER,fileInfoPtr[0].label,fileInfoPtr[0].mime,fileInfoPtr[0].path,NULL,NULL,fileInfoPtr[0].x,fileInfoPtr[0].y);
 		}
 	else
 		{
-			readDesktopFile("home");
+			readDesktopFile("Home");
 		}
-	
 	free(command);
 
 	getSavedDiskData();
+	DEBUGSTR("111111111");
 	scanForMountableDisks();
+	DEBUGSTR("2222222222");
 	alarm(refreshRate);
 
 	XdbeSwapBuffers(display,&swapInfo,1);
@@ -398,8 +350,10 @@ int main(int argc,char **argv)
 							//if(fdisktype!=NULL)
 							//	free(fdisktype);
 							//fdisktype=strdup(diskType);
-							oldx=diskXPos;
-							oldy=diskYPos;
+							//oldx=diskXPos;
+							//oldy=diskYPos;
+							oldx=fileDiskXPos;
+							oldy=fileDiskYPos;
 							oldboxx=ev.xbutton.x;
 							oldboxy=ev.xbutton.y;
 						}
@@ -414,9 +368,12 @@ int main(int argc,char **argv)
 							//	free(fdisktype);
 							fdisktype=NULL;
 							fdiskuuid=NULL;
-							diskName=NULL;
-							diskUUID=NULL;
-							diskType=NULL;
+							//diskName=NULL;
+							//diskUUID=NULL;
+							//diskType=NULL;
+							fileDiskLabel=NULL;
+							fileDiskUUID=NULL;
+							fileDiskType=NULL;
 							oldx=-1;
 							oldy=-1;
 							foundDiskNumber=-1;
@@ -438,10 +395,37 @@ int main(int argc,char **argv)
 									xySlot[oldx][oldy]=0;
 									//DEBUGVAL(foundDiskNumber);
 									//makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
-									makeDiskInfofile(NULL,attached[foundDiskNumber].label,attached[foundDiskNumber].uuid,newx,newy,(char*)iconDiskType[attached[foundDiskNumber].type]);
+									if(isDisk==true)
+										{
+										//void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y)
+											saveInfofile(DISKFOLDER,attached[foundDiskNumber].label,NULL,NULL,attached[foundDiskNumber].uuid,(char*)iconDiskType[attached[foundDiskNumber].type],newx,newy);
+											//makeDiskInfofile(NULL,attached[foundDiskNumber].label,attached[foundDiskNumber].uuid,newx,newy,(char*)iconDiskType[attached[foundDiskNumber].type]);
+										
+//											diskName=NULL;
+//	diskUUID=NULL;
+//	diskXPos=-1;
+//	diskYPos=-1;
+//	diskType=NULL;
+											fileDiskLabel=NULL;
+	fileDiskUUID=NULL;
+	fileDiskXPos=-1;
+	fileDiskYPos=-1;
+	fileDiskType=NULL;
+
+										}
+									else
+										{
+											saveInfofile(CACHEFOLDER,fileInfoPtr[foundDiskNumber].label,fileInfoPtr[foundDiskNumber].mime,fileInfoPtr[foundDiskNumber].path,NULL,NULL,newx,newy);
+											fileInfoPtr[foundDiskNumber].x=newx;
+											fileInfoPtr[foundDiskNumber].y=newy;
+										}
+									foundDiskNumber=0;
 									needsRefresh=true;
+									system("cat /home/keithhedger/.config/LFS/disks/f1f54821-49e3-42cc-9872-af2fcc6c82e9");
 									getSavedDiskData();
+									system("cat /home/keithhedger/.config/LFS/disks/f1f54821-49e3-42cc-9872-af2fcc6c82e9");
 									scanForMountableDisks();
+									system("cat /home/keithhedger/.config/LFS/disks/f1f54821-49e3-42cc-9872-af2fcc6c82e9");
 								}
 
 							XSetForeground(display,gc,0);
@@ -459,9 +443,12 @@ int main(int argc,char **argv)
 							//	free(fdisktype);
 							fdisktype=NULL;
 							fdiskuuid=NULL;
-							diskName=NULL;
-							diskUUID=NULL;
-							diskType=NULL;
+						//	diskName=NULL;
+						//	diskUUID=NULL;
+						//	diskType=NULL;
+							fileDiskLabel=NULL;
+							fileDiskUUID=NULL;
+							fileDiskType=NULL;
 							oldx=-1;
 							oldy=-1;
 							alarm(refreshRate);

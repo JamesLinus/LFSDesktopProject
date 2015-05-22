@@ -35,7 +35,6 @@ int			savedFileCount;
 
 //diskInfo	*disksDataPtr;
 fileInfo	*fileInfoPtr;
-int			desktopFilesCnt=0;
 
 struct hsearch_data	hashtab;
 
@@ -117,6 +116,7 @@ void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata)
 	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
 }
 
+#if 0
 void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type)
 {
 	char	*filepath;
@@ -141,6 +141,52 @@ void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char
 	diskXPos=-1;
 	diskYPos=-1;
 	diskType=NULL;
+}
+#endif
+/*
+extern char		*fileDiskLabel=NULL;
+extern char		*fileDiskMime=NULL;
+extern char		*fileDiskPath=NULL;
+extern char		*fileDiskUUID=NULL;
+extern char		*fileDiskType=NULL;
+extern int		fileDiskXPos=-1;
+extern int		fileDiskYPos=-1;
+*/
+void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y)
+{
+	char	*filepath;
+
+	fileDiskLabel=label;
+	fileDiskMime=mime;
+	fileDiskPath=path;
+	fileDiskUUID=uuid;
+	fileDiskType=type;
+	fileDiskXPos=x;
+	fileDiskYPos=y;
+
+	if(where==DISKFOLDER)
+		{
+			asprintf(&filepath,"%s/%s",diskInfoPath,uuid);
+			DEBUGSTR(filepath);
+			DEBUGVAL(x);
+			DEBUGVAL(y);
+			saveVarsToFile(filepath,globalFileData);
+		}
+	else
+		{
+		DEBUGSTR("XXXXXXXXXXXXXXXXXX");
+			asprintf(&filepath,"%s/%s",cachePath,label);
+			saveVarsToFile(filepath,globalFileData);
+		}
+	free(filepath);
+
+	fileDiskLabel=NULL;
+	fileDiskMime=NULL;
+	fileDiskPath=NULL;
+	fileDiskType=NULL;
+	fileDiskType=NULL;
+	fileDiskXPos=-1;
+	fileDiskYPos=-1;
 }
 
 void getSavedDiskData(void)
@@ -176,33 +222,49 @@ void getSavedDiskData(void)
 	fp=popen(buffer,"r");
 	if(fp!=NULL)
 		{
+		DEBUGSTR(buffer);
 			while(fgets(buffer,BUFFERSIZE,fp))
 				{
 					buffer[strlen(buffer)-1]=0;
-					loadVarsFromFile(buffer,diskData);
-					saved[cnt].uuid=strdup(diskUUID);
-					saved[cnt].x=diskXPos;
-					saved[cnt].y=diskYPos;
-					xySlot[diskXPos][diskYPos]=1;
+					//loadVarsFromFile(buffer,diskData);
+					loadVarsFromFile(buffer,globalFileData);
+					DEBUGSTR(fileDiskUUID);
+					//saved[cnt].uuid=strdup(diskUUID);
+					saved[cnt].uuid=strdup(fileDiskUUID);
+					//saved[cnt].x=diskXPos;
+					saved[cnt].x=fileDiskXPos;
+					//saved[cnt].y=diskYPos;
+					saved[cnt].y=fileDiskYPos;
+					//xySlot[diskXPos][diskYPos]=1;
+					xySlot[fileDiskXPos][fileDiskYPos]=1;
 					cnt++;
 				}
 			pclose(fp);
 		}
 }
 
+void getDesktopFiles(void)
+{
+	char	buffer[2048];
+	FILE	*fp;
+
+	
+}
 
 void readDesktopFile(const char* name)
 {
 	FILE	*fr;
 	char	buffer[2048];
 
-	snprintf(buffer,2047,"%s/%s.rc",cachePath,name);
+	snprintf(buffer,2047,"%s/%s",cachePath,name);
 	fr=fopen(buffer,"r");
 	if(fr!=NULL)
 		{
 			fscanf(fr,"label	%as\n",&fileInfoPtr[desktopFilesCnt].label);
 			fscanf(fr,"mime	%as\n",&fileInfoPtr[desktopFilesCnt].mime);
 			fscanf(fr,"path	%as\n",&fileInfoPtr[desktopFilesCnt].path);
+			fscanf(fr,"uuid	%*s\n",&fileInfoPtr[desktopFilesCnt].path);
+			fscanf(fr,"type	%*s\n",&fileInfoPtr[desktopFilesCnt].path);
 			fscanf(fr,"xpos	%i\n",&fileInfoPtr[desktopFilesCnt].x);
 			fscanf(fr,"ypos	%i\n",&fileInfoPtr[desktopFilesCnt].y);
 			desktopFilesCnt++;
