@@ -17,6 +17,12 @@
 
 #include "graphics.h"
 
+#define DEBUGSTR(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printString((char*)x)
+#define DEBUGVAL(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printInt((int)x)
+extern int			errLine;
+extern const char	*errFile;
+extern const char	*errFunc;
+
 struct diskInfo
 {
 	char		*name;
@@ -26,8 +32,20 @@ struct diskInfo
 	char		*type;
 };
 
+struct fileInfo
+{
+	char		*label;
+	char		*mime;
+	char		*path;
+	char		*icon;
+	int			x;
+	int			y;
+};
+
 
 extern diskInfo	*disksDataPtr;
+extern fileInfo	*fileInfoPtr;
+extern int		desktopFilesCnt;
 
 extern char		*diskInfoPath;
 extern char		*cachePath;
@@ -45,8 +63,11 @@ extern hsearch_data	hashtab;
 
 int fileExists(char *name);
 void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata);
-char* pathToIcon(char* name);
+char* pathToIcon(char* name,const char* catagory);
 void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type);
 void getSavedDiskData(void);
+void readDesktopFile(const char* name);
+void printString(char* str);
+void printInt(int v);
 
 #endif

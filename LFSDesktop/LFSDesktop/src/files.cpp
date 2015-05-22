@@ -20,6 +20,10 @@
 #include "disks.h"
 #include "files.h"
 
+int			errLine;
+const char	*errFile;
+const char	*errFunc;
+
 char		*diskInfoPath;
 char		*cachePath;
 char		*prefsPath;
@@ -32,6 +36,8 @@ int			diskYPos=-1;
 char		*diskType=NULL;
 
 diskInfo	*disksDataPtr;
+fileInfo	*fileInfoPtr;
+int			desktopFilesCnt=0;
 
 struct hsearch_data	hashtab;
 
@@ -80,14 +86,15 @@ char* defaultIcon(char *theme,char *name)
 	return(retstr);
 }
 
-char* pathToIcon(char* name)
+char* pathToIcon(char* name,const char* catagory)
 {
 	char	*command;
 	FILE	*fp;
 	char	buffer[2048];
 	char	*retstr=NULL;
 
-	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"devices\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name);
+	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
+	printf(">>%s<<\n",command);
 
 	fp=popen(command,"r");
 	free(command);
@@ -187,4 +194,38 @@ void getSavedDiskData(void)
 }
 
 
+void readDesktopFile(const char* name)
+{
+	FILE	*fr;
+	char	buffer[2048];
+
+	snprintf(buffer,2047,"%s/%s.rc",cachePath,name);
+	fr=fopen(buffer,"r");
+	if(fr!=NULL)
+		{
+			fscanf(fr,"label	%as\n",&fileInfoPtr[desktopFilesCnt].label);
+			fscanf(fr,"mime	%as\n",&fileInfoPtr[desktopFilesCnt].mime);
+			fscanf(fr,"path	%as\n",&fileInfoPtr[desktopFilesCnt].path);
+			fscanf(fr,"icon	%as\n",&fileInfoPtr[desktopFilesCnt].icon);
+			fscanf(fr,"xpos	%i\n",&fileInfoPtr[desktopFilesCnt].x);
+			fscanf(fr,"%*s	%i\n",&fileInfoPtr[desktopFilesCnt].y);
+			DEBUGVAL(fileInfoPtr[desktopFilesCnt].y);
+			desktopFilesCnt++;
+			fclose(fr);
+		}
+	
+		
+}
+
+void printString(char* str)
+{
+	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
+	printf(">>%s<<\n",str);
+}
+
+void printInt(int v)
+{
+	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
+	printf(">>%i<<\n",v);
+}
 

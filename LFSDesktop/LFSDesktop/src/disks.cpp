@@ -23,7 +23,7 @@
 disks		*attached=NULL;
 saveDisks	*saved=NULL;
 int			numberOfDisksAttached=-1000;
-const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash"};
+const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home"};
 
 void mountDisk(int x, int y)
 {

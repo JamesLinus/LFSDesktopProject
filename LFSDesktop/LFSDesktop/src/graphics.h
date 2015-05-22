@@ -31,7 +31,7 @@ struct	diskIconStruct
 
 extern cairo_t	*cr;
 
-void drawImage(char *type,char *label,int x,int y,bool mounted);
+void drawImage(char *type,const char *catagory,int x,int y,bool mounted);
 
 void createColours(void);
 int get_argb_visual(Visual** vis,int *depth);

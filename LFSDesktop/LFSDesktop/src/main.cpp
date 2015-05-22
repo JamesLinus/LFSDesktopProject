@@ -240,6 +240,38 @@ int main(int argc,char **argv)
 		for(int xx=0; xx<xCnt; xx++)
 			xySlot[xx][yy]=0;
 
+	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
+	asprintf(&command,"%s/home.rc",cachePath);
+	desktopFilesCnt=0;
+	if(fileExists(command)!=0)
+		{
+			fw=fopen(command,"w");
+			if(fw!=NULL)
+				{
+					desktopFilesCnt=1;
+					fileInfoPtr[0].x=0;
+					fileInfoPtr[0].y=0;
+					fileInfoPtr[0].label=strdup("Home");
+					fileInfoPtr[0].mime=strdup("inode/directory");
+					fileInfoPtr[0].path=strdup(getenv("HOME"));
+					fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
+
+					fprintf(fw,"label	%s\n",fileInfoPtr[0].label);
+					fprintf(fw,"mime	%s\n",fileInfoPtr[0].mime);
+					fprintf(fw,"path	%s\n",fileInfoPtr[0].path);
+					fprintf(fw,"icon	%s\n",fileInfoPtr[0].icon);
+					fprintf(fw,"xpos	%i\n",fileInfoPtr[0].x);
+					fprintf(fw,"ypos	%i\n",fileInfoPtr[0].y);
+					fclose(fw);
+				}
+		}
+	else
+		{
+			readDesktopFile("home");
+		}
+	
+	free(command);
+
 	getSavedDiskData();
 	scanForMountableDisks();
 	alarm(refreshRate);
@@ -274,7 +306,6 @@ int main(int argc,char **argv)
 				case ButtonPress:
 					if(ev.xbutton.button!=Button1)
 						break;
-					//printf("ButtonPress no %i b1=%i\n",ev.xbutton.button,Button1);
 					dragging=true;
 					buttonDown=true;
 					if(firstClick==false)
