@@ -131,16 +131,6 @@ void drawIcons(void)
 				}
 		}
 
-//draw extra icons from cache
-/*
-			fscanf(fr,"name	%as\n",fileInfoPtr[desktopFilesCnt].name);
-			fscanf(fr,"mime	%as\n",fileInfoPtr[desktopFilesCnt].mime);
-			fscanf(fr,"path	%as\n",fileInfoPtr[desktopFilesCnt].path);
-			fscanf(fr,"icon	%as\n",fileInfoPtr[desktopFilesCnt].icon);
-			fscanf(fr,"xpos	%as\n",fileInfoPtr[desktopFilesCnt].x);
-			fscanf(fr,"ypos	%as\n",fileInfoPtr[desktopFilesCnt].y);
-
-*/
 //draw home
 	diskx=fileInfoPtr[0].x*gridSize+gridBorder;
 	disky=fileInfoPtr[0].y*gridSize+gridBorder;

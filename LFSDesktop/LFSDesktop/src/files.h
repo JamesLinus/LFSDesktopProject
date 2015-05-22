@@ -27,13 +27,6 @@ extern char		*cachePath;
 extern char		*prefsPath;
 extern int		savedFileCount;
 
-//extern args		diskData[];
-//extern char		*diskName;
-//extern char		*diskUUID;
-//extern int		diskXPos;
-//extern int		diskYPos;
-//extern char		*diskType;
-
 extern hsearch_data	hashtab;
 
 int fileExists(char *name);
@@ -43,6 +36,7 @@ void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char
 void getSavedDiskData(void);
 void readDesktopFile(const char* name);
 void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y);
+int getSaveDiskNumber(char* uuid);
 
 void printString(char* str);
 void printInt(int v);

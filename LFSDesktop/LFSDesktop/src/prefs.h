@@ -18,15 +18,6 @@
 
 #define MAXGRIDY 4
 
-//enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
-
-//struct args
-//{
-//	const char*	name;
-//	int			type;
-//	void*		data;
-//};
-
 extern args				desktopPrefs[];
 
 extern char				*iconTheme;

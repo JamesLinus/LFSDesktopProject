@@ -273,16 +273,10 @@ int main(int argc,char **argv)
 	free(command);
 
 	getSavedDiskData();
-	DEBUGSTR("111111111");
 	scanForMountableDisks();
-	DEBUGSTR("2222222222");
 	alarm(refreshRate);
-
 	XdbeSwapBuffers(display,&swapInfo,1);
 
-	char	*fdiskname=NULL;
-	char	*fdiskuuid=NULL;
-	char	*fdisktype=NULL;
 	int		oldx=-1,oldy=-1;
 	bool	buttonDown=false;
 	int		oldboxx=-1,oldboxy=-1;
@@ -341,17 +335,6 @@ int main(int argc,char **argv)
 
 					if(foundIcon==true)
 						{
-							//if(fdiskname!=NULL)
-							//	free(fdiskname);
-							//fdiskname=strdup(diskName);
-							//if(fdiskuuid!=NULL)
-							//	free(fdiskuuid);
-							//fdiskuuid=strdup(diskUUID);
-							//if(fdisktype!=NULL)
-							//	free(fdisktype);
-							//fdisktype=strdup(diskType);
-							//oldx=diskXPos;
-							//oldy=diskYPos;
 							oldx=fileDiskXPos;
 							oldy=fileDiskYPos;
 							oldboxx=ev.xbutton.x;
@@ -359,18 +342,6 @@ int main(int argc,char **argv)
 						}
 					else
 						{
-							//if(fdiskname!=NULL)
-							//	free(fdiskname);
-							//fdiskname=NULL;
-							//if(fdiskuuid!=NULL)
-							//	free(fdiskuuid);
-							//if(fdisktype!=NULL)
-							//	free(fdisktype);
-							fdisktype=NULL;
-							fdiskuuid=NULL;
-							//diskName=NULL;
-							//diskUUID=NULL;
-							//diskType=NULL;
 							fileDiskLabel=NULL;
 							fileDiskUUID=NULL;
 							fileDiskType=NULL;
@@ -393,25 +364,14 @@ int main(int argc,char **argv)
 							if(xySlot[newx][newy]==0)
 								{
 									xySlot[oldx][oldy]=0;
-									//DEBUGVAL(foundDiskNumber);
-									//makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
 									if(isDisk==true)
 										{
-										//void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y)
 											saveInfofile(DISKFOLDER,attached[foundDiskNumber].label,NULL,NULL,attached[foundDiskNumber].uuid,(char*)iconDiskType[attached[foundDiskNumber].type],newx,newy);
-											//makeDiskInfofile(NULL,attached[foundDiskNumber].label,attached[foundDiskNumber].uuid,newx,newy,(char*)iconDiskType[attached[foundDiskNumber].type]);
-										
-//											diskName=NULL;
-//	diskUUID=NULL;
-//	diskXPos=-1;
-//	diskYPos=-1;
-//	diskType=NULL;
 											fileDiskLabel=NULL;
-	fileDiskUUID=NULL;
-	fileDiskXPos=-1;
-	fileDiskYPos=-1;
-	fileDiskType=NULL;
-
+											fileDiskUUID=NULL;
+											fileDiskXPos=-1;
+											fileDiskYPos=-1;
+											fileDiskType=NULL;
 										}
 									else
 										{
@@ -421,11 +381,8 @@ int main(int argc,char **argv)
 										}
 									foundDiskNumber=0;
 									needsRefresh=true;
-									system("cat /home/keithhedger/.config/LFS/disks/f1f54821-49e3-42cc-9872-af2fcc6c82e9");
 									getSavedDiskData();
-									system("cat /home/keithhedger/.config/LFS/disks/f1f54821-49e3-42cc-9872-af2fcc6c82e9");
 									scanForMountableDisks();
-									system("cat /home/keithhedger/.config/LFS/disks/f1f54821-49e3-42cc-9872-af2fcc6c82e9");
 								}
 
 							XSetForeground(display,gc,0);
@@ -434,18 +391,6 @@ int main(int argc,char **argv)
 							newy=((ev.xbutton.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
 							XDrawRectangle(display,rootWin,gc,newx,newy,gridSize,gridSize);
 
-							//if(fdiskname!=NULL)
-							//	free(fdiskname);
-							//fdiskname=NULL;
-							//if(fdiskuuid!=NULL)
-							//	free(fdiskuuid);
-							//if(fdisktype!=NULL)
-							//	free(fdisktype);
-							fdisktype=NULL;
-							fdiskuuid=NULL;
-						//	diskName=NULL;
-						//	diskUUID=NULL;
-						//	diskType=NULL;
 							fileDiskLabel=NULL;
 							fileDiskUUID=NULL;
 							fileDiskType=NULL;

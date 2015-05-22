@@ -46,24 +46,18 @@ void mountDisk(int x, int y)
 					line[strlen(line)-1]=0;
 					if(strlen(line)>0)
 						{
-							//loadVarsFromFile(line,diskData);
 							loadVarsFromFile(line,globalFileData);
-							//if(strlen(diskUUID)>1)
 							if(strlen(fileDiskUUID)>1)
 								{
-									//if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
 									if((x>=(fileDiskXPos*gridSize+gridBorder))&&(x<=(fileDiskXPos*gridSize+gridBorder)+iconSize)&&(y>=(fileDiskYPos*gridSize+gridBorder))&&(y<=(fileDiskYPos*gridSize+gridBorder)+iconSize))
 										{
 #ifdef _USESUIDHELPER_
-											//asprintf(&command,"%s %s /media/%s",HELPERAPP,diskUUID,diskName);
 											asprintf(&command,"%s %s /media/%s",HELPERAPP,fileDiskUUID,fileDiskLabel);
 #else
-											//asprintf(&command,"udevil mount `findfs UUID=%s`",diskUUID);
 											asprintf(&command,"udevil mount `findfs UUID=%s`",fileDiskUUID);
 #endif
 											system(command);
 											free(command);
-											//asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",diskUUID);
 											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",fileDiskUUID);
 											system(command);
 											free(command);
@@ -91,22 +85,6 @@ int getUSBData(const char *ptr)
 				return(CARD);
 		}
 	return(USB);
-	
-/*
-	char	*newdevice=NULL;
-
-	if((device!=NULL) && (strstr(device,"iPod")!=NULL))
-		{
-			asprintf(&newdevice,"multimedia-player");
-			return(newdevice);
-		}
-	if((device!=NULL) && (strstr(device,"SD/MMC")!=NULL))
-		{
-			asprintf(&newdevice,"media-sm");
-			return(newdevice);
-		}
-	return(newdevice);
-*/
 }
 
 void deleteDiskInfo(void)
@@ -125,7 +103,6 @@ void deleteDiskInfo(void)
 				free(attached[j].sysname);
 		}
 	free(attached);
-
 }
 
 bool getDiskPos(char* uuid,int* xptr,int* yptr)
@@ -251,11 +228,34 @@ void scanForMountableDisks(void)
 													attached[j].x=xpos;
 													attached[j].y=ypos;
 													sprintf(buffer,"%s/%s",diskInfoPath,attached[j].uuid);
-													DEBUGSTR(attached[j].uuid);
 													saveInfofile(DISKFOLDER,attached[j].label,NULL,NULL,attached[j].uuid,(char*)iconDiskType[attached[j].type],attached[j].x,attached[j].y);
-													//makeDiskInfofile(buffer,attached[j].label,attached[j].uuid,attached[j].x,attached[j].y,(char*)iconDiskType[attached[j].type]);
+													//xySlot[xpos][ypos]=1;
+													/*
+													int sd=-1;
+													sd=getSaveDiskNumber(attached[j].uuid);
+													if(sd==-1)
+														{
+															getSavedDiskData();
+														}
+													else
+														{
+															debugstr("11111111");
+															saved[sd].x=attached[j].x;
+															saved[sd].y=attached[j].y;
+															
+														}
+													*/
+													//attached[j].
+													/*
+																		saved[cnt].uuid=strdup(fileDiskUUID);
+					saved[cnt].x=fileDiskXPos;
+					saved[cnt].y=fileDiskYPos;
+					xySlot[fileDiskXPos][fileDiskYPos]=1;
+
+													*/
 													getSavedDiskData();
 												}
+											xySlot[xpos][ypos]=1;
 										}
 								}
 							udev_device_unref(thedev);
