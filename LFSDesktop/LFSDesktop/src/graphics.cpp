@@ -18,6 +18,7 @@
 
 #include <cairo.h>
 
+#include "globals.h"
 #include "prefs.h"
 #include "files.h"
 #include "disks.h"
@@ -144,8 +145,6 @@ void drawIcons(void)
 	diskx=fileInfoPtr[0].x*gridSize+gridBorder;
 	disky=fileInfoPtr[0].y*gridSize+gridBorder;
 
-DEBUGVAL(fileInfoPtr[0].x);
-DEBUGVAL(fileInfoPtr[0].y);
 	drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
 
 	rect.x=diskx;
@@ -165,7 +164,6 @@ DEBUGVAL(fileInfoPtr[0].y);
 	XSetForeground(display,gc,labelBackground);
 	XSetFillStyle(display,gc,FillSolid);
 	XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
-
 
 	XSetForeground(display,labelGC,labelForeground);
 	XSetBackground(display,labelGC,labelBackground);

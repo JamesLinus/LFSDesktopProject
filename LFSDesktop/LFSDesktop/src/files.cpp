@@ -15,14 +15,12 @@
 #include <stdio.h>
 #include <search.h>
 
+#include "globals.h"
 #include "prefs.h"
 #include "graphics.h"
 #include "disks.h"
 #include "files.h"
 
-int			errLine;
-const char	*errFile;
-const char	*errFunc;
 
 char		*diskInfoPath;
 char		*cachePath;
@@ -94,7 +92,6 @@ char* pathToIcon(char* name,const char* catagory)
 	char	*retstr=NULL;
 
 	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
-	printf(">>%s<<\n",command);
 
 	fp=popen(command,"r");
 	free(command);
@@ -206,15 +203,11 @@ void readDesktopFile(const char* name)
 			fscanf(fr,"label	%as\n",&fileInfoPtr[desktopFilesCnt].label);
 			fscanf(fr,"mime	%as\n",&fileInfoPtr[desktopFilesCnt].mime);
 			fscanf(fr,"path	%as\n",&fileInfoPtr[desktopFilesCnt].path);
-			fscanf(fr,"icon	%as\n",&fileInfoPtr[desktopFilesCnt].icon);
 			fscanf(fr,"xpos	%i\n",&fileInfoPtr[desktopFilesCnt].x);
-			fscanf(fr,"%*s	%i\n",&fileInfoPtr[desktopFilesCnt].y);
-			DEBUGVAL(fileInfoPtr[desktopFilesCnt].y);
+			fscanf(fr,"ypos	%i\n",&fileInfoPtr[desktopFilesCnt].y);
 			desktopFilesCnt++;
 			fclose(fr);
 		}
-	
-		
 }
 
 void printString(char* str)

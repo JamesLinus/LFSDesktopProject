@@ -15,32 +15,9 @@
 #include <unistd.h>
 #include <search.h>
 
+#include "globals.h"
 #include "graphics.h"
 
-#define DEBUGSTR(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printString((char*)x)
-#define DEBUGVAL(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printInt((int)x)
-extern int			errLine;
-extern const char	*errFile;
-extern const char	*errFunc;
-
-struct diskInfo
-{
-	char		*name;
-	char		*uuid;
-	int			x;
-	int			y;
-	char		*type;
-};
-
-struct fileInfo
-{
-	char		*label;
-	char		*mime;
-	char		*path;
-	char		*icon;
-	int			x;
-	int			y;
-};
 
 
 extern diskInfo	*disksDataPtr;

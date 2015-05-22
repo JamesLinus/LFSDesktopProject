@@ -24,6 +24,7 @@
 
 #include "config.h"
 
+#include "globals.h"
 #include "prefs.h"
 #include "files.h"
 #include "disks.h"
@@ -54,7 +55,58 @@ void printhelp(void)
 	      );
 }
 
+int	foundDiskNumber=-1;
+
 bool findIcon(int x, int y)
+{
+	FILE	*fp;
+	FILE	*fd;
+	char	*command;
+	char	line[2048];
+	int		dx,dy;
+	char	label[256];
+	char	uuid[256];
+	char	dataline[256];
+
+	for(int j=0;j<numberOfDisksAttached;j++)
+		{
+			if((x>=(attached[j].x*gridSize+gridBorder))&&(x<=(attached[j].x*gridSize+gridBorder)+iconSize)&&(y>=(attached[j].y*gridSize+gridBorder))&&(y<=(attached[j].y*gridSize+gridBorder)+iconSize))
+				{
+					diskXPos=attached[j].x;
+					diskYPos=attached[j].y;
+					foundDiskNumber=j;
+					return(true);
+				}
+		}
+return(false);
+
+	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
+	fp=popen(command,"r");
+	free(command);
+	if(fp!=NULL)
+		{
+			while(fgets(line,2048,fp))
+				{
+					line[strlen(line)-1]=0;
+					if(strlen(line)>0)
+						{
+							loadVarsFromFile(line,diskData);
+							if((diskUUID!=NULL) && (strlen(diskUUID)>1))
+								{
+									if((x>=(diskXPos*gridSize+gridBorder))&&(x<=(diskXPos*gridSize+gridBorder)+iconSize)&&(y>=(diskYPos*gridSize+gridBorder))&&(y<=(diskYPos*gridSize+gridBorder)+iconSize))
+										{
+											pclose(fp);
+											return(true);
+										}
+								}
+						}
+				}
+			pclose(fp);
+		}
+	return(false);
+}
+
+bool findIconXX(int x, int y)
 {
 	FILE	*fp;
 	FILE	*fd;
@@ -254,12 +306,10 @@ int main(int argc,char **argv)
 					fileInfoPtr[0].label=strdup("Home");
 					fileInfoPtr[0].mime=strdup("inode/directory");
 					fileInfoPtr[0].path=strdup(getenv("HOME"));
-					fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
 
 					fprintf(fw,"label	%s\n",fileInfoPtr[0].label);
 					fprintf(fw,"mime	%s\n",fileInfoPtr[0].mime);
 					fprintf(fw,"path	%s\n",fileInfoPtr[0].path);
-					fprintf(fw,"icon	%s\n",fileInfoPtr[0].icon);
 					fprintf(fw,"xpos	%i\n",fileInfoPtr[0].x);
 					fprintf(fw,"ypos	%i\n",fileInfoPtr[0].y);
 					fclose(fw);
@@ -285,6 +335,8 @@ int main(int argc,char **argv)
 	bool	buttonDown=false;
 	int		oldboxx=-1,oldboxy=-1;
 	bool	dragging=false;
+
+	fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
 
 	while(done)
 		{
@@ -337,15 +389,15 @@ int main(int argc,char **argv)
 
 					if(foundIcon==true)
 						{
-							if(fdiskname!=NULL)
-								free(fdiskname);
-							fdiskname=strdup(diskName);
-							if(fdiskuuid!=NULL)
-								free(fdiskuuid);
-							fdiskuuid=strdup(diskUUID);
-							if(fdisktype!=NULL)
-								free(fdisktype);
-							fdisktype=strdup(diskType);
+							//if(fdiskname!=NULL)
+							//	free(fdiskname);
+							//fdiskname=strdup(diskName);
+							//if(fdiskuuid!=NULL)
+							//	free(fdiskuuid);
+							//fdiskuuid=strdup(diskUUID);
+							//if(fdisktype!=NULL)
+							//	free(fdisktype);
+							//fdisktype=strdup(diskType);
 							oldx=diskXPos;
 							oldy=diskYPos;
 							oldboxx=ev.xbutton.x;
@@ -353,13 +405,13 @@ int main(int argc,char **argv)
 						}
 					else
 						{
-							if(fdiskname!=NULL)
-								free(fdiskname);
-							fdiskname=NULL;
-							if(fdiskuuid!=NULL)
-								free(fdiskuuid);
-							if(fdisktype!=NULL)
-								free(fdisktype);
+							//if(fdiskname!=NULL)
+							//	free(fdiskname);
+							//fdiskname=NULL;
+							//if(fdiskuuid!=NULL)
+							//	free(fdiskuuid);
+							//if(fdisktype!=NULL)
+							//	free(fdisktype);
 							fdisktype=NULL;
 							fdiskuuid=NULL;
 							diskName=NULL;
@@ -367,6 +419,7 @@ int main(int argc,char **argv)
 							diskType=NULL;
 							oldx=-1;
 							oldy=-1;
+							foundDiskNumber=-1;
 						}
 
 					break;
@@ -383,7 +436,9 @@ int main(int argc,char **argv)
 							if(xySlot[newx][newy]==0)
 								{
 									xySlot[oldx][oldy]=0;
-									makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
+									//DEBUGVAL(foundDiskNumber);
+									//makeDiskInfofile(NULL,fdiskname,fdiskuuid,newx,newy,fdisktype);
+									makeDiskInfofile(NULL,attached[foundDiskNumber].label,attached[foundDiskNumber].uuid,newx,newy,(char*)iconDiskType[attached[foundDiskNumber].type]);
 									needsRefresh=true;
 									getSavedDiskData();
 									scanForMountableDisks();
@@ -395,13 +450,13 @@ int main(int argc,char **argv)
 							newy=((ev.xbutton.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);
 							XDrawRectangle(display,rootWin,gc,newx,newy,gridSize,gridSize);
 
-							if(fdiskname!=NULL)
-								free(fdiskname);
-							fdiskname=NULL;
-							if(fdiskuuid!=NULL)
-								free(fdiskuuid);
-							if(fdisktype!=NULL)
-								free(fdisktype);
+							//if(fdiskname!=NULL)
+							//	free(fdiskname);
+							//fdiskname=NULL;
+							//if(fdiskuuid!=NULL)
+							//	free(fdiskuuid);
+							//if(fdisktype!=NULL)
+							//	free(fdisktype);
 							fdisktype=NULL;
 							fdiskuuid=NULL;
 							diskName=NULL;
