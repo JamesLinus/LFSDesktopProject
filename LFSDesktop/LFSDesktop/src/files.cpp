@@ -27,28 +27,28 @@ char		*cachePath;
 char		*prefsPath;
 int			savedFileCount;
 
-char		*diskName=NULL;
-char		*diskUUID=NULL;
-int			diskXPos=-1;
-int			diskYPos=-1;
-char		*diskType=NULL;
+//char		*diskName=NULL;
+//char		*diskUUID=NULL;
+//int			diskXPos=-1;
+//int			diskYPos=-1;
+//char		*diskType=NULL;
 
-diskInfo	*disksDataPtr;
+//diskInfo	*disksDataPtr;
 fileInfo	*fileInfoPtr;
 int			desktopFilesCnt=0;
 
 struct hsearch_data	hashtab;
 
-args			diskData[]=
-{
-	{"diskname",TYPESTRING,&diskName},
-	{"diskuuid",TYPESTRING,&diskUUID},
-	{"diskx",TYPEINT,&diskXPos},
-	{"disky",TYPEINT,&diskYPos},
-	{"type",TYPESTRING,&diskType},
-
-	{NULL,0,NULL}
-};
+//args			diskData[]=
+//{
+//	{"diskname",TYPESTRING,&diskName},
+//	{"diskuuid",TYPESTRING,&diskUUID},
+//	{"diskx",TYPEINT,&diskXPos},
+//	{"disky",TYPEINT,&diskYPos},
+//	{"type",TYPESTRING,&diskType},/
+//
+//	{NULL,0,NULL}
+//};
 
 
 int fileExists(char *name)

@@ -14,16 +14,18 @@
 #include <X11/Intrinsic.h>
 #include <X11/extensions/Xdbe.h>
 
+#include "globals.h"
+
 #define MAXGRIDY 4
 
-enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+//enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
-struct args
-{
-	const char*	name;
-	int			type;
-	void*		data;
-};
+//struct args
+//{
+//	const char*	name;
+//	int			type;
+//	void*		data;
+//};
 
 extern args				desktopPrefs[];
 

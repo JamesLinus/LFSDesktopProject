@@ -20,7 +20,6 @@
 
 
 
-extern diskInfo	*disksDataPtr;
 extern fileInfo	*fileInfoPtr;
 extern int		desktopFilesCnt;
 
@@ -29,12 +28,12 @@ extern char		*cachePath;
 extern char		*prefsPath;
 extern int		savedFileCount;
 
-extern args		diskData[];
-extern char		*diskName;
-extern char		*diskUUID;
-extern int		diskXPos;
-extern int		diskYPos;
-extern char		*diskType;
+//extern args		diskData[];
+//extern char		*diskName;
+//extern char		*diskUUID;
+//extern int		diskXPos;
+//extern int		diskYPos;
+//extern char		*diskType;
 
 extern hsearch_data	hashtab;
 
