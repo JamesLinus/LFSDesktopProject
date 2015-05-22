@@ -272,6 +272,9 @@ int main(int argc,char **argv)
 			switch(ev.type)
 				{
 				case ButtonPress:
+					if(ev.xbutton.button!=Button1)
+						break;
+					//printf("ButtonPress no %i b1=%i\n",ev.xbutton.button,Button1);
 					dragging=true;
 					buttonDown=true;
 					if(firstClick==false)
@@ -337,6 +340,7 @@ int main(int argc,char **argv)
 
 					break;
 				case ButtonRelease:
+				//printf("ButtonRelease\n");
 					dragging=false;
 					buttonDown=false;
 					if(foundIcon==true)

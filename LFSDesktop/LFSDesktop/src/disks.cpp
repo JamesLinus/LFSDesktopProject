@@ -23,7 +23,7 @@
 disks		*attached=NULL;
 saveDisks	*saved=NULL;
 int			numberOfDisksAttached=-1000;
-const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-dvd","dev-dvd","harddisk-usb"};
+const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash"};
 
 void mountDisk(int x, int y)
 {
@@ -72,8 +72,21 @@ void mountDisk(int x, int y)
 		}
 }
 
-char* getUSBData(char *device)
+int getUSBData(const char *ptr)
 {
+	char	*type=NULL;
+	if(ptr!=NULL)
+		{
+			if(strcasestr(ptr,"apple")!=NULL)
+				return(IPOD);
+			if(strcasestr(ptr,"sandisk")!=NULL)
+				return(CARD);
+			if(strcasestr(ptr,"generic")!=NULL)
+				return(CARD);
+		}
+	return(USB);
+	
+/*
 	char	*newdevice=NULL;
 
 	if((device!=NULL) && (strstr(device,"iPod")!=NULL))
@@ -87,6 +100,7 @@ char* getUSBData(char *device)
 			return(newdevice);
 		}
 	return(newdevice);
+*/
 }
 
 void deleteDiskInfo(void)
@@ -194,11 +208,19 @@ void scanForMountableDisks(void)
 													attached[j].type=DVD;
 												}
 
+											if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_CD")!=NULL)
+												{
+													attached[j].dvd=true;
+													attached[j].type=CDROM;
+												}
+
 											usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
 											if(usbdev!=NULL)
 												{
 													attached[j].usb=true;
-													attached[j].type=USB;
+													attached[j].type=getUSBData(udev_device_get_property_value(thedev,"ID_VENDOR"));
+													if(udev_device_get_property_value(thedev,"ID_DRIVE_THUMB")!=NULL)
+														attached[j].type=STICK;
 												}
 
 											if(getDiskPos(attached[j].uuid,&xpos,&ypos))

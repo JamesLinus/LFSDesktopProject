@@ -129,6 +129,7 @@ void drawIcons(void)
 					XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,attached[j].label,strlen(attached[j].label));
 				}
 		}
+	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 
 void createColours(void)

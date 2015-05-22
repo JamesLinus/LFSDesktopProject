@@ -1,3 +1,8 @@
+0.0.5
+Better disk type regognition.
+Disk icon data now held in memory instead of keep read hardrive.
+Switched to libudev.
+
 0.0.4
 Let the system have some CPU cycles!
 Uses default ( gnome ) icons for missing disk icons.
