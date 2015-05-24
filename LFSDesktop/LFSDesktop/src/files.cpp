@@ -44,7 +44,7 @@ char* defaultIcon(char *theme,char *name)
 	char	buffer[2048];
 	char	*retstr=NULL;
 
-	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*harddisk*.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name);
+	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*harddisk*.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme);
 
 	fp=popen(command,"r");
 	free(command);
@@ -187,12 +187,80 @@ void getSavedDiskData(void)
 		}
 }
 
+void getFreeSlot(int *x,int *y)
+{
+	for(int yy=0; yy<yCnt; yy++)
+		{
+			for(int xx=0; xx<xCnt; xx++)
+				{
+					if(xySlot[xx][yy]==0)
+						{
+							*x=xx;
+							*y=yy;
+							xySlot[xx][yy]=1;
+							return;
+						}
+				}
+		}
+}
+
 void getDesktopFiles(void)
 {
-	char	buffer[2048];
 	FILE	*fp;
+	char	buffer[4096];
+	char	*ptr;
 
-	
+	sprintf(buffer,"find %s -mindepth 1",cachePath);
+
+	fp=popen(buffer,"r");
+	while(fgets(buffer,4096,fp))
+		{
+			buffer[strlen(buffer)-1]=0;
+			ptr=strrchr(buffer,'/');
+			ptr++;
+			readDesktopFile(ptr);
+			
+		}
+	pclose(fp);
+}
+
+void createDesktopFiles(void)
+{
+	FILE	*fp;
+	FILE	*fm;
+	char	buffer[4096];
+	char	buffer2[4096];
+	char	*ptr;
+	//char	buffer3[4096];
+
+
+	sprintf(buffer,"find %s/Desktop -mindepth 1",getenv("HOME"));
+
+	fp=popen(buffer,"r");
+	while(fgets(buffer,4096,fp))
+		{
+			buffer[strlen(buffer)-1]=0;
+			fileInfoPtr[desktopFilesCnt].path=strdup(buffer);
+			ptr=strrchr(buffer,'/');
+			ptr++;
+			fileInfoPtr[desktopFilesCnt].label=strdup(ptr);
+			sprintf(buffer2,"xdg-mime query filetype %s",fileInfoPtr[desktopFilesCnt].path);
+			fm=popen(buffer2,"r");
+			fgets(buffer,4096,fm);
+			pclose(fm);
+			buffer[strlen(buffer)-1]=0;
+			ptr=strchr(buffer,'/');
+			while(ptr!=NULL)
+				{
+					*ptr='-';
+					ptr=strchr(buffer,'/');
+				}
+			fileInfoPtr[desktopFilesCnt].mime=strdup(buffer);
+			getFreeSlot(&fileInfoPtr[desktopFilesCnt].x,&fileInfoPtr[desktopFilesCnt].y);
+			saveInfofile(CACHEFOLDER,fileInfoPtr[desktopFilesCnt].label,fileInfoPtr[desktopFilesCnt].mime,fileInfoPtr[desktopFilesCnt].path,NULL,NULL,fileInfoPtr[desktopFilesCnt].x,fileInfoPtr[desktopFilesCnt].y);
+			desktopFilesCnt++;
+		}
+	pclose(fp);
 }
 
 void readDesktopFile(const char* name)
@@ -207,11 +275,26 @@ void readDesktopFile(const char* name)
 			fscanf(fr,"label	%as\n",&fileInfoPtr[desktopFilesCnt].label);
 			fscanf(fr,"mime	%as\n",&fileInfoPtr[desktopFilesCnt].mime);
 			fscanf(fr,"path	%as\n",&fileInfoPtr[desktopFilesCnt].path);
-			fscanf(fr,"uuid	%*s\n",&fileInfoPtr[desktopFilesCnt].path);
-			fscanf(fr,"type	%*s\n",&fileInfoPtr[desktopFilesCnt].path);
+			fscanf(fr,"uuid	%*s\n");
+			fscanf(fr,"type	%*s\n");
 			fscanf(fr,"xpos	%i\n",&fileInfoPtr[desktopFilesCnt].x);
 			fscanf(fr,"ypos	%i\n",&fileInfoPtr[desktopFilesCnt].y);
 			desktopFilesCnt++;
+			if(desktopFilesCnt==desktopFilesCntMax)
+				{
+					fileInfoPtr=(fileInfo*)realloc(fileInfoPtr,(desktopFilesCntMax+20)*sizeof(fileInfo));
+					for(int j=desktopFilesCnt;desktopFilesCnt+20;j++)
+						{
+							fileInfoPtr[j].label=NULL;
+							fileInfoPtr[j].mime=NULL;
+							fileInfoPtr[j].path=NULL;
+							fileInfoPtr[j].uuid=NULL;
+							fileInfoPtr[j].type=NULL;
+							fileInfoPtr[j].x=-1;
+							fileInfoPtr[j].y=-1;
+						}
+					desktopFilesCntMax+=20;
+				}
 			fclose(fr);
 		}
 }

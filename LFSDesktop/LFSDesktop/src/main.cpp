@@ -55,43 +55,12 @@ void printhelp(void)
 	      );
 }
 
-int		foundDiskNumber=-1;
-bool	isDisk=false;
-
 bool findIcon(int x, int y)
 {
-	FILE	*fp;
-	FILE	*fd;
-	char	*command;
-	char	line[2048];
-	int		dx,dy;
-	char	label[256];
-	char	uuid[256];
-	char	dataline[256];
-
-	for(int j=0;j<numberOfDisksAttached;j++)
-		{
-			if((x>=(attached[j].x*gridSize+gridBorder))&&(x<=(attached[j].x*gridSize+gridBorder)+iconSize)&&(y>=(attached[j].y*gridSize+gridBorder))&&(y<=(attached[j].y*gridSize+gridBorder)+iconSize))
-				{
-					if(attached[j].uuid!=NULL)
-						{
-							//diskXPos=attached[j].x;
-							//diskYPos=attached[j].y;
-							fileDiskXPos=attached[j].x;
-							fileDiskYPos=attached[j].y;
-							foundDiskNumber=j;
-							isDisk=true;
-							return(true);
-					}
-				}
-		}
-
 	for(int j=0;j<desktopFilesCnt;j++)
 		{
 			if((x>=(fileInfoPtr[j].x*gridSize+gridBorder))&&(x<=(fileInfoPtr[j].x*gridSize+gridBorder)+iconSize)&&(y>=(fileInfoPtr[j].y*gridSize+gridBorder))&&(y<=(fileInfoPtr[j].y*gridSize+gridBorder)+iconSize))
 				{
-				//	diskXPos=fileInfoPtr[j].x;
-				//	diskYPos=fileInfoPtr[j].y;
 					fileDiskXPos=fileInfoPtr[j].x;
 					fileDiskYPos=fileInfoPtr[j].y;
 					foundDiskNumber=j;
@@ -100,7 +69,20 @@ bool findIcon(int x, int y)
 				}
 		}
 
-
+	for(int j=0;j<numberOfDisksAttached;j++)
+		{
+			if((x>=(attached[j].x*gridSize+gridBorder))&&(x<=(attached[j].x*gridSize+gridBorder)+iconSize)&&(y>=(attached[j].y*gridSize+gridBorder))&&(y<=(attached[j].y*gridSize+gridBorder)+iconSize))
+				{
+					if(attached[j].uuid!=NULL)
+						{
+							fileDiskXPos=attached[j].x;
+							fileDiskYPos=attached[j].y;
+							foundDiskNumber=j;
+							isDisk=true;
+							return(true);
+					}
+				}
+		}
 	return(false);
 }
 
@@ -117,17 +99,15 @@ int main(int argc,char **argv)
 	int				c;
 	XEvent			ev;
 	char			*command;
-	unsigned long	timer=0;
 	FILE			*fw;
 	char			*path;
 	char			buffer[100];
 	pid_t			pid=getpid();
-	int				xCnt;
-	int				yCnt;
 	bool			done=true;
 	Time			time=0;
 	bool			firstClick=false;
 	bool			foundIcon=false;
+	bool			createdskfiles=false;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -178,6 +158,10 @@ int main(int argc,char **argv)
 					asprintf(&command,"rm %s/*",diskInfoPath);
 					system(command);
 					free(command);
+					asprintf(&command,"rm %s/*",cachePath);
+					system(command);
+					free(command);
+					createdskfiles=true;
 					break;
 
 				case 't':
@@ -254,6 +238,7 @@ int main(int argc,char **argv)
 			xySlot[xx][yy]=0;
 
 	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
+	desktopFilesCntMax=20;
 	asprintf(&command,"%s/Home",cachePath);
 	desktopFilesCnt=0;
 	if(fileExists(command)!=0)
@@ -265,14 +250,16 @@ int main(int argc,char **argv)
 			fileInfoPtr[0].mime=strdup("inode/directory");
 			fileInfoPtr[0].path=strdup(getenv("HOME"));
 			saveInfofile(CACHEFOLDER,fileInfoPtr[0].label,fileInfoPtr[0].mime,fileInfoPtr[0].path,NULL,NULL,fileInfoPtr[0].x,fileInfoPtr[0].y);
-		}
-	else
-		{
-			readDesktopFile("Home");
+			xySlot[0][0]=1;
 		}
 	free(command);
 
+	if(createdskfiles==true)
+		createDesktopFiles();
+	else
+		getDesktopFiles();
 	getSavedDiskData();
+
 	scanForMountableDisks();
 	alarm(refreshRate);
 	XdbeSwapBuffers(display,&swapInfo,1);
@@ -330,6 +317,7 @@ int main(int argc,char **argv)
 						{
 							oldx=-1;
 							oldy=-1;
+							foundDiskNumber=-1;
 							foundIcon=findIcon(ev.xbutton.x,ev.xbutton.y);
 						}
 
@@ -379,7 +367,7 @@ int main(int argc,char **argv)
 											fileInfoPtr[foundDiskNumber].x=newx;
 											fileInfoPtr[foundDiskNumber].y=newy;
 										}
-									foundDiskNumber=0;
+									//foundDiskNumber=0;
 									needsRefresh=true;
 									getSavedDiskData();
 									scanForMountableDisks();

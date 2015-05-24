@@ -27,54 +27,32 @@ const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","me
 
 void mountDisk(int x, int y)
 {
-	FILE	*fp;
-	FILE	*fd;
 	char	*command;
-	char	line[2048];
-	int		dx,dy;
-	char	label[256];
-	char	uuid[256];
-	char	dataline[256];
 
-	asprintf(&command,"find %s -mindepth 1",diskInfoPath);
-	fp=popen(command,"r");
-	free(command);
-	if(fp!=NULL)
+	if(isDisk==false)
 		{
-			while(fgets(line,2048,fp))
-				{
-					line[strlen(line)-1]=0;
-					if(strlen(line)>0)
-						{
-							loadVarsFromFile(line,globalFileData);
-							if(strlen(fileDiskUUID)>1)
-								{
-									if((x>=(fileDiskXPos*gridSize+gridBorder))&&(x<=(fileDiskXPos*gridSize+gridBorder)+iconSize)&&(y>=(fileDiskYPos*gridSize+gridBorder))&&(y<=(fileDiskYPos*gridSize+gridBorder)+iconSize))
-										{
+			asprintf(&command,"xdg-open %s",fileInfoPtr[foundDiskNumber].path);
+			system(command);
+			free(command);
+			return;
+		}
+	else
+		{
 #ifdef _USESUIDHELPER_
-											asprintf(&command,"%s %s /media/%s",HELPERAPP,fileDiskUUID,fileDiskLabel);
+			asprintf(&command,"%s %s /media/%s",HELPERAPP,attached[foundDiskNumber].uuid,attached[foundDiskNumber].label);
 #else
-											asprintf(&command,"udevil mount `findfs UUID=%s`",fileDiskUUID);
+			asprintf(&command,"udevil mount `findfs UUID=%s`",attached[foundDiskNumber].uuid);
 #endif
-											system(command);
-											free(command);
-											asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",fileDiskUUID);
-											system(command);
-											free(command);
-
-											pclose(fp);
-											return;
-										}
-								}
-						}
-				}
-			pclose(fp);
+			system(command);
+			free(command);
+			asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",attached[foundDiskNumber].uuid);
+			system(command);
+			free(command);
 		}
 }
 
 int getUSBData(const char *ptr)
 {
-	char	*type=NULL;
 	if(ptr!=NULL)
 		{
 			if(strcasestr(ptr,"apple")!=NULL)
@@ -124,7 +102,7 @@ void scanForMountableDisks(void)
 	struct udev *udev;
 	char		buffer[BUFFERSIZE];
 	FILE		*fp;
-	int			numofdisks;
+	int			numofdisks=0;
 	const char	*ptr;
 	int			xpos=0,ypos=0;
 	udev_device *usbdev;
@@ -229,30 +207,7 @@ void scanForMountableDisks(void)
 													attached[j].y=ypos;
 													sprintf(buffer,"%s/%s",diskInfoPath,attached[j].uuid);
 													saveInfofile(DISKFOLDER,attached[j].label,NULL,NULL,attached[j].uuid,(char*)iconDiskType[attached[j].type],attached[j].x,attached[j].y);
-													//xySlot[xpos][ypos]=1;
-													/*
-													int sd=-1;
-													sd=getSaveDiskNumber(attached[j].uuid);
-													if(sd==-1)
-														{
-															getSavedDiskData();
-														}
-													else
-														{
-															debugstr("11111111");
-															saved[sd].x=attached[j].x;
-															saved[sd].y=attached[j].y;
-															
-														}
-													*/
-													//attached[j].
-													/*
-																		saved[cnt].uuid=strdup(fileDiskUUID);
-					saved[cnt].x=fileDiskXPos;
-					saved[cnt].y=fileDiskYPos;
-					xySlot[fileDiskXPos][fileDiskYPos]=1;
-
-													*/
+													xySlot[xpos][ypos]=1;
 													getSavedDiskData();
 												}
 											xySlot[xpos][ypos]=1;

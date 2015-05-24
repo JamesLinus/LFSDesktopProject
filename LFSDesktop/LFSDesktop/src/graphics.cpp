@@ -68,14 +68,13 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 
 void drawIcons(void)
 {
-	FILE	*tp;
-	char	*com;
-	char	line[BUFFERSIZE];
-	XColor		colour;
+	FILE		*tp;
+	char		*com;
+	char		line[BUFFERSIZE];
 	int			fontheight;
 	int			stringwidth;
 
-	int			boxx,boxy,boxw,boxh;
+	int			boxx,boxw,boxh;
 	XRectangle	rect;
 	int			diskx,disky;
 	bool		mounted=false;
@@ -116,7 +115,6 @@ void drawIcons(void)
 					stringwidth=XTextWidth(labelFont,attached[j].label,strlen(attached[j].label));
 
 					boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-					boxy=disky+iconSize+1;
 					boxw=stringwidth+2;
 					boxh=fontheight-2;
 
@@ -131,35 +129,44 @@ void drawIcons(void)
 				}
 		}
 
-//draw home
-	diskx=fileInfoPtr[0].x*gridSize+gridBorder;
-	disky=fileInfoPtr[0].y*gridSize+gridBorder;
+//draw desktop icons
+	for(int j=0;j<desktopFilesCnt;j++)
+		{
+			diskx=fileInfoPtr[j].x*gridSize+gridBorder;
+			disky=fileInfoPtr[j].y*gridSize+gridBorder;
 
-	drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
+			if(strcmp(fileInfoPtr[j].label,"Home")==0)
+				drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
+			else
+				{
+					if(strstr(fileInfoPtr[j].mime,"inode"))
+						drawImage(fileInfoPtr[j].mime,"places",diskx,disky,true);
+					else
+						drawImage(fileInfoPtr[j].mime,"mimetypes",diskx,disky,true);
+				}
+			rect.x=diskx;
+			rect.y=disky;
+			rect.width=iconSize;
+			rect.height=iconSize;
+			XUnionRectWithRegion(&rect,rg, rg);
+			XSetClipMask(display,gc,0);
 
-	rect.x=diskx;
-	rect.y=disky;
-	rect.width=iconSize;
-	rect.height=iconSize;
-	XUnionRectWithRegion(&rect,rg, rg);
-	XSetClipMask(display,gc,0);
+			fontheight=labelFont->ascent+labelFont->descent;
+			stringwidth=XTextWidth(labelFont,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
 
-	fontheight=labelFont->ascent+labelFont->descent;
-	stringwidth=XTextWidth(labelFont,fileInfoPtr[0].label,strlen(fileInfoPtr[0].label));
+			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+			boxw=stringwidth+2;
+			boxh=fontheight-2;
+			XSetForeground(display,gc,labelBackground);
+			XSetFillStyle(display,gc,FillSolid);
+			XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
 
-	boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-	boxy=disky+iconSize+1;
-	boxw=stringwidth+2;
-	boxh=fontheight-2;
-	XSetForeground(display,gc,labelBackground);
-	XSetFillStyle(display,gc,FillSolid);
-	XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
+			XSetForeground(display,labelGC,labelForeground);
+			XSetBackground(display,labelGC,labelBackground);
 
-	XSetForeground(display,labelGC,labelForeground);
-	XSetBackground(display,labelGC,labelBackground);
+			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
 
-	XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,fileInfoPtr[0].label,strlen(fileInfoPtr[0].label));
-
+		}
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 

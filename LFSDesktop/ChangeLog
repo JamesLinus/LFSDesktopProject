@@ -1,4 +1,6 @@
 0.0.5
+Code clean.
+Files in~/Desktop now shown/opened ( with double click ).
 Better disk type regognition.
 Disk icon data now held in memory instead of keep read hardrive.
 Switched to libudev.
