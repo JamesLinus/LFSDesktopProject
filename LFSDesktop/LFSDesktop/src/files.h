@@ -38,9 +38,8 @@ void getSavedDiskData(void);
 void readDesktopFile(const char* name);
 void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y);
 int getSaveDiskNumber(char* uuid);
-void getDesktopFiles(void);
-void createDesktopFiles(void);
 void rescanDesktop(void);
+void refreshDesktopFiles(void);
 
 void printString(char* str);
 void printInt(int v);

@@ -111,10 +111,8 @@ int main(int argc,char **argv)
 	Time			time=0;
 	bool			firstClick=false;
 	bool			foundIcon=false;
-	bool			createdskfiles=false;
 	pollfd			pollstruct;
 	int				fd;
-	int				desktopdir;
 	long			numRead=0;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
@@ -171,7 +169,6 @@ int main(int argc,char **argv)
 					asprintf(&command,"rm %s/*",cachePath);
 					system(command);
 					free(command);
-					createdskfiles=true;
 					break;
 
 				case 't':
@@ -262,21 +259,21 @@ int main(int argc,char **argv)
 			saveInfofile(CACHEFOLDER,fileInfoPtr[0].label,fileInfoPtr[0].mime,fileInfoPtr[0].path,NULL,NULL,fileInfoPtr[0].x,fileInfoPtr[0].y);
 			xySlot[0][0]=1;
 		}
+	else
+		readDesktopFile("Home");
+
 	free(command);
 	fd=inotify_init();
 	pollstruct.fd =fd;
 	pollstruct.events=POLLIN;
 	pollstruct.revents=0;
 	
-	desktopdir=inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE);
-	
-	if(createdskfiles==true)
-		createDesktopFiles();
-	else
-		getDesktopFiles();
-	getSavedDiskData();
+	inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE);
+	refreshDesktopFiles();
 
+	getSavedDiskData();
 	scanForMountableDisks();
+
 	alarm(refreshRate);
 	XdbeSwapBuffers(display,&swapInfo,1);
 
