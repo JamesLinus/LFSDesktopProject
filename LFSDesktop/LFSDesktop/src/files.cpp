@@ -25,6 +25,7 @@
 char		*diskInfoPath;
 char		*cachePath;
 char		*prefsPath;
+char		*desktopPath;
 int			savedFileCount;
 
 fileInfo	*fileInfoPtr;
@@ -231,8 +232,6 @@ void createDesktopFiles(void)
 	char	buffer[4096];
 	char	buffer2[4096];
 	char	*ptr;
-	//char	buffer3[4096];
-
 
 	sprintf(buffer,"find %s/Desktop -mindepth 1",getenv("HOME"));
 
@@ -297,6 +296,11 @@ void readDesktopFile(const char* name)
 				}
 			fclose(fr);
 		}
+}
+
+void rescanDesktop(void)
+{
+ DEBUGSTR("rescan desk\n");
 }
 
 void printString(char* str)

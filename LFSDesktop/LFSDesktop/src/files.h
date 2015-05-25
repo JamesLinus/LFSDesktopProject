@@ -25,6 +25,7 @@ extern fileInfo	*fileInfoPtr;
 extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;
+extern char		*desktopPath;
 extern int		savedFileCount;
 
 extern hsearch_data	hashtab;
@@ -39,6 +40,7 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 int getSaveDiskNumber(char* uuid);
 void getDesktopFiles(void);
 void createDesktopFiles(void);
+void rescanDesktop(void);
 
 void printString(char* str);
 void printInt(int v);

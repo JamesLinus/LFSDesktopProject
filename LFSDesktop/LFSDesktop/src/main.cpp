@@ -94,6 +94,10 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
+#include <sys/inotify.h>
+#include <limits.h>
+#include <poll.h>
+
 int main(int argc,char **argv)
 {
 	int				c;
@@ -108,6 +112,10 @@ int main(int argc,char **argv)
 	bool			firstClick=false;
 	bool			foundIcon=false;
 	bool			createdskfiles=false;
+	pollfd			pollstruct;
+	int				fd;
+	int				desktopdir;
+	long			numRead=0;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -141,6 +149,8 @@ int main(int argc,char **argv)
 	asprintf(&command,"mkdir -p %s 2>&1 >/dev/null",cachePath);
 	system(command);
 	free(command);
+
+	asprintf(&desktopPath,"%s/Desktop",getenv("HOME"));
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
 	loadVarsFromFile(prefsPath,desktopPrefs);
@@ -253,7 +263,13 @@ int main(int argc,char **argv)
 			xySlot[0][0]=1;
 		}
 	free(command);
-
+	fd=inotify_init();
+	pollstruct.fd =fd;
+	pollstruct.events=POLLIN;
+	pollstruct.revents=0;
+	
+	desktopdir=inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE);
+	
 	if(createdskfiles==true)
 		createDesktopFiles();
 	else
@@ -277,12 +293,19 @@ int main(int argc,char **argv)
 				{
 					scanForMountableDisks();
 					drawIcons();
+					int ret=poll(&pollstruct,POLLIN,20);
+					if(ret!=0)
+						{
+							numRead=read(fd,buffer,100);
+							if(numRead>0)
+								rescanDesktop();
+						}
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;
 				}
 
 			if(dragging==false)
-				usleep(10000);
+				usleep(25000);
 
 			XCheckWindowEvent(display,rootWin,ButtonPress|ButtonReleaseMask|PointerMotionMask,&ev);
 
