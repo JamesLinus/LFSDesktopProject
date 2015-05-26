@@ -38,15 +38,139 @@ int fileExists(char *name)
 	return (stat(name,&buffer));
 }
 
-char* defaultIcon(char *theme,char *name)
+char	findbuffer[2048];
+char	findbufferfind[2048];
+void findIcon(char *theme,const char *name,const char *catagory)
+{
+	char	*command;
+	FILE	*fp;
+
+	sprintf(findbufferfind,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name,catagory);
+//debugstr(findbuffer);
+	fp=popen(findbufferfind,"r");
+	if(fp!=NULL)
+		{
+			findbuffer[0]=0;
+			fgets(findbuffer,2048,fp);
+			findbuffer[strlen(findbuffer)-1]=0;
+			pclose(fp);
+		}
+}
+
+char* defaultIcon(char *theme,char *name,const char *catagory)
+{
+	char		*ret=NULL;
+	const char	*defaultname=NULL;
+	char	*command;
+	FILE	*fp;
+	char	buffer[2048];
+	char	retstr[1024];
+
+//	debugstr(name);
+//	debugstr(theme);
+new is bad
+	if(strstr(name,"text")!=NULL)
+		{
+			defaultname="text-plain";
+			findIcon(theme,defaultname,catagory);
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-generic.png"));
+		}
+
+	if(strstr(name,"shellscript")!=NULL)
+		{
+			defaultname="text-x-script";
+			findIcon(theme,defaultname,catagory);
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/text-x-script.png"));
+		}
+
+	if(strstr(name,"empty")!=NULL)
+		{
+			defaultname="empty";
+			findIcon(theme,defaultname,"mimetype");
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/empty.png"));
+		}
+
+	if(strstr(name,"audio")!=NULL)
+		{
+			defaultname="audio-x-generic";
+			findIcon(theme,defaultname,catagory);
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/audio-x-generic.png"));
+		}
+
+	if(strstr(name,"image")!=NULL)
+		{
+			defaultname="image-x-generic";
+			findIcon(theme,defaultname,catagory);
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/image-x-generic.png"));
+		}
+	if(strstr(name,"harddisk")!=NULL)
+		{
+			defaultname="harddisk";
+			findIcon(theme,defaultname,"devices");
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/devices/drive-harddisk.png"));
+		}
+
+
+	if(strstr(name,"harddisk-usb")!=NULL)
+		{
+			defaultname="media-usb";
+			findIcon(theme,defaultname,"devices");
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/devices/drive-removable-media.png"));
+		}
+
+	if(strstr(name,"flash")!=NULL)
+		{
+			defaultname="media-flash";
+			findIcon(theme,defaultname,"devices");
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/devices/media-flash.png"));
+		}
+
+	if(strstr(name,"zip")!=NULL)
+		{
+			defaultname="x-archive";
+			findIcon(theme,defaultname,"mimetypes");
+			if(strlen(findbuffer)>0)
+				return(strdup(findbuffer));
+			else
+				return(strdup("/usr/share/icons/gnome/256x256/mimetypes/package-x-generic.png"));
+		}
+
+
+	return(strdup("/usr/share/icons/gnome/256x256/mimetypes/empty.png"));		
+}
+
+char* defaultIconxx(char *theme,char *name,const char *catagory)
 {
 	char	*command;
 	FILE	*fp;
 	char	buffer[2048];
 	char	*retstr=NULL;
 
-//	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*harddisk*.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme);
-	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\"  2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name);
+	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name);
 
 	fp=popen(command,"r");
 	free(command);
@@ -62,8 +186,11 @@ char* defaultIcon(char *theme,char *name)
 		{
 			if(retstr!=NULL)
 				free(retstr);
-//			return(defaultIcon((char*)"gnome",name));
-			return(defaultIcon((char*)"gnome","text-x-generic"));
+			if(strcmp(catagory,"devices")!=0)
+				return(defaultIcon((char*)"gnome","text-x-generic","mimetypes"));
+			else
+				return(defaultIcon((char*)"gnome","harddisk","devices"));
+
 		}
 	return(retstr);
 }
@@ -76,7 +203,6 @@ char* pathToIcon(char* name,const char* catagory)
 	char	*retstr=NULL;
 
 	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
-
 	fp=popen(command,"r");
 	free(command);
 	if(fp!=NULL)
@@ -86,11 +212,12 @@ char* pathToIcon(char* name,const char* catagory)
 			sscanf(buffer,"%as",&retstr);
 			pclose(fp);
 		}
+
 	if((retstr==NULL) || (strlen(retstr)==0))
 		{
 			if(retstr!=NULL)
 				free(retstr);
-			return(defaultIcon(iconTheme,name));
+			retstr=defaultIcon(iconTheme,name,catagory);
 		}
 	return(retstr);
 }
@@ -208,6 +335,16 @@ void getFreeSlot(int *x,int *y)
 		}
 }
 
+/*
+	{"label",TYPESTRING,&fileDiskLabel},
+	{"mime",TYPESTRING,&fileDiskMime},
+	{"path",TYPESTRING,&fileDiskPath},
+	{"uuid",TYPESTRING,&fileDiskUUID},
+	{"type",TYPESTRING,&fileDiskType},
+	{"xpos",TYPEINT,&fileDiskXPos},
+	{"ypos",TYPEINT,&fileDiskYPos},
+
+*/
 void readDesktopFile(const char* name)
 {
 	FILE	*fr;
@@ -217,13 +354,15 @@ void readDesktopFile(const char* name)
 	fr=fopen(buffer,"r");
 	if(fr!=NULL)
 		{
-			fscanf(fr,"label	%as\n",&fileInfoPtr[desktopFilesCnt].label);
-			fscanf(fr,"mime	%as\n",&fileInfoPtr[desktopFilesCnt].mime);
-			fscanf(fr,"path	%as\n",&fileInfoPtr[desktopFilesCnt].path);
-			fscanf(fr,"uuid	%*s\n");
-			fscanf(fr,"type	%*s\n");
-			fscanf(fr,"xpos	%i\n",&fileInfoPtr[desktopFilesCnt].x);
-			fscanf(fr,"ypos	%i\n",&fileInfoPtr[desktopFilesCnt].y);
+			loadVarsFromFile(buffer,globalFileData);
+			fileInfoPtr[desktopFilesCnt].label=fileDiskLabel;
+			fileInfoPtr[desktopFilesCnt].mime=fileDiskMime;
+			fileInfoPtr[desktopFilesCnt].path=fileDiskPath;
+			fileInfoPtr[desktopFilesCnt].x=fileDiskXPos;
+			fileInfoPtr[desktopFilesCnt].y=fileDiskYPos;
+			fileDiskLabel=NULL;
+			fileDiskMime=NULL;
+			fileDiskPath=NULL;
 			desktopFilesCnt++;
 			if(desktopFilesCnt==desktopFilesCntMax)
 				{
@@ -314,7 +453,11 @@ void refreshDesktopFiles(void)
 							*ptr='-';
 							ptr=strchr(buffer,'/');
 						}
-					fileInfoPtr[desktopFilesCnt].mime=strdup(buffer);
+					ptr=strstr(buffer,"text-x-shellscript");
+					if(ptr==NULL)
+						fileInfoPtr[desktopFilesCnt].mime=strdup(buffer);
+					else
+						fileInfoPtr[desktopFilesCnt].mime=strdup("application-x-shellscript");
 					getFreeSlot(&fileInfoPtr[desktopFilesCnt].x,&fileInfoPtr[desktopFilesCnt].y);
 					saveInfofile(CACHEFOLDER,fileInfoPtr[desktopFilesCnt].label,fileInfoPtr[desktopFilesCnt].mime,fileInfoPtr[desktopFilesCnt].path,NULL,NULL,fileInfoPtr[desktopFilesCnt].x,fileInfoPtr[desktopFilesCnt].y);
 					desktopFilesCnt++;

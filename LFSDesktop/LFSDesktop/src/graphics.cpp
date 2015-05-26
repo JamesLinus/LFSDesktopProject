@@ -144,6 +144,7 @@ void drawIcons(void)
 					else
 						drawImage(fileInfoPtr[j].mime,"mimetypes",diskx,disky,true);
 				}
+
 			rect.x=diskx;
 			rect.y=disky;
 			rect.width=iconSize;

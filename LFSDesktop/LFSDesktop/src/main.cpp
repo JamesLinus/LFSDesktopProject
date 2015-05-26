@@ -289,7 +289,6 @@ int main(int argc,char **argv)
 			if(needsRefresh==true)
 				{
 					scanForMountableDisks();
-					drawIcons();
 					int ret=poll(&pollstruct,POLLIN,20);
 					if(ret!=0)
 						{
@@ -297,6 +296,7 @@ int main(int argc,char **argv)
 							if(numRead>0)
 								rescanDesktop();
 						}
+					drawIcons();
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;
 				}
