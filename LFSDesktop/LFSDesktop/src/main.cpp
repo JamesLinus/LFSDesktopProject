@@ -268,7 +268,7 @@ int main(int argc,char **argv)
 	pollstruct.events=POLLIN;
 	pollstruct.revents=0;
 	
-	inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE);
+	inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE|IN_MODIFY);
 	refreshDesktopFiles();
 
 	getSavedDiskData();

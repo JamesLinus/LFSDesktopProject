@@ -31,7 +31,7 @@ void mountDisk(int x, int y)
 
 	if(isDisk==false)
 		{
-			asprintf(&command,"xdg-open %s",fileInfoPtr[foundDiskNumber].path);
+			asprintf(&command,"xdg-open \"%s\"",fileInfoPtr[foundDiskNumber].path);
 			system(command);
 			free(command);
 			return;

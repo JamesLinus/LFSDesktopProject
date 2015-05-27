@@ -1,4 +1,8 @@
 0.0.5
+Use default icon for corrupt/unkown format icons.
+Set default icons for incomplete icon themes ( defaults taken from gnome theme ).
+Corrected wrong icons for bash scripts/text files.
+Now use libmagic to get mime types.
 Code clean.
 Files in~/Desktop now shown/opened ( with double click ).
 Better disk type regognition.

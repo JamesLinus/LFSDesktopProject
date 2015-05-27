@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <search.h>
+#include <magic.h>
 
 #include "globals.h"
 #include "prefs.h"
@@ -27,6 +28,7 @@ char		*cachePath;
 char		*prefsPath;
 char		*desktopPath;
 int			savedFileCount;
+char		findbuffer[2048];
 
 fileInfo	*fileInfoPtr;
 
@@ -38,7 +40,21 @@ int fileExists(char *name)
 	return (stat(name,&buffer));
 }
 
-char	findbuffer[2048];
+char* getMimeType(char *filepath)
+{
+	const char			*mime;
+	struct magic_set	*magic;
+	char				*returnstr=NULL;
+
+	magic=magic_open(MAGIC_MIME_TYPE);
+	magic_load(magic,NULL);
+	mime=magic_file(magic,filepath);
+	if(mime!=NULL)
+		returnstr=strdup(mime);
+	magic_close(magic);
+	return(returnstr);
+}
+
 void findIcon(char *theme,const char *name,const char *catagory)
 {
 	FILE	*fp;
@@ -150,38 +166,6 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 
 
 	return(strdup("/usr/share/icons/gnome/256x256/mimetypes/empty.png"));		
-}
-
-char* defaultIconxx(char *theme,char *name,const char *catagory)
-{
-	char	*command;
-	FILE	*fp;
-	char	buffer[2048];
-	char	*retstr=NULL;
-
-	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name);
-
-	fp=popen(command,"r");
-	free(command);
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,2048,fp);
-			sscanf(buffer,"%as",&retstr);
-			pclose(fp);
-		}
-
-	if((retstr==NULL) || (strlen(retstr)==0))
-		{
-			if(retstr!=NULL)
-				free(retstr);
-			if(strcmp(catagory,"devices")!=0)
-				return(defaultIcon((char*)"gnome",(char*)"text-x-generic","mimetypes"));
-			else
-				return(defaultIcon((char*)"gnome",(char*)"harddisk","devices"));
-
-		}
-	return(retstr);
 }
 
 char* pathToIcon(char* name,const char* catagory)
@@ -329,20 +313,12 @@ void getFreeSlot(int *x,int *y)
 		}
 }
 
-/*
-	{"label",TYPESTRING,&fileDiskLabel},
-	{"mime",TYPESTRING,&fileDiskMime},
-	{"path",TYPESTRING,&fileDiskPath},
-	{"uuid",TYPESTRING,&fileDiskUUID},
-	{"type",TYPESTRING,&fileDiskType},
-	{"xpos",TYPEINT,&fileDiskXPos},
-	{"ypos",TYPEINT,&fileDiskYPos},
-
-*/
 void readDesktopFile(const char* name)
 {
 	FILE	*fr;
 	char	buffer[2048];
+	char	*tptr=NULL;
+	char	*ptr=NULL;
 
 	snprintf(buffer,2047,"%s/%s",cachePath,name);
 	fr=fopen(buffer,"r");
@@ -354,6 +330,20 @@ void readDesktopFile(const char* name)
 			fileInfoPtr[desktopFilesCnt].path=fileDiskPath;
 			fileInfoPtr[desktopFilesCnt].x=fileDiskXPos;
 			fileInfoPtr[desktopFilesCnt].y=fileDiskYPos;
+			snprintf(buffer,2047,"%s/%s",desktopPath,name);
+			tptr=getMimeType(buffer);
+			ptr=strchr(tptr,'/');
+			while(ptr!=NULL)
+				{
+					*ptr='-';
+					ptr=strchr(tptr,'/');
+				}
+			ptr=strstr(tptr,"text-x-shellscript");
+			if(ptr==NULL)
+				fileInfoPtr[desktopFilesCnt].mime=strdup(tptr);
+			else
+				fileInfoPtr[desktopFilesCnt].mime=strdup("application-x-shellscript");
+			free(tptr);
 			fileDiskLabel=NULL;
 			fileDiskMime=NULL;
 			fileDiskPath=NULL;
@@ -383,7 +373,7 @@ void refreshDesktopFiles(void)
 	char	buffer2[4096];
 	char	*ptr;
 	FILE	*fp;
-	FILE	*fm;
+	char	*tptr;
 
 	for(int j=1;j<desktopFilesCntMax;j++)
 		{
@@ -436,22 +426,19 @@ void refreshDesktopFiles(void)
 					ptr=strrchr(buffer,'/');
 					ptr++;
 					fileInfoPtr[desktopFilesCnt].label=strdup(ptr);
-					sprintf(buffer2,"xdg-mime query filetype '%s'",fileInfoPtr[desktopFilesCnt].path);
-					fm=popen(buffer2,"r");
-					fgets(buffer,4096,fm);
-					pclose(fm);
-					buffer[strlen(buffer)-1]=0;
-					ptr=strchr(buffer,'/');
+					tptr=getMimeType(buffer);
+					ptr=strchr(tptr,'/');
 					while(ptr!=NULL)
 						{
 							*ptr='-';
-							ptr=strchr(buffer,'/');
+							ptr=strchr(tptr,'/');
 						}
-					ptr=strstr(buffer,"text-x-shellscript");
+					ptr=strstr(tptr,"text-x-shellscript");
 					if(ptr==NULL)
-						fileInfoPtr[desktopFilesCnt].mime=strdup(buffer);
+						fileInfoPtr[desktopFilesCnt].mime=strdup(tptr);
 					else
 						fileInfoPtr[desktopFilesCnt].mime=strdup("application-x-shellscript");
+					free(tptr);
 					getFreeSlot(&fileInfoPtr[desktopFilesCnt].x,&fileInfoPtr[desktopFilesCnt].y);
 					saveInfofile(CACHEFOLDER,fileInfoPtr[desktopFilesCnt].label,fileInfoPtr[desktopFilesCnt].mime,fileInfoPtr[desktopFilesCnt].path,NULL,NULL,fileInfoPtr[desktopFilesCnt].x,fileInfoPtr[desktopFilesCnt].y);
 					desktopFilesCnt++;
