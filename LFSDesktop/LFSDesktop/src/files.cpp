@@ -39,15 +39,12 @@ int fileExists(char *name)
 }
 
 char	findbuffer[2048];
-char	findbufferfind[2048];
 void findIcon(char *theme,const char *name,const char *catagory)
 {
-	char	*command;
 	FILE	*fp;
 
-	sprintf(findbufferfind,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name,catagory);
-//debugstr(findbuffer);
-	fp=popen(findbufferfind,"r");
+	sprintf(findbuffer,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name,catagory);
+	fp=popen(findbuffer,"r");
 	if(fp!=NULL)
 		{
 			findbuffer[0]=0;
@@ -59,16 +56,8 @@ void findIcon(char *theme,const char *name,const char *catagory)
 
 char* defaultIcon(char *theme,char *name,const char *catagory)
 {
-	char		*ret=NULL;
 	const char	*defaultname=NULL;
-	char	*command;
-	FILE	*fp;
-	char	buffer[2048];
-	char	retstr[1024];
 
-//	debugstr(name);
-//	debugstr(theme);
-new is bad
 	if(strstr(name,"text")!=NULL)
 		{
 			defaultname="text-plain";
@@ -187,9 +176,9 @@ char* defaultIconxx(char *theme,char *name,const char *catagory)
 			if(retstr!=NULL)
 				free(retstr);
 			if(strcmp(catagory,"devices")!=0)
-				return(defaultIcon((char*)"gnome","text-x-generic","mimetypes"));
+				return(defaultIcon((char*)"gnome",(char*)"text-x-generic","mimetypes"));
 			else
-				return(defaultIcon((char*)"gnome","harddisk","devices"));
+				return(defaultIcon((char*)"gnome",(char*)"harddisk","devices"));
 
 		}
 	return(retstr);
@@ -225,6 +214,11 @@ char* pathToIcon(char* name,const char* catagory)
 void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata)
 {
 	hashdata->cairoImage=cairo_image_surface_create_from_png(imagepath);
+	if(cairo_surface_status(hashdata->cairoImage)!=CAIRO_STATUS_SUCCESS)
+		{
+			fprintf(stderr,"Can't use file:%s\n",imagepath);
+			hashdata->cairoImage=cairo_image_surface_create_from_png("/usr/share/icons/gnome/256x256/mimetypes/empty.png");
+		}
 	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
 }
 
