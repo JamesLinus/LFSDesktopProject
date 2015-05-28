@@ -44,7 +44,7 @@ extern saveDisks	*saved;
 extern int			numberOfDisksAttached;
 extern const char	*iconDiskType[];
 
-void mountDisk(int x,int y);
+void mountDisk(int what);
 void scanForMountableDisks(void);
 
 #endif

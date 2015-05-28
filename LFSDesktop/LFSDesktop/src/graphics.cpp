@@ -84,7 +84,7 @@ void drawIcons(void)
 
 	for(int j=0; j<numberOfDisksAttached; j++)
 		{
-			if(attached[j].ignore==false)
+			if((attached[j].ignore==false) && (attached[j].uuid!=NULL))
 				{
 					asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
 					line[0]=0;

@@ -1,3 +1,8 @@
+0.0.6
+Pop up menu disappears if you move pointer out of window.
+Fixed Segfault trying to eject some disks.
+Added right click on disk to mount/unmount/eject.
+
 0.0.5
 Use default icon for corrupt/unkown format icons.
 Set default icons for incomplete icon themes ( defaults taken from gnome theme ).

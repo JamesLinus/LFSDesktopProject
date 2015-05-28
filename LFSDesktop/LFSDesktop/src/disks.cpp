@@ -25,7 +25,7 @@ saveDisks	*saved=NULL;
 int			numberOfDisksAttached=-1000;
 const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home"};
 
-void mountDisk(int x, int y)
+void mountDisk(int what)
 {
 	char	*command;
 
@@ -39,15 +39,38 @@ void mountDisk(int x, int y)
 	else
 		{
 #ifdef _USESUIDHELPER_
-			asprintf(&command,"%s %s /media/%s",HELPERAPP,attached[foundDiskNumber].uuid,attached[foundDiskNumber].label);
+			asprintf(&command,"%s \"%s\" \"/media/%s\" %i",HELPERAPP,attached[foundDiskNumber].uuid,attached[foundDiskNumber].label,what);
 #else
 			asprintf(&command,"udevil mount `findfs UUID=%s`",attached[foundDiskNumber].uuid);
 #endif
 			system(command);
 			free(command);
-			asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",attached[foundDiskNumber].uuid);
-			system(command);
-			free(command);
+			if(what==1)
+				{
+					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",attached[foundDiskNumber].uuid);
+					system(command);
+					free(command);
+				}
+
+			if(what==3)
+				{
+					if(attached[foundDiskNumber].uuid!=NULL)
+						free(attached[foundDiskNumber].uuid);
+					if(attached[foundDiskNumber].label!=NULL)
+						free(attached[foundDiskNumber].label);
+					if(attached[foundDiskNumber].mountpoint!=NULL)
+						free(attached[foundDiskNumber].mountpoint);
+					if(attached[foundDiskNumber].dev!=NULL)
+						free(attached[foundDiskNumber].dev);
+					if(attached[foundDiskNumber].sysname!=NULL)
+						free(attached[foundDiskNumber].sysname);
+					xySlot[attached[foundDiskNumber].x][attached[foundDiskNumber].y]=0;
+					attached[foundDiskNumber].uuid=NULL;
+					attached[foundDiskNumber].label=NULL;
+					attached[foundDiskNumber].mountpoint=NULL;
+					attached[foundDiskNumber].dev=NULL;
+					attached[foundDiskNumber].sysname=NULL;
+				}
 		}
 }
 

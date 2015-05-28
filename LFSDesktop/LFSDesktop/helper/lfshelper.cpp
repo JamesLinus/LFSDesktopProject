@@ -23,18 +23,37 @@ int main(int argc, char **argv)
 	char	*command;
 	uid_t	user=getuid(); 
 	int		isNTFS=1;
+	int		what;
 
-	if(argc==3)
+	if(argc==4)
 		{
 			isNTFS=checkForNTFS(argv[1]);
 			setresuid(0,user,user);
 			asprintf(&command,"mkdir -p %s &>/dev/null",argv[2]);
 			system(command);
 			free(command);
-			if(isNTFS==0)
-				asprintf(&command,"mount -o user,uid=%i,gid=%i UUID=%s %s",user,user,argv[1],argv[2]);
-			else
-				asprintf(&command,"mount UUID=%s %s",argv[1],argv[2]);
+			what=atoi(argv[3]);
+			switch(what)
+				{
+					case 1:
+						if(isNTFS==0)
+							asprintf(&command,"mount -o user,uid=%i,gid=%i UUID=\"%s\" \"%s\"",user,user,argv[1],argv[2]);
+						else
+							asprintf(&command,"mount UUID=\"%s\" \"%s\"",argv[1],argv[2]);
+						break;
+					case 2:
+						asprintf(&command,"umount UUID=\"%s\"",argv[1]);
+						system(command);
+						free(command);			
+						asprintf(&command,"rmdir \"%s\"",argv[2]);
+						break;
+					case 3:
+						asprintf(&command,"eject UUID=\"%s\" &",argv[1]);
+						system(command);
+						free(command);			
+						asprintf(&command,"rmdir \"%s\"",argv[2]);
+						break;
+				}
 			system(command);
 			free(command);			
 		}

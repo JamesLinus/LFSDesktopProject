@@ -22,6 +22,13 @@
 
 #include <libudev.h>
 
+#include <sys/inotify.h>
+#include <limits.h>
+#include <poll.h>
+
+#include <Xm/PushB.h>
+#include <Xm/Form.h>
+
 #include "config.h"
 
 #include "globals.h"
@@ -42,6 +49,7 @@ struct	option long_options[] =
 };
 
 bool	needsRefresh=true;
+bool	loop=true;
 
 void printhelp(void)
 {
@@ -94,9 +102,104 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
-#include <sys/inotify.h>
-#include <limits.h>
-#include <poll.h>
+void pushedButton(Widget w,XtPointer client_data,XmPushButtonCallbackStruct *cbs)
+{
+	long	what=(long)client_data;
+	switch(what)
+		{
+			case 1:
+				mountDisk(1);
+				break;
+			case 2:
+				mountDisk(2);
+				break;
+			case 3:
+				mountDisk(3);
+				break;
+		}
+	needsRefresh=true;
+	printf("Hello to you too!\nfrom button %i\n",(int)(long)client_data);
+	loop=false;
+}
+
+Widget mountMenu(XEvent ev,XtAppContext *app)
+{
+	Widget	toplevel,form,mount,unmount,eject;
+	int		dump=0;
+
+	toplevel=XtVaAppInitialize(app,"Mount",NULL,0,&dump,NULL,NULL,NULL);
+
+	form=XtVaCreateManagedWidget("form",xmFormWidgetClass,toplevel,NULL);
+
+	mount=XtVaCreateManagedWidget("Mount",xmPushButtonWidgetClass,form,
+				XmNtopAttachment,XmATTACH_FORM,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+
+	unmount=XtVaCreateManagedWidget("Unmount",xmPushButtonWidgetClass,form,
+				XmNtopWidget,mount,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+
+	eject=XtVaCreateManagedWidget("Eject",xmPushButtonWidgetClass,form,
+				XmNtopWidget,unmount,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+
+	XtAddCallback(mount,XmNactivateCallback,(XtCallbackProc)pushedButton,(XtPointer)1);
+	XtAddCallback(unmount,XmNactivateCallback,(XtCallbackProc)pushedButton,(XtPointer)2);
+	XtAddCallback(eject,XmNactivateCallback,(XtCallbackProc)pushedButton,(XtPointer)3);
+
+	XtVaSetValues(toplevel,XmNmwmDecorations,0,NULL);
+	XtVaSetValues(toplevel,XmNoverrideRedirect,TRUE,NULL);
+	XtVaSetValues(toplevel,XmNx,ev.xbutton.x,XmNy,ev.xbutton.y,NULL);
+	XtRealizeWidget(toplevel);
+	return(toplevel);
+}
+
+void doPopUp(XEvent ev)
+{
+	Widget			mountmenu;
+	XEvent			event;
+	XtAppContext	app;
+	bool			foundicon;
+
+	foundicon=findIcon(ev.xbutton.x,ev.xbutton.y);
+	if(foundicon==false)
+		return;
+	if(isDisk==false)
+		return;
+	loop=true;
+
+	mountmenu=mountMenu(ev,&app);
+	/* enter processing loop */
+	while(loop==true)
+		{
+			XtAppNextEvent(app,&event);
+			switch(event.type)
+				{
+				case LeaveNotify:
+				if(event.xcrossing.detail==NotifyAncestor)
+					loop=false;
+					break;
+				}
+			XtDispatchEvent(&event);
+		}
+	XtDestroyWidget(mountmenu);
+	while(XtAppPending(app)!=0)
+		{
+			XtAppNextEvent(app,&event);
+			XtDispatchEvent(&event);
+		}
+}
 
 int main(int argc,char **argv)
 {
@@ -309,6 +412,11 @@ int main(int argc,char **argv)
 			switch(ev.type)
 				{
 				case ButtonPress:
+					if(ev.xbutton.button==Button3)
+						{
+							doPopUp(ev);
+							break;
+						}
 					if(ev.xbutton.button!=Button1)
 						break;
 					dragging=true;
@@ -323,7 +431,7 @@ int main(int argc,char **argv)
 							firstClick=false;
 							if(ev.xbutton.time-time<800)
 								{
-									mountDisk(ev.xbutton.x,ev.xbutton.y);
+									mountDisk(1);
 									needsRefresh=true;
 								}
 							else
@@ -360,7 +468,9 @@ int main(int argc,char **argv)
 
 					break;
 				case ButtonRelease:
-				//printf("ButtonRelease\n");
+					if(ev.xbutton.button!=Button1)
+							break;
+
 					dragging=false;
 					buttonDown=false;
 					if(foundIcon==true)
@@ -387,7 +497,6 @@ int main(int argc,char **argv)
 											fileInfoPtr[foundDiskNumber].x=newx;
 											fileInfoPtr[foundDiskNumber].y=newy;
 										}
-									//foundDiskNumber=0;
 									needsRefresh=true;
 									getSavedDiskData();
 									scanForMountableDisks();
