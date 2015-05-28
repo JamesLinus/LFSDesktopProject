@@ -1,4 +1,5 @@
 0.0.6
+Symlinks handled properly in ~/Desktop.
 Pop up menu disappears if you move pointer out of window.
 Fixed Segfault trying to eject some disks.
 Added right click on disk to mount/unmount/eject.

@@ -81,12 +81,34 @@ void drawIcons(void)
 
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
+/*
+#include <mntent.h>
 
+int main(void)
+{
+//mount
+  struct mntent *ent;
+  FILE *aFile;
+
+  aFile = setmntent("/proc/mounts", "r");
+  if (aFile == NULL) {
+    perror("setmntent");
+    exit(1);
+  }
+  while (NULL != (ent = getmntent(aFile)))
+  {
+  printf(">>>%s<<<\n",hasmntopt(ent,MNTOPT_NOSUID));
+    printf("%s %s\n", ent->mnt_fsname, ent->mnt_dir);
+  }
+  endmntent(aFile);
+}
+*/
 	for(int j=0; j<numberOfDisksAttached; j++)
 		{
 			if((attached[j].ignore==false) && (attached[j].uuid!=NULL))
 				{
-					asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
+					//asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
+					asprintf(&com,"findmnt -fn %s",attached[j].dev);
 					line[0]=0;
 					tp=popen(com,"r");
 					free(com);

@@ -46,7 +46,7 @@ char* getMimeType(char *filepath)
 	struct magic_set	*magic;
 	char				*returnstr=NULL;
 
-	magic=magic_open(MAGIC_MIME_TYPE);
+	magic=magic_open(MAGIC_MIME_TYPE|MAGIC_SYMLINK);
 	magic_load(magic,NULL);
 	mime=magic_file(magic,filepath);
 	if(mime!=NULL)
