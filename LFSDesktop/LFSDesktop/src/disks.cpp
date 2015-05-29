@@ -25,6 +25,28 @@ saveDisks	*saved=NULL;
 int			numberOfDisksAttached=-1000;
 const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home"};
 
+void freeAttached(int num)
+{
+	if(attached[num].uuid!=NULL)
+		free(attached[num].uuid);
+	if(attached[num].label!=NULL)
+		free(attached[num].label);
+	if(attached[num].mountpoint!=NULL)
+		free(attached[num].mountpoint);
+	if(attached[num].dev!=NULL)
+		free(attached[num].dev);
+	if(attached[num].sysname!=NULL)
+		free(attached[num].sysname);
+	xySlot[attached[num].x][attached[num].y]=0;
+	attached[num].uuid=NULL;
+	attached[num].label=NULL;
+	attached[num].mountpoint=NULL;
+	attached[num].dev=NULL;
+	attached[num].sysname=NULL;
+	attached[num].x=0;
+	attached[num].y=0;
+}
+
 void mountDisk(int what)
 {
 	char	*command;
@@ -54,22 +76,7 @@ void mountDisk(int what)
 
 			if(what==3)
 				{
-					if(attached[foundDiskNumber].uuid!=NULL)
-						free(attached[foundDiskNumber].uuid);
-					if(attached[foundDiskNumber].label!=NULL)
-						free(attached[foundDiskNumber].label);
-					if(attached[foundDiskNumber].mountpoint!=NULL)
-						free(attached[foundDiskNumber].mountpoint);
-					if(attached[foundDiskNumber].dev!=NULL)
-						free(attached[foundDiskNumber].dev);
-					if(attached[foundDiskNumber].sysname!=NULL)
-						free(attached[foundDiskNumber].sysname);
-					xySlot[attached[foundDiskNumber].x][attached[foundDiskNumber].y]=0;
-					attached[foundDiskNumber].uuid=NULL;
-					attached[foundDiskNumber].label=NULL;
-					attached[foundDiskNumber].mountpoint=NULL;
-					attached[foundDiskNumber].dev=NULL;
-					attached[foundDiskNumber].sysname=NULL;
+					freeAttached(foundDiskNumber);
 				}
 		}
 }
@@ -92,16 +99,17 @@ void deleteDiskInfo(void)
 {
 	for(int j=0; j<numberOfDisksAttached; j++)
 		{
-			if(attached[j].uuid!=NULL)
-				free(attached[j].uuid);
-			if(attached[j].label!=NULL)
-				free(attached[j].label);
-			if(attached[j].mountpoint!=NULL)
-				free(attached[j].mountpoint);
-			if(attached[j].dev!=NULL)
-				free(attached[j].dev);
-			if(attached[j].sysname!=NULL)
-				free(attached[j].sysname);
+			freeAttached(j);
+//			if(attached[j].uuid!=NULL)
+//				free(attached[j].uuid);
+//			if(attached[j].label!=NULL)
+//				free(attached[j].label);
+//			if(attached[j].mountpoint!=NULL)
+//				free(attached[j].mountpoint);
+//			if(attached[j].dev!=NULL)
+//				free(attached[j].dev);
+//			if(attached[j].sysname!=NULL)
+//				free(attached[j].sysname);
 		}
 	free(attached);
 }
@@ -235,6 +243,17 @@ void scanForMountableDisks(void)
 												}
 											xySlot[xpos][ypos]=1;
 										}
+							else
+								{
+									if(firstRun==false)
+										freeAttached(j);
+								}
+									
+								}
+							else
+								{
+									if(firstRun==false)
+										freeAttached(j);
 								}
 							udev_device_unref(thedev);
 						}

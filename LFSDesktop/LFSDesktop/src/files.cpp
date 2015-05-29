@@ -22,7 +22,6 @@
 #include "disks.h"
 #include "files.h"
 
-
 char		*diskInfoPath;
 char		*cachePath;
 char		*prefsPath;
@@ -289,7 +288,7 @@ void getSavedDiskData(void)
 					saved[cnt].uuid=strdup(fileDiskUUID);
 					saved[cnt].x=fileDiskXPos;
 					saved[cnt].y=fileDiskYPos;
-					xySlot[fileDiskXPos][fileDiskYPos]=1;
+					//xySlot[fileDiskXPos][fileDiskYPos]=1;
 					cnt++;
 				}
 			pclose(fp);
@@ -330,6 +329,7 @@ void readDesktopFile(const char* name)
 			fileInfoPtr[desktopFilesCnt].path=fileDiskPath;
 			fileInfoPtr[desktopFilesCnt].x=fileDiskXPos;
 			fileInfoPtr[desktopFilesCnt].y=fileDiskYPos;
+			xySlot[fileDiskXPos][fileDiskYPos]=1;
 			snprintf(buffer,2047,"%s/%s",desktopPath,name);
 			tptr=getMimeType(buffer);
 			ptr=strchr(tptr,'/');

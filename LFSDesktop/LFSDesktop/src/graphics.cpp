@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <search.h>
+#include <mntent.h>
 
 #include <cairo.h>
 
@@ -25,6 +26,25 @@
 #include "graphics.h"
 
 cairo_t	*cr;
+
+void debugDesk(void)
+{
+	for(int yyy=0;yyy<yCnt;yyy++)
+		{
+			for(int xxx=0;xxx<xCnt;xxx++)
+				{
+					cairo_save(cr);
+						cairo_translate(cr,xxx*gridSize+gridBorder,yyy*gridSize+gridBorder);
+						cairo_rectangle (cr, 0, 0,32, 32);
+						if(xySlot[xxx][yyy]==0)
+							cairo_set_source_rgba (cr, 0, 1, 0, 0.25);
+						else
+							cairo_set_source_rgba (cr, 1, 0, 0, 0.25);
+						cairo_fill (cr);
+					cairo_restore(cr);
+				}
+		}
+}
 
 void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 {
@@ -51,6 +71,7 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 			cairo_save(cr);
 				cairo_translate(cr,x,y);
 				cairo_scale (cr,scale,scale);
+				//printf("<<%f>>\n",scale);
 				cairo_set_source_surface(cr,((diskIconStruct*)retentry->data)->cairoImage,0,0);
 				cairo_paint(cr);
 			cairo_restore(cr);
@@ -68,16 +89,20 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 
 void drawIcons(void)
 {
-	FILE		*tp;
-	char		*com;
-	char		line[BUFFERSIZE];
-	int			fontheight;
-	int			stringwidth;
+	FILE			*tp;
+//	char			*com;
+//	char			line[BUFFERSIZE];
+	int				fontheight;
+	int				stringwidth;
 
-	int			boxx,boxw,boxh;
-	XRectangle	rect;
-	int			diskx,disky;
-	bool		mounted=false;
+	int				boxx,boxw,boxh;
+	XRectangle		rect;
+	int				diskx,disky;
+	bool			mounted=false;
+	struct mntent	*entry;
+	bool			loop;
+
+//  FILE *aFile;
 
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
@@ -103,25 +128,41 @@ int main(void)
   endmntent(aFile);
 }
 */
+
+
 	for(int j=0; j<numberOfDisksAttached; j++)
 		{
 			if((attached[j].ignore==false) && (attached[j].uuid!=NULL))
 				{
 					//asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
-					asprintf(&com,"findmnt -fn %s",attached[j].dev);
-					line[0]=0;
-					tp=popen(com,"r");
-					free(com);
-					fgets(line,BUFFERSIZE,tp);
-					pclose(tp);
+					//asprintf(&com,"findmnt -fn %s",attached[j].dev);
+					//line[0]=0;
+					//tp=popen(com,"r");
+					//free(com);
+					//fgets(line,BUFFERSIZE,tp);
+					//pclose(tp);
+					tp=setmntent("/proc/mounts","r");
+					mounted=false;
+					loop=true;
+					entry=getmntent(tp);
+					while((entry!=NULL) && (loop=true))
+						{
+							if(strcasecmp(attached[j].dev,entry->mnt_fsname)==0)
+								{
+									mounted=true;
+									loop=false;
+								}
+							entry=getmntent(tp);
+						}
+					endmntent(tp);
 
 					diskx=attached[j].x*gridSize+gridBorder;
 					disky=attached[j].y*gridSize+gridBorder;
 
-					if(strlen(line)>0)
-						mounted=true;
-					else
-						mounted=false;
+					//if(strlen(line)>0)
+					//	mounted=true;
+					//else
+					//	mounted=false;
 
 					drawImage((char*)iconDiskType[attached[j].type],"devices",diskx,disky,mounted);
 
@@ -190,6 +231,10 @@ int main(void)
 			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
 
 		}
+
+	if(debugDeskFlag==true)
+		debugDesk();
+
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 

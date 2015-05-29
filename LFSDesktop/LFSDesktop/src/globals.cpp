@@ -29,6 +29,8 @@ int			fileDiskYPos=-1;
 
 int			foundDiskNumber=-1;
 bool		isDisk=false;
+bool		debugDeskFlag=false;
+bool		firstRun=false;
 
 int			xCnt;
 int			yCnt;

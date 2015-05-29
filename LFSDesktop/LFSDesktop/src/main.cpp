@@ -43,6 +43,7 @@ struct	option long_options[] =
 {
 	{"clean",0,0,'c'},
 	{"theme",1,0,'t'},
+	{"theme",0,0,'d'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
 	{0,0,0,0}
@@ -57,6 +58,7 @@ void printhelp(void)
 	       "A CLI application\n"
 	       " -c,--clean		Clean disk info data\n"
 	       " -t,--theme		Set theme\n"
+	       " -d,--debug		Debug\n"
 	       " -v,--version	output version information and exit\n"
 	       " -h,-?,--help	print this help\n\n"
 	       "Report bugs to kdhedger@yahoo.co.uk\n"
@@ -105,20 +107,9 @@ void  alarmCallBack(int sig)
 void pushedButton(Widget w,XtPointer client_data,XmPushButtonCallbackStruct *cbs)
 {
 	long	what=(long)client_data;
-	switch(what)
-		{
-			case 1:
-				mountDisk(1);
-				break;
-			case 2:
-				mountDisk(2);
-				break;
-			case 3:
-				mountDisk(3);
-				break;
-		}
+
+	mountDisk(what);
 	needsRefresh=true;
-	printf("Hello to you too!\nfrom button %i\n",(int)(long)client_data);
 	loop=false;
 }
 
@@ -259,12 +250,16 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hct:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hcdt:",long_options,&option_index);
 			if (c==-1)
 				break;
 
 			switch (c)
 				{
+				case 'd':
+					debugDeskFlag=true;
+					break;
+
 				case 'c':
 					asprintf(&command,"rm %s/*",diskInfoPath);
 					system(command);
@@ -372,6 +367,7 @@ int main(int argc,char **argv)
 	pollstruct.revents=0;
 	
 	inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE|IN_MODIFY);
+	firstRun=true;
 	refreshDesktopFiles();
 
 	getSavedDiskData();
@@ -386,7 +382,7 @@ int main(int argc,char **argv)
 	bool	dragging=false;
 
 	fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
-
+	firstRun=false;
 	while(done)
 		{
 			if(needsRefresh==true)
@@ -468,6 +464,10 @@ int main(int argc,char **argv)
 
 					break;
 				case ButtonRelease:
+					//if(ev.xbutton.button!=Button3)
+					//	{
+					//		xySlot[oldx][oldy]=0;
+					//	}
 					if(ev.xbutton.button!=Button1)
 							break;
 
@@ -490,12 +490,14 @@ int main(int argc,char **argv)
 											fileDiskXPos=-1;
 											fileDiskYPos=-1;
 											fileDiskType=NULL;
+											xySlot[newx][newy]=1;
 										}
 									else
 										{
 											saveInfofile(CACHEFOLDER,fileInfoPtr[foundDiskNumber].label,fileInfoPtr[foundDiskNumber].mime,fileInfoPtr[foundDiskNumber].path,NULL,NULL,newx,newy);
 											fileInfoPtr[foundDiskNumber].x=newx;
 											fileInfoPtr[foundDiskNumber].y=newy;
+											xySlot[newx][newy]=1;
 										}
 									needsRefresh=true;
 									getSavedDiskData();
