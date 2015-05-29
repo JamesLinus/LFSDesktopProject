@@ -40,6 +40,7 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 int getSaveDiskNumber(char* uuid);
 void rescanDesktop(void);
 void refreshDesktopFiles(void);
+void getFreeSlot(int *x,int *y);
 
 void printString(char* str);
 void printInt(int v);

@@ -88,7 +88,7 @@ void saveVarsToFile(const char* filepath,args* dataptr)
 		}
 }
 
-void loadVarsFromFile(char* filepath,args* dataptr)
+bool loadVarsFromFile(char* filepath,args* dataptr)
 {
 	FILE*	fd=NULL;
 	char	buffer[2048];
@@ -134,5 +134,7 @@ void loadVarsFromFile(char* filepath,args* dataptr)
 					strarg=NULL;
 				}
 			fclose(fd);
+			return(true);
 		}
+	return(false);
 }

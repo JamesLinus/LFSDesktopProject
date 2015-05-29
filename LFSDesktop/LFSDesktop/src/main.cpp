@@ -207,6 +207,8 @@ int main(int argc,char **argv)
 	bool			foundIcon=false;
 	pollfd			pollstruct;
 	int				fd;
+	pollfd			polldisks;
+	int				fhfordisks;
 	long			numRead=0;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
@@ -365,8 +367,14 @@ int main(int argc,char **argv)
 	pollstruct.fd =fd;
 	pollstruct.events=POLLIN;
 	pollstruct.revents=0;
-	
 	inotify_add_watch(fd,desktopPath,IN_CREATE|IN_DELETE|IN_MODIFY);
+
+	fhfordisks=inotify_init();
+	polldisks.fd=fhfordisks;
+	polldisks.events=POLLIN;
+	polldisks.revents=0;
+	inotify_add_watch(fhfordisks,"/dev/disk/by-uuid",IN_CREATE|IN_DELETE|IN_MODIFY);
+
 	firstRun=true;
 	refreshDesktopFiles();
 
@@ -383,6 +391,11 @@ int main(int argc,char **argv)
 
 	fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
 	firstRun=false;
+
+	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
+	deskIconsCnt=0;
+	fillDesk();
+
 	while(done)
 		{
 			if(needsRefresh==true)
@@ -395,6 +408,15 @@ int main(int argc,char **argv)
 							if(numRead>0)
 								rescanDesktop();
 						}
+					
+					ret=poll(&polldisks,POLLIN,20);
+					if(ret!=0)
+						{
+							numRead=read(fhfordisks,buffer,100);
+							if(numRead>0)
+								fillDesk();
+						}
+
 					drawIcons();
 					XdbeSwapBuffers(display,&swapInfo,1);
 					needsRefresh=false;

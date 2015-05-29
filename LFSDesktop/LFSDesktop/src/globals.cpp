@@ -52,3 +52,7 @@ args		globalFileData[]=
 fileInfo	*disksDataPtr;
 int			desktopFilesCnt=0;
 int			desktopFilesCntMax=0;
+
+int			deskIconsCnt=0;
+int			deskIconsMaxCnt=100;
+deskIcons	*deskIconsArray;

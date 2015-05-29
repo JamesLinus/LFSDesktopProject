@@ -46,5 +46,6 @@ extern const char	*iconDiskType[];
 
 void mountDisk(int what);
 void scanForMountableDisks(void);
+void fillDesk(void);
 
 #endif

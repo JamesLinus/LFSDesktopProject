@@ -51,6 +51,6 @@ extern unsigned long	labelForeground;
 extern int				**xySlot;
 
 void saveVarsToFile(const char* filepath,args* dataptr);
-void loadVarsFromFile(char* filepath,args* dataptr);
+bool loadVarsFromFile(char* filepath,args* dataptr);
 
 #endif

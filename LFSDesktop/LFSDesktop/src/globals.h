@@ -36,6 +36,29 @@ struct fileInfo
 	int			y;
 };
 
+struct deskIcons
+{
+	char			*label;
+	char			*uuid;
+//	char			*dev;
+	char			*mountpoint;
+	int				x;
+	int				y;
+	bool			mounted;
+	char			*partname;
+	bool			ignore;
+	bool			dvd;
+	bool			cdrom;
+	bool			usb;
+	//bool			harddisk;
+	bool			file;
+	int				iconhint;
+};
+
+extern int			deskIconsCnt;
+extern int			deskIconsMaxCnt;
+extern deskIcons	*deskIconsArray;
+
 extern int			errLine;
 extern const char	*errFile;
 extern const char	*errFunc;

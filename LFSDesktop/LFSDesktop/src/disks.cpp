@@ -263,3 +263,128 @@ void scanForMountableDisks(void)
 	udev_unref(udev);
 }
 
+void clearDeskEntry(int num)
+{
+	if(deskIconsArray[num].label!=NULL)
+		free(deskIconsArray[num].label);
+	deskIconsArray[num].label=NULL;
+	if(deskIconsArray[num].uuid!=NULL)
+		free(deskIconsArray[num].uuid);
+	deskIconsArray[num].uuid=NULL;
+	if(deskIconsArray[num].mountpoint!=NULL)
+		free(deskIconsArray[num].mountpoint);
+	deskIconsArray[num].mountpoint=NULL;
+	if(deskIconsArray[num].partname!=NULL)
+		free(deskIconsArray[num].partname);
+	deskIconsArray[num].partname=NULL;
+
+	deskIconsArray[num].dvd=false;
+	deskIconsArray[num].cdrom=false;
+	deskIconsArray[num].usb=false;
+	deskIconsArray[num].file=false;
+	deskIconsArray[num].iconhint=-1;
+}
+
+void fillDesk(void)
+{
+	struct udev		*udev;
+	udev_device 	*thedev;
+	udev_device 	*usbdev;
+	char			buffer[BUFFERSIZE];
+	char			path[BUFFERSIZE];
+	char			*uuid=NULL;
+	int				iconhint=0;
+	bool			iscd=false;
+	bool			isdvd=false;
+	bool			isusb=false;
+	FILE			*fp;
+	const char		*ptr;
+
+	/* Create the udev object */
+	udev = udev_new();
+	if (!udev) {
+		printf("Can't create udev\n");
+		exit(1);
+	}
+debugstr("update");
+	deskIconsCnt=1;
+
+	fp=popen("ls -1 /dev/disk/by-uuid","r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			while(fgets(buffer,BUFFERSIZE,fp))
+				{
+					clearDeskEntry(deskIconsCnt);
+					buffer[strlen(buffer)-1]=0;
+					asprintf(&uuid,"%s",buffer);
+					sprintf(path,"/dev/disk/by-uuid/%s",buffer);
+					buffer[readlink(path,buffer,BUFFERSIZE)]=0;
+					ptr=strrchr(buffer,'/');
+					ptr++;
+					deskIconsArray[deskIconsCnt].partname=strdup(ptr);
+					thedev=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
+					debugstr(path);
+					if(thedev==NULL)
+						{
+							printf("no dev for %s from %s\n",ptr,buffer);
+							exit(1);
+						}
+					else
+						{
+							if(strcmp(udev_device_get_property_value(thedev,"ID_FS_USAGE"),"filesystem")==0)
+								{
+									ptr=udev_device_get_property_value(thedev,"ID_FS_LABEL");
+									if(ptr==NULL)
+										ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
+									if(ptr==NULL)
+										continue;
+									iconhint=0;
+									deskIconsArray[deskIconsCnt].label=strdup(ptr);
+									deskIconsArray[deskIconsCnt].uuid=uuid;
+
+									isdvd=false;
+									iscd=false;
+									isusb=false;
+									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
+										{
+											iconhint=-1;
+											isdvd=true;
+										}
+									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_CD")!=NULL)
+										{
+											iconhint=-1;
+											iscd=true;
+										}
+									
+									usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
+									if(usbdev!=NULL)
+										{
+											isusb=true;
+											if(udev_device_get_property_value(thedev,"ID_DRIVE_THUMB")!=NULL)
+												iconhint=STICK;
+											else
+												iconhint=getUSBData(udev_device_get_property_value(thedev,"ID_VENDOR"));
+										}
+									deskIconsArray[deskIconsCnt].dvd=isdvd;
+									deskIconsArray[deskIconsCnt].cdrom=iscd;
+									deskIconsArray[deskIconsCnt].usb=isusb;
+									deskIconsArray[deskIconsCnt].file=false;
+									deskIconsArray[deskIconsCnt].iconhint=iconhint;
+									sprintf(buffer,"%s/%s",diskInfoPath,deskIconsArray[deskIconsCnt].uuid);
+									if(loadVarsFromFile(buffer,globalFileData))
+										{
+											deskIconsArray[deskIconsCnt].x=fileDiskXPos;
+											deskIconsArray[deskIconsCnt].y=fileDiskYPos;
+										}
+									else
+										{
+											getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
+										}
+									deskIconsCnt++;
+								}
+						}
+				}
+		}
+	pclose(fp);	
+}
