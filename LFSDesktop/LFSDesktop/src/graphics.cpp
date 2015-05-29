@@ -44,6 +44,11 @@ void debugDesk(void)
 					cairo_restore(cr);
 				}
 		}
+
+//	for(int j=0;j<deskIconsCnt;j++)
+//		{
+//			printf("%s\n",deskIconsArray[j].label);
+//		}
 }
 
 void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
@@ -88,6 +93,137 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 }
 
 void drawIcons(void)
+{
+	FILE			*tp;
+	int				fontheight;
+	int				stringwidth;
+
+	int				boxx,boxw,boxh;
+	XRectangle		rect;
+	int				diskx,disky;
+	bool			mounted=false;
+	struct mntent	*entry;
+	bool			loop;
+
+	XDestroyRegion(rg);
+	rg=XCreateRegion();
+#if 1
+	for(int j=0;j<deskIconsCnt;j++)
+		{
+			if(deskIconsArray[j].installed==false)
+				continue;
+			if(deskIconsArray[j].file==false)
+				{
+					tp=setmntent("/proc/mounts","r");
+					mounted=false;
+					loop=true;
+					entry=getmntent(tp);
+					while((entry!=NULL) && (loop=true))
+						{
+							if(strcasecmp(deskIconsArray[j].dev,entry->mnt_fsname)==0)
+								{
+									mounted=true;
+									loop=false;
+								}
+							entry=getmntent(tp);
+						}
+					endmntent(tp);
+				}
+			else
+				mounted=true;
+
+			diskx=deskIconsArray[j].x*gridSize+gridBorder;
+			disky=deskIconsArray[j].y*gridSize+gridBorder;
+			if(deskIconsArray[j].file==false)
+				drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
+			else
+				{
+				if(strcmp(deskIconsArray[j].label,"Home")==0)
+					drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
+				else
+					{
+						if(strstr(deskIconsArray[j].mime,"inode"))
+							drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
+						else
+							drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
+					}
+				}
+
+			rect.x=diskx;
+			rect.y=disky;
+			rect.width=iconSize;
+			rect.height=iconSize;
+			XUnionRectWithRegion(&rect,rg, rg);
+
+			XSetClipMask(display,gc,0);
+
+			fontheight=labelFont->ascent+labelFont->descent;
+			stringwidth=XTextWidth(labelFont,deskIconsArray[j].label,strlen(deskIconsArray[j].label));
+
+			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+			boxw=stringwidth+2;
+			boxh=fontheight-2;
+
+			XSetForeground(display,gc,labelBackground);
+			XSetFillStyle(display,gc,FillSolid);
+			XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
+
+			XSetForeground(display,labelGC,labelForeground);
+			XSetBackground(display,labelGC,labelBackground);
+
+			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,deskIconsArray[j].label,strlen(deskIconsArray[j].label));
+		}
+#endif
+#if 0
+//draw desktop icons
+	for(int j=1;j<desktopFilesCnt;j++)
+		{
+			diskx=fileInfoPtr[j].x*gridSize+gridBorder;
+			disky=fileInfoPtr[j].y*gridSize+gridBorder;
+
+			if(strcmp(fileInfoPtr[j].label,"Home")==0)
+				drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
+			else
+				{
+					if(strstr(fileInfoPtr[j].mime,"inode"))
+						drawImage(fileInfoPtr[j].mime,"places",diskx,disky,true);
+					else
+						drawImage(fileInfoPtr[j].mime,"mimetypes",diskx,disky,true);
+				}
+
+			rect.x=diskx;
+			rect.y=disky;
+			rect.width=iconSize;
+			rect.height=iconSize;
+			XUnionRectWithRegion(&rect,rg, rg);
+			XSetClipMask(display,gc,0);
+
+			fontheight=labelFont->ascent+labelFont->descent;
+			stringwidth=XTextWidth(labelFont,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
+
+			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
+			boxw=stringwidth+2;
+			boxh=fontheight-2;
+			XSetForeground(display,gc,labelBackground);
+			XSetFillStyle(display,gc,FillSolid);
+			XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
+
+			XSetForeground(display,labelGC,labelForeground);
+			XSetBackground(display,labelGC,labelBackground);
+
+			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
+
+		}
+#endif
+	if(debugDeskFlag==true)
+		debugDesk();
+
+	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
+}
+
+
+
+void drawIconsXXX(void)
 {
 	FILE			*tp;
 //	char			*com;

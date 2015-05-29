@@ -65,7 +65,39 @@ void printhelp(void)
 	      );
 }
 
-bool findIcon(int x, int y)
+bool findIcon(int x,int y)
+{
+/*
+	for(int j=1;j<deskIconsCnt;j++)
+		{
+			if((x>=(deskIconsArray[j].x*gridSize+gridBorder))&&(x<=(deskIconsArray[j].x*gridSize+gridBorder)+iconSize)&&(y>=(deskIconsArray[j].y*gridSize+gridBorder))&&(y<=(deskIconsArray[j].y*gridSize+gridBorder)+iconSize))
+				{
+					fileDiskXPos=fileInfoPtr[j].x;
+					fileDiskYPos=fileInfoPtr[j].y;
+					foundDiskNumber=j;
+					isDisk=false;
+					return(true);
+				}
+		}
+*/
+	for(int j=1;j<deskIconsCnt;j++)
+		{
+			if((x>=(deskIconsArray[j].x*gridSize+gridBorder))&&(x<=(deskIconsArray[j].x*gridSize+gridBorder)+iconSize)&&(y>=(deskIconsArray[j].y*gridSize+gridBorder))&&(y<=(deskIconsArray[j].y*gridSize+gridBorder)+iconSize))
+				{
+					if(deskIconsArray[j].uuid!=NULL)
+						{
+							fileDiskXPos=deskIconsArray[j].x;
+							fileDiskYPos=deskIconsArray[j].y;
+							foundDiskNumber=j;
+							isDisk=true;
+							return(true);
+					}
+				}
+		}
+	return(false);
+}
+
+bool findIconXXX(int x, int y)
 {
 	for(int j=0;j<desktopFilesCnt;j++)
 		{
@@ -346,23 +378,10 @@ int main(int argc,char **argv)
 
 	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
 	desktopFilesCntMax=20;
-	asprintf(&command,"%s/Home",cachePath);
+	//asprintf(&command,"%s/Home",cachePath);
 	desktopFilesCnt=0;
-	if(fileExists(command)!=0)
-		{
-			desktopFilesCnt=1;
-			fileInfoPtr[0].x=0;
-			fileInfoPtr[0].y=0;
-			fileInfoPtr[0].label=strdup("Home");
-			fileInfoPtr[0].mime=strdup("inode/directory");
-			fileInfoPtr[0].path=strdup(getenv("HOME"));
-			saveInfofile(CACHEFOLDER,fileInfoPtr[0].label,fileInfoPtr[0].mime,fileInfoPtr[0].path,NULL,NULL,fileInfoPtr[0].x,fileInfoPtr[0].y);
-			xySlot[0][0]=1;
-		}
-	else
-		readDesktopFile("Home");
 
-	free(command);
+	//free(command);
 	fd=inotify_init();
 	pollstruct.fd =fd;
 	pollstruct.events=POLLIN;
@@ -374,6 +393,30 @@ int main(int argc,char **argv)
 	polldisks.events=POLLIN;
 	polldisks.revents=0;
 	inotify_add_watch(fhfordisks,"/dev/disk/by-uuid",IN_CREATE|IN_DELETE|IN_MODIFY);
+
+	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
+	deskIconsCnt=0;
+
+	asprintf(&command,"%s/Home",cachePath);
+//	desktopFilesCnt=0;
+
+	if(fileExists(command)!=0)
+		{
+			desktopFilesCnt=1;
+			deskIconsArray[0].x=0;
+			deskIconsArray[0].y=0;
+			deskIconsArray[0].installed=true;
+			deskIconsArray[0].label=strdup("Home");
+			deskIconsArray[0].mime=strdup("inode-directory");
+			deskIconsArray[0].mountpoint=strdup(getenv("HOME"));
+			deskIconsArray[0].file=true;
+			saveInfofile(CACHEFOLDER,deskIconsArray[0].label,deskIconsArray[0].mime,deskIconsArray[0].mountpoint,NULL,NULL,deskIconsArray[0].x,deskIconsArray[0].y);
+			xySlot[0][0]=1;
+		}
+	else
+		readDesktopFile("Home");
+
+	fillDesk();
 
 	firstRun=true;
 	refreshDesktopFiles();
@@ -392,9 +435,8 @@ int main(int argc,char **argv)
 	fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
 	firstRun=false;
 
-	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
-	deskIconsCnt=0;
-	fillDesk();
+	//	xySlot[0][0]=1;
+
 
 	while(done)
 		{
@@ -486,10 +528,6 @@ int main(int argc,char **argv)
 
 					break;
 				case ButtonRelease:
-					//if(ev.xbutton.button!=Button3)
-					//	{
-					//		xySlot[oldx][oldy]=0;
-					//	}
 					if(ev.xbutton.button!=Button1)
 							break;
 
@@ -506,7 +544,9 @@ int main(int argc,char **argv)
 									xySlot[oldx][oldy]=0;
 									if(isDisk==true)
 										{
-											saveInfofile(DISKFOLDER,attached[foundDiskNumber].label,NULL,NULL,attached[foundDiskNumber].uuid,(char*)iconDiskType[attached[foundDiskNumber].type],newx,newy);
+											deskIconsArray[foundDiskNumber].x=newx;
+											deskIconsArray[foundDiskNumber].y=newy;
+											saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy);
 											fileDiskLabel=NULL;
 											fileDiskUUID=NULL;
 											fileDiskXPos=-1;

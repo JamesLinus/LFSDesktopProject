@@ -41,6 +41,7 @@ int getSaveDiskNumber(char* uuid);
 void rescanDesktop(void);
 void refreshDesktopFiles(void);
 void getFreeSlot(int *x,int *y);
+char* getMimeType(char *filepath);
 
 void printString(char* str);
 void printInt(int v);

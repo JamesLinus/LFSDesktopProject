@@ -40,8 +40,9 @@ struct deskIcons
 {
 	char			*label;
 	char			*uuid;
-//	char			*dev;
+	char			*dev;
 	char			*mountpoint;
+	char			*mime;
 	int				x;
 	int				y;
 	bool			mounted;
@@ -53,6 +54,7 @@ struct deskIcons
 	//bool			harddisk;
 	bool			file;
 	int				iconhint;
+	bool			installed;
 };
 
 extern int			deskIconsCnt;

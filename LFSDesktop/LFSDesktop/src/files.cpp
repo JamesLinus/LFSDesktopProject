@@ -324,11 +324,13 @@ void readDesktopFile(const char* name)
 	if(fr!=NULL)
 		{
 			loadVarsFromFile(buffer,globalFileData);
-			fileInfoPtr[desktopFilesCnt].label=fileDiskLabel;
-			fileInfoPtr[desktopFilesCnt].mime=fileDiskMime;
-			fileInfoPtr[desktopFilesCnt].path=fileDiskPath;
-			fileInfoPtr[desktopFilesCnt].x=fileDiskXPos;
-			fileInfoPtr[desktopFilesCnt].y=fileDiskYPos;
+			deskIconsArray[deskIconsCnt].label=fileDiskLabel;
+			deskIconsArray[deskIconsCnt].mime=strdup(fileDiskMime);
+			deskIconsArray[deskIconsCnt].mountpoint=fileDiskPath;
+			deskIconsArray[deskIconsCnt].x=fileDiskXPos;
+			deskIconsArray[deskIconsCnt].y=fileDiskYPos;
+			deskIconsArray[deskIconsCnt].file=true;
+			deskIconsArray[deskIconsCnt].installed=true;
 			xySlot[fileDiskXPos][fileDiskYPos]=1;
 			snprintf(buffer,2047,"%s/%s",desktopPath,name);
 			tptr=getMimeType(buffer);
@@ -340,29 +342,14 @@ void readDesktopFile(const char* name)
 				}
 			ptr=strstr(tptr,"text-x-shellscript");
 			if(ptr==NULL)
-				fileInfoPtr[desktopFilesCnt].mime=strdup(tptr);
+				deskIconsArray[deskIconsCnt].mime=strdup(tptr);
 			else
-				fileInfoPtr[desktopFilesCnt].mime=strdup("application-x-shellscript");
+				deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
 			free(tptr);
 			fileDiskLabel=NULL;
 			fileDiskMime=NULL;
 			fileDiskPath=NULL;
-			desktopFilesCnt++;
-			if(desktopFilesCnt==desktopFilesCntMax)
-				{
-					fileInfoPtr=(fileInfo*)realloc(fileInfoPtr,(desktopFilesCntMax+20)*sizeof(fileInfo));
-					for(int j=desktopFilesCnt;desktopFilesCnt+20;j++)
-						{
-							fileInfoPtr[j].label=NULL;
-							fileInfoPtr[j].mime=NULL;
-							fileInfoPtr[j].path=NULL;
-							fileInfoPtr[j].uuid=NULL;
-							fileInfoPtr[j].type=NULL;
-							fileInfoPtr[j].x=-1;
-							fileInfoPtr[j].y=-1;
-						}
-					desktopFilesCntMax+=20;
-				}
+			deskIconsCnt++;
 			fclose(fr);
 		}
 }

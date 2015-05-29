@@ -27,6 +27,7 @@ const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","me
 
 void freeAttached(int num)
 {
+#if 0
 	if(attached[num].uuid!=NULL)
 		free(attached[num].uuid);
 	if(attached[num].label!=NULL)
@@ -45,6 +46,37 @@ void freeAttached(int num)
 	attached[num].sysname=NULL;
 	attached[num].x=0;
 	attached[num].y=0;
+#endif
+}
+
+void clearDeskEntry(int num)
+{
+	if(deskIconsArray[num].label!=NULL)
+		free(deskIconsArray[num].label);
+	deskIconsArray[num].label=NULL;
+	if(deskIconsArray[num].uuid!=NULL)
+		free(deskIconsArray[num].uuid);
+	deskIconsArray[num].uuid=NULL;
+	if(deskIconsArray[num].mountpoint!=NULL)
+		free(deskIconsArray[num].mountpoint);
+	deskIconsArray[num].mountpoint=NULL;
+	if(deskIconsArray[num].partname!=NULL)
+		free(deskIconsArray[num].partname);
+	deskIconsArray[num].partname=NULL;
+	if(deskIconsArray[num].dev!=NULL)
+		free(deskIconsArray[num].dev);
+	deskIconsArray[num].dev=NULL;
+	if(deskIconsArray[num].mime!=NULL)
+		free(deskIconsArray[num].mime);
+	deskIconsArray[num].mime=NULL;
+
+	xySlot[deskIconsArray[num].x][deskIconsArray[num].y]=0;
+	deskIconsArray[num].dvd=false;
+	deskIconsArray[num].cdrom=false;
+	deskIconsArray[num].usb=false;
+	deskIconsArray[num].file=false;
+	deskIconsArray[num].iconhint=-1;
+	deskIconsArray[num].installed=false;
 }
 
 void mountDisk(int what)
@@ -61,23 +93,21 @@ void mountDisk(int what)
 	else
 		{
 #ifdef _USESUIDHELPER_
-			asprintf(&command,"%s \"%s\" \"/media/%s\" %i",HELPERAPP,attached[foundDiskNumber].uuid,attached[foundDiskNumber].label,what);
+			asprintf(&command,"%s \"%s\" \"/media/%s\" %i",HELPERAPP,deskIconsArray[foundDiskNumber].uuid,deskIconsArray[foundDiskNumber].label,what);
 #else
-			asprintf(&command,"udevil mount `findfs UUID=%s`",attached[foundDiskNumber].uuid);
+			asprintf(&command,"udevil mount `findfs UUID=%s`",deskIconsArray[foundDiskNumber].uuid);
 #endif
 			system(command);
 			free(command);
 			if(what==1)
 				{
-					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",attached[foundDiskNumber].uuid);
+					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",deskIconsArray[foundDiskNumber].uuid);
 					system(command);
 					free(command);
 				}
 
 			if(what==3)
-				{
-					freeAttached(foundDiskNumber);
-				}
+				clearDeskEntry(foundDiskNumber);
 		}
 }
 
@@ -263,28 +293,6 @@ void scanForMountableDisks(void)
 	udev_unref(udev);
 }
 
-void clearDeskEntry(int num)
-{
-	if(deskIconsArray[num].label!=NULL)
-		free(deskIconsArray[num].label);
-	deskIconsArray[num].label=NULL;
-	if(deskIconsArray[num].uuid!=NULL)
-		free(deskIconsArray[num].uuid);
-	deskIconsArray[num].uuid=NULL;
-	if(deskIconsArray[num].mountpoint!=NULL)
-		free(deskIconsArray[num].mountpoint);
-	deskIconsArray[num].mountpoint=NULL;
-	if(deskIconsArray[num].partname!=NULL)
-		free(deskIconsArray[num].partname);
-	deskIconsArray[num].partname=NULL;
-
-	deskIconsArray[num].dvd=false;
-	deskIconsArray[num].cdrom=false;
-	deskIconsArray[num].usb=false;
-	deskIconsArray[num].file=false;
-	deskIconsArray[num].iconhint=-1;
-}
-
 void fillDesk(void)
 {
 	struct udev		*udev;
@@ -324,7 +332,6 @@ debugstr("update");
 					ptr++;
 					deskIconsArray[deskIconsCnt].partname=strdup(ptr);
 					thedev=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
-					debugstr(path);
 					if(thedev==NULL)
 						{
 							printf("no dev for %s from %s\n",ptr,buffer);
@@ -348,12 +355,12 @@ debugstr("update");
 									isusb=false;
 									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
 										{
-											iconhint=-1;
+											iconhint=DVD;
 											isdvd=true;
 										}
 									if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_CD")!=NULL)
 										{
-											iconhint=-1;
+											iconhint=CDROM;
 											iscd=true;
 										}
 									
@@ -366,6 +373,7 @@ debugstr("update");
 											else
 												iconhint=getUSBData(udev_device_get_property_value(thedev,"ID_VENDOR"));
 										}
+									asprintf(&deskIconsArray[deskIconsCnt].dev,"/dev/%s",deskIconsArray[deskIconsCnt].partname);
 									deskIconsArray[deskIconsCnt].dvd=isdvd;
 									deskIconsArray[deskIconsCnt].cdrom=iscd;
 									deskIconsArray[deskIconsCnt].usb=isusb;
@@ -381,10 +389,54 @@ debugstr("update");
 										{
 											getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
 										}
+									deskIconsArray[deskIconsCnt].installed=true;
 									deskIconsCnt++;
 								}
 						}
 				}
 		}
-	pclose(fp);	
+	pclose(fp);
+
+//desktop files
+	sprintf(buffer,"find %s -mindepth 1",desktopPath);
+	char	buffer2[4096];
+	char	*tptr;
+	fp=popen(buffer,"r");
+	while(fgets(buffer,BUFFERSIZE,fp))
+		{
+			char	*ptr;
+			buffer[strlen(buffer)-1]=0;
+			ptr=strrchr(buffer,'/');
+			ptr++;
+			sprintf(buffer2,"%s/%s",cachePath,ptr);
+			if(fileExists(buffer2)==-1)
+				{
+					deskIconsArray[deskIconsCnt].mountpoint=strdup(buffer);
+					ptr=strrchr(buffer,'/');
+					ptr++;
+					deskIconsArray[deskIconsCnt].label=strdup(ptr);
+					tptr=getMimeType(buffer);
+					ptr=strchr(tptr,'/');
+					while(ptr!=NULL)
+						{
+							*ptr='-';
+							ptr=strchr(tptr,'/');
+						}
+					ptr=strstr(tptr,"text-x-shellscript");
+					if(ptr==NULL)
+						deskIconsArray[deskIconsCnt].mime=strdup(tptr);
+					else
+						deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
+					free(tptr);
+					getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
+					saveInfofile(CACHEFOLDER,deskIconsArray[deskIconsCnt].label,deskIconsArray[deskIconsCnt].mime,deskIconsArray[deskIconsCnt].mountpoint,NULL,NULL,deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
+					deskIconsArray[deskIconsCnt].file=true;
+					deskIconsCnt++;
+				}
+			else
+				{
+					readDesktopFile(ptr);
+				}
+		}
+	pclose(fp);
 }
