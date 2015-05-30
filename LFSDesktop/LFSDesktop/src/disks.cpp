@@ -102,6 +102,25 @@ int getUSBData(const char *ptr)
 	return(USB);
 }
 
+void addExtraIconSpace(void)
+{
+	if(deskIconsCnt>=deskIconsMaxCnt)
+		{
+			deskIconsMaxCnt+=10;
+			deskIconsArray=(deskIcons*)realloc(deskIconsArray,deskIconsMaxCnt*sizeof(deskIcons));
+			for(int j=deskIconsCnt;j<deskIconsMaxCnt;j++)
+				{
+					deskIconsArray[j].label=NULL;
+					deskIconsArray[j].uuid=NULL;
+					deskIconsArray[j].dev=NULL;
+					deskIconsArray[j].mountpoint=NULL;
+					deskIconsArray[j].mime=NULL;
+					deskIconsArray[j].partname=NULL;
+					deskIconsArray[j].installed=false;
+				}
+		}
+}
+
 void fillDesk(void)
 {
 	struct udev		*udev;
@@ -132,6 +151,7 @@ void fillDesk(void)
 			buffer[0]=0;
 			while(fgets(buffer,BUFFERSIZE,fp))
 				{
+					addExtraIconSpace();
 					clearDeskEntry(deskIconsCnt,false);
 					buffer[strlen(buffer)-1]=0;
 					asprintf(&uuid,"%s",buffer);
@@ -221,6 +241,7 @@ void fillDesk(void)
 			ptr=strrchr(buffer,'/');
 			ptr++;
 			sprintf(buffer2,"%s/%s",cachePath,ptr);
+			addExtraIconSpace();
 			if(fileExists(buffer2)==-1)
 				{
 					clearDeskEntry(deskIconsCnt,false);
