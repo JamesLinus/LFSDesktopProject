@@ -67,19 +67,19 @@ void printhelp(void)
 
 bool findIcon(int x,int y)
 {
-/*
-	for(int j=1;j<deskIconsCnt;j++)
+
+	for(int j=0;j<deskIconsCnt;j++)
 		{
 			if((x>=(deskIconsArray[j].x*gridSize+gridBorder))&&(x<=(deskIconsArray[j].x*gridSize+gridBorder)+iconSize)&&(y>=(deskIconsArray[j].y*gridSize+gridBorder))&&(y<=(deskIconsArray[j].y*gridSize+gridBorder)+iconSize))
 				{
-					fileDiskXPos=fileInfoPtr[j].x;
-					fileDiskYPos=fileInfoPtr[j].y;
+					fileDiskXPos=deskIconsArray[j].x;
+					fileDiskYPos=deskIconsArray[j].y;
 					foundDiskNumber=j;
-					isDisk=false;
+					isDisk=!deskIconsArray[j].file;
 					return(true);
 				}
 		}
-*/
+/*
 	for(int j=1;j<deskIconsCnt;j++)
 		{
 			if((x>=(deskIconsArray[j].x*gridSize+gridBorder))&&(x<=(deskIconsArray[j].x*gridSize+gridBorder)+iconSize)&&(y>=(deskIconsArray[j].y*gridSize+gridBorder))&&(y<=(deskIconsArray[j].y*gridSize+gridBorder)+iconSize))
@@ -95,6 +95,7 @@ bool findIcon(int x,int y)
 					}
 				}
 		}
+*/
 	return(false);
 }
 
@@ -200,6 +201,7 @@ void doPopUp(XEvent ev)
 	foundicon=findIcon(ev.xbutton.x,ev.xbutton.y);
 	if(foundicon==false)
 		return;
+
 	if(isDisk==false)
 		return;
 	loop=true;
@@ -415,6 +417,7 @@ int main(int argc,char **argv)
 	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
 	deskIconsCnt=0;
 	asprintf(&command,"%s/Home",cachePath);
+deskIconsCnt=0;
 	if(fileExists(command)!=0)
 		{
 			deskIconsCnt=1;
@@ -431,10 +434,8 @@ int main(int argc,char **argv)
 	else
 		readDesktopFile("Home");
 	free(command);
-		//	debugstr("XXXXXXXXXX");
 	fillDesk();
-
-	firstRun=true;
+//	firstRun=true;
 //	refreshDesktopFiles();
 
 //	getSavedDiskData();
@@ -449,10 +450,11 @@ int main(int argc,char **argv)
 	bool	dragging=false;
 
 	//fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
-	firstRun=false;
+//	firstRun=false;
 
 	//	xySlot[0][0]=1;
 
+//DEBUGVAL(xySlot[0][0]);
 
 	while(done)
 		{
@@ -559,8 +561,10 @@ int main(int argc,char **argv)
 							if(xySlot[newx][newy]==0)
 								{
 									xySlot[oldx][oldy]=0;
+									/*
 									if(isDisk==true)
 										{
+										debugstr("XXXXXXXXXXXXX");
 											deskIconsArray[foundDiskNumber].x=newx;
 											deskIconsArray[foundDiskNumber].y=newy;
 											saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy);
@@ -578,6 +582,19 @@ int main(int argc,char **argv)
 											deskIconsArray[foundDiskNumber].y=newy;
 											xySlot[newx][newy]=1;
 										}
+										*/
+									deskIconsArray[foundDiskNumber].x=newx;
+									deskIconsArray[foundDiskNumber].y=newy;
+									xySlot[newx][newy]=1;
+									if(deskIconsArray[foundDiskNumber].file==true)
+										saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy);
+									else
+										saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy);
+									fileDiskLabel=NULL;
+									fileDiskUUID=NULL;
+									fileDiskXPos=-1;
+									fileDiskYPos=-1;
+									fileDiskType=NULL;
 									needsRefresh=true;
 									//getSavedDiskData();
 									//scanForMountableDisks();

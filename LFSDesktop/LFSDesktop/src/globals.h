@@ -86,7 +86,7 @@ extern int		fileDiskYPos;
 extern int		foundDiskNumber;
 extern bool		isDisk;
 extern bool		debugDeskFlag;
-extern bool		firstRun;
+//extern bool		firstRun;
 
 extern int		xCnt;
 extern int		yCnt;

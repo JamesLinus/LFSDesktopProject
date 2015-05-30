@@ -49,7 +49,7 @@ void freeAttached(int num)
 #endif
 }
 
-void clearDeskEntry(int num)
+void clearDeskEntry(int num,bool clearslot)
 {
 	if(deskIconsArray[num].label!=NULL)
 		free(deskIconsArray[num].label);
@@ -70,7 +70,9 @@ void clearDeskEntry(int num)
 		free(deskIconsArray[num].mime);
 	deskIconsArray[num].mime=NULL;
 
-	xySlot[deskIconsArray[num].x][deskIconsArray[num].y]=0;
+	if(clearslot==true)
+		xySlot[deskIconsArray[num].x][deskIconsArray[num].y]=0;
+
 	deskIconsArray[num].dvd=false;
 	deskIconsArray[num].cdrom=false;
 	deskIconsArray[num].usb=false;
@@ -86,11 +88,10 @@ void mountDisk(int what)
 
 	if(isDisk==false)
 		{
-/*
-			asprintf(&command,"xdg-open \"%s\"",fileInfoPtr[foundDiskNumber].path);
+
+			asprintf(&command,"xdg-open \"%s\"",deskIconsArray[foundDiskNumber].mountpoint);
 			system(command);
 			free(command);
-*/
 			return;
 		}
 	else
@@ -110,7 +111,7 @@ void mountDisk(int what)
 				}
 
 			if(what==3)
-				clearDeskEntry(foundDiskNumber);
+				clearDeskEntry(foundDiskNumber,true);
 		}
 }
 
@@ -319,7 +320,7 @@ void fillDesk(void)
 		printf("Can't create udev\n");
 		exit(1);
 	}
-debugstr("update");
+
 	deskIconsCnt=1;
 
 	fp=popen("ls -1 /dev/disk/by-uuid","r");
@@ -328,7 +329,7 @@ debugstr("update");
 			buffer[0]=0;
 			while(fgets(buffer,BUFFERSIZE,fp))
 				{
-					clearDeskEntry(deskIconsCnt);
+					clearDeskEntry(deskIconsCnt,false);
 					buffer[strlen(buffer)-1]=0;
 					asprintf(&uuid,"%s",buffer);
 					sprintf(path,"/dev/disk/by-uuid/%s",buffer);
@@ -351,6 +352,9 @@ debugstr("update");
 										ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
 									if(ptr==NULL)
 										continue;
+
+									//clearDeskEntry(deskIconsCnt);
+									//deskIconsArray[deskIconsCnt].partname=temppartname;
 									iconhint=0;
 									deskIconsArray[deskIconsCnt].label=strdup(ptr);
 									deskIconsArray[deskIconsCnt].uuid=uuid;
@@ -435,6 +439,7 @@ debugstr("update");
 						deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
 					free(tptr);
 					getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
+					xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
 					saveInfofile(CACHEFOLDER,deskIconsArray[deskIconsCnt].label,deskIconsArray[deskIconsCnt].mime,deskIconsArray[deskIconsCnt].mountpoint,NULL,NULL,deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
 					deskIconsArray[deskIconsCnt].file=true;
 					deskIconsCnt++;

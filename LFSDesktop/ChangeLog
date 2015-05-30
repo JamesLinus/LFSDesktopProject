@@ -1,4 +1,8 @@
 0.0.6
+Uses kernel 'getmntent' routines for determining mounted disks and mount point instead of external command.
+More stuff in memory instead of thrashing hardrive.
+Folded Desktop files into disk arrays.
+Major code clean.
 Symlinks handled properly in ~/Desktop.
 Pop up menu disappears if you move pointer out of window.
 Fixed Segfault trying to eject some disks.
