@@ -24,20 +24,6 @@ struct args
 	void*		data;
 };
 
-/*
-struct fileInfo
-{
-	char		*label;
-	char		*mime;
-	char		*path;
-	char		*icon;
-	char		*uuid;
-	char		*type;
-	int			x;
-	int			y;
-};
-*/
-
 struct deskIcons
 {
 	char			*label;
@@ -67,10 +53,6 @@ extern int			errLine;
 extern const char	*errFile;
 extern const char	*errFunc;
 
-//file icon data
-//extern fileInfo	*disksDataPtr;
-//extern int		desktopFilesCnt;
-//extern int		desktopFilesCntMax;
 
 //save/load file
 extern args		globalFileData[];
@@ -86,7 +68,6 @@ extern int		fileDiskYPos;
 extern int		foundDiskNumber;
 extern bool		isDisk;
 extern bool		debugDeskFlag;
-//extern bool		firstRun;
 
 extern int		xCnt;
 extern int		yCnt;

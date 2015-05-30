@@ -16,7 +16,8 @@
 
 #include "globals.h"
 
-#define MAXGRIDY 4
+#define MAXGRIDY 8
+#define MAXGRIDX 8
 
 extern args				desktopPrefs[];
 

@@ -20,34 +20,7 @@
 #include "files.h"
 #include "disks.h"
 
-//disks		*attached=NULL;
-//saveDisks	*saved=NULL;
-int			numberOfDisksAttached=-1000;
 const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home"};
-
-void freeAttached(int num)
-{
-#if 0
-	if(attached[num].uuid!=NULL)
-		free(attached[num].uuid);
-	if(attached[num].label!=NULL)
-		free(attached[num].label);
-	if(attached[num].mountpoint!=NULL)
-		free(attached[num].mountpoint);
-	if(attached[num].dev!=NULL)
-		free(attached[num].dev);
-	if(attached[num].sysname!=NULL)
-		free(attached[num].sysname);
-	xySlot[attached[num].x][attached[num].y]=0;
-	attached[num].uuid=NULL;
-	attached[num].label=NULL;
-	attached[num].mountpoint=NULL;
-	attached[num].dev=NULL;
-	attached[num].sysname=NULL;
-	attached[num].x=0;
-	attached[num].y=0;
-#endif
-}
 
 void clearDeskEntry(int num,bool clearslot)
 {
@@ -129,176 +102,6 @@ int getUSBData(const char *ptr)
 	return(USB);
 }
 
-/*
-void deleteDiskInfo(void)
-{
-	for(int j=0; j<numberOfDisksAttached; j++)
-		{
-			freeAttached(j);
-//			if(attached[j].uuid!=NULL)
-//				free(attached[j].uuid);
-//			if(attached[j].label!=NULL)
-//				free(attached[j].label);
-//			if(attached[j].mountpoint!=NULL)
-//				free(attached[j].mountpoint);
-//			if(attached[j].dev!=NULL)
-//				free(attached[j].dev);
-//			if(attached[j].sysname!=NULL)
-//				free(attached[j].sysname);
-		}
-	free(attached);
-}
-
-bool getDiskPos(char* uuid,int* xptr,int* yptr)
-{
-	for (int j=0;j<savedFileCount;j++)
-		{
-			if(strcmp(uuid,saved[j].uuid)==0)
-				{
-					*xptr=saved[j].x;
-					*yptr=saved[j].y;
-					return(true);
-				}
-		}
-	return(false);
-}
-*/
-#if 0
-void scanForMountableDisks(void)
-{
-	struct udev *udev;
-	char		buffer[BUFFERSIZE];
-	FILE		*fp;
-	int			numofdisks=0;
-	const char	*ptr;
-	int			xpos=0,ypos=0;
-	udev_device *usbdev;
-	udev_device	*thedev;
-
-	/* Create the udev object */
-	udev=udev_new();
-	if (!udev)
-		{
-			printf("Can't create udev\n");
-			exit(1);
-		}
-
-	fp=popen(READFROM "|wc -l","r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,BUFFERSIZE,fp);
-			numofdisks=atoi(buffer);
-			pclose(fp);
-		}
-
-	if(numberOfDisksAttached<numofdisks)
-		{
-			deleteDiskInfo();
-			attached=(disks*)calloc(numofdisks,sizeof(disks));
-			numberOfDisksAttached=numofdisks;
-		}
-
-	fp=popen(READFROM,"r");
-	if(fp!=NULL)
-		{
-			for(int j=0;j<numberOfDisksAttached;j++)
-				{
-					buffer[0]=0;
-					fgets(buffer,BUFFERSIZE,fp);
-					buffer[strlen(buffer)-1]=0;
-					thedev=udev_device_new_from_subsystem_sysname(udev,"block",buffer);
-					if(thedev!=NULL)
-						{
-							attached[j].ignore=true;
-							if(udev_device_get_property_value(thedev,"ID_FS_UUID")!=NULL)
-								{
-//get uuid
-									attached[j].uuid=strdup(udev_device_get_property_value(thedev,"ID_FS_UUID"));
-//partname
-									attached[j].sysname=strdup(buffer);
-									asprintf(&attached[j].dev,"/dev/%s",buffer);
-//is a file system
-									if(strcmp(udev_device_get_property_value(thedev,"ID_FS_USAGE"),"filesystem")==0)
-										{
-											attached[j].ignore=false;
-											ptr=udev_device_get_property_value(thedev,"ID_FS_LABEL");
-											if(ptr!=NULL)
-												attached[j].label=strdup(ptr);
-											else
-												{
-													ptr=udev_device_get_property_value(thedev,"ID_SERIAL");
-													attached[j].label=strndup(ptr,16);
-												}
-
-											if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_DVD")!=NULL)
-												{
-													attached[j].dvd=true;
-													attached[j].type=DVD;
-												}
-
-											if(udev_device_get_property_value(thedev,"ID_CDROM_MEDIA_CD")!=NULL)
-												{
-													attached[j].dvd=true;
-													attached[j].type=CDROM;
-												}
-
-											usbdev=udev_device_get_parent_with_subsystem_devtype(thedev,"usb","usb_device");
-											if(usbdev!=NULL)
-												{
-													attached[j].usb=true;
-													attached[j].type=getUSBData(udev_device_get_property_value(thedev,"ID_VENDOR"));
-													if(udev_device_get_property_value(thedev,"ID_DRIVE_THUMB")!=NULL)
-														attached[j].type=STICK;
-												}
-
-											if(getDiskPos(attached[j].uuid,&xpos,&ypos))
-												{
-													attached[j].x=xpos;
-													attached[j].y=ypos;
-												}
-											else
-												{
-													xpos=0;
-													ypos=0;
-													while(xySlot[xpos][ypos]!=0)
-														{
-															ypos++;
-															if(ypos>MAXGRIDY)
-																{
-																	ypos=0;
-																	xpos++;
-																}
-														}
-													attached[j].x=xpos;
-													attached[j].y=ypos;
-													sprintf(buffer,"%s/%s",diskInfoPath,attached[j].uuid);
-													saveInfofile(DISKFOLDER,attached[j].label,NULL,NULL,attached[j].uuid,(char*)iconDiskType[attached[j].type],attached[j].x,attached[j].y);
-													xySlot[xpos][ypos]=1;
-													getSavedDiskData();
-												}
-											xySlot[xpos][ypos]=1;
-										}
-							else
-								{
-									if(firstRun==false)
-										freeAttached(j);
-								}
-									
-								}
-							else
-								{
-									if(firstRun==false)
-										freeAttached(j);
-								}
-							udev_device_unref(thedev);
-						}
-				}
-			pclose(fp);
-		}
-	udev_unref(udev);
-}
-#endif
 void fillDesk(void)
 {
 	struct udev		*udev;
@@ -353,8 +156,6 @@ void fillDesk(void)
 									if(ptr==NULL)
 										continue;
 
-									//clearDeskEntry(deskIconsCnt);
-									//deskIconsArray[deskIconsCnt].partname=temppartname;
 									iconhint=0;
 									deskIconsArray[deskIconsCnt].label=strdup(ptr);
 									deskIconsArray[deskIconsCnt].uuid=uuid;
@@ -397,6 +198,7 @@ void fillDesk(void)
 									else
 										{
 											getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
+											saveInfofile(DISKFOLDER,deskIconsArray[deskIconsCnt].label,NULL,NULL,deskIconsArray[deskIconsCnt].uuid,(char*)iconDiskType[deskIconsArray[deskIconsCnt].iconhint],deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
 										}
 									deskIconsArray[deskIconsCnt].installed=true;
 									xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
@@ -421,6 +223,7 @@ void fillDesk(void)
 			sprintf(buffer2,"%s/%s",cachePath,ptr);
 			if(fileExists(buffer2)==-1)
 				{
+					clearDeskEntry(deskIconsCnt,false);
 					deskIconsArray[deskIconsCnt].mountpoint=strdup(buffer);
 					ptr=strrchr(buffer,'/');
 					ptr++;
@@ -441,6 +244,7 @@ void fillDesk(void)
 					getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
 					xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
 					saveInfofile(CACHEFOLDER,deskIconsArray[deskIconsCnt].label,deskIconsArray[deskIconsCnt].mime,deskIconsArray[deskIconsCnt].mountpoint,NULL,NULL,deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
+					deskIconsArray[deskIconsCnt].installed=true;
 					deskIconsArray[deskIconsCnt].file=true;
 					deskIconsCnt++;
 				}

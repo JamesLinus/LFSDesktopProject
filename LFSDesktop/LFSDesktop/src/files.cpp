@@ -26,10 +26,7 @@ char		*diskInfoPath;
 char		*cachePath;
 char		*prefsPath;
 char		*desktopPath;
-int			savedFileCount;
 char		findbuffer[2048];
-
-//fileInfo	*fileInfoPtr;
 
 struct hsearch_data	hashtab;
 
@@ -238,66 +235,23 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 	fileDiskYPos=-1;
 }
 
-#if 0
-int getSaveDiskNumber(char* uuid)
-{
-	for(int j=0;j<savedFileCount;j++)
-		{
-			if(strcmp(saved[j].uuid,uuid)==0)
-				return(j);
-		}
-	return(-1);
-}
-
-void getSavedDiskData(void)
-{
-	FILE	*fp;
-	char	buffer[BUFFERSIZE];
-	int		cnt;
-
-	if(saved!=NULL)
-		{
-			for(int j=0;j<savedFileCount;j++)
-				{
-					if(saved[j].uuid!=NULL)
-						free(saved[j].uuid);
-				}
-			free(saved);
-			saved=NULL;
-		}
-
-	sprintf(buffer,"ls -1 %s|wc -l",diskInfoPath);
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,BUFFERSIZE,fp);
-			savedFileCount=atoi(buffer);
-			pclose(fp);
-		}
-
-	saved=(saveDisks*)calloc(savedFileCount,sizeof(saveDisks));
-	cnt=0;
-	sprintf(buffer,"find %s -mindepth 1",diskInfoPath);
-	fp=popen(buffer,"r");
-	if(fp!=NULL)
-		{
-			while(fgets(buffer,BUFFERSIZE,fp))
-				{
-					buffer[strlen(buffer)-1]=0;
-					loadVarsFromFile(buffer,globalFileData);
-					saved[cnt].uuid=strdup(fileDiskUUID);
-					saved[cnt].x=fileDiskXPos;
-					saved[cnt].y=fileDiskYPos;
-					//xySlot[fileDiskXPos][fileDiskYPos]=1;
-					cnt++;
-				}
-			pclose(fp);
-		}
-}
-#endif
 void getFreeSlot(int *x,int *y)
 {
+
+	for(int xx=0; xx<MAXGRIDX; xx++)
+		{
+			for(int yy=0; yy<MAXGRIDY; yy++)
+				{
+					if(xySlot[xx][yy]==0)
+						{
+							*x=xx;
+							*y=yy;
+							xySlot[xx][yy]=1;
+							return;
+						}
+				}
+		}
+	
 	for(int yy=0; yy<yCnt; yy++)
 		{
 			for(int xx=0; xx<xCnt; xx++)
@@ -354,97 +308,6 @@ void readDesktopFile(const char* name)
 			fclose(fr);
 		}
 }
-
-#if 0
-void refreshDesktopFiles(void)
-{
-	char	buffer[4096];
-	char	buffer2[4096];
-	char	*ptr;
-	FILE	*fp;
-	char	*tptr;
-
-	for(int j=1;j<desktopFilesCntMax;j++)
-		{
-			if(fileInfoPtr[j].label!=NULL)
-				{
-					free(fileInfoPtr[j].label);
-					fileInfoPtr[j].label=NULL;
-				}	
-			if(fileInfoPtr[j].mime!=NULL)
-				{
-					free(fileInfoPtr[j].mime);
-					fileInfoPtr[j].mime=NULL;
-				}	
-			if(fileInfoPtr[j].path!=NULL)
-				{
-					free(fileInfoPtr[j].path);
-					fileInfoPtr[j].path=NULL;
-				}	
-			if(fileInfoPtr[j].icon!=NULL)
-				{
-					free(fileInfoPtr[j].icon);
-					fileInfoPtr[j].icon=NULL;
-				}	
-			if(fileInfoPtr[j].uuid!=NULL)
-				{
-					free(fileInfoPtr[j].uuid);
-					fileInfoPtr[j].uuid=NULL;
-				}	
-			if(fileInfoPtr[j].type!=NULL)
-				{
-					free(fileInfoPtr[j].type);
-					fileInfoPtr[j].type=NULL;
-				}	
-		}
-
-	desktopFilesCnt=1;
-
-	sprintf(buffer,"find %s -mindepth 1",desktopPath);
-
-	fp=popen(buffer,"r");
-	while(fgets(buffer,4096,fp))
-		{
-			buffer[strlen(buffer)-1]=0;
-			ptr=strrchr(buffer,'/');
-			ptr++;
-			sprintf(buffer2,"%s/%s",cachePath,ptr);
-			if(fileExists(buffer2)==-1)
-				{
-					fileInfoPtr[desktopFilesCnt].path=strdup(buffer);
-					ptr=strrchr(buffer,'/');
-					ptr++;
-					fileInfoPtr[desktopFilesCnt].label=strdup(ptr);
-					tptr=getMimeType(buffer);
-					ptr=strchr(tptr,'/');
-					while(ptr!=NULL)
-						{
-							*ptr='-';
-							ptr=strchr(tptr,'/');
-						}
-					ptr=strstr(tptr,"text-x-shellscript");
-					if(ptr==NULL)
-						fileInfoPtr[desktopFilesCnt].mime=strdup(tptr);
-					else
-						fileInfoPtr[desktopFilesCnt].mime=strdup("application-x-shellscript");
-					free(tptr);
-					getFreeSlot(&fileInfoPtr[desktopFilesCnt].x,&fileInfoPtr[desktopFilesCnt].y);
-					saveInfofile(CACHEFOLDER,fileInfoPtr[desktopFilesCnt].label,fileInfoPtr[desktopFilesCnt].mime,fileInfoPtr[desktopFilesCnt].path,NULL,NULL,fileInfoPtr[desktopFilesCnt].x,fileInfoPtr[desktopFilesCnt].y);
-					desktopFilesCnt++;
-				}
-			else
-				{
-					readDesktopFile(ptr);
-				}
-		}
-	pclose(fp);
-}
-
-void rescanDesktop(void)
-{
- refreshDesktopFiles();
-}
-#endif
 
 void printString(char* str)
 {

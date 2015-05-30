@@ -79,58 +79,9 @@ bool findIcon(int x,int y)
 					return(true);
 				}
 		}
-/*
-	for(int j=1;j<deskIconsCnt;j++)
-		{
-			if((x>=(deskIconsArray[j].x*gridSize+gridBorder))&&(x<=(deskIconsArray[j].x*gridSize+gridBorder)+iconSize)&&(y>=(deskIconsArray[j].y*gridSize+gridBorder))&&(y<=(deskIconsArray[j].y*gridSize+gridBorder)+iconSize))
-				{
-					if(deskIconsArray[j].uuid!=NULL)
-						{
-						//debugstr(deskIconsArray[j].label);
-							fileDiskXPos=deskIconsArray[j].x;
-							fileDiskYPos=deskIconsArray[j].y;
-							foundDiskNumber=j;
-							isDisk=true;
-							return(true);
-					}
-				}
-		}
-*/
 	return(false);
 }
 
-#if 0
-bool findIconXXX(int x, int y)
-{
-	for(int j=0;j<desktopFilesCnt;j++)
-		{
-			if((x>=(fileInfoPtr[j].x*gridSize+gridBorder))&&(x<=(fileInfoPtr[j].x*gridSize+gridBorder)+iconSize)&&(y>=(fileInfoPtr[j].y*gridSize+gridBorder))&&(y<=(fileInfoPtr[j].y*gridSize+gridBorder)+iconSize))
-				{
-					fileDiskXPos=fileInfoPtr[j].x;
-					fileDiskYPos=fileInfoPtr[j].y;
-					foundDiskNumber=j;
-					isDisk=false;
-					return(true);
-				}
-		}
-
-	for(int j=0;j<numberOfDisksAttached;j++)
-		{
-			if((x>=(attached[j].x*gridSize+gridBorder))&&(x<=(attached[j].x*gridSize+gridBorder)+iconSize)&&(y>=(attached[j].y*gridSize+gridBorder))&&(y<=(attached[j].y*gridSize+gridBorder)+iconSize))
-				{
-					if(attached[j].uuid!=NULL)
-						{
-							fileDiskXPos=attached[j].x;
-							fileDiskYPos=attached[j].y;
-							foundDiskNumber=j;
-							isDisk=true;
-							return(true);
-					}
-				}
-		}
-	return(false);
-}
-#endif
 void  alarmCallBack(int sig)
 {
 	signal(SIGALRM,SIG_IGN);
@@ -246,6 +197,10 @@ int main(int argc,char **argv)
 	pollfd			polldisks;
 	int				fhfordisks;
 	long			numRead=0;
+	int				oldx=-1,oldy=-1;
+	bool	buttonDown=false;
+	int		oldboxx=-1,oldboxy=-1;
+	bool	dragging=false;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -380,28 +335,6 @@ int main(int argc,char **argv)
 		for(int xx=0; xx<xCnt; xx++)
 			xySlot[xx][yy]=0;
 
-//	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
-//	desktopFilesCntMax=20;
-//	asprintf(&command,"%s/Home",cachePath);
-//	desktopFilesCnt=0;
-/*
-	if(fileExists(command)!=0)
-		{
-			desktopFilesCnt=1;
-			deskIconsArray[0].x=0;
-			deskIconsArray[0].y=0;
-			debugstr("XXXXXXXXXX");
-			deskIconsArray[0].installed=true;
-			deskIconsArray[0].label=strdup("Home");
-			deskIconsArray[0].mime=strdup("inode/directory");
-			deskIconsArray[0].mountpoint=strdup(getenv("HOME"));
-			saveInfofile(CACHEFOLDER,deskIconsArray[0].label,deskIconsArray[0].mime,deskIconsArray[0].mountpoint,NULL,NULL,deskIconsArray[0].x,deskIconsArray[0].y);
-			xySlot[0][0]=1;
-		}
-	else
-		readDesktopFile("Home");
-*/
-//	free(command);
 	fd=inotify_init();
 	pollstruct.fd =fd;
 	pollstruct.events=POLLIN;
@@ -417,7 +350,7 @@ int main(int argc,char **argv)
 	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
 	deskIconsCnt=0;
 	asprintf(&command,"%s/Home",cachePath);
-deskIconsCnt=0;
+
 	if(fileExists(command)!=0)
 		{
 			deskIconsCnt=1;
@@ -434,39 +367,21 @@ deskIconsCnt=0;
 	else
 		readDesktopFile("Home");
 	free(command);
-	fillDesk();
-//	firstRun=true;
-//	refreshDesktopFiles();
 
-//	getSavedDiskData();
-//	scanForMountableDisks();
+	fillDesk();
 
 	alarm(refreshRate);
 	XdbeSwapBuffers(display,&swapInfo,1);
-
-	int		oldx=-1,oldy=-1;
-	bool	buttonDown=false;
-	int		oldboxx=-1,oldboxy=-1;
-	bool	dragging=false;
-
-	//fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
-//	firstRun=false;
-
-	//	xySlot[0][0]=1;
-
-//DEBUGVAL(xySlot[0][0]);
 
 	while(done)
 		{
 			if(needsRefresh==true)
 				{
-					//scanForMountableDisks();
 					int ret=poll(&pollstruct,POLLIN,20);
 					if(ret!=0)
 						{
 							numRead=read(fd,buffer,100);
 							if(numRead>0)
-								//rescanDesktop();
 								fillDesk();
 						}
 					
@@ -561,43 +476,19 @@ deskIconsCnt=0;
 							if(xySlot[newx][newy]==0)
 								{
 									xySlot[oldx][oldy]=0;
-									/*
-									if(isDisk==true)
-										{
-										debugstr("XXXXXXXXXXXXX");
-											deskIconsArray[foundDiskNumber].x=newx;
-											deskIconsArray[foundDiskNumber].y=newy;
-											saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy);
-											fileDiskLabel=NULL;
-											fileDiskUUID=NULL;
-											fileDiskXPos=-1;
-											fileDiskYPos=-1;
-											fileDiskType=NULL;
-											xySlot[newx][newy]=1;
-										}
-									else
-										{
-											saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy);
-											deskIconsArray[foundDiskNumber].x=newx;
-											deskIconsArray[foundDiskNumber].y=newy;
-											xySlot[newx][newy]=1;
-										}
-										*/
 									deskIconsArray[foundDiskNumber].x=newx;
 									deskIconsArray[foundDiskNumber].y=newy;
 									xySlot[newx][newy]=1;
-									if(deskIconsArray[foundDiskNumber].file==true)
-										saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy);
-									else
+									if(isDisk==true)
 										saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy);
+									else
+										saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy);
 									fileDiskLabel=NULL;
 									fileDiskUUID=NULL;
 									fileDiskXPos=-1;
 									fileDiskYPos=-1;
 									fileDiskType=NULL;
 									needsRefresh=true;
-									//getSavedDiskData();
-									//scanForMountableDisks();
 								}
 
 							XSetForeground(display,gc,0);

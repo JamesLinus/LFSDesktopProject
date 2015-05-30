@@ -107,7 +107,7 @@ void drawIcons(void)
 
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
-#if 1
+
 	for(int j=0;j<deskIconsCnt;j++)
 		{
 			if(deskIconsArray[j].installed==false)
@@ -173,207 +173,13 @@ void drawIcons(void)
 
 			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,deskIconsArray[j].label,strlen(deskIconsArray[j].label));
 		}
-#endif
-#if 0
-//draw desktop icons
-	for(int j=1;j<desktopFilesCnt;j++)
-		{
-			diskx=fileInfoPtr[j].x*gridSize+gridBorder;
-			disky=fileInfoPtr[j].y*gridSize+gridBorder;
-
-			if(strcmp(fileInfoPtr[j].label,"Home")==0)
-				drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
-			else
-				{
-					if(strstr(fileInfoPtr[j].mime,"inode"))
-						drawImage(fileInfoPtr[j].mime,"places",diskx,disky,true);
-					else
-						drawImage(fileInfoPtr[j].mime,"mimetypes",diskx,disky,true);
-				}
-
-			rect.x=diskx;
-			rect.y=disky;
-			rect.width=iconSize;
-			rect.height=iconSize;
-			XUnionRectWithRegion(&rect,rg, rg);
-			XSetClipMask(display,gc,0);
-
-			fontheight=labelFont->ascent+labelFont->descent;
-			stringwidth=XTextWidth(labelFont,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
-
-			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-			boxw=stringwidth+2;
-			boxh=fontheight-2;
-			XSetForeground(display,gc,labelBackground);
-			XSetFillStyle(display,gc,FillSolid);
-			XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
-
-			XSetForeground(display,labelGC,labelForeground);
-			XSetBackground(display,labelGC,labelBackground);
-
-			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
-
-		}
-#endif
-	if(debugDeskFlag==true)
-		debugDesk();
-
-	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
-}
-
-
-#if 0
-void drawIconsXXX(void)
-{
-	FILE			*tp;
-//	char			*com;
-//	char			line[BUFFERSIZE];
-	int				fontheight;
-	int				stringwidth;
-
-	int				boxx,boxw,boxh;
-	XRectangle		rect;
-	int				diskx,disky;
-	bool			mounted=false;
-	struct mntent	*entry;
-	bool			loop;
-
-//  FILE *aFile;
-
-	XDestroyRegion(rg);
-	rg=XCreateRegion();
-/*
-#include <mntent.h>
-
-int main(void)
-{
-//mount
-  struct mntent *ent;
-  FILE *aFile;
-
-  aFile = setmntent("/proc/mounts", "r");
-  if (aFile == NULL) {
-    perror("setmntent");
-    exit(1);
-  }
-  while (NULL != (ent = getmntent(aFile)))
-  {
-  printf(">>>%s<<<\n",hasmntopt(ent,MNTOPT_NOSUID));
-    printf("%s %s\n", ent->mnt_fsname, ent->mnt_dir);
-  }
-  endmntent(aFile);
-}
-*/
-
-
-	for(int j=0; j<numberOfDisksAttached; j++)
-		{
-			if((attached[j].ignore==false) && (attached[j].uuid!=NULL))
-				{
-					//asprintf(&com,"findmnt -fn $(findfs UUID=%s)",attached[j].uuid);
-					//asprintf(&com,"findmnt -fn %s",attached[j].dev);
-					//line[0]=0;
-					//tp=popen(com,"r");
-					//free(com);
-					//fgets(line,BUFFERSIZE,tp);
-					//pclose(tp);
-					tp=setmntent("/proc/mounts","r");
-					mounted=false;
-					loop=true;
-					entry=getmntent(tp);
-					while((entry!=NULL) && (loop=true))
-						{
-							if(strcasecmp(attached[j].dev,entry->mnt_fsname)==0)
-								{
-									mounted=true;
-									loop=false;
-								}
-							entry=getmntent(tp);
-						}
-					endmntent(tp);
-
-					diskx=attached[j].x*gridSize+gridBorder;
-					disky=attached[j].y*gridSize+gridBorder;
-
-					//if(strlen(line)>0)
-					//	mounted=true;
-					//else
-					//	mounted=false;
-
-					drawImage((char*)iconDiskType[attached[j].type],"devices",diskx,disky,mounted);
-
-					rect.x=diskx;
-					rect.y=disky;
-					rect.width=iconSize;
-					rect.height=iconSize;
-					XUnionRectWithRegion(&rect,rg, rg);
-
-					XSetClipMask(display,gc,0);
-
-					fontheight=labelFont->ascent+labelFont->descent;
-					stringwidth=XTextWidth(labelFont,attached[j].label,strlen(attached[j].label));
-
-					boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-					boxw=stringwidth+2;
-					boxh=fontheight-2;
-
-					XSetForeground(display,gc,labelBackground);
-					XSetFillStyle(display,gc,FillSolid);
-					XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
-
-					XSetForeground(display,labelGC,labelForeground);
-					XSetBackground(display,labelGC,labelBackground);
-
-					XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,attached[j].label,strlen(attached[j].label));
-				}
-		}
-
-//draw desktop icons
-	for(int j=0;j<desktopFilesCnt;j++)
-		{
-			diskx=fileInfoPtr[j].x*gridSize+gridBorder;
-			disky=fileInfoPtr[j].y*gridSize+gridBorder;
-
-			if(strcmp(fileInfoPtr[j].label,"Home")==0)
-				drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
-			else
-				{
-					if(strstr(fileInfoPtr[j].mime,"inode"))
-						drawImage(fileInfoPtr[j].mime,"places",diskx,disky,true);
-					else
-						drawImage(fileInfoPtr[j].mime,"mimetypes",diskx,disky,true);
-				}
-
-			rect.x=diskx;
-			rect.y=disky;
-			rect.width=iconSize;
-			rect.height=iconSize;
-			XUnionRectWithRegion(&rect,rg, rg);
-			XSetClipMask(display,gc,0);
-
-			fontheight=labelFont->ascent+labelFont->descent;
-			stringwidth=XTextWidth(labelFont,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
-
-			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-			boxw=stringwidth+2;
-			boxh=fontheight-2;
-			XSetForeground(display,gc,labelBackground);
-			XSetFillStyle(display,gc,FillSolid);
-			XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
-
-			XSetForeground(display,labelGC,labelForeground);
-			XSetBackground(display,labelGC,labelBackground);
-
-			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,fileInfoPtr[j].label,strlen(fileInfoPtr[j].label));
-
-		}
 
 	if(debugDeskFlag==true)
 		debugDesk();
 
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
-#endif
+
 void createColours(void)
 {
 	XColor	colour;

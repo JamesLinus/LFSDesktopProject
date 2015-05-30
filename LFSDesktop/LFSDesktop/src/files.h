@@ -26,7 +26,6 @@ extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;
 extern char		*desktopPath;
-extern int		savedFileCount;
 
 extern hsearch_data	hashtab;
 
@@ -34,12 +33,8 @@ int fileExists(char *name);
 void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata);
 char* pathToIcon(char* name,const char* catagory);
 void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type);
-void getSavedDiskData(void);
 void readDesktopFile(const char* name);
 void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y);
-int getSaveDiskNumber(char* uuid);
-//void rescanDesktop(void);
-//void refreshDesktopFiles(void);
 void getFreeSlot(int *x,int *y);
 char* getMimeType(char *filepath);
 
