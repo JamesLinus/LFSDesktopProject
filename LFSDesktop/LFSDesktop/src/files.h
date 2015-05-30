@@ -20,8 +20,8 @@
 
 
 
-extern fileInfo	*fileInfoPtr;
-
+//extern fileInfo	*fileInfoPtr;
+//
 extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;
@@ -38,8 +38,8 @@ void getSavedDiskData(void);
 void readDesktopFile(const char* name);
 void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y);
 int getSaveDiskNumber(char* uuid);
-void rescanDesktop(void);
-void refreshDesktopFiles(void);
+//void rescanDesktop(void);
+//void refreshDesktopFiles(void);
 void getFreeSlot(int *x,int *y);
 char* getMimeType(char *filepath);
 

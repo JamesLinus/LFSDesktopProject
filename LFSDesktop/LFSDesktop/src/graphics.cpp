@@ -222,7 +222,7 @@ void drawIcons(void)
 }
 
 
-
+#if 0
 void drawIconsXXX(void)
 {
 	FILE			*tp;
@@ -373,7 +373,7 @@ int main(void)
 
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
-
+#endif
 void createColours(void)
 {
 	XColor	colour;

@@ -20,8 +20,8 @@
 #include "files.h"
 #include "disks.h"
 
-disks		*attached=NULL;
-saveDisks	*saved=NULL;
+//disks		*attached=NULL;
+//saveDisks	*saved=NULL;
 int			numberOfDisksAttached=-1000;
 const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home"};
 
@@ -83,11 +83,14 @@ void mountDisk(int what)
 {
 	char	*command;
 
+
 	if(isDisk==false)
 		{
+/*
 			asprintf(&command,"xdg-open \"%s\"",fileInfoPtr[foundDiskNumber].path);
 			system(command);
 			free(command);
+*/
 			return;
 		}
 	else
@@ -125,6 +128,7 @@ int getUSBData(const char *ptr)
 	return(USB);
 }
 
+/*
 void deleteDiskInfo(void)
 {
 	for(int j=0; j<numberOfDisksAttached; j++)
@@ -157,7 +161,8 @@ bool getDiskPos(char* uuid,int* xptr,int* yptr)
 		}
 	return(false);
 }
-
+*/
+#if 0
 void scanForMountableDisks(void)
 {
 	struct udev *udev;
@@ -292,7 +297,7 @@ void scanForMountableDisks(void)
 		}
 	udev_unref(udev);
 }
-
+#endif
 void fillDesk(void)
 {
 	struct udev		*udev;
@@ -390,6 +395,7 @@ debugstr("update");
 											getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
 										}
 									deskIconsArray[deskIconsCnt].installed=true;
+									xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
 									deskIconsCnt++;
 								}
 						}

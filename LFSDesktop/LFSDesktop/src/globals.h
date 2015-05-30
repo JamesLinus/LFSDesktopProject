@@ -24,6 +24,7 @@ struct args
 	void*		data;
 };
 
+/*
 struct fileInfo
 {
 	char		*label;
@@ -35,6 +36,7 @@ struct fileInfo
 	int			x;
 	int			y;
 };
+*/
 
 struct deskIcons
 {
@@ -66,9 +68,9 @@ extern const char	*errFile;
 extern const char	*errFunc;
 
 //file icon data
-extern fileInfo	*disksDataPtr;
-extern int		desktopFilesCnt;
-extern int		desktopFilesCntMax;
+//extern fileInfo	*disksDataPtr;
+//extern int		desktopFilesCnt;
+//extern int		desktopFilesCntMax;
 
 //save/load file
 extern args		globalFileData[];

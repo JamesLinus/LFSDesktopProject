@@ -29,7 +29,7 @@ char		*desktopPath;
 int			savedFileCount;
 char		findbuffer[2048];
 
-fileInfo	*fileInfoPtr;
+//fileInfo	*fileInfoPtr;
 
 struct hsearch_data	hashtab;
 
@@ -238,6 +238,7 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 	fileDiskYPos=-1;
 }
 
+#if 0
 int getSaveDiskNumber(char* uuid)
 {
 	for(int j=0;j<savedFileCount;j++)
@@ -294,7 +295,7 @@ void getSavedDiskData(void)
 			pclose(fp);
 		}
 }
-
+#endif
 void getFreeSlot(int *x,int *y)
 {
 	for(int yy=0; yy<yCnt; yy++)
@@ -354,6 +355,7 @@ void readDesktopFile(const char* name)
 		}
 }
 
+#if 0
 void refreshDesktopFiles(void)
 {
 	char	buffer[4096];
@@ -442,6 +444,7 @@ void rescanDesktop(void)
 {
  refreshDesktopFiles();
 }
+#endif
 
 void printString(char* str)
 {

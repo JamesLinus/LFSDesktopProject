@@ -14,7 +14,8 @@
 
 enum {HARDDIVE=0,USB,CDROM,DVD,STICK,IPOD,CARD,HOME};
 
-struct disks
+/*
+//struct disks
 {
 	char			*uuid;
 	char			*label;
@@ -38,14 +39,14 @@ struct	saveDisks
 	int				x;
 	int				y;
 };
-
-extern disks		*attached;
-extern saveDisks	*saved;
+*/
+//extern disks		*attached;
+//extern saveDisks	*saved;
 extern int			numberOfDisksAttached;
 extern const char	*iconDiskType[];
 
 void mountDisk(int what);
-void scanForMountableDisks(void);
+//void scanForMountableDisks(void);
 void fillDesk(void);
 
 #endif

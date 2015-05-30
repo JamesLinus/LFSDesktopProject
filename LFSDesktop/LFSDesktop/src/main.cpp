@@ -86,6 +86,7 @@ bool findIcon(int x,int y)
 				{
 					if(deskIconsArray[j].uuid!=NULL)
 						{
+						//debugstr(deskIconsArray[j].label);
 							fileDiskXPos=deskIconsArray[j].x;
 							fileDiskYPos=deskIconsArray[j].y;
 							foundDiskNumber=j;
@@ -97,6 +98,7 @@ bool findIcon(int x,int y)
 	return(false);
 }
 
+#if 0
 bool findIconXXX(int x, int y)
 {
 	for(int j=0;j<desktopFilesCnt;j++)
@@ -127,7 +129,7 @@ bool findIconXXX(int x, int y)
 		}
 	return(false);
 }
-
+#endif
 void  alarmCallBack(int sig)
 {
 	signal(SIGALRM,SIG_IGN);
@@ -376,12 +378,28 @@ int main(int argc,char **argv)
 		for(int xx=0; xx<xCnt; xx++)
 			xySlot[xx][yy]=0;
 
-	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
-	desktopFilesCntMax=20;
-	//asprintf(&command,"%s/Home",cachePath);
-	desktopFilesCnt=0;
-
-	//free(command);
+//	fileInfoPtr=(fileInfo*)calloc(20,sizeof(fileInfo));
+//	desktopFilesCntMax=20;
+//	asprintf(&command,"%s/Home",cachePath);
+//	desktopFilesCnt=0;
+/*
+	if(fileExists(command)!=0)
+		{
+			desktopFilesCnt=1;
+			deskIconsArray[0].x=0;
+			deskIconsArray[0].y=0;
+			debugstr("XXXXXXXXXX");
+			deskIconsArray[0].installed=true;
+			deskIconsArray[0].label=strdup("Home");
+			deskIconsArray[0].mime=strdup("inode/directory");
+			deskIconsArray[0].mountpoint=strdup(getenv("HOME"));
+			saveInfofile(CACHEFOLDER,deskIconsArray[0].label,deskIconsArray[0].mime,deskIconsArray[0].mountpoint,NULL,NULL,deskIconsArray[0].x,deskIconsArray[0].y);
+			xySlot[0][0]=1;
+		}
+	else
+		readDesktopFile("Home");
+*/
+//	free(command);
 	fd=inotify_init();
 	pollstruct.fd =fd;
 	pollstruct.events=POLLIN;
@@ -396,18 +414,15 @@ int main(int argc,char **argv)
 
 	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
 	deskIconsCnt=0;
-
 	asprintf(&command,"%s/Home",cachePath);
-//	desktopFilesCnt=0;
-
 	if(fileExists(command)!=0)
 		{
-			desktopFilesCnt=1;
+			deskIconsCnt=1;
 			deskIconsArray[0].x=0;
 			deskIconsArray[0].y=0;
 			deskIconsArray[0].installed=true;
 			deskIconsArray[0].label=strdup("Home");
-			deskIconsArray[0].mime=strdup("inode-directory");
+			deskIconsArray[0].mime=strdup("inode/directory");
 			deskIconsArray[0].mountpoint=strdup(getenv("HOME"));
 			deskIconsArray[0].file=true;
 			saveInfofile(CACHEFOLDER,deskIconsArray[0].label,deskIconsArray[0].mime,deskIconsArray[0].mountpoint,NULL,NULL,deskIconsArray[0].x,deskIconsArray[0].y);
@@ -415,14 +430,15 @@ int main(int argc,char **argv)
 		}
 	else
 		readDesktopFile("Home");
-
+	free(command);
+		//	debugstr("XXXXXXXXXX");
 	fillDesk();
 
 	firstRun=true;
-	refreshDesktopFiles();
+//	refreshDesktopFiles();
 
-	getSavedDiskData();
-	scanForMountableDisks();
+//	getSavedDiskData();
+//	scanForMountableDisks();
 
 	alarm(refreshRate);
 	XdbeSwapBuffers(display,&swapInfo,1);
@@ -432,7 +448,7 @@ int main(int argc,char **argv)
 	int		oldboxx=-1,oldboxy=-1;
 	bool	dragging=false;
 
-	fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
+	//fileInfoPtr[0].icon=pathToIcon((char*)"home","places");
 	firstRun=false;
 
 	//	xySlot[0][0]=1;
@@ -442,13 +458,14 @@ int main(int argc,char **argv)
 		{
 			if(needsRefresh==true)
 				{
-					scanForMountableDisks();
+					//scanForMountableDisks();
 					int ret=poll(&pollstruct,POLLIN,20);
 					if(ret!=0)
 						{
 							numRead=read(fd,buffer,100);
 							if(numRead>0)
-								rescanDesktop();
+								//rescanDesktop();
+								fillDesk();
 						}
 					
 					ret=poll(&polldisks,POLLIN,20);
@@ -556,14 +573,14 @@ int main(int argc,char **argv)
 										}
 									else
 										{
-											saveInfofile(CACHEFOLDER,fileInfoPtr[foundDiskNumber].label,fileInfoPtr[foundDiskNumber].mime,fileInfoPtr[foundDiskNumber].path,NULL,NULL,newx,newy);
-											fileInfoPtr[foundDiskNumber].x=newx;
-											fileInfoPtr[foundDiskNumber].y=newy;
+											saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy);
+											deskIconsArray[foundDiskNumber].x=newx;
+											deskIconsArray[foundDiskNumber].y=newy;
 											xySlot[newx][newy]=1;
 										}
 									needsRefresh=true;
-									getSavedDiskData();
-									scanForMountableDisks();
+									//getSavedDiskData();
+									//scanForMountableDisks();
 								}
 
 							XSetForeground(display,gc,0);
