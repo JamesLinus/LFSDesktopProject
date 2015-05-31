@@ -48,7 +48,7 @@ args		globalFileData[]=
 };
 
 int			deskIconsCnt=0;
-int			deskIconsMaxCnt=100;
+int			deskIconsMaxCnt=30;
 deskIcons	*deskIconsArray;
 
 char		*rootDev=NULL;
