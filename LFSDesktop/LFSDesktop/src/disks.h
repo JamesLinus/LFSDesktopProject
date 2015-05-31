@@ -12,7 +12,7 @@
 
 #define READFROM "ls -1 /sys/class/block"
 
-enum {HARDDIVE=0,USB,CDROM,DVD,STICK,IPOD,CARD,HOME};
+enum {HARDDIVE=0,USB,CDROM,DVD,STICK,IPOD,CARD,HOME,COMPUTER};
 
 extern const char	*iconDiskType[];
 

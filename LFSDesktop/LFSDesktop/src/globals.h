@@ -14,8 +14,11 @@
 #define DEBUGVAL(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printInt((int)x)
 #define debugstr(x) DEBUGSTR(x)
 
+#define RESERVED 2
+
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum {CACHEFOLDER,DISKFOLDER};
+enum {HOMEDATA=0,ROOTDATA};
 
 struct args
 {
@@ -39,7 +42,6 @@ struct deskIcons
 	bool			dvd;
 	bool			cdrom;
 	bool			usb;
-	//bool			harddisk;
 	bool			file;
 	int				iconhint;
 	bool			installed;
@@ -71,5 +73,7 @@ extern bool		debugDeskFlag;
 
 extern int		xCnt;
 extern int		yCnt;
+
+extern char		*rootDev;
 
 #endif

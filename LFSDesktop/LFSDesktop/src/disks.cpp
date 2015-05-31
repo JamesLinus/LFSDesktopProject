@@ -20,7 +20,7 @@
 #include "files.h"
 #include "disks.h"
 
-const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home"};
+const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home","computer"};
 
 void clearDeskEntry(int num,bool clearslot)
 {
@@ -117,6 +117,7 @@ void addExtraIconSpace(void)
 					deskIconsArray[j].mime=NULL;
 					deskIconsArray[j].partname=NULL;
 					deskIconsArray[j].installed=false;
+					deskIconsArray[j].ignore=false;
 				}
 		}
 }
@@ -143,7 +144,7 @@ void fillDesk(void)
 		exit(1);
 	}
 
-	deskIconsCnt=1;
+	deskIconsCnt=RESERVED;
 
 	fp=popen("ls -1 /dev/disk/by-uuid","r");
 	if(fp!=NULL)
@@ -221,7 +222,14 @@ void fillDesk(void)
 											saveInfofile(DISKFOLDER,deskIconsArray[deskIconsCnt].label,NULL,NULL,deskIconsArray[deskIconsCnt].uuid,(char*)iconDiskType[deskIconsArray[deskIconsCnt].iconhint],deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
 										}
 									deskIconsArray[deskIconsCnt].installed=true;
-									xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
+									if(strcmp(deskIconsArray[deskIconsCnt].dev,rootDev)==0)
+										{
+											xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=0;
+											deskIconsArray[deskIconsCnt].ignore=true;
+										}
+									else
+										xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
+									
 									deskIconsCnt++;
 								}
 						}

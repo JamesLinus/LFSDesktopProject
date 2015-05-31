@@ -198,9 +198,10 @@ int main(int argc,char **argv)
 	int				fhfordisks;
 	long			numRead=0;
 	int				oldx=-1,oldy=-1;
-	bool	buttonDown=false;
-	int		oldboxx=-1,oldboxy=-1;
-	bool	dragging=false;
+	bool			buttonDown=false;
+	int				oldboxx=-1,oldboxy=-1;
+	bool			dragging=false;
+	FILE			*fp;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -347,26 +348,60 @@ int main(int argc,char **argv)
 	polldisks.revents=0;
 	inotify_add_watch(fhfordisks,"/dev/disk/by-uuid",IN_CREATE|IN_DELETE|IN_MODIFY);
 
-	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
-	deskIconsCnt=0;
-	asprintf(&command,"%s/Home",cachePath);
-
-	if(fileExists(command)!=0)
-		{
-			deskIconsCnt=1;
-			deskIconsArray[0].x=0;
-			deskIconsArray[0].y=0;
-			deskIconsArray[0].installed=true;
-			deskIconsArray[0].label=strdup("Home");
-			deskIconsArray[0].mime=strdup("inode/directory");
-			deskIconsArray[0].mountpoint=strdup(getenv("HOME"));
-			deskIconsArray[0].file=true;
-			saveInfofile(CACHEFOLDER,deskIconsArray[0].label,deskIconsArray[0].mime,deskIconsArray[0].mountpoint,NULL,NULL,deskIconsArray[0].x,deskIconsArray[0].y);
-			xySlot[0][0]=1;
-		}
-	else
-		readDesktopFile("Home");
+	asprintf(&command,"findmnt -nf /|awk '{print $2}'");
+	fp=popen(command,"r");
 	free(command);
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,100,fp);
+			sscanf(buffer,"%as",&rootDev);
+			pclose(fp);
+		}
+
+	deskIconsArray=(deskIcons*)calloc(deskIconsMaxCnt,sizeof(deskIcons));
+
+//home icon
+	deskIconsCnt=HOMEDATA;
+	asprintf(&command,"%s/Home",cachePath);
+	if(fileExists(command)==0)
+		readDesktopFile("Home");
+	else
+		{
+			deskIconsArray[HOMEDATA].x=0;
+			deskIconsArray[HOMEDATA].y=0;
+			deskIconsArray[HOMEDATA].installed=true;
+			deskIconsArray[HOMEDATA].label=strdup("Home");
+			deskIconsArray[HOMEDATA].mime=strdup("inode-directory");
+			deskIconsArray[HOMEDATA].mountpoint=strdup(getenv("HOME"));
+			saveInfofile(CACHEFOLDER,deskIconsArray[HOMEDATA].label,deskIconsArray[HOMEDATA].mime,deskIconsArray[HOMEDATA].mountpoint,NULL,NULL,deskIconsArray[HOMEDATA].x,deskIconsArray[HOMEDATA].y);
+		}
+	deskIconsArray[HOMEDATA].file=true;
+	deskIconsArray[HOMEDATA].iconhint=COMPUTER;
+	xySlot[deskIconsArray[HOMEDATA].x][deskIconsArray[HOMEDATA].y]=1;
+	free(command);
+
+//computer icon
+	deskIconsCnt=ROOTDATA;
+	asprintf(&command,"%s/Computer",cachePath);
+	if(fileExists(command)==0)
+		readDesktopFile("Computer");
+	else
+		{
+			deskIconsArray[ROOTDATA].x=0;
+			deskIconsArray[ROOTDATA].y=1;
+			deskIconsArray[ROOTDATA].installed=true;
+			deskIconsArray[ROOTDATA].label=strdup("Computer");
+			deskIconsArray[ROOTDATA].mime=strdup("computer");
+			deskIconsArray[ROOTDATA].mountpoint=strdup("/");
+			saveInfofile(CACHEFOLDER,deskIconsArray[ROOTDATA].label,deskIconsArray[ROOTDATA].mime,deskIconsArray[ROOTDATA].mountpoint,NULL,NULL,deskIconsArray[ROOTDATA].x,deskIconsArray[ROOTDATA].y);
+		}
+	deskIconsArray[ROOTDATA].file=true;
+	deskIconsArray[ROOTDATA].iconhint=COMPUTER;
+	xySlot[deskIconsArray[ROOTDATA].x][deskIconsArray[ROOTDATA].y]=1;
+	free(command);
+
+	deskIconsCnt=RESERVED;
 
 	fillDesk();
 

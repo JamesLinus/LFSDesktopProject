@@ -110,7 +110,7 @@ void drawIcons(void)
 
 	for(int j=0;j<deskIconsCnt;j++)
 		{
-			if(deskIconsArray[j].installed==false)
+			if((deskIconsArray[j].installed==false) || (deskIconsArray[j].ignore==true))
 				continue;
 			if(deskIconsArray[j].file==false)
 				{
@@ -135,18 +135,33 @@ void drawIcons(void)
 			diskx=deskIconsArray[j].x*gridSize+gridBorder;
 			disky=deskIconsArray[j].y*gridSize+gridBorder;
 			if(deskIconsArray[j].file==false)
-				drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
+				{
+				//	if(strcmp(iconDiskType[deskIconsArray[j].dev,rootDev)==0)
+				//		drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
+				//	else
+						drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
+				}
 			else
 				{
-				if(strcmp(deskIconsArray[j].label,"Home")==0)
-					drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
-				else
-					{
-						if(strstr(deskIconsArray[j].mime,"inode"))
-							drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
-						else
-							drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
-					}
+					if(j<RESERVED)
+						{
+							if(strcmp(deskIconsArray[j].label,"Home")==0)
+								drawImage((char*)iconDiskType[HOME],"",diskx,disky,true);
+							else
+								drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"",diskx,disky,true);
+						}
+					else
+						{
+				//if(strcmp(deskIconsArray[j].label,"Home")==0)
+				//	drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
+				//else
+				//	{
+					if(strstr(deskIconsArray[j].mime,"inode"))
+						drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
+					else
+						drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
+				//	}
+						}
 				}
 
 			rect.x=diskx;

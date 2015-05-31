@@ -1,4 +1,5 @@
 0.0.6
+Now shows 'Computer' icon for root system, and no longer mountable/unmountable from right click.
 Uses kernel 'getmntent' routines for determining mounted disks and mount point instead of external command.
 More stuff in memory instead of thrashing hardrive.
 Folded Desktop files into disk arrays.
