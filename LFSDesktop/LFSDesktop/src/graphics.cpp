@@ -152,15 +152,10 @@ void drawIcons(void)
 						}
 					else
 						{
-				//if(strcmp(deskIconsArray[j].label,"Home")==0)
-				//	drawImage((char*)iconDiskType[HOME],"places",diskx,disky,true);
-				//else
-				//	{
 					if(strstr(deskIconsArray[j].mime,"inode"))
 						drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
 					else
 						drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
-				//	}
 						}
 				}
 

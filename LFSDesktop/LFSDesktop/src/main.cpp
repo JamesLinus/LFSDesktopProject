@@ -441,6 +441,7 @@ int main(int argc,char **argv)
 			switch(ev.type)
 				{
 				case ButtonPress:
+				debugstr("button dowen");
 					if(ev.xbutton.button==Button3)
 						{
 							doPopUp(ev);
@@ -547,6 +548,7 @@ int main(int argc,char **argv)
 
 					if(foundIcon==true && buttonDown==true)
 						{
+						debugstr("motion");
 							alarm(0);
 							if((ev.xmotion.x>oldboxx+iconSize) || (ev.xmotion.x<oldboxx-iconSize) || (ev.xmotion.y>oldboxy+iconSize) || (ev.xmotion.y<oldboxy-iconSize))
 								{
