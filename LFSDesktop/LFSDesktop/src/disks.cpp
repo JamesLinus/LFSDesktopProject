@@ -149,6 +149,7 @@ void fillDesk(void)
 	fp=popen("ls -1 /dev/disk/by-uuid","r");
 	if(fp!=NULL)
 		{
+
 			buffer[0]=0;
 			while(fgets(buffer,BUFFERSIZE,fp))
 				{
