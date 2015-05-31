@@ -160,6 +160,9 @@ void fillDesk(void)
 					buffer[readlink(path,buffer,BUFFERSIZE)]=0;
 					ptr=strrchr(buffer,'/');
 					ptr++;
+					sprintf(path,"/dev/%s",ptr);
+					if(strcmp(path,rootDev)==0)
+						continue;
 					deskIconsArray[deskIconsCnt].partname=strdup(ptr);
 					thedev=udev_device_new_from_subsystem_sysname(udev,"block",ptr);
 					if(thedev==NULL)
@@ -222,14 +225,7 @@ void fillDesk(void)
 											saveInfofile(DISKFOLDER,deskIconsArray[deskIconsCnt].label,NULL,NULL,deskIconsArray[deskIconsCnt].uuid,(char*)iconDiskType[deskIconsArray[deskIconsCnt].iconhint],deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
 										}
 									deskIconsArray[deskIconsCnt].installed=true;
-									if(strcmp(deskIconsArray[deskIconsCnt].dev,rootDev)==0)
-										{
-											xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=0;
-											deskIconsArray[deskIconsCnt].ignore=true;
-										}
-									else
-										xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
-									
+									xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
 									deskIconsCnt++;
 								}
 						}
