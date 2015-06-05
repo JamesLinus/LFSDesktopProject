@@ -47,6 +47,9 @@ args		globalFileData[]=
 	{NULL,0,NULL}
 };
 
+
+bool shapeset=false;
+
 int			deskIconsCnt=0;
 int			deskIconsMaxCnt=30;
 deskIcons	*deskIconsArray;

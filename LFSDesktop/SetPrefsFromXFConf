@@ -5,7 +5,9 @@
 prefs="$(cat ${HOME}/.config/LFS/lfsdesktop.rc|sed 's/ /=/g')"
 eval "$prefs"
 
-theme=$(xfconf-query -c "xsettings" -p "/Net/IconThemeName")
+theme=$(xfconf-query -c "xsettings" -p "/Net/ThemeName")
+iconetheme=$(xfconf-query -c "xsettings" -p "/Net/IconThemeName")
+
 iconsize=${iconsize:-32}
 gridborder=${gridborder:-32}
 refreshrate=${refreshrate:-2}
@@ -13,14 +15,39 @@ refreshrate=${refreshrate:-2}
 MON0=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-path")
 MON1=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor1/image-path")
 
-echo "icontheme $theme" > ${HOME}/.config/LFS/lfsdesktop.rc
+echo "icontheme $iconetheme" > ${HOME}/.config/LFS/lfsdesktop.rc
 echo "iconsize $iconsize" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "gridborder $gridborder" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "refreshrate $refreshrate" >> ${HOME}/.config/LFS/lfsdesktop.rc
 
-echo "0" > "${HOME}/.config/LFS/monitors.rc"
+imagestyle=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-style")
+case $imagestyle in
+	0)
+		ims=0;;
+	1)
+		ims=2;;
+	2)
+		ims=1;;
+	*)
+		ims=0;;
+esac
+
+echo "$ims" > "${HOME}/.config/LFS/monitors.rc"
 echo $MON0 >> "${HOME}/.config/LFS/monitors.rc"
-echo "0" >> "${HOME}/.config/LFS/monitors.rc"
+
+imagestyle=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor1/image-style")
+case $imagestyle in
+	0)
+		ims=0;;
+	1)
+		ims=2;;
+	2)
+		ims=1;;
+	*)
+		ims=0;;
+esac
+
+echo "$ims" >> "${HOME}/.config/LFS/monitors.rc"
 echo $MON1 >> "${HOME}/.config/LFS/monitors.rc"
 
 echo "backdrop	${HOME}/Wallpapers/2000 AD 0304 [manwolf1]0000 (~Cclay~).jpg" > "${HOME}/.config/LFS/setwallpaper.rc"
@@ -30,3 +57,12 @@ echo "multimode	1" >> "${HOME}/.config/LFS/setwallpaper.rc"
 
 setwallpaper
 lfsdesktop  &
+
+#gtk stuff
+echo "gtk-theme-name = \"$theme\"" > ~/.gtkrc-2.0
+echo "gtk-icon-theme-name = \"$iconetheme\"" >> ~/.gtkrc-2.0
+#gtk-font-name = "[font-name] [size]"
+echo "gtk-fallback-icon-theme = gnome" >> ~/.gtkrc-2.0
+#gtk-cursor-theme-name = XSilver
+#gtk-cursor-theme-size = 16
+

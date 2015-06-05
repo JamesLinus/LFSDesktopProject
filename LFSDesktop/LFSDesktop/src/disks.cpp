@@ -58,11 +58,12 @@ void mountDisk(int what)
 {
 	char	*command;
 
-
 	if(isDisk==false)
 		{
-
-			asprintf(&command,"xdg-open \"%s\"",deskIconsArray[foundDiskNumber].mountpoint);
+			if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
+				asprintf(&command,"awk -F= '/Exec=/{system($2)}' \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+			else
+				asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
 			system(command);
 			free(command);
 			return;
@@ -78,7 +79,7 @@ void mountDisk(int what)
 			free(command);
 			if(what==1)
 				{
-					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open",deskIconsArray[foundDiskNumber].uuid);
+					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open &",deskIconsArray[foundDiskNumber].uuid);
 					system(command);
 					free(command);
 				}

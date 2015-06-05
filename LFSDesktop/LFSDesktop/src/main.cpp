@@ -90,6 +90,49 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
+
+#include <X11/Intrinsic.h>
+#include <X11/StringDefs.h>
+
+#include <X11/Xaw/MenuButton.h>
+#include <X11/Xaw/SimpleMenu.h>
+#include <X11/Xaw/Sme.h>
+#include <X11/Xaw/SmeBSB.h>
+#include <Xm/MenuShell.h>
+///usr/include/Xm/MenuShell.h
+#include <X11/Xaw/Cardinals.h>
+#include <Xm/CascadeB.h>
+
+#define COLOR_DISPLAY
+
+String fallback_resources[] = { 
+#ifdef COLOR_DISPLAY
+    /* For Color workstations. */
+    "*menu.menuLabel.foreground:    Blue",
+    "*entry.menuLabel.foreground:    Blue",
+    "*menu*quit.foreground:	    Green",
+    "*menu*item1.foreground:        Red",
+    "xmenu1*menu*item2.foreground:  White",
+    "*menu*item3.foreground:        Blue",
+   // "*Eject*.background:	    Blue",
+    //"*form*.background:	    Red",
+   // "*Eject*.foreground:	    Blue",
+   // "*Eject*.background:	    Blue",
+#endif /* COLOR_DISPLAY */
+    "*mount*.menuLabel:	    Red",
+    "*mount*.label:	    Red",
+    "*menuButton.label:             Click here for a pulldown menu",
+    "*menu.label:		    This is xmenu1",
+    "*menuLabel.vertSpace:	    100",
+    "*blank.height:		    20",
+     "*form*Unmount.menuLabel:	    Green",
+     "*form*ShapeStyle:	roundedRectangle",
+"*form*.background:	    Red",
+ 		"*form*.Eject.background: green",
+ 		"*form*.Eject.ShapeStyle: roundedRectangle",
+ 		
+   NULL,
+};
 void pushedButton(Widget w,XtPointer client_data,XmPushButtonCallbackStruct *cbs)
 {
 	long	what=(long)client_data;
@@ -99,12 +142,12 @@ void pushedButton(Widget w,XtPointer client_data,XmPushButtonCallbackStruct *cbs
 	loop=false;
 }
 
-Widget mountMenu(XEvent ev,XtAppContext *app)
+Widget mountMenu(XtAppContext *app,int x,int y)
 {
 	Widget	toplevel,form,mount,unmount,eject;
 	int		dump=0;
 
-	toplevel=XtVaAppInitialize(app,"Mount",NULL,0,&dump,NULL,NULL,NULL);
+	toplevel=XtVaAppInitialize(app,"Mount",NULL,0,&dump,NULL,fallback_resources,NULL);
 
 	form=XtVaCreateManagedWidget("form",xmFormWidgetClass,toplevel,NULL);
 
@@ -137,19 +180,19 @@ Widget mountMenu(XEvent ev,XtAppContext *app)
 
 	XtVaSetValues(toplevel,XmNmwmDecorations,0,NULL);
 	XtVaSetValues(toplevel,XmNoverrideRedirect,TRUE,NULL);
-	XtVaSetValues(toplevel,XmNx,ev.xbutton.x,XmNy,ev.xbutton.y,NULL);
+	XtVaSetValues(toplevel,XmNx,x,XmNy,y,NULL);
 	XtRealizeWidget(toplevel);
 	return(toplevel);
 }
 
-void doPopUp(XEvent ev)
+void doPopUp(int x,int y)
 {
 	Widget			mountmenu;
 	XEvent			event;
 	XtAppContext	app;
 	bool			foundicon;
 
-	foundicon=findIcon(ev.xbutton.x,ev.xbutton.y);
+	foundicon=findIcon(x,y);
 	if(foundicon==false)
 		return;
 
@@ -157,7 +200,7 @@ void doPopUp(XEvent ev)
 		return;
 	loop=true;
 
-	mountmenu=mountMenu(ev,&app);
+	mountmenu=mountMenu(&app,x,y);
 	/* enter processing loop */
 	while(loop==true)
 		{
@@ -177,6 +220,129 @@ void doPopUp(XEvent ev)
 			XtAppNextEvent(app,&event);
 			XtDispatchEvent(&event);
 		}
+}
+static char * menu_item_names[] = {
+	"quit",	"item1", "item2", "item3", "item4",
+    };
+
+
+
+Widget appMenu(XtAppContext *app,int x,int y)
+{
+	Widget	toplevel,form,mount,unmount,eject;
+	int		dump=0;
+Widget top, command, menu, entry;
+
+	toplevel=XtVaAppInitialize(app,"Mount",NULL,0,&dump,NULL,fallback_resources,NULL);
+
+	form=XtVaCreateManagedWidget("form",xmFormWidgetClass,toplevel,NULL);
+  //menu = XtVaCreatePopupShell("menu", simpleMenuWidgetClass, form, 
+//			      NULL);
+ 
+	entry = XtVaCreateManagedWidget("Applications", menuButtonWidgetClass, form,
+				XmNtopAttachment,XmATTACH_FORM,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+#if 1				      
+/* 
+ entry = XtVaCreateManagedWidget("XXXX", xmCascadeButtonWidgetClass, entry,
+	XmNtopWidget,entry,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+*/
+ for (int i = 0; i < (int) XtNumber(menu_item_names) ; i++)
+ {
+	char * item = menu_item_names[i];
+
+/*
+entry = XtVaCreateManagedWidget(item, xmCascadeButtonWidgetClass, entry,
+	XmNtopWidget,entry,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+*/				
+	entry = XtVaCreateManagedWidget(item, menuButtonWidgetClass, form,
+				XmNtopWidget,entry,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+				      }
+
+
+#else
+	mount=XtVaCreateManagedWidget("Mount",menuButtonWidgetClass,form,
+				XmNtopWidget,entry,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+
+	unmount=XtVaCreateManagedWidget("Unmount",xmPushButtonWidgetClass,form,
+				XmNtopWidget,mount,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+
+	eject=XtVaCreateManagedWidget("Eject",xmPushButtonWidgetClass,form,
+				XmNtopWidget,unmount,
+				XmNtopAttachment,XmATTACH_WIDGET,
+				XmNbottomAttachment,XmATTACH_NONE,
+				XmNleftAttachment,XmATTACH_FORM,
+				XmNrightAttachment,XmATTACH_FORM,
+				NULL);
+#endif
+	//XtAddCallback(mount,XmNactivateCallback,(XtCallbackProc)pushedButton,(XtPointer)1);
+//	XtAddCallback(unmount,XmNactivateCallback,(XtCallbackProc)pushedButton,(XtPointer)2);
+//	XtAddCallback(eject,XmNactivateCallback,(XtCallbackProc)pushedButton,(XtPointer)3);
+
+	XtVaSetValues(toplevel,XmNmwmDecorations,0,NULL);
+	XtVaSetValues(toplevel,XmNoverrideRedirect,TRUE,NULL);
+	XtVaSetValues(toplevel,XmNx,x,XmNy,y,NULL);
+	XtRealizeWidget(toplevel);
+	return(toplevel);
+}
+
+void doMainMenu(int x,int y)
+{
+	Widget			appmenu;
+	XEvent			event;
+	XtAppContext	app;
+DEBUGSTR("b3 release");
+	loop=true;
+	appmenu=appMenu(&app,x,y);
+	/* enter processing loop */
+	while(loop==true)
+		{
+			XtAppNextEvent(app,&event);
+			switch(event.type)
+				{
+				case LeaveNotify:
+				if(event.xcrossing.detail==NotifyAncestor)
+					loop=false;
+					break;
+				}
+			XtDispatchEvent(&event);
+		}
+	XtDestroyWidget(appmenu);
+	while(XtAppPending(app)!=0)
+		{
+			XtAppNextEvent(app,&event);
+			XtDispatchEvent(&event);
+		}
+
+//doPopUp(x,y)
 }
 
 int main(int argc,char **argv)
@@ -202,6 +368,14 @@ int main(int argc,char **argv)
 	int				oldboxx=-1,oldboxy=-1;
 	bool			dragging=false;
 	FILE			*fp;
+	bool			riteup=false;
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -437,14 +611,28 @@ int main(int argc,char **argv)
 				usleep(25000);
 
 			XCheckWindowEvent(display,rootWin,ButtonPress|ButtonReleaseMask|PointerMotionMask,&ev);
-
+#if 0
+			if(XQueryPointer(display,rootWin,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+				{
+					if(mask_return & Button3Mask)
+						riteup=true;
+					else
+						if(riteup==true)
+							{
+								//DEBUGVAL(win_x_return);
+								doMainMenu(win_x_return,win_y_return);
+								riteup=false;
+							}
+				}
+#endif
 			switch(ev.type)
 				{
 				case ButtonPress:
-				debugstr("button dowen");
+				//debugstr("button down");
 					if(ev.xbutton.button==Button3)
 						{
-							doPopUp(ev);
+							doPopUp(ev.xbutton.x,ev.xbutton.y);
+							riteup=false;
 							break;
 						}
 					if(ev.xbutton.button!=Button1)
@@ -548,7 +736,7 @@ int main(int argc,char **argv)
 
 					if(foundIcon==true && buttonDown==true)
 						{
-						debugstr("motion");
+						//debugstr("motion");
 							alarm(0);
 							if((ev.xmotion.x>oldboxx+iconSize) || (ev.xmotion.x<oldboxx-iconSize) || (ev.xmotion.y>oldboxy+iconSize) || (ev.xmotion.y<oldboxy-iconSize))
 								{

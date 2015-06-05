@@ -55,6 +55,9 @@ extern int			errLine;
 extern const char	*errFile;
 extern const char	*errFunc;
 
+extern bool shapeset;
+
+
 
 //save/load file
 extern args		globalFileData[];
