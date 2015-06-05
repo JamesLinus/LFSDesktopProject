@@ -11,7 +11,8 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
 			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
-			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\"
+			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\" \
+			-DMAINMENURAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
 LIBS =		-lmagic \
 			-lXm -lXaw7 -lXt -lXext -lICE -lSM -lX11 \

@@ -15,6 +15,7 @@
 #define debugstr(x) DEBUGSTR(x)
 
 #define RESERVED 2
+#define MAXBUFFER 512
 
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum {CACHEFOLDER,DISKFOLDER};

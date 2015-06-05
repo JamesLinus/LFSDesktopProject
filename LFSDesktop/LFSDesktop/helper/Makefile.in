@@ -287,7 +287,8 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
 			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
-			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\"
+			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\" \
+			-DMAINMENURAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
 lfshelper_SOURCES = lfshelper.cpp
 lfshelper_CFLAGS = -O3

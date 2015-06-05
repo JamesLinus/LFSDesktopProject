@@ -93,7 +93,7 @@ void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 
 	if(!streq(XtName(w),"Cancel"))
 		{
-			fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
+			//fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
 			sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
 			system(buffer);
 		}
@@ -108,7 +108,7 @@ void setCatagories(void)
 	int		mycatcnt;
 	bool	foundmatch;
 	FILE	*filedata;
-	int		foundcatmatch;
+	int		foundcatmatch=-1;
 	char	foundnamebuffer[BUFFERSIZE];
 	char	foundexecbuffer[BUFFERSIZE];
 	bool	overridefound;
@@ -206,13 +206,17 @@ int main(int argc,char *argv[])
 	Widget			top;
 	Widget			command;
 	Widget			menu;
-	Widget			menu2;
 	Widget			entry;
 	Widget			box;
 	XtAppContext	app_con;
-	int i;
+	int				x=0,y=0;
 
 	setCatagories();
+
+	if(argc>1)
+		x=atoi(argv[1]);
+	if(argc>2)
+		y=atoi(argv[2]);
 
 	top=XtVaAppInitialize(&app_con,"Xmenu1",NULL,ZERO,&argc,argv,fallback_resources,NULL);
 
@@ -237,7 +241,7 @@ int main(int argc,char *argv[])
    
 	XtVaSetValues(top,XmNmwmDecorations,0,NULL);
 	XtVaSetValues(top,XmNoverrideRedirect,TRUE,NULL);
-	XtVaSetValues(top,XmNx,100,XmNy,1200,NULL);
+	XtVaSetValues(top,XmNx,x,XmNy,y,NULL);
 
 	XtRealizeWidget(top);
 	XtAppMainLoop(app_con);
