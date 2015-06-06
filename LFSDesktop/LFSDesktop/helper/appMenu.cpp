@@ -113,7 +113,7 @@ void setCatagories(void)
 	int		mycatcnt;
 	bool	foundmatch;
 	FILE	*filedata;
-	int		foundcatmatch;
+	int		foundcatmatch=-1;
 	char	foundnamebuffer[BUFFERSIZE];
 	char	foundexecbuffer[BUFFERSIZE];
 	bool	overridefound;
@@ -211,11 +211,9 @@ int main(int argc,char *argv[])
 	Widget			top;
 	Widget			command;
 	Widget			menu;
-	Widget			menu2;
 	Widget			entry;
 	Widget			box;
 	XtAppContext	app_con;
-	int				i;
 	int				x=0,y=0;
 	Display			*display;
 	Window			root_return;

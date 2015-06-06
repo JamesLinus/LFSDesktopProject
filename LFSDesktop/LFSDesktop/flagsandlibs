@@ -3,6 +3,8 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 			$(X11_CFLAGS) \
 			$(XINERAMA_CFLAGS) \
 			$(XEXT_CFLAGS) \
+			$(XT_CFLAGS) \
+			$(XAW_CFLAGS) \
 			$(LIBUDEV_CFLAGS) \
 			$(CAIRO_CFLAGS) \
 			-Wall \
@@ -15,9 +17,11 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 			-DMAINMENURAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
 LIBS =		-lmagic \
-			-lXm -lXaw7 -lXt -lXext -lICE -lSM -lX11 \
+			-lXm \
 			$(X11_LIBS) \
 			$(XINERAMA_LIBS) \
+			$(XAW_LIBS) \
+			$(XT_LIBS) \
 			$(XEXT_LIBS) \
 			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS)
