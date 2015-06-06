@@ -9,8 +9,8 @@ lfsdesktop_CFLAGS = -O3
 
 man1_MANS = ../resources/man/lfsdesktop.1
 
-#pixfilesdir = $(pkgdatadir)/pixmaps
-#pixfiles_DATA = ../resources/pixmaps/*
+appdefaultsdir = $(sysconfdir)/X11/app-defaults
+appdefaults_DATA = ../resources/appmenu
 
 bin_PROGRAMS = lfsdesktop
 

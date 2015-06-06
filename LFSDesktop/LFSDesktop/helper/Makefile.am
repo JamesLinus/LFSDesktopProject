@@ -9,5 +9,4 @@ appmenu_SOURCES = appMenu.cpp
 appmenu_CFLAGS = -O3
 
 helperdir = $(libexecdir)/LFSDesktop
-
 helper_PROGRAMS = lfshelper appmenu

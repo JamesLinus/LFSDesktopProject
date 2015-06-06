@@ -1,4 +1,6 @@
 0.0.6
+Added 'appmenu' resources file to /etc/X11/app-defaults.
+Application menu now pops up at mouse and dissapears if mouse is moved out of window.
 Added 'Applications' menu.
 Now shows 'Computer' icon for root system, and no longer mountable/unmountable from right click.
 Uses kernel 'getmntent' routines for determining mounted disks and mount point instead of external command.

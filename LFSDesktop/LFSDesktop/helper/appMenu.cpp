@@ -84,6 +84,8 @@ String			fallback_resources[]=
 };
 
 appMenuStruct	mainMenus[MAXCATS];
+bool			mainloop=false;
+bool			makestatic=false;
 
 void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 {
@@ -91,13 +93,16 @@ void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 	int ent=(int)(long)data-(cat*256);
 	char	buffer[BUFFERSIZE];
 
-	if(!streq(XtName(w),"Cancel"))
+	if(!streq(XtName(w),"Exit"))
 		{
-			//fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
+			fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
 			sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
 			system(buffer);
 		}
-	XtAppSetExitFlag(XtWidgetToApplicationContext(w));
+	else
+		if(makestatic==true)
+			XtAppSetExitFlag(XtWidgetToApplicationContext(w));
+	mainloop=false;
 }
 
 void setCatagories(void)
@@ -108,7 +113,7 @@ void setCatagories(void)
 	int		mycatcnt;
 	bool	foundmatch;
 	FILE	*filedata;
-	int		foundcatmatch=-1;
+	int		foundcatmatch;
 	char	foundnamebuffer[BUFFERSIZE];
 	char	foundexecbuffer[BUFFERSIZE];
 	bool	overridefound;
@@ -206,19 +211,52 @@ int main(int argc,char *argv[])
 	Widget			top;
 	Widget			command;
 	Widget			menu;
+	Widget			menu2;
 	Widget			entry;
 	Widget			box;
 	XtAppContext	app_con;
+	int				i;
 	int				x=0,y=0;
+	Display			*display;
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+	XEvent			event;
+	int				win=0,wout=0;
+	bool			mdown=false;
+
+	display=XOpenDisplay(NULL);
+	if(display==NULL)
+		exit(1);
 
 	setCatagories();
+	makestatic=true;
 
 	if(argc>1)
-		x=atoi(argv[1]);
-	if(argc>2)
-		y=atoi(argv[2]);
+		{
+			if(argv[1][0]=='m')
+				{
+					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+						{
+							x=win_x_return-10;
+							y=win_y_return-10;
+							makestatic=false;
+						}
+				}
+			else
+				{
+					if(argc>1)
+						x=atoi(argv[1]);
+					if(argc>2)
+						y=atoi(argv[2]);
+				}
+		}
 
-	top=XtVaAppInitialize(&app_con,"Xmenu1",NULL,ZERO,&argc,argv,fallback_resources,NULL);
+	top=XtVaAppInitialize(&app_con,"appmenu",NULL,ZERO,&argc,argv,fallback_resources,NULL);
 
 	box=XtVaCreateManagedWidget("box",boxWidgetClass,top,NULL);
 
@@ -236,15 +274,54 @@ int main(int argc,char *argv[])
 				}
 		}
 
-	command = XtVaCreateManagedWidget("Cancel", commandWidgetClass, box,NULL);
-    XtAddCallback(command, XtNcallback,entrySelectCB, NULL);
+	if(makestatic==true)
+		{
+			command = XtVaCreateManagedWidget("Exit", commandWidgetClass, box,NULL);
+		    XtAddCallback(command, XtNcallback,entrySelectCB, NULL);
+		}
    
 	XtVaSetValues(top,XmNmwmDecorations,0,NULL);
 	XtVaSetValues(top,XmNoverrideRedirect,TRUE,NULL);
 	XtVaSetValues(top,XmNx,x,XmNy,y,NULL);
 
 	XtRealizeWidget(top);
-	XtAppMainLoop(app_con);
+	if(makestatic==true)
+		{
+			XtAppMainLoop(app_con);
+		}
+	else
+		{
+			mainloop=true;
+			while(mainloop==true)
+				{
+					XtAppNextEvent(app_con,&event);
+					switch(event.type)
+						{
+							case ButtonPress:
+								mdown=true;
+								break;
+							case ButtonRelease:
+								mdown=false;
+								break;
+							case LeaveNotify:
+								wout=event.xcrossing.subwindow;
+								break;
+							case EnterNotify:
+								win=event.xcrossing.subwindow;
+								break;
+						}
+					if(((win==0) && (wout!=0)) && (mdown==false))
+						mainloop=false;
+					XtDispatchEvent(&event);
+				}
+
+			XtDestroyWidget(top);
+			while(XtAppPending(app_con)!=0)
+				{
+					XtAppNextEvent(app_con,&event);
+					XtDispatchEvent(&event);
+				}
+		}
 	XtAppSetExitFlag(app_con);
 	return(0);
 }

@@ -496,8 +496,9 @@ int main(int argc,char **argv)
 						{
 							if(child_return==0)
 								{
-									sprintf(buffer,"%s %i %i",MAINMENURAPP,win_x_return,win_y_return);
-									system(buffer);
+									//sprintf(buffer,"%s %i %i",MAINMENURAPP,win_x_return,win_y_return);
+									//system(buffer);
+									system(MAINMENURAPP " m");
 								}
 						}
 				}
