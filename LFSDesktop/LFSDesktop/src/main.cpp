@@ -495,11 +495,7 @@ int main(int argc,char **argv)
 					if(mask_return & Button3Mask)
 						{
 							if(child_return==0)
-								{
-									//sprintf(buffer,"%s %i %i",MAINMENURAPP,win_x_return,win_y_return);
-									//system(buffer);
-									system(MAINMENURAPP " m");
-								}
+								system(MAINMENURAPP " m");
 						}
 				}
 

@@ -63,7 +63,12 @@ void mountDisk(int what)
 			if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
 				asprintf(&command,"awk -F= '/Exec=/{system($2)}' \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
 			else
-				asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+				{
+					if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
+						asprintf(&command,"\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+					else
+						asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+				}
 			system(command);
 			free(command);
 			return;
