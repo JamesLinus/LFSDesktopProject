@@ -64,8 +64,11 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 	if(retentry->data==NULL)
 		{
 			retentry->data=malloc(sizeof(diskIconStruct));
-			tstr=pathToIcon(type,catagory);
-			makeImage((char*)tstr,(char*)type,(diskIconStruct*)(retentry->data));
+			if(strcmp(catagory,"customicon")==0)
+				tstr=strdup(type);
+			else
+				tstr=pathToIcon(type,catagory);
+			makeImage((char*)tstr,(diskIconStruct*)(retentry->data));
 			free(tstr);
 		}
 
@@ -76,7 +79,6 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 			cairo_save(cr);
 				cairo_translate(cr,x,y);
 				cairo_scale (cr,scale,scale);
-				//printf("<<%f>>\n",scale);
 				cairo_set_source_surface(cr,((diskIconStruct*)retentry->data)->cairoImage,0,0);
 				cairo_paint(cr);
 			cairo_restore(cr);
@@ -136,9 +138,9 @@ void drawIcons(void)
 			disky=deskIconsArray[j].y*gridSize+gridBorder;
 			if(deskIconsArray[j].file==false)
 				{
-				//	if(strcmp(iconDiskType[deskIconsArray[j].dev,rootDev)==0)
-				//		drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
-				//	else
+					if(deskIconsArray[j].iconhint==666)
+						drawImage(deskIconsArray[j].icon,"customicon",diskx,disky,mounted);						
+					else
 						drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
 				}
 			else
@@ -152,10 +154,15 @@ void drawIcons(void)
 						}
 					else
 						{
-					if(strstr(deskIconsArray[j].mime,"inode"))
-						drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
-					else
-						drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
+							if(strstr(deskIconsArray[j].mime,"inode"))
+								drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
+							else
+								{
+									if(deskIconsArray[j].iconhint==666)
+										drawImage(deskIconsArray[j].icon,"customicon",diskx,disky,mounted);
+									else				
+										drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
+								}
 						}
 				}
 

@@ -30,7 +30,7 @@ extern char		*desktopPath;
 extern hsearch_data	hashtab;
 
 int fileExists(char *name);
-void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata);
+void makeImage(char *imagepath,diskIconStruct *hashdata);
 char* pathToIcon(char* name,const char* catagory);
 void makeDiskInfofile(char* diskfilepath,char* label,char* uuid,int x,int y,char* type);
 void readDesktopFile(const char* name);

@@ -191,7 +191,7 @@ char* pathToIcon(char* name,const char* catagory)
 	return(retstr);
 }
 
-void makeImage(char *imagepath,char *destname,diskIconStruct *hashdata)
+void makeImage(char *imagepath,diskIconStruct *hashdata)
 {
 	hashdata->cairoImage=cairo_image_surface_create_from_png(imagepath);
 	if(cairo_surface_status(hashdata->cairoImage)!=CAIRO_STATUS_SUCCESS)
@@ -282,6 +282,12 @@ void readDesktopFile(const char* name)
 			deskIconsArray[deskIconsCnt].label=fileDiskLabel;
 			deskIconsArray[deskIconsCnt].mime=strdup(fileDiskMime);
 			deskIconsArray[deskIconsCnt].mountpoint=fileDiskPath;
+			deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
+			if(fileCustomIcon!=NULL)
+				{
+					deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
+					deskIconsArray[deskIconsCnt].iconhint=666;
+				}
 			deskIconsArray[deskIconsCnt].x=fileDiskXPos;
 			deskIconsArray[deskIconsCnt].y=fileDiskYPos;
 			deskIconsArray[deskIconsCnt].file=true;
@@ -304,6 +310,7 @@ void readDesktopFile(const char* name)
 			fileDiskLabel=NULL;
 			fileDiskMime=NULL;
 			fileDiskPath=NULL;
+			fileCustomIcon=NULL;
 			deskIconsCnt++;
 			fclose(fr);
 		}

@@ -6,3 +6,10 @@ appmenu*box.*.width:			100
 
 appmenu*boxmount.*.width:		50
 appmenu*boxmount*.background:	grey
+
+appmenu*background:				grey
+appmenu*foreground:				Black
+
+appmenu*dialog.*.width:			48
+appmenu*dialog*value.width:		240
+appmenu*dialog*label.width:		240

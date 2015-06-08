@@ -8,5 +8,8 @@ lfshelper_CFLAGS = -O3
 appmenu_SOURCES = appMenu.cpp
 appmenu_CFLAGS = -O3
 
+lfsdialog_SOURCES = lfsdialog.cpp
+lfsdialog_CFLAGS = -O3
+
 helperdir = $(libexecdir)/LFSDesktop
-helper_PROGRAMS = lfshelper appmenu
+helper_PROGRAMS = lfshelper appmenu lfsdialog

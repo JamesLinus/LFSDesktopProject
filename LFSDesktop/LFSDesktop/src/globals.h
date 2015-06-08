@@ -20,6 +20,7 @@
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 enum {CACHEFOLDER,DISKFOLDER};
 enum {HOMEDATA=0,ROOTDATA};
+enum {BUTTONMOUNT=1,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONCUSTUMICON};
 
 struct args
 {
@@ -35,6 +36,7 @@ struct deskIcons
 	char			*dev;
 	char			*mountpoint;
 	char			*mime;
+	char			*icon;
 	int				x;
 	int				y;
 	bool			mounted;
@@ -68,6 +70,7 @@ extern char		*fileDiskMime;
 extern char		*fileDiskPath;
 extern char		*fileDiskUUID;
 extern char		*fileDiskType;
+extern char		*fileCustomIcon;
 extern int		fileDiskXPos;
 extern int		fileDiskYPos;
 

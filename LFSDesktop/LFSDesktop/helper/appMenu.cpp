@@ -2,7 +2,7 @@
 
 #©keithhedger Thu 4 Jun 20:05:59 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -o appMenu -lXm $(pkg-config --cflags --libs xt xext ice sm x11) -lXm -lXaw7 -lXt -lXext -lICE -lSM -lX11 ||exit 1
+g++ "$0" -o appMenu $(pkg-config --cflags --libs xt xext ice sm x11) -lXm -lXaw7 -lXt -lXext -lICE -lSM -lX11 ||exit 1
 ./appMenu "$@"
 retval=$?
        rm ./appMenu

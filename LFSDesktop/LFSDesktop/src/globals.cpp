@@ -24,6 +24,7 @@ char		*fileDiskMime=NULL;
 char		*fileDiskPath=NULL;
 char		*fileDiskUUID=NULL;
 char		*fileDiskType=NULL;
+char		*fileCustomIcon=NULL;
 int			fileDiskXPos=-1;
 int			fileDiskYPos=-1;
 
@@ -41,6 +42,7 @@ args		globalFileData[]=
 	{"path",TYPESTRING,&fileDiskPath},
 	{"uuid",TYPESTRING,&fileDiskUUID},
 	{"type",TYPESTRING,&fileDiskType},
+	{"icon",TYPESTRING,&fileCustomIcon},
 	{"xpos",TYPEINT,&fileDiskXPos},
 	{"ypos",TYPEINT,&fileDiskYPos},
 

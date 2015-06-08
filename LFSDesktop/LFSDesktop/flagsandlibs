@@ -17,12 +17,12 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 			-DMAINMENURAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
 LIBS =		-lmagic \
-			-lXm \
 			$(X11_LIBS) \
 			$(XINERAMA_LIBS) \
 			$(XAW_LIBS) \
 			$(XT_LIBS) \
 			$(XEXT_LIBS) \
+			-lXm \
 			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS)
 

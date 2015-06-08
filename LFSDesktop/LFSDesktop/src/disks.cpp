@@ -20,7 +20,7 @@
 #include "files.h"
 #include "disks.h"
 
-const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home","computer"};
+const char	*iconDiskType[]= {"harddisk","harddisk-usb","dev-cdrom","dev-dvd","media-removable","multimedia-player","flash","user-home","computer","customicon"};
 
 void clearDeskEntry(int num,bool clearslot)
 {
@@ -42,6 +42,9 @@ void clearDeskEntry(int num,bool clearslot)
 	if(deskIconsArray[num].mime!=NULL)
 		free(deskIconsArray[num].mime);
 	deskIconsArray[num].mime=NULL;
+	if(deskIconsArray[num].icon!=NULL)
+		free(deskIconsArray[num].icon);
+	deskIconsArray[num].icon=NULL;
 
 	if(clearslot==true)
 		xySlot[deskIconsArray[num].x][deskIconsArray[num].y]=0;
@@ -60,18 +63,23 @@ void mountDisk(int what)
 
 	if(isDisk==false)
 		{
-			if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
-				asprintf(&command,"awk -F= '/Exec=/{system($2)}' \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
-			else
+			switch (what)
 				{
-					if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
-						asprintf(&command,"\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
-					else
-						asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+					case BUTTONOPEN:
+						if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
+							asprintf(&command,"awk -F= '/Exec=/{system($2)}' \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+						else
+							{
+								if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
+									asprintf(&command,"\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+								else
+									asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+							}
+						system(command);
+						free(command);
+						return;
+						break;
 				}
-			system(command);
-			free(command);
-			return;
 		}
 	else
 		{
@@ -82,14 +90,14 @@ void mountDisk(int what)
 #endif
 			system(command);
 			free(command);
-			if(what==1)
+			if(what==BUTTONMOUNT)
 				{
 					asprintf(&command,"findmnt -lno TARGET -S UUID=\"%s\"|xargs xdg-open &",deskIconsArray[foundDiskNumber].uuid);
 					system(command);
 					free(command);
 				}
 
-			if(what==3)
+			if(what==BUTTONEJECT)
 				clearDeskEntry(foundDiskNumber,true);
 		}
 }
@@ -224,6 +232,11 @@ void fillDesk(void)
 										{
 											deskIconsArray[deskIconsCnt].x=fileDiskXPos;
 											deskIconsArray[deskIconsCnt].y=fileDiskYPos;
+											if(fileCustomIcon!=NULL)
+												{
+													deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
+													deskIconsArray[deskIconsCnt].iconhint=666;
+												}
 										}
 									else
 										{

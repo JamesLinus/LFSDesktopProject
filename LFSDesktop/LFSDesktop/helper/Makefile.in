@@ -86,7 +86,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-helper_PROGRAMS = lfshelper$(EXEEXT) appmenu$(EXEEXT)
+helper_PROGRAMS = lfshelper$(EXEEXT) appmenu$(EXEEXT) \
+	lfsdialog$(EXEEXT)
 subdir = LFSDesktop/helper
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -102,6 +103,9 @@ PROGRAMS = $(helper_PROGRAMS)
 am_appmenu_OBJECTS = appMenu.$(OBJEXT)
 appmenu_OBJECTS = $(am_appmenu_OBJECTS)
 appmenu_LDADD = $(LDADD)
+am_lfsdialog_OBJECTS = lfsdialog.$(OBJEXT)
+lfsdialog_OBJECTS = $(am_lfsdialog_OBJECTS)
+lfsdialog_LDADD = $(LDADD)
 am_lfshelper_OBJECTS = lfshelper.$(OBJEXT)
 lfshelper_OBJECTS = $(am_lfshelper_OBJECTS)
 lfshelper_LDADD = $(LDADD)
@@ -134,8 +138,9 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(appmenu_SOURCES) $(lfshelper_SOURCES)
-DIST_SOURCES = $(appmenu_SOURCES) $(lfshelper_SOURCES)
+SOURCES = $(appmenu_SOURCES) $(lfsdialog_SOURCES) $(lfshelper_SOURCES)
+DIST_SOURCES = $(appmenu_SOURCES) $(lfsdialog_SOURCES) \
+	$(lfshelper_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -197,12 +202,12 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = -lmagic \
-			-lXm \
 			$(X11_LIBS) \
 			$(XINERAMA_LIBS) \
 			$(XAW_LIBS) \
 			$(XT_LIBS) \
 			$(XEXT_LIBS) \
+			-lXm \
 			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS)
 
@@ -302,6 +307,8 @@ lfshelper_SOURCES = lfshelper.cpp
 lfshelper_CFLAGS = -O3
 appmenu_SOURCES = appMenu.cpp
 appmenu_CFLAGS = -O3
+lfsdialog_SOURCES = lfsdialog.cpp
+lfsdialog_CFLAGS = -O3
 helperdir = $(libexecdir)/LFSDesktop
 all: all-am
 
@@ -384,6 +391,10 @@ appmenu$(EXEEXT): $(appmenu_OBJECTS) $(appmenu_DEPENDENCIES) $(EXTRA_appmenu_DEP
 	@rm -f appmenu$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(appmenu_OBJECTS) $(appmenu_LDADD) $(LIBS)
 
+lfsdialog$(EXEEXT): $(lfsdialog_OBJECTS) $(lfsdialog_DEPENDENCIES) $(EXTRA_lfsdialog_DEPENDENCIES) 
+	@rm -f lfsdialog$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsdialog_OBJECTS) $(lfsdialog_LDADD) $(LIBS)
+
 lfshelper$(EXEEXT): $(lfshelper_OBJECTS) $(lfshelper_DEPENDENCIES) $(EXTRA_lfshelper_DEPENDENCIES) 
 	@rm -f lfshelper$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(lfshelper_OBJECTS) $(lfshelper_LDADD) $(LIBS)
@@ -395,6 +406,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/appMenu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lfsdialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lfshelper.Po@am__quote@
 
 .cpp.o:
