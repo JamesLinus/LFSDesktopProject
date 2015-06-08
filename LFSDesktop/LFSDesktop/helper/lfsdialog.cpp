@@ -66,8 +66,8 @@ int main(int argc,char *argv[])
 				{
 					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 						{
-							x=win_x_return-10;
-							y=win_y_return-10;
+							x=win_x_return+32;
+							y=win_y_return+32;
 							makestatic=false;
 						}
 				}

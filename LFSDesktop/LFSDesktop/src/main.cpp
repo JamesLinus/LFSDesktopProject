@@ -95,6 +95,26 @@ void  alarmCallBack(int sig)
 
 void doCustomIcon(void)
 {
+	char buffer[MAXBUFFER];
+	FILE *fp;
+	int	retval;
+
+	sprintf(buffer,LFSDIALOGAPP " m 0 \"Path To Icon ...\"");
+	fp=popen(buffer,"r");
+	fgets(buffer,MAXBUFFER,fp);
+	retval=pclose(fp);
+	if(retval==0)
+		{
+	//		printf("%s\n",buffer);
+			deskIconsArray[foundDiskNumber].iconhint=666;
+			deskIconsArray[foundDiskNumber].icon=strdup(buffer);
+			fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
+			if(isDisk==true)
+				saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,"customicon",deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y);
+
+			fileCustomIcon=NULL;
+			needsRefresh=true;
+		}
 }
 
 void pushedButton(Widget w,XtPointer data,XtPointer  garbage)
