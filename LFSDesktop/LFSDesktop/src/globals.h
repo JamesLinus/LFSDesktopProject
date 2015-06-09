@@ -48,6 +48,7 @@ struct deskIcons
 	bool			file;
 	int				iconhint;
 	bool			installed;
+	bool			customicon;
 };
 
 extern int			deskIconsCnt;
@@ -73,6 +74,7 @@ extern char		*fileDiskType;
 extern char		*fileCustomIcon;
 extern int		fileDiskXPos;
 extern int		fileDiskYPos;
+extern bool		fileGotCustomIcon;
 
 extern int		foundDiskNumber;
 extern bool		isDisk;

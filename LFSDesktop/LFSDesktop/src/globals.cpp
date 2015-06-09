@@ -27,6 +27,7 @@ char		*fileDiskType=NULL;
 char		*fileCustomIcon=NULL;
 int			fileDiskXPos=-1;
 int			fileDiskYPos=-1;
+bool		fileGotCustomIcon=false;;
 
 int			foundDiskNumber=-1;
 bool		isDisk=false;
@@ -45,6 +46,7 @@ args		globalFileData[]=
 	{"icon",TYPESTRING,&fileCustomIcon},
 	{"xpos",TYPEINT,&fileDiskXPos},
 	{"ypos",TYPEINT,&fileDiskYPos},
+	{"custom",TYPEBOOL,&fileGotCustomIcon},
 
 	{NULL,0,NULL}
 };

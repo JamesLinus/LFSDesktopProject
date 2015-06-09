@@ -109,6 +109,8 @@ void doCustomIcon(bool useicon)
 				{
 					deskIconsArray[foundDiskNumber].icon=strdup(buffer);
 					fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
+					fileGotCustomIcon=true;
+					deskIconsArray[foundDiskNumber].customicon=true;
 				}
 		}
 	else
@@ -116,7 +118,9 @@ void doCustomIcon(bool useicon)
 			if(deskIconsArray[foundDiskNumber].icon!=NULL)
 				free(deskIconsArray[foundDiskNumber].icon);
 			deskIconsArray[foundDiskNumber].icon=NULL;
+			deskIconsArray[foundDiskNumber].customicon=false;
 			fileCustomIcon=NULL;
+			fileGotCustomIcon=false;
 		}
 
 

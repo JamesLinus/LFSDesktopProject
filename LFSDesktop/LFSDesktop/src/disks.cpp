@@ -55,6 +55,7 @@ void clearDeskEntry(int num,bool clearslot)
 	deskIconsArray[num].file=false;
 	deskIconsArray[num].iconhint=-1;
 	deskIconsArray[num].installed=false;
+	deskIconsArray[num].customicon=false;
 }
 
 void mountDisk(int what)
@@ -157,6 +158,7 @@ void fillDesk(void)
 	bool			isusb=false;
 	FILE			*fp;
 	const char		*ptr;
+	char			*holdfilename=NULL;
 
 	/* Create the udev object */
 	udev = udev_new();
@@ -240,10 +242,12 @@ void fillDesk(void)
 										{
 											deskIconsArray[deskIconsCnt].x=fileDiskXPos;
 											deskIconsArray[deskIconsCnt].y=fileDiskYPos;
-											if(fileCustomIcon!=NULL)
+											if(fileGotCustomIcon==true)
 												{
 													deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
+													deskIconsArray[deskIconsCnt].customicon=true;
 													fileCustomIcon=NULL;
+													fileGotCustomIcon=false;
 												}
 											else
 												deskIconsArray[deskIconsCnt].icon=NULL;
@@ -262,7 +266,7 @@ void fillDesk(void)
 		}
 	pclose(fp);
 
-char *holdfilename=NULL;
+	holdfilename=NULL;
 
 //desktop files
 	sprintf(buffer,"find %s -mindepth 1",desktopPath);
@@ -287,26 +291,6 @@ char *holdfilename=NULL;
 				{
 					clearDeskEntry(deskIconsCnt,false);
 					deskIconsArray[deskIconsCnt].mountpoint=strdup(buffer);
-#if 0
-					if(strcmp(&buffer[strlen(buffer)-8],".desktop")==0)
-						{
-							char	commandbuffer[MAXBUFFER];
-							char	*icon;
-							char	*pth;
-
-							sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",buffer);
-							icon=oneLiner(commandbuffer);
-							pth=strrchr(icon,'.');
-							if(pth!=NULL)
-								*pth=0;
-							if(icon!=NULL)
-								{
-									pth=pathToIcon(icon,"");
-									deskIconsArray[deskIconsCnt].icon=strdup(pth);
-									fileCustomIcon=pth;
-								}
-						}
-#endif
 					ptr=strrchr(buffer,'/');
 					ptr++;
 					deskIconsArray[deskIconsCnt].label=strdup(ptr);
@@ -335,27 +319,26 @@ char *holdfilename=NULL;
 					readDesktopFile(ptr);
 				}
 			
-			if(holdfilename!=NULL)
+			if((holdfilename!=NULL) && (deskIconsArray[deskIconsCnt-1].customicon==false))
+				{
+					char	commandbuffer[MAXBUFFER];
+					char	*icon;
+					char	*pth;
+
+					sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",holdfilename);
+					icon=oneLiner(commandbuffer);
+					pth=strrchr(icon,'.');
+					if(pth!=NULL)
+						*pth=0;
+					if(icon!=NULL)
 						{
-							char	commandbuffer[MAXBUFFER];
-							char	*icon;
-							char	*pth;
-
-							sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",holdfilename);
-							icon=oneLiner(commandbuffer);
-							pth=strrchr(icon,'.');
-							if(pth!=NULL)
-								*pth=0;
-							if(icon!=NULL)
-								{
-									pth=pathToIcon(icon,"");
-									deskIconsArray[deskIconsCnt-1].icon=strdup(pth);
-								}
-							free(holdfilename);
-							holdfilename=NULL;
-							fileCustomIcon=NULL;
+							pth=pathToIcon(icon,"");
+							deskIconsArray[deskIconsCnt-1].icon=strdup(pth);
 						}
-
+					free(holdfilename);
+					holdfilename=NULL;
+					fileCustomIcon=NULL;
+				}
 		}
 	pclose(fp);
 }

@@ -213,8 +213,11 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 	fileDiskXPos=x;
 	fileDiskYPos=y;
 
-	if(deskIconsArray[iconnum].icon!=NULL)
-		fileCustomIcon=deskIconsArray[iconnum].icon;
+	if(deskIconsArray[iconnum].customicon==true)
+		{
+			fileCustomIcon=deskIconsArray[iconnum].icon;
+			fileGotCustomIcon=true;
+		}
 
 	if(where==DISKFOLDER)
 		{
@@ -234,6 +237,7 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 	fileDiskType=NULL;
 	fileDiskType=NULL;
 	fileCustomIcon=NULL;
+	fileGotCustomIcon=false;
 	fileDiskXPos=-1;
 	fileDiskYPos=-1;
 }
@@ -281,11 +285,13 @@ void readDesktopFile(const char* name)
 	fr=fopen(buffer,"r");
 	if(fr!=NULL)
 		{
+			fileGotCustomIcon=false;
 			loadVarsFromFile(buffer,globalFileData);
 			deskIconsArray[deskIconsCnt].label=fileDiskLabel;
 			deskIconsArray[deskIconsCnt].mime=strdup(fileDiskMime);
 			deskIconsArray[deskIconsCnt].mountpoint=fileDiskPath;
 			deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
+			deskIconsArray[deskIconsCnt].customicon=fileGotCustomIcon;
 			if(fileCustomIcon!=NULL)
 				{
 					deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
@@ -314,6 +320,7 @@ void readDesktopFile(const char* name)
 			fileDiskMime=NULL;
 			fileDiskPath=NULL;
 			fileCustomIcon=NULL;
+			fileGotCustomIcon=false;
 			deskIconsCnt++;
 			fclose(fr);
 		}
