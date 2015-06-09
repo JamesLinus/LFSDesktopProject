@@ -93,40 +93,61 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
-void doCustomIcon(void)
+void doCustomIcon(bool useicon)
 {
 	char buffer[MAXBUFFER];
 	FILE *fp;
 	int	retval;
 
-	sprintf(buffer,LFSDIALOGAPP " m 0 \"Path To Icon ...\"");
-	fp=popen(buffer,"r");
-	fgets(buffer,MAXBUFFER,fp);
-	retval=pclose(fp);
-	if(retval==0)
+	if(useicon==true)
 		{
-			deskIconsArray[foundDiskNumber].iconhint=666;
-			deskIconsArray[foundDiskNumber].icon=strdup(buffer);
-			fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
-			if(isDisk==true)
-				saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)"customicon",deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y);
-			else
-				saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y);
-			fileCustomIcon=NULL;
-			needsRefresh=true;
+			sprintf(buffer,LFSDIALOGAPP " m 0 \"Path To Icon ...\"");
+			fp=popen(buffer,"r");
+			fgets(buffer,MAXBUFFER,fp);
+			retval=pclose(fp);
+			if(retval==0)
+				{
+					deskIconsArray[foundDiskNumber].icon=strdup(buffer);
+					fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
+				}
 		}
+	else
+		{
+			if(deskIconsArray[foundDiskNumber].icon!=NULL)
+				free(deskIconsArray[foundDiskNumber].icon);
+			deskIconsArray[foundDiskNumber].icon=NULL;
+			fileCustomIcon=NULL;
+		}
+
+
+	if(isDisk==true)
+		saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y,foundDiskNumber);
+	else
+		saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y,foundDiskNumber);
+
+	needsRefresh=true;
 }
 
 void pushedButton(Widget w,XtPointer data,XtPointer  garbage)
 {
 	long	what=(long)data;
 
-	if(what<BUTTONOPEN)
-		mountDisk(what);
-	if(what==BUTTONADDICON)
+	switch(what)
 		{
-			doCustomIcon();
+			case BUTTONOPEN:
+			case BUTTONMOUNT:
+			case BUTTONUNMOUNT:
+			case BUTTONEJECT:
+				mountDisk(what);
+				break;
+			case BUTTONADDICON:
+				doCustomIcon(true);
+				break;
+			case BUTTONREMOVEICON:
+				doCustomIcon(false);
+				break;
 		}
+
 	needsRefresh=true;
 	loop=false;
 }
@@ -428,7 +449,7 @@ int main(int argc,char **argv)
 			deskIconsArray[HOMEDATA].label=strdup("Home");
 			deskIconsArray[HOMEDATA].mime=strdup("inode-directory");
 			deskIconsArray[HOMEDATA].mountpoint=strdup(getenv("HOME"));
-			saveInfofile(CACHEFOLDER,deskIconsArray[HOMEDATA].label,deskIconsArray[HOMEDATA].mime,deskIconsArray[HOMEDATA].mountpoint,NULL,NULL,deskIconsArray[HOMEDATA].x,deskIconsArray[HOMEDATA].y);
+			saveInfofile(CACHEFOLDER,deskIconsArray[HOMEDATA].label,deskIconsArray[HOMEDATA].mime,deskIconsArray[HOMEDATA].mountpoint,NULL,NULL,deskIconsArray[HOMEDATA].x,deskIconsArray[HOMEDATA].y,HOMEDATA);
 		}
 	deskIconsArray[HOMEDATA].file=true;
 	deskIconsArray[HOMEDATA].iconhint=COMPUTER;
@@ -448,7 +469,7 @@ int main(int argc,char **argv)
 			deskIconsArray[ROOTDATA].label=strdup("Computer");
 			deskIconsArray[ROOTDATA].mime=strdup("computer");
 			deskIconsArray[ROOTDATA].mountpoint=strdup("/");
-			saveInfofile(CACHEFOLDER,deskIconsArray[ROOTDATA].label,deskIconsArray[ROOTDATA].mime,deskIconsArray[ROOTDATA].mountpoint,NULL,NULL,deskIconsArray[ROOTDATA].x,deskIconsArray[ROOTDATA].y);
+			saveInfofile(CACHEFOLDER,deskIconsArray[ROOTDATA].label,deskIconsArray[ROOTDATA].mime,deskIconsArray[ROOTDATA].mountpoint,NULL,NULL,deskIconsArray[ROOTDATA].x,deskIconsArray[ROOTDATA].y,ROOTDATA);
 		}
 	deskIconsArray[ROOTDATA].file=true;
 	deskIconsArray[ROOTDATA].iconhint=COMPUTER;
@@ -580,10 +601,11 @@ int main(int argc,char **argv)
 									deskIconsArray[foundDiskNumber].x=newx;
 									deskIconsArray[foundDiskNumber].y=newy;
 									xySlot[newx][newy]=1;
+									
 									if(isDisk==true)
-										saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy);
+										saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)iconDiskType[deskIconsArray[foundDiskNumber].iconhint],newx,newy,foundDiskNumber);
 									else
-										saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy);
+										saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,newx,newy,foundDiskNumber);
 									fileDiskLabel=NULL;
 									fileDiskUUID=NULL;
 									fileDiskXPos=-1;

@@ -56,6 +56,7 @@ void findIcon(char *theme,const char *name,const char *catagory)
 	FILE	*fp;
 
 	sprintf(findbuffer,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s*.png\" 2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,name,catagory);
+
 	fp=popen(findbuffer,"r");
 	if(fp!=NULL)
 		{
@@ -167,19 +168,16 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 char* pathToIcon(char* name,const char* catagory)
 {
 	char	*command;
-	FILE	*fp;
-	char	buffer[2048];
 	char	*retstr=NULL;
 
 	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
-	fp=popen(command,"r");
-	free(command);
-	if(fp!=NULL)
+	retstr=oneLiner(command);
+
+	if((retstr==NULL) || (strlen(retstr)==0))
 		{
-			buffer[0]=0;
-			fgets(buffer,2048,fp);
-			sscanf(buffer,"%as",&retstr);
-			pclose(fp);
+			free(command);
+			asprintf(&command,"find \"/usr/share/pixmaps\"  \"/usr/share/icons/hicolor\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",name,catagory);
+			retstr=oneLiner(command);
 		}
 
 	if((retstr==NULL) || (strlen(retstr)==0))
@@ -188,6 +186,7 @@ char* pathToIcon(char* name,const char* catagory)
 				free(retstr);
 			retstr=defaultIcon(iconTheme,name,catagory);
 		}
+	free(command);
 	return(retstr);
 }
 
@@ -202,7 +201,7 @@ void makeImage(char *imagepath,diskIconStruct *hashdata)
 	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
 }
 
-void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y)
+void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y,int iconnum)
 {
 	char	*filepath;
 
@@ -213,6 +212,9 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 	fileDiskType=type;
 	fileDiskXPos=x;
 	fileDiskYPos=y;
+
+	if(deskIconsArray[iconnum].icon!=NULL)
+		fileCustomIcon=deskIconsArray[iconnum].icon;
 
 	if(where==DISKFOLDER)
 		{
@@ -231,6 +233,7 @@ void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* t
 	fileDiskPath=NULL;
 	fileDiskType=NULL;
 	fileDiskType=NULL;
+	fileCustomIcon=NULL;
 	fileDiskXPos=-1;
 	fileDiskYPos=-1;
 }
@@ -314,6 +317,27 @@ void readDesktopFile(const char* name)
 			deskIconsCnt++;
 			fclose(fr);
 		}
+}
+
+char* oneLiner(char *command)
+{
+	FILE	*fp;
+	char	buffer[MAXBUFFER];
+
+	fp=popen(command,"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,MAXBUFFER,fp);
+			if(strlen(buffer)>0)
+				{
+					if(buffer[strlen(buffer)-1] =='\n')
+						buffer[strlen(buffer)-1]=0;
+				}
+			pclose(fp);
+			return(strdup(buffer));
+		}
+	return(NULL);
 }
 
 void printString(char* str)

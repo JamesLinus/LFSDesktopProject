@@ -60,14 +60,18 @@ void clearDeskEntry(int num,bool clearslot)
 void mountDisk(int what)
 {
 	char	*command;
-
+	char	buffer[MAXBUFFER];
 	if(isDisk==false)
 		{
 			switch (what)
 				{
 					case BUTTONOPEN:
 						if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
-							asprintf(&command,"awk -F= '/Exec=/{system($2)}' \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+							{
+								sprintf(buffer,"echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
+								command=oneLiner(buffer);
+								
+							}
 						else
 							{
 								if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
@@ -75,6 +79,7 @@ void mountDisk(int what)
 								else
 									asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
 							}
+
 						system(command);
 						free(command);
 						return;
@@ -238,7 +243,6 @@ void fillDesk(void)
 											if(fileCustomIcon!=NULL)
 												{
 													deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
-													deskIconsArray[deskIconsCnt].iconhint=666;
 													fileCustomIcon=NULL;
 												}
 											else
@@ -247,7 +251,7 @@ void fillDesk(void)
 									else
 										{
 											getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
-											saveInfofile(DISKFOLDER,deskIconsArray[deskIconsCnt].label,NULL,NULL,deskIconsArray[deskIconsCnt].uuid,(char*)iconDiskType[deskIconsArray[deskIconsCnt].iconhint],deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
+											saveInfofile(DISKFOLDER,deskIconsArray[deskIconsCnt].label,NULL,NULL,deskIconsArray[deskIconsCnt].uuid,(char*)iconDiskType[deskIconsArray[deskIconsCnt].iconhint],deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y,deskIconsCnt);
 										}
 									deskIconsArray[deskIconsCnt].installed=true;
 									xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
@@ -257,6 +261,8 @@ void fillDesk(void)
 				}
 		}
 	pclose(fp);
+
+char *holdfilename=NULL;
 
 //desktop files
 	sprintf(buffer,"find %s -mindepth 1",desktopPath);
@@ -271,10 +277,36 @@ void fillDesk(void)
 			ptr++;
 			sprintf(buffer2,"%s/%s",cachePath,ptr);
 			addExtraIconSpace();
+
+			if(strcmp(&buffer[strlen(buffer)-8],".desktop")==0)
+				{
+					holdfilename=strdup(buffer);
+				}
+				
 			if(fileExists(buffer2)==-1)
 				{
 					clearDeskEntry(deskIconsCnt,false);
 					deskIconsArray[deskIconsCnt].mountpoint=strdup(buffer);
+#if 0
+					if(strcmp(&buffer[strlen(buffer)-8],".desktop")==0)
+						{
+							char	commandbuffer[MAXBUFFER];
+							char	*icon;
+							char	*pth;
+
+							sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",buffer);
+							icon=oneLiner(commandbuffer);
+							pth=strrchr(icon,'.');
+							if(pth!=NULL)
+								*pth=0;
+							if(icon!=NULL)
+								{
+									pth=pathToIcon(icon,"");
+									deskIconsArray[deskIconsCnt].icon=strdup(pth);
+									fileCustomIcon=pth;
+								}
+						}
+#endif
 					ptr=strrchr(buffer,'/');
 					ptr++;
 					deskIconsArray[deskIconsCnt].label=strdup(ptr);
@@ -293,7 +325,7 @@ void fillDesk(void)
 					free(tptr);
 					getFreeSlot(&deskIconsArray[deskIconsCnt].x,&deskIconsArray[deskIconsCnt].y);
 					xySlot[deskIconsArray[deskIconsCnt].x][deskIconsArray[deskIconsCnt].y]=1;
-					saveInfofile(CACHEFOLDER,deskIconsArray[deskIconsCnt].label,deskIconsArray[deskIconsCnt].mime,deskIconsArray[deskIconsCnt].mountpoint,NULL,NULL,deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y);
+					saveInfofile(CACHEFOLDER,deskIconsArray[deskIconsCnt].label,deskIconsArray[deskIconsCnt].mime,deskIconsArray[deskIconsCnt].mountpoint,NULL,NULL,deskIconsArray[deskIconsCnt].x,deskIconsArray[deskIconsCnt].y,deskIconsCnt);
 					deskIconsArray[deskIconsCnt].installed=true;
 					deskIconsArray[deskIconsCnt].file=true;
 					deskIconsCnt++;
@@ -302,6 +334,28 @@ void fillDesk(void)
 				{
 					readDesktopFile(ptr);
 				}
+			
+			if(holdfilename!=NULL)
+						{
+							char	commandbuffer[MAXBUFFER];
+							char	*icon;
+							char	*pth;
+
+							sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",holdfilename);
+							icon=oneLiner(commandbuffer);
+							pth=strrchr(icon,'.');
+							if(pth!=NULL)
+								*pth=0;
+							if(icon!=NULL)
+								{
+									pth=pathToIcon(icon,"");
+									deskIconsArray[deskIconsCnt-1].icon=strdup(pth);
+								}
+							free(holdfilename);
+							holdfilename=NULL;
+							fileCustomIcon=NULL;
+						}
+
 		}
 	pclose(fp);
 }

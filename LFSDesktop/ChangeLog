@@ -1,4 +1,7 @@
 0.0.6
+Added 'Open' option to right click menu.
+Added remove custom icons.
+Added set custom icons.
 Added 'appmenu' resources file to /etc/X11/app-defaults.
 Application menu now pops up at mouse and dissapears if mouse is moved out of window.
 Added 'Applications' menu.

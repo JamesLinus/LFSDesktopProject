@@ -138,7 +138,7 @@ void drawIcons(void)
 			disky=deskIconsArray[j].y*gridSize+gridBorder;
 			if(deskIconsArray[j].file==false)
 				{
-					if(deskIconsArray[j].iconhint==666)
+					if(deskIconsArray[j].icon!=NULL)
 						drawImage(deskIconsArray[j].icon,"customicon",diskx,disky,mounted);						
 					else
 						drawImage((char*)iconDiskType[deskIconsArray[j].iconhint],"devices",diskx,disky,mounted);
@@ -154,7 +154,7 @@ void drawIcons(void)
 						}
 					else
 						{
-							if(deskIconsArray[j].iconhint==666)
+							if(deskIconsArray[j].icon!=NULL)
 								{
 									drawImage(deskIconsArray[j].icon,"customicon",diskx,disky,mounted);
 								}
