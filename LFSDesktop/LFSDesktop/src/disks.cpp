@@ -130,8 +130,10 @@ void addExtraIconSpace(void)
 					deskIconsArray[j].mountpoint=NULL;
 					deskIconsArray[j].mime=NULL;
 					deskIconsArray[j].partname=NULL;
+					deskIconsArray[j].icon=NULL;
 					deskIconsArray[j].installed=false;
 					deskIconsArray[j].ignore=false;
+					deskIconsArray[j].iconhint=0;
 				}
 		}
 }
@@ -228,6 +230,7 @@ void fillDesk(void)
 									deskIconsArray[deskIconsCnt].file=false;
 									deskIconsArray[deskIconsCnt].iconhint=iconhint;
 									sprintf(buffer,"%s/%s",diskInfoPath,deskIconsArray[deskIconsCnt].uuid);
+									
 									if(loadVarsFromFile(buffer,globalFileData))
 										{
 											deskIconsArray[deskIconsCnt].x=fileDiskXPos;
@@ -236,7 +239,10 @@ void fillDesk(void)
 												{
 													deskIconsArray[deskIconsCnt].icon=fileCustomIcon;
 													deskIconsArray[deskIconsCnt].iconhint=666;
+													fileCustomIcon=NULL;
 												}
+											else
+												deskIconsArray[deskIconsCnt].icon=NULL;
 										}
 									else
 										{

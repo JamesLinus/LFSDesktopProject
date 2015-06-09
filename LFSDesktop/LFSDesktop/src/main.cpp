@@ -105,13 +105,13 @@ void doCustomIcon(void)
 	retval=pclose(fp);
 	if(retval==0)
 		{
-	//		printf("%s\n",buffer);
 			deskIconsArray[foundDiskNumber].iconhint=666;
 			deskIconsArray[foundDiskNumber].icon=strdup(buffer);
 			fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
 			if(isDisk==true)
-				saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,"customicon",deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y);
-
+				saveInfofile(DISKFOLDER,deskIconsArray[foundDiskNumber].label,NULL,NULL,deskIconsArray[foundDiskNumber].uuid,(char*)"customicon",deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y);
+			else
+				saveInfofile(CACHEFOLDER,deskIconsArray[foundDiskNumber].label,deskIconsArray[foundDiskNumber].mime,deskIconsArray[foundDiskNumber].mountpoint,NULL,NULL,deskIconsArray[foundDiskNumber].x,deskIconsArray[foundDiskNumber].y);
 			fileCustomIcon=NULL;
 			needsRefresh=true;
 		}
@@ -123,7 +123,7 @@ void pushedButton(Widget w,XtPointer data,XtPointer  garbage)
 
 	if(what<BUTTONOPEN)
 		mountDisk(what);
-	if(what==BUTTONCUSTUMICON)
+	if(what==BUTTONADDICON)
 		{
 			doCustomIcon();
 		}
@@ -141,7 +141,7 @@ String	fallback_resources[]=
 
 Widget mountMenu(XtAppContext *app,int x,int y,bool isdisk)
 {
-	Widget	toplevel,mount,unmount,eject,bmount,custom;
+	Widget	toplevel,mount,unmount,eject,bmount,custom,remove;
 	int		dump=0;
 
 	toplevel=XtVaAppInitialize(app,"appmenu",NULL,0,&dump,NULL,fallback_resources,NULL);
@@ -152,20 +152,21 @@ Widget mountMenu(XtAppContext *app,int x,int y,bool isdisk)
 			mount=XtVaCreateManagedWidget("Mount",commandWidgetClass,bmount,NULL);
 			unmount=XtVaCreateManagedWidget("Unmount",commandWidgetClass,bmount,NULL);
 			eject=XtVaCreateManagedWidget("Eject",commandWidgetClass,bmount,NULL);
-			custom=XtVaCreateManagedWidget("Custom Icon",commandWidgetClass,bmount,NULL);
 
 			XtAddCallback(mount,XtNcallback,pushedButton,(XtPointer)(long)BUTTONMOUNT);
 			XtAddCallback(unmount,XtNcallback,pushedButton,(XtPointer)(long)BUTTONUNMOUNT);
 			XtAddCallback(eject,XtNcallback,pushedButton,(XtPointer)(long)BUTTONEJECT);
-			XtAddCallback(custom,XtNcallback,pushedButton,(XtPointer)(long)BUTTONCUSTUMICON);
 		}
 	else
 		{
 			mount=XtVaCreateManagedWidget("Open",commandWidgetClass,bmount,NULL);
-			custom=XtVaCreateManagedWidget("Custom Icon",commandWidgetClass,bmount,NULL);
 			XtAddCallback(mount,XtNcallback,pushedButton,(XtPointer)(long)BUTTONOPEN);
-			XtAddCallback(custom,XtNcallback,pushedButton,(XtPointer)(long)BUTTONCUSTUMICON);
-	}
+		}
+
+	custom=XtVaCreateManagedWidget("Custom Icon",commandWidgetClass,bmount,NULL);
+	XtAddCallback(custom,XtNcallback,pushedButton,(XtPointer)(long)BUTTONADDICON);
+	remove=XtVaCreateManagedWidget("Remove Icon",commandWidgetClass,bmount,NULL);
+	XtAddCallback(remove,XtNcallback,pushedButton,(XtPointer)(long)BUTTONREMOVEICON);
 
 	XtVaSetValues(toplevel,XmNmwmDecorations,0,NULL);
 	XtVaSetValues(toplevel,XmNoverrideRedirect,TRUE,NULL);

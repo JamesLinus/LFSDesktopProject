@@ -154,13 +154,15 @@ void drawIcons(void)
 						}
 					else
 						{
-							if(strstr(deskIconsArray[j].mime,"inode"))
-								drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
+							if(deskIconsArray[j].iconhint==666)
+								{
+									drawImage(deskIconsArray[j].icon,"customicon",diskx,disky,mounted);
+								}
 							else
 								{
-									if(deskIconsArray[j].iconhint==666)
-										drawImage(deskIconsArray[j].icon,"customicon",diskx,disky,mounted);
-									else				
+									if(strstr(deskIconsArray[j].mime,"inode"))
+										drawImage(deskIconsArray[j].mime,"places",diskx,disky,true);
+									else
 										drawImage(deskIconsArray[j].mime,"mimetypes",diskx,disky,true);
 								}
 						}
