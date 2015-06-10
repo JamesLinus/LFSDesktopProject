@@ -8,9 +8,6 @@ lfswmanager_SOURCES = $(COMMONSRC)
 lfswmanager_CFLAGS = -O3 -export-dynamic
 lfswmanager_CXXFLAGS = -O3 -export-dynamic
 
-pixfilesdir = $(pkgdatadir)/pixmaps
-pixfiles_DATA = ../resources/pixmaps/*
-
 defaultsdir = $(pkgdatadir)
 defaults_DATA = ../resources/defaults
 
