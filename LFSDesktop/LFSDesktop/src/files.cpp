@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <search.h>
 #include <magic.h>
+#include <stdarg.h>
+#include <alloca.h>
 
 #include "globals.h"
 #include "prefs.h"
@@ -171,13 +173,13 @@ char* pathToIcon(char* name,const char* catagory)
 	char	*retstr=NULL;
 
 	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
-	retstr=oneLiner(command);
+	retstr=oneLiner("s",command);
 
 	if((retstr==NULL) || (strlen(retstr)==0))
 		{
 			free(command);
 			asprintf(&command,"find \"/usr/share/pixmaps\"  \"/usr/share/icons/hicolor\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",name,catagory);
-			retstr=oneLiner(command);
+			retstr=oneLiner("s",command);
 		}
 
 	if((retstr==NULL) || (strlen(retstr)==0))
@@ -326,7 +328,8 @@ void readDesktopFile(const char* name)
 		}
 }
 
-char* oneLiner(char *command)
+/*
+har* oneLiner(char *command)
 {
 	FILE	*fp;
 	char	buffer[MAXBUFFER];
@@ -347,15 +350,89 @@ char* oneLiner(char *command)
 	return(NULL);
 }
 
-void printString(char* str)
+
+*/
+
+char* oneLiner(const char* fmt,...)
 {
-	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
-	printf(">>%s<<\n",str);
+	FILE	*fp;
+	va_list	ap;
+	char	*buffer,*subdata;
+
+	buffer=(char*)alloca(MAXBUFFER);
+	subdata=(char*)alloca(256);
+	buffer[0]=0;
+
+	va_start(ap,fmt);
+
+	while (*fmt)
+		{
+			subdata[0]=0;
+			switch(*fmt)
+				{
+				case 's':
+					sprintf(subdata,"%s",va_arg(ap,char*));
+					break;
+				case 'i':
+					sprintf(subdata,"%i",va_arg(ap,int));
+					break;
+				default:
+					sprintf(subdata,"%c",*fmt);
+					break;
+				}
+			strcat(buffer,subdata);
+			fmt++;
+		}
+	va_end(ap);
+
+//	debugfunc("s",buffer);
+
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,MAXBUFFER,fp);
+			if(strlen(buffer)>0)
+				{
+					if(buffer[strlen(buffer)-1] =='\n')
+						buffer[strlen(buffer)-1]=0;
+				}
+			pclose(fp);
+			return(strdup(buffer));
+		}
+	return(NULL);
 }
 
-void printInt(int v)
+void debugFunc(const char *fmt, ...)
 {
-	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
-	printf(">>%i<<\n",v);
-}
+	va_list	ap;
+	char	*tdata,*subdata;
 
+	tdata=(char*)alloca(1024);
+	subdata=(char*)alloca(256);
+	tdata[0]=0;
+
+	va_start(ap,fmt);
+
+	while (*fmt)
+		{
+			subdata[0]=0;
+			switch(*fmt)
+				{
+				case 's':
+					sprintf(subdata,"%s",va_arg(ap,char*));
+					break;
+				case 'i':
+					sprintf(subdata,"%i",va_arg(ap,int));
+					break;
+				default:
+					sprintf(subdata,"%c",*fmt);
+					break;
+				}
+			strcat(tdata,subdata);
+			fmt++;
+		}
+	va_end(ap);
+	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
+	printf(">>%s<<\n",tdata);
+}

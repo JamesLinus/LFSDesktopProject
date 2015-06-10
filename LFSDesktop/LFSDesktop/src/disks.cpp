@@ -69,9 +69,9 @@ void mountDisk(int what)
 					case BUTTONOPEN:
 						if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
 							{
-								sprintf(buffer,"echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
-								command=oneLiner(buffer);
-								
+								//sprintf(buffer,"echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
+								//command=oneLiner(buffer);
+								command=oneLiner("ssss","echo \"$(awk -F= '/Exec=/{print $2}'"," \"",deskIconsArray[foundDiskNumber].mountpoint,"\"|sed 's/%.//g') &\"");
 							}
 						else
 							{
@@ -326,7 +326,7 @@ void fillDesk(void)
 					char	*pth;
 
 					sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",holdfilename);
-					icon=oneLiner(commandbuffer);
+					icon=oneLiner("s",commandbuffer);
 					pth=strrchr(icon,'.');
 					if(pth!=NULL)
 						*pth=0;

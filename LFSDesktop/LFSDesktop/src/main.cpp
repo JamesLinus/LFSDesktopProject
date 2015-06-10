@@ -101,7 +101,7 @@ void doCustomIcon(bool useicon)
 
 	if(useicon==true)
 		{
-			sprintf(buffer,LFSDIALOGAPP " m 0 \"Path To Icon ...\"");
+			sprintf(buffer,LFSDIALOGAPP " c 0 \"Path To Icon ...\"");
 			fp=popen(buffer,"r");
 			fgets(buffer,MAXBUFFER,fp);
 			retval=pclose(fp);
@@ -213,13 +213,10 @@ void doPopUp(int x,int y)
 	if(foundicon==false)
 		return;
 
-	//if(isDisk==false)
-	//	return;
 	loop=true;
 
 	mountmenu=mountMenu(&app,x,y,isDisk);
 
-	//mainloop=true;
 	while(loop==true)
 		{
 			XtAppNextEvent(app,&event);

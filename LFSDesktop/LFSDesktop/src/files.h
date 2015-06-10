@@ -37,9 +37,7 @@ void readDesktopFile(const char* name);
 void saveInfofile(int where,char* label,char* mime,char* path,char* uuid,char* type,int x, int y,int iconnum);
 void getFreeSlot(int *x,int *y);
 char* getMimeType(char *filepath);
-char* oneLiner(char *command);
-
-void printString(char* str);
-void printInt(int v);
+char* oneLiner(const char* fmt,...);
+void debugFunc(const char *fmt, ...);
 
 #endif

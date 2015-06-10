@@ -10,9 +10,8 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
-#define DEBUGSTR(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printString((char*)x)
-#define DEBUGVAL(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printInt((int)x)
-#define debugstr(x) DEBUGSTR(x)
+#define DEBUGFUNC(x,...) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc((const char*)x,__VA_ARGS__)
+#define debugfunc  DEBUGFUNC
 
 #define RESERVED 2
 #define MAXBUFFER 512

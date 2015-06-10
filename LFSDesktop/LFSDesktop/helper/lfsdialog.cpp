@@ -62,6 +62,8 @@ int main(int argc,char *argv[])
 
 	if(argc>1)
 		{
+			if(argv[1][0]!='c')
+			{
 			if(argv[1][0]=='m')
 				{
 					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
@@ -77,6 +79,7 @@ int main(int argc,char *argv[])
 						x=atoi(argv[1]);
 					if(argc>2)
 						y=atoi(argv[2]);
+				}
 				}
 			if((argc>2) && (argv[3]!=NULL))
 				label=argv[3];
