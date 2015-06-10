@@ -4,7 +4,7 @@ appmenu*box*.background:		grey
 appmenu*box.Exit.background:	grey40
 appmenu*box.*.width:			100
 
-appmenu*boxmount.*.width:		50
+appmenu*boxmount.*.width:		85
 appmenu*boxmount*.background:	grey
 
 appmenu*background:				grey
