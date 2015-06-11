@@ -1,0 +1,4 @@
+../src/lfswmanager-xftfont.o: ../src/xftfont.cpp \
+ /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:
