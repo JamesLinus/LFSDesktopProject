@@ -268,11 +268,13 @@ void createDesktopWindow(void)
 			xa_prop[2]=XInternAtom(display,"_NET_WM_STATE_SKIP_PAGER",False);
 			xa_prop[3]=XInternAtom(display,"_NET_WM_STATE_SKIP_TASKBAR",False);
 			xa_prop[4]=XInternAtom(display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
+			xa_prop[5]=XInternAtom(display,"_NET_WM_TYPE_DESKTOP",False);
+			xa_prop[6]=XInternAtom(display,"_NET_WM_WINDOW_TYPE_DOCK ",False);
 			xa_prop[9]=XInternAtom(display,"_MOTIF_WM_HINTS",True);
 
 			xa=XInternAtom(display,"_NET_WM_STATE",False);
 			if(xa!=None)
-				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,5);
+				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,7);
 
 			hints.flags=2;
 			hints.decorations=0;
