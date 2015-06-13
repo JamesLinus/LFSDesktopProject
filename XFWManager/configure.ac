@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSWManager],[0.0.1],[PROJ],[LFSWManager])
+AC_INIT([XFWManager],[0.0.3],[PROJ],[XFWManager])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -84,5 +84,5 @@ AC_SUBST(XFIXES_LIBS)
 #AC_DEFINE([HAVE_COMPOSITOR], [1], [Define to enable compositor])
 AC_DEFINE([HAVE_RENDER], [1], [Define to enable render])
 
-AC_OUTPUT(Makefile LFSWManager/app/Makefile)
+AC_OUTPUT(Makefile XFWManager/app/Makefile)
 

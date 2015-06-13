@@ -1,5 +1,5 @@
 
-SUBDIRS = LFSWManager/app
+SUBDIRS = XFWManager/app
 
 remake:
 	$(shell ./remakesourcelist)
