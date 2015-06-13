@@ -20,7 +20,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef CONFIG_XFT
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
 #include <string.h>
@@ -136,4 +135,3 @@ int fttextwidth_utf8(struct font *f,const char *s)
 	XftTextExtentsUtf8(dpy,font,(XftChar8 *)s,strlen(s),&info);
 	return info.width - info.x; // [sic]
 }
-#endif
