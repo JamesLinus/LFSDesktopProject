@@ -3,14 +3,14 @@ AUTOMAKE_OPTIONS = subdir-objects
 include ../flagsandlibs
 include ../sources
 
-lfswmanager_SOURCES = $(COMMONSRC)
+xfwmanager_SOURCES = $(COMMONSRC)
 
-lfswmanager_CFLAGS = -O3 -export-dynamic
-lfswmanager_CXXFLAGS = -O3 -export-dynamic
+xfwmanager_CFLAGS = -O3 -export-dynamic
+xfwmanager_CXXFLAGS = -O3 -export-dynamic
 
 defaultsdir = $(pkgdatadir)
 defaults_DATA = ../resources/defaults
 
-bin_PROGRAMS = lfswmanager
+bin_PROGRAMS = xfwmanager
 
-man1_MANS = ../resources/man/lfswmanager.1
+man1_MANS = ../resources/man/xfwmanager.1
