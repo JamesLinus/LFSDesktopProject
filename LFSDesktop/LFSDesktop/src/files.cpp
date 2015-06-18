@@ -328,6 +328,7 @@ void readDesktopFile(const char* name)
 		}
 }
 
+//synchronous only
 char* oneLiner(const char* fmt,...)
 {
 	FILE	*fp;

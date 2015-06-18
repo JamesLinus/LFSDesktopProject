@@ -15,10 +15,13 @@
 
 char			*iconTheme;
 
+//desktop prefs
 int				iconSize=40;
 int				gridBorder=32;
 int				gridSize=iconSize+gridBorder;
 int				refreshRate=2;
+char			*terminalCommand=NULL;
+bool			showSuffix=false;
 
 Display			*display;
 Window			rootWin;
@@ -51,6 +54,8 @@ args			desktopPrefs[]=
 	{"gridsize",TYPEINT,&gridSize},
 	{"gridborder",TYPEINT,&gridBorder},
 	{"refreshrate",TYPEINT,&refreshRate},
+	{"termcommand",TYPESTRING,&terminalCommand},
+	{"showextension",TYPEBOOL,&showSuffix},
 
 	{NULL,0,NULL}
 };

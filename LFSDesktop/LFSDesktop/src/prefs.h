@@ -26,6 +26,8 @@ extern int				iconSize;
 extern int				gridSize;
 extern int				gridBorder;
 extern int				refreshRate;
+extern char				*terminalCommand;
+extern bool				showSuffix;
 
 extern Display			*display;
 extern Window			rootWin;

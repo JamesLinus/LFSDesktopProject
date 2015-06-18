@@ -106,6 +106,8 @@ void drawIcons(void)
 	bool			mounted=false;
 	struct mntent	*entry;
 	bool			loop;
+	char			*tlable;
+	char			*dot=NULL;
 
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
@@ -177,7 +179,15 @@ void drawIcons(void)
 			XSetClipMask(display,gc,0);
 
 			fontheight=labelFont->ascent+labelFont->descent;
-			stringwidth=XTextWidth(labelFont,deskIconsArray[j].label,strlen(deskIconsArray[j].label));
+			tlable=strdup(deskIconsArray[j].label);
+			dot=NULL;
+			if(showSuffix==false)
+				{
+					dot=strrchr(tlable,'.');
+					if(dot!=NULL)
+						*dot=0;
+				}
+			stringwidth=XTextWidth(labelFont,tlable,strlen(tlable));
 
 			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
 			boxw=stringwidth+2;
@@ -190,7 +200,8 @@ void drawIcons(void)
 			XSetForeground(display,labelGC,labelForeground);
 			XSetBackground(display,labelGC,labelBackground);
 
-			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,deskIconsArray[j].label,strlen(deskIconsArray[j].label));
+			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,tlable,strlen(tlable));
+			free(tlable);
 		}
 
 	if(debugDeskFlag==true)

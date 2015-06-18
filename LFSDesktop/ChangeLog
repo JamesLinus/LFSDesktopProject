@@ -1,4 +1,8 @@
 0.0.8
+Added 'showextension' to config options
+Added "show-extension" command opt to show file extensions ( default no show ).
+Added 'termcommand' to config options
+Added "term-command" command opt to set the command to use when opening desktop file in terminal.
 Fix for some window mangers not respecting 'keep below' and bringing the desktop to the front (openbox), now stays underneath.
 
 0.0.7

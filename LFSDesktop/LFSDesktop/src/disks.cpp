@@ -61,6 +61,9 @@ void clearDeskEntry(int num,bool clearslot)
 void mountDisk(int what)
 {
 	char	*command;
+	char	*termcommand;
+	bool	interm=false;
+
 	if(isDisk==false)
 		{
 			switch (what)
@@ -68,16 +71,32 @@ void mountDisk(int what)
 					case BUTTONOPEN:
 						if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
 							{
+								interm=false;
+								command=oneLiner("awk -F= '/Terminal=/{print $2}' \"%s\"",deskIconsArray[foundDiskNumber].mountpoint);
+								if(strcasecmp(command,"true")==0)
+									interm=true;
+								free(command);
 								command=oneLiner("echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
-								system(command);
+								if(interm==true)
+									{
+										asprintf(&termcommand,"%s %s",terminalCommand,command);
+										system(termcommand);
+										free(termcommand);
+									}	
+								else
+									system(command);
 							}
 						else
 							{
 								if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
-									command=oneLiner("\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+									{
+										asprintf(&command,"\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+										system(command);
+									}
 								else
-									asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
-									system(command);
+									{
+										command=oneLiner("xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+									}
 							}
 						free(command);
 						return;

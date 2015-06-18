@@ -46,6 +46,8 @@ struct	option long_options[] =
 {
 	{"clean",0,0,'c'},
 	{"theme",1,0,'t'},
+	{"term-command",1,0,'x'},
+	{"show-extension",0,0,'s'},
 	{"debug",0,0,'d'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
@@ -57,15 +59,17 @@ bool	loop=true;
 
 void printhelp(void)
 {
-	printf("Usage: lfsdesktop [OPTION]\n"
-	       "A CLI application\n"
-	       " -c,--clean		Clean disk info data\n"
-	       " -t,--theme		Set theme\n"
-	       " -d,--debug		Debug\n"
-	       " -v,--version	output version information and exit\n"
-	       " -h,-?,--help	print this help\n\n"
-	       "Report bugs to kdhedger68713@gmail.com\n"
-	      );
+	printf("LFSDesktop - " VERSION "\n"
+			"Usage: lfsdesktop [OPTION] ...\n" 
+			" -c,--clean			Clean disk info data\n"
+			" -t,--theme			Set theme\n"
+			" -x,--term-command		Set terminal command ( default xterm -e )\n"
+			" -s,--show-extension	Set terminal command ( default xterm -e )\n"
+			" -d,--debug			Debug\n"
+			" -v,--version			output version information and exit\n"
+			" -h,-?,--help			print this help\n\n"
+			"Report bugs to kdhedger68713@gmail.com\n"
+		  );
 }
 
 bool findIcon(int x,int y)
@@ -315,12 +319,15 @@ int main(int argc,char **argv)
 	asprintf(&desktopPath,"%s/Desktop",getenv("HOME"));
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
+
+	showSuffix=false;
+
 	loadVarsFromFile(prefsPath,desktopPrefs);
 
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hcdt:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hcdst:x:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -343,6 +350,16 @@ int main(int argc,char **argv)
 					if(iconTheme!=NULL)
 						free(iconTheme);
 					iconTheme=strdup(optarg);
+					break;
+
+				case 'x':
+					if(terminalCommand!=NULL)
+						free(terminalCommand);
+					terminalCommand=strdup(optarg);
+					break;
+
+				case 's':
+					showSuffix=true;
 					break;
 
 				case 'v':
