@@ -64,7 +64,7 @@ void printhelp(void)
 	       " -d,--debug		Debug\n"
 	       " -v,--version	output version information and exit\n"
 	       " -h,-?,--help	print this help\n\n"
-	       "Report bugs to kdhedger@yahoo.co.uk\n"
+	       "Report bugs to kdhedger68713@gmail.com\n"
 	      );
 }
 

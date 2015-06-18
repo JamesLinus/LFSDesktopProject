@@ -1,3 +1,6 @@
+0.0.8
+Fix for some window mangers not respecting 'keep below' and bringing the desktop to the front (openbox), now stays underneath.
+
 0.0.7
 Custom icon path dialog now pops up in centre of window.
 .desktop files now show proper icon for theme.

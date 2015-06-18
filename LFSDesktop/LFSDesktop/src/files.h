@@ -18,10 +18,6 @@
 #include "globals.h"
 #include "graphics.h"
 
-
-
-//extern fileInfo	*fileInfoPtr;
-//
 extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;

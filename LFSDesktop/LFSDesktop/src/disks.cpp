@@ -61,7 +61,6 @@ void clearDeskEntry(int num,bool clearslot)
 void mountDisk(int what)
 {
 	char	*command;
-	char	buffer[MAXBUFFER];
 	if(isDisk==false)
 		{
 			switch (what)
@@ -69,19 +68,17 @@ void mountDisk(int what)
 					case BUTTONOPEN:
 						if(strstr(deskIconsArray[foundDiskNumber].mountpoint,".desktop")!=0)
 							{
-								//sprintf(buffer,"echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
-								//command=oneLiner(buffer);
-								command=oneLiner("ssss","echo \"$(awk -F= '/Exec=/{print $2}'"," \"",deskIconsArray[foundDiskNumber].mountpoint,"\"|sed 's/%.//g') &\"");
+								command=oneLiner("echo \"$(awk -F= '/Exec=/{print $2}' \"%s\"|sed 's/%%.//g') &\"",deskIconsArray[foundDiskNumber].mountpoint);
+								system(command);
 							}
 						else
 							{
 								if(strcmp(deskIconsArray[foundDiskNumber].mime,"application-x-executable")==0)
-									asprintf(&command,"\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+									command=oneLiner("\"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
 								else
 									asprintf(&command,"xdg-open \"%s\" &",deskIconsArray[foundDiskNumber].mountpoint);
+									system(command);
 							}
-
-						system(command);
 						free(command);
 						return;
 						break;
@@ -326,7 +323,7 @@ void fillDesk(void)
 					char	*pth;
 
 					sprintf(commandbuffer,"awk -F= '/Icon=/{print $2}' \"%s\"",holdfilename);
-					icon=oneLiner("s",commandbuffer);
+					icon=oneLiner("%s",commandbuffer);
 					pth=strrchr(icon,'.');
 					if(pth!=NULL)
 						*pth=0;

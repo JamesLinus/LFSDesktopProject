@@ -1,43 +1,10 @@
-#if 0
 
-#©keithhedger Thu 4 Jun 20:05:59 BST 2015 kdhedger68713@gmail.com
+/*
 
-g++ "$0" -o appMenu $(pkg-config --cflags --libs xt xext ice sm x11) -lXm -lXaw7 -lXt -lXext -lICE -lSM -lX11 ||exit 1
-./appMenu "$@"
-retval=$?
-       rm ./appMenu
-       exit $retval
+©keithhedger Thu 4 Jun 20:05:59 BST 2015 kdhedger68713@gmail.com
 
-#endif
 
-       /*
-        * A simple Simple Menu Widget example.
-        *
-        * November 30,1989 - Chris D. Peterson
-        */
-
-       /*
-        * $XConsortium: xmenu1.c,v 1.8 89/12/15 19:33:15 kit Exp $
-        *
-        * Copyright 1989 Massachusetts Institute of Technology
-        *
-        * Permission to use,copy,modify,distribute,and sell this software and its
-        * documentation for any purpose is hereby granted without fee,provided that
-        * the above copyright notice appear in all copies and that both that
-        * copyright notice and this permission notice appear in supporting
-        * documentation,and that the name of M.I.T. not be used in advertising or
-        * publicity pertaining to distribution of the software without specific,
-        * written prior permission.  M.I.T. makes no representations about the
-        * suitability of this software for any purpose.  It is provided "as is"
-        * without express or implied warranty.
-        *
-        * M.I.T. DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,INCLUDING ALL
-        * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,IN NO EVENT SHALL M.I.T.
-        * BE LIABLE FOR ANY SPECIAL,INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-        * WHATSOEVER RESULTING FROM LOSS OF USE,DATA OR PROFITS,WHETHER IN AN ACTION
-        * OF CONTRACT,NEGLIGENCE OR OTHER TORTIOUS ACTION,ARISING OUT OF OR IN
-        * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-        */
+*/
 
 #include <stdio.h>
 #include <stdlib.h>

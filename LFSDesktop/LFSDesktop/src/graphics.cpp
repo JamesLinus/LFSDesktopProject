@@ -265,19 +265,17 @@ void createDesktopWindow(void)
 
 			xa=XInternAtom(display,"_NET_WM_WINDOW_TYPE",False);
 			xa_prop[0]=XInternAtom(display,"_NET_WM_WINDOW_TYPE_DESKTOP",False);
-			//xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_FULLSCREEN",False);
 			if(xa!=None)
 				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,1);
 
 			xa=XInternAtom(display,"_NET_WM_STATE",False);
 			xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_SKIP_PAGER",False);
 			xa_prop[1]=XInternAtom(display,"_NET_WM_STATE_SKIP_TASKBAR",False);
-			//xa_prop[2]=XInternAtom(display,"_NET_WM_STATE_BELOW",False);
+			xa_prop[2]=XInternAtom(display,"_NET_WM_STATE_BELOW",False);
+			xa_prop[3]=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
 			if(xa!=None)
-				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,2);
+				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,4);
 
-//			xa=XInternAtom(display,"_NET_WM_ALLOWED_ACTIONS",False);
-//			XDeleteProperty(display,rootWin,xa);
 			xa=XInternAtom(display,"_NET_WM_ALLOWED_ACTIONS",False);
 			xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
 			xa_prop[1]=XInternAtom(display,"_NET_WM_STATE_BELOW",False);
@@ -285,26 +283,6 @@ void createDesktopWindow(void)
 	
 			if(xa!=None)
 				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,3);
-
-
-
-
-#if 0
-			xa=XInternAtom(display,"_NET_WM_STATE",False);
-			xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
-			xa_prop[1]=XInternAtom(display,"_NET_WM_STATE_BELOW",False);
-			xa_prop[2]=XInternAtom(display,"_NET_WM_STATE_SKIP_PAGER",False);
-			xa_prop[3]=XInternAtom(display,"_NET_WM_STATE_SKIP_TASKBAR",False);
-			xa_prop[4]=XInternAtom(display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
-			xa_prop[5]=XInternAtom(display,"_NET_WM_TYPE_DESKTOP",False);
-			xa_prop[6]=XInternAtom(display,"_NET_WM_WINDOW_TYPE_DOCK",False);
-			xa_prop[9]=XInternAtom(display,"_MOTIF_WM_HINTS",True);
-
-			//xa=XInternAtom(display,"_NET_WM_STATE",False);
-			//if(xa!=None)
-				XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,7);
-
-#endif
 
 			hints.flags=2;
 			hints.decorations=0;
@@ -314,22 +292,13 @@ void createDesktopWindow(void)
 			xa_prop[9]=XInternAtom(display,"_MOTIF_WM_HINTS",True);
 			XChangeProperty(display,rootWin,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
 
-//xa_prop[0]=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
-//XChangeProperty(display,rootWin,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,1);
 			rg=XCreateRegion();
 			XMapWindow(display,rootWin);
 			XSync(display,False);
 
 			XMoveWindow(display,rootWin,0,0);
-
-//xa_prop[7]=XInternAtom(display,"_NET_WM_ALLOWED_ACTIONS",False);
-//XDeleteProperty(display,rootWin,xa_prop[7]);
+			XLowerWindow(display,rootWin);
 	
-			xa=XInternAtom(display,"_NET_WM_ACTION_ABOVE",False);
-			XDeleteProperty(display,rootWin,xa);
-			xa=XInternAtom(display,"_NET_WM_ACTION_MOVE",False);
-			XDeleteProperty(display,rootWin,xa);
-
 			buffer=XdbeAllocateBackBufferName(display,rootWin,XdbeBackground);
 			swapInfo.swap_window=rootWin;
 			swapInfo.swap_action=XdbeBackground;

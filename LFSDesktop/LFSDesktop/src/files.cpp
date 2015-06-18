@@ -173,13 +173,13 @@ char* pathToIcon(char* name,const char* catagory)
 	char	*retstr=NULL;
 
 	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",iconTheme,getenv("HOME"),iconTheme,name,catagory);
-	retstr=oneLiner("s",command);
+	retstr=oneLiner("%s",command);
 
 	if((retstr==NULL) || (strlen(retstr)==0))
 		{
 			free(command);
 			asprintf(&command,"find \"/usr/share/pixmaps\"  \"/usr/share/icons/hicolor\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",name,catagory);
-			retstr=oneLiner("s",command);
+			retstr=oneLiner("%s",command);
 		}
 
 	if((retstr==NULL) || (strlen(retstr)==0))
@@ -328,65 +328,45 @@ void readDesktopFile(const char* name)
 		}
 }
 
-/*
-har* oneLiner(char *command)
-{
-	FILE	*fp;
-	char	buffer[MAXBUFFER];
-
-	fp=popen(command,"r");
-	if(fp!=NULL)
-		{
-			buffer[0]=0;
-			fgets(buffer,MAXBUFFER,fp);
-			if(strlen(buffer)>0)
-				{
-					if(buffer[strlen(buffer)-1] =='\n')
-						buffer[strlen(buffer)-1]=0;
-				}
-			pclose(fp);
-			return(strdup(buffer));
-		}
-	return(NULL);
-}
-
-
-*/
-
 char* oneLiner(const char* fmt,...)
 {
 	FILE	*fp;
 	va_list	ap;
-	char	*buffer,*subdata;
+	char	*buffer,*subbuffer;
 
 	buffer=(char*)alloca(MAXBUFFER);
-	subdata=(char*)alloca(256);
+	subbuffer=(char*)alloca(MAXBUFFER);
+
 	buffer[0]=0;
-
-	va_start(ap,fmt);
-
+	subbuffer[0]=0;
+	va_start(ap, fmt);
 	while (*fmt)
 		{
-			subdata[0]=0;
-			switch(*fmt)
+			subbuffer[0]=0;
+			if(fmt[0]=='%')
 				{
-				case 's':
-					sprintf(subdata,"%s",va_arg(ap,char*));
-					break;
-				case 'i':
-					sprintf(subdata,"%i",va_arg(ap,int));
-					break;
-				default:
-					sprintf(subdata,"%c",*fmt);
-					break;
+					fmt++;
+					switch(*fmt)
+						{
+							case 's':
+								sprintf(subbuffer,"%s",va_arg(ap,char*));
+								break;
+							case 'i':
+								sprintf(subbuffer,"%i",va_arg(ap,int));
+								break;
+							default:
+								sprintf(subbuffer,"%c",fmt[0]);
+								break;
+						}
 				}
-			strcat(buffer,subdata);
+			else
+				sprintf(subbuffer,"%c",fmt[0]);
+			strcat(buffer,subbuffer);
 			fmt++;
 		}
 	va_end(ap);
 
-//	debugfunc("s",buffer);
-
+//debugfunc("%s",buffer);
 	fp=popen(buffer,"r");
 	if(fp!=NULL)
 		{
@@ -406,33 +386,39 @@ char* oneLiner(const char* fmt,...)
 void debugFunc(const char *fmt, ...)
 {
 	va_list	ap;
-	char	*tdata,*subdata;
+	char	*buffer,*subbuffer;
 
-	tdata=(char*)alloca(1024);
-	subdata=(char*)alloca(256);
-	tdata[0]=0;
+	buffer=(char*)alloca(MAXBUFFER);
+	subbuffer=(char*)alloca(MAXBUFFER);
 
-	va_start(ap,fmt);
-
+	buffer[0]=0;
+	subbuffer[0]=0;
+	va_start(ap, fmt);
 	while (*fmt)
 		{
-			subdata[0]=0;
-			switch(*fmt)
+			subbuffer[0]=0;
+			if(fmt[0]=='%')
 				{
-				case 's':
-					sprintf(subdata,"%s",va_arg(ap,char*));
-					break;
-				case 'i':
-					sprintf(subdata,"%i",va_arg(ap,int));
-					break;
-				default:
-					sprintf(subdata,"%c",*fmt);
-					break;
+					fmt++;
+					switch(*fmt)
+						{
+							case 's':
+								sprintf(subbuffer,"%s",va_arg(ap,char*));
+								break;
+							case 'i':
+								sprintf(subbuffer,"%i",va_arg(ap,int));
+								break;
+							default:
+								sprintf(subbuffer,"%c",fmt[0]);
+								break;
+						}
 				}
-			strcat(tdata,subdata);
+			else
+				sprintf(subbuffer,"%c",fmt[0]);
+			strcat(buffer,subbuffer);
 			fmt++;
 		}
 	va_end(ap);
 	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
-	printf(">>%s<<\n",tdata);
+	printf(">>%s<<\n",buffer);
 }
