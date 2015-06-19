@@ -64,7 +64,7 @@ void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 
 	if(!streq(XtName(w),"Exit"))
 		{
-			fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
+			//fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
 			if(mainMenus[cat].entry[ent].inTerm==false)
 				sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
 			else
