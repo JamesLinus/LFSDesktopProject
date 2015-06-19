@@ -45,7 +45,8 @@
 struct	option long_options[] =
 {
 	{"clean",0,0,'c'},
-	{"theme",1,0,'t'},
+	{"tidy",0,0,'t'},
+	{"theme",1,0,'a'},
 	{"term-command",1,0,'x'},
 	{"show-extension",0,0,'s'},
 	{"debug",0,0,'d'},
@@ -61,8 +62,9 @@ void printhelp(void)
 {
 	printf("LFSDesktop - " VERSION "\n"
 			"Usage: lfsdesktop [OPTION] ...\n" 
-			" -c,--clean			Clean disk info data\n"
-			" -t,--theme			Set theme\n"
+			" -c,--clean			Clean disk info/desktop cache data\n"
+			" -t,--tidy				Tidy disk info/desktop cache data preserving existing\n"
+			" -a,--theme			Set theme\n"
 			" -x,--term-command		Set terminal command ( default xterm -e )\n"
 			" -s,--show-extension	Set terminal command ( default xterm -e )\n"
 			" -d,--debug			Debug\n"
@@ -282,6 +284,7 @@ int main(int argc,char **argv)
 	int				win_x_return;
 	int				win_y_return;
 	unsigned int	mask_return;
+	bool			dotidy=false;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -327,7 +330,7 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hcdst:x:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hctdsa:x:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -347,6 +350,10 @@ int main(int argc,char **argv)
 					break;
 
 				case 't':
+					dotidy=true;
+					break;
+
+				case 'a':
 					if(iconTheme!=NULL)
 						free(iconTheme);
 					iconTheme=strdup(optarg);
@@ -497,6 +504,24 @@ int main(int argc,char **argv)
 	deskIconsCnt=RESERVED;
 
 	fillDesk();
+
+	if(dotidy==true)
+		{
+			command=oneLiner("rm \"%s\"/*;rm \"%s\"/*",cachePath,diskInfoPath);
+			for (int j=0;j<deskIconsCnt;j++)
+				{
+					if(deskIconsArray[j].file==true)
+						saveInfofile(CACHEFOLDER,deskIconsArray[j].label,deskIconsArray[j].mime,deskIconsArray[j].mountpoint,NULL,NULL,deskIconsArray[j].x,deskIconsArray[j].y,j);
+					else
+						saveInfofile(DISKFOLDER,deskIconsArray[j].label,NULL,NULL,deskIconsArray[j].uuid,(char*)iconDiskType[deskIconsArray[j].iconhint],deskIconsArray[j].x,deskIconsArray[j].y,j);
+			
+					fileDiskLabel=NULL;
+					fileDiskUUID=NULL;
+					fileDiskXPos=-1;
+					fileDiskYPos=-1;
+					fileDiskType=NULL;
+				}
+		}
 
 	alarm(refreshRate);
 	XdbeSwapBuffers(display,&swapInfo,1);
