@@ -64,7 +64,6 @@ void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 
 	if(!streq(XtName(w),"Exit"))
 		{
-			//fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
 			if(mainMenus[cat].entry[ent].inTerm==false)
 				sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
 			else
@@ -217,37 +216,13 @@ int main(int argc,char *argv[])
 
 	setCatagories();
 	makestatic=true;
-
-/*
-	if(argc>1)
-		{
-			if(argv[1][0]=='m')
-				{
-					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-						{
-							x=win_x_return-10;
-							y=win_y_return-10;
-							makestatic=false;
-						}
-				}
-			else
-				{
-					if(argc>1)
-						x=atoi(argv[1]);
-					if(argc>2)
-						y=atoi(argv[2]);
-				}
-		}
-
-
-*/
 	
 	if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-						{
-							x=win_x_return-10;
-							y=win_y_return-10;
-							makestatic=false;
-						}
+	{
+		x=win_x_return-10;
+		y=win_y_return-10;
+		makestatic=false;
+	}
 	terminalCommand=argv[1];
 
 	top=XtVaAppInitialize(&app_con,"appmenu",NULL,ZERO,&argc,argv,fallback_resources,NULL);
