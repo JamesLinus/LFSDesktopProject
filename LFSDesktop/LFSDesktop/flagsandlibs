@@ -15,7 +15,7 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
 			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\" \
 			-DLFSDIALOGAPP=\""${libexecdir}/${PACKAGE}/lfsdialog"\" \
-			-DMAINMENURAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
+			-DMAINMENUAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
 LIBS =		-lmagic \
 			$(X11_LIBS) \

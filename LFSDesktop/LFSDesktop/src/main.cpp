@@ -535,7 +535,10 @@ int main(int argc,char **argv)
 					if(mask_return & Button3Mask)
 						{
 							if(child_return==0)
-								system(MAINMENURAPP " m");
+								{
+									sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
+									system(buffer);
+								}
 						}
 				}
 

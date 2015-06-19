@@ -31,6 +31,7 @@ struct			menuEntryStruct
 {
 	char			*name;
 	char			*exec;
+	bool			inTerm;
 };
 
 struct			appMenuStruct
@@ -53,6 +54,7 @@ String			fallback_resources[]=
 appMenuStruct	mainMenus[MAXCATS];
 bool			mainloop=false;
 bool			makestatic=false;
+const char		*terminalCommand=NULL;
 
 void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 {
@@ -63,7 +65,11 @@ void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
 	if(!streq(XtName(w),"Exit"))
 		{
 			fprintf(stderr,"Name=%s\nExec=%s\n",mainMenus[cat].entry[ent].name,mainMenus[cat].entry[ent].exec);
-			sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
+			if(mainMenus[cat].entry[ent].inTerm==false)
+				sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
+			else
+				sprintf(buffer,"%s %s &",terminalCommand,mainMenus[cat].entry[ent].exec);
+				
 			system(buffer);
 		}
 	else
@@ -83,7 +89,8 @@ void setCatagories(void)
 	int		foundcatmatch=-1;
 	char	foundnamebuffer[BUFFERSIZE];
 	char	foundexecbuffer[BUFFERSIZE];
-	bool	overridefound;
+	bool	overridefound=false;
+	bool	interm=false;
 
 	for(int j=0; j<MAXCATS; j++)
 		{
@@ -93,7 +100,7 @@ void setCatagories(void)
 				{
 					mainMenus[j].entry[k].name=NULL;
 					mainMenus[j].entry[k].exec=NULL;
-
+					mainMenus[j].entry[k].inTerm=false;
 				}
 		}
 
@@ -109,6 +116,7 @@ void setCatagories(void)
 						{
 							foundmatch=false;
 							overridefound=false;
+							interm=false;
 							while(fgets(buffer,BUFFERSIZE,filedata))
 								{
 									if(buffer[strlen(buffer)-1]=='\n')
@@ -150,6 +158,14 @@ void setCatagories(void)
 													if(strcasecmp(splitstr,"true")==0)
 														overridefound=true;
 												}
+											if(strcmp(splitstr,"Terminal")==0)
+												{
+													splitstr=strtok(NULL,"=");
+													if(strcasecmp(splitstr,"true")==0)
+														interm=true;
+													else
+														interm=false;
+												}
 										}
 								}
 
@@ -164,6 +180,7 @@ void setCatagories(void)
 										}
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].name=strdup(foundnamebuffer);
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].exec=strdup(foundexecbuffer);
+									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].inTerm=interm;
 									mainMenus[foundcatmatch].maxentrys++;
 								}
 							fclose(filedata);
@@ -201,6 +218,7 @@ int main(int argc,char *argv[])
 	setCatagories();
 	makestatic=true;
 
+/*
 	if(argc>1)
 		{
 			if(argv[1][0]=='m')
@@ -220,6 +238,17 @@ int main(int argc,char *argv[])
 						y=atoi(argv[2]);
 				}
 		}
+
+
+*/
+	
+	if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+						{
+							x=win_x_return-10;
+							y=win_y_return-10;
+							makestatic=false;
+						}
+	terminalCommand=argv[1];
 
 	top=XtVaAppInitialize(&app_con,"appmenu",NULL,ZERO,&argc,argv,fallback_resources,NULL);
 
