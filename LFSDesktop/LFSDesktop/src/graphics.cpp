@@ -108,10 +108,18 @@ void drawIcons(void)
 	bool			loop;
 	char			*tlable;
 	char			*dot=NULL;
-
+cairo_text_extents_t extents;
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
-
+double bm,bh,bem;
+			cairo_save(cr);
+			cairo_select_font_face(cr, "Purisa",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
+			cairo_set_font_size(cr,10);
+			cairo_text_extents(cr,"GAME_OF_THRONES", &extents);
+			cairo_restore(cr);
+			bh=extents.height+2.0;
+			bm=bh/2.0;
+			bem=bm-(extents.height/2);
 	for(int j=0;j<deskIconsCnt;j++)
 		{
 			if((deskIconsArray[j].installed==false) || (deskIconsArray[j].ignore==true))
@@ -177,7 +185,52 @@ void drawIcons(void)
 			XUnionRectWithRegion(&rect,rg, rg);
 
 			XSetClipMask(display,gc,0);
+	
+			tlable=strdup(deskIconsArray[j].label);
+			dot=NULL;
+			if(showSuffix==false)
+				{
+					dot=strrchr(tlable,'.');
+					if(dot!=NULL)
+						*dot=0;
+				}
+			cairo_save(cr);
 
+			cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); 
+			
+			//cairo_select_font_face(cr, "Purisa",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
+			//cairo_set_font_size(cr,10);
+
+			cairo_text_extents(cr, tlable, &extents);
+cairo_set_source_rgb(cr, 0.6, 0.6, 0.6);
+//  cairo_set_line_width(cr, 1);
+			cairo_text_extents(cr,tlable, &extents);
+			//cairo_restore(cr);
+			bh=extents.height+2.0;
+			bm=bh/2.0;
+
+  cairo_rectangle(cr,diskx+(iconSize/2)-(extents.width/2)-2, disky+iconSize+2,extents.width+3,bh);
+  //cairo_stroke_preserve(cr);
+  cairo_fill(cr);
+			cairo_restore(cr);
+			cairo_save(cr);
+			cairo_text_extents(cr, tlable, &extents);
+
+			cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+			//double th;
+			//th=extents.height/2.0;
+//printf(">>%f - %f<<\n",bh,extents.height);
+//printf("--%f--\n",th+(bh/2.0));
+			
+		//	cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2)-1,disky+iconSize+extents.height);
+		//	cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2)-1,disky+iconSize+(bh/2)+(extents.height/2));
+			//cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+th+(bh/2.0));
+			//cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+th+(bh/2.0));
+			//cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+1+(bh/2.0)+(extents.height/2.0));
+			cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+2+bh-2);
+			cairo_show_text(cr,tlable);  
+			cairo_restore(cr);
+/*
 			fontheight=labelFont->ascent+labelFont->descent;
 			tlable=strdup(deskIconsArray[j].label);
 			dot=NULL;
@@ -201,6 +254,7 @@ void drawIcons(void)
 			XSetBackground(display,labelGC,labelBackground);
 
 			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,tlable,strlen(tlable));
+*/
 			free(tlable);
 		}
 
