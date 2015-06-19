@@ -1,4 +1,5 @@
 0.0.8
+Added basic manpage.
 Added 'tidy' option to clean stale files from cache, custom positions/icons unnaffected.
 Selection from 'Applications' popup now obeys 'Terminal=..' option in desktop file.
 Added 'showextension' to config options
