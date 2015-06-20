@@ -28,6 +28,9 @@ extern int				gridBorder;
 extern int				refreshRate;
 extern char				*terminalCommand;
 extern bool				showSuffix;
+extern char				*fontFace;
+extern char				*foreCol;
+extern char				*backCol;
 
 extern Display			*display;
 extern Window			rootWin;

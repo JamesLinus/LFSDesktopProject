@@ -22,6 +22,9 @@ int				gridSize=iconSize+gridBorder;
 int				refreshRate=2;
 char			*terminalCommand=NULL;
 bool			showSuffix=false;
+char			*fontFace=NULL;
+char			*foreCol;
+char			*backCol;
 
 Display			*display;
 Window			rootWin;
@@ -56,7 +59,9 @@ args			desktopPrefs[]=
 	{"refreshrate",TYPEINT,&refreshRate},
 	{"termcommand",TYPESTRING,&terminalCommand},
 	{"showextension",TYPEBOOL,&showSuffix},
-
+	{"fontface",TYPESTRING,&fontFace},
+	{"labelforeground",TYPESTRING,&foreCol},
+	{"labelbackground",TYPESTRING,&backCol},
 	{NULL,0,NULL}
 };
 

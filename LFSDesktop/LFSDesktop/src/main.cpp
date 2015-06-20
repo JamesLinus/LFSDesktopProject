@@ -49,6 +49,9 @@ struct	option long_options[] =
 	{"theme",1,0,'a'},
 	{"term-command",1,0,'x'},
 	{"show-extension",0,0,'s'},
+	{"font",1,0,'f'},
+	{"fore-colour",1,0,'4'},
+	{"back-colour",1,0,'b'},
 	{"debug",0,0,'d'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
@@ -67,6 +70,9 @@ void printhelp(void)
 			" -a,--theme			Set theme\n"
 			" -x,--term-command		Set terminal command ( default xterm -e )\n"
 			" -s,--show-extension	Set terminal command ( default xterm -e )\n"
+			" -f,--font				Font face ( Sans;0;0;10 - Fontname;Weight(0/1);Slant(0/1/2);Fontsize )\n"
+			" -4,--fore-colour		Fore colour for label in RGBA hex notation ( default 0xffffffff )\n"
+			" -b,--back-colour		Back colour for label in RGBA hex notation ( default 0x0 )\n"
 			" -d,--debug			Debug\n"
 			" -v,--version			output version information and exit\n"
 			" -h,-?,--help			print this help\n\n"
@@ -254,6 +260,42 @@ void doPopUp(int x,int y)
 		}
 }
 
+void setFontEtc(void)
+{
+	char	*ptr;
+
+	ptr=strtok(fontFace,";");
+	if(ptr!=NULL)
+		fontName=strdup(ptr);
+	else
+		fontName=strdup("Sans");
+	ptr=strtok(NULL,";");
+	if(ptr!=NULL)
+		weight=(cairo_font_weight_t)atoi(ptr);
+	else
+		weight=CAIRO_FONT_WEIGHT_NORMAL;
+	ptr=strtok(NULL,";");
+	if(ptr!=NULL)
+		slant=(cairo_font_slant_t)atoi(ptr);
+	else
+		slant=CAIRO_FONT_SLANT_NORMAL;
+	ptr=strtok(NULL,";");
+	if(ptr!=NULL)
+		fontSize=atoi(ptr);
+	else
+		fontSize=10;
+
+	backColour.r=((strtol(backCol,NULL,16)>>24) & 0xff)/256.0;
+	backColour.g=((strtol(backCol,NULL,16)>>16) & 0xff)/256.0;
+	backColour.b=((strtol(backCol,NULL,16)>>8) & 0xff)/256.0;
+	backColour.a=((strtol(backCol,NULL,16)>>0) & 0xff)/256.0;
+
+	foreColour.r=((strtol(foreCol,NULL,16)>>24) & 0xff)/256.0;
+	foreColour.g=((strtol(foreCol,NULL,16)>>16) & 0xff)/256.0;
+	foreColour.b=((strtol(foreCol,NULL,16)>>8) & 0xff)/256.0;
+	foreColour.a=((strtol(foreCol,NULL,16)>>0) & 0xff)/256.0;
+}
+
 int main(int argc,char **argv)
 {
 	int				c;
@@ -322,7 +364,9 @@ int main(int argc,char **argv)
 	asprintf(&desktopPath,"%s/Desktop",getenv("HOME"));
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
-
+	asprintf(&fontFace,"Sans;0;0;10");
+	asprintf(&foreCol,"0xffffffff");
+	asprintf(&backCol,"0x00000000");
 	showSuffix=false;
 
 	loadVarsFromFile(prefsPath,desktopPrefs);
@@ -330,7 +374,7 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hctdsa:x:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hctdsa:x:f:4:b:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -369,6 +413,24 @@ int main(int argc,char **argv)
 					showSuffix=true;
 					break;
 
+				case 'f':
+					if(fontFace!=NULL)
+						free(fontFace);
+					fontFace=strdup(optarg);
+					break;
+
+				case '4':
+					if(foreCol!=NULL)
+						free(foreCol);
+					foreCol=strdup(optarg);
+					break;
+
+				case 'b':
+					if(backCol!=NULL)
+						free(backCol);
+					backCol=strdup(optarg);
+					break;
+
 				case 'v':
 					printf("lfsdesktop %s\n",VERSION);
 					return 0;
@@ -398,6 +460,8 @@ int main(int argc,char **argv)
 	display=XOpenDisplay(NULL);
 	if(display==NULL)
 		exit(1);
+
+	setFontEtc();
 
 	XSynchronize(display,true);
 	screen=DefaultScreen(display);

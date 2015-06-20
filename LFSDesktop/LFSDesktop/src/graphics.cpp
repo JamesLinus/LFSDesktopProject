@@ -25,7 +25,13 @@
 #include "disks.h"
 #include "graphics.h"
 
-cairo_t	*cr;
+cairo_t				*cr;
+char				*fontName;
+cairo_font_weight_t weight;
+cairo_font_slant_t	slant;
+int					fontSize;
+cairoColor			backColour;
+cairoColor			foreColour;
 
 void debugDesk(void)
 {
@@ -96,30 +102,27 @@ void drawImage(char *type,const char *catagory,int x,int y,bool mounted)
 
 void drawIcons(void)
 {
-	FILE			*tp;
-	int				fontheight;
-	int				stringwidth;
+	FILE					*tp;
+	XRectangle				rect;
+	int						diskx,disky;
+	bool					mounted=false;
+	struct mntent			*entry;
+	bool					loop;
+	char					*tlable;
+	char					*dot=NULL;
+	cairo_text_extents_t	extents;
+	int						boxheight;
 
-	int				boxx,boxw,boxh;
-	XRectangle		rect;
-	int				diskx,disky;
-	bool			mounted=false;
-	struct mntent	*entry;
-	bool			loop;
-	char			*tlable;
-	char			*dot=NULL;
-cairo_text_extents_t extents;
 	XDestroyRegion(rg);
 	rg=XCreateRegion();
-double bm,bh,bem;
-			cairo_save(cr);
-			cairo_select_font_face(cr, "Purisa",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
-			cairo_set_font_size(cr,10);
-			cairo_text_extents(cr,"GAME_OF_THRONES", &extents);
-			cairo_restore(cr);
-			bh=extents.height+2.0;
-			bm=bh/2.0;
-			bem=bm-(extents.height/2);
+
+	cairo_save(cr);
+		cairo_select_font_face(cr,fontName,slant,weight);
+		cairo_set_font_size(cr,fontSize);
+		cairo_text_extents(cr,"qI_^`",&extents);
+	cairo_restore(cr);
+	boxheight=extents.height+4;
+
 	for(int j=0;j<deskIconsCnt;j++)
 		{
 			if((deskIconsArray[j].installed==false) || (deskIconsArray[j].ignore==true))
@@ -194,72 +197,32 @@ double bm,bh,bem;
 					if(dot!=NULL)
 						*dot=0;
 				}
+
 			cairo_save(cr);
+				cairo_select_font_face(cr,fontName,slant,weight);
+				cairo_set_font_size(cr,fontSize);
+				cairo_text_extents(cr,tlable, &extents);
+				rect.x=diskx+(iconSize/2)-(extents.x_advance/2)-2;
+				rect.y=disky+iconSize;
+				rect.width=extents.x_advance+4;
+				rect.height=boxheight;
+//paint rect background
+				cairo_rectangle(cr,rect.x,rect.y,rect.width,rect.height);
+				cairo_set_source_rgba(cr,backColour.r,backColour.g,backColour.b,backColour.a);
+				cairo_fill(cr);
 
-			cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); 
-			
-			//cairo_select_font_face(cr, "Purisa",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
-			//cairo_set_font_size(cr,10);
-
-			cairo_text_extents(cr, tlable, &extents);
-cairo_set_source_rgb(cr, 0.6, 0.6, 0.6);
-//  cairo_set_line_width(cr, 1);
-			cairo_text_extents(cr,tlable, &extents);
-			//cairo_restore(cr);
-			bh=extents.height+2.0;
-			bm=bh/2.0;
-
-  cairo_rectangle(cr,diskx+(iconSize/2)-(extents.width/2)-2, disky+iconSize+2,extents.width+3,bh);
-  //cairo_stroke_preserve(cr);
-  cairo_fill(cr);
+//paint text
+				cairo_move_to(cr,rect.x+2,rect.y+(rect.height/2)-(extents.y_bearing/2)-1);
+				cairo_set_source_rgba(cr,foreColour.r,foreColour.g,foreColour.b,foreColour.a);
+				cairo_show_text(cr,tlable); 
 			cairo_restore(cr);
-			cairo_save(cr);
-			cairo_text_extents(cr, tlable, &extents);
 
-			cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-			//double th;
-			//th=extents.height/2.0;
-//printf(">>%f - %f<<\n",bh,extents.height);
-//printf("--%f--\n",th+(bh/2.0));
-			
-		//	cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2)-1,disky+iconSize+extents.height);
-		//	cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2)-1,disky+iconSize+(bh/2)+(extents.height/2));
-			//cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+th+(bh/2.0));
-			//cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+th+(bh/2.0));
-			//cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+1+(bh/2.0)+(extents.height/2.0));
-			cairo_move_to(cr, diskx+(iconSize/2)-(extents.width/2.0)-1,disky+iconSize+2+bh-2);
-			cairo_show_text(cr,tlable);  
-			cairo_restore(cr);
-/*
-			fontheight=labelFont->ascent+labelFont->descent;
-			tlable=strdup(deskIconsArray[j].label);
-			dot=NULL;
-			if(showSuffix==false)
-				{
-					dot=strrchr(tlable,'.');
-					if(dot!=NULL)
-						*dot=0;
-				}
-			stringwidth=XTextWidth(labelFont,tlable,strlen(tlable));
-
-			boxx=diskx+(iconSize/2)-(stringwidth/2)-1;
-			boxw=stringwidth+2;
-			boxh=fontheight-2;
-
-			XSetForeground(display,gc,labelBackground);
-			XSetFillStyle(display,gc,FillSolid);
-			XFillRectangle(display,drawOnThis,gc,boxx,disky+iconSize,boxw,boxh);
-
-			XSetForeground(display,labelGC,labelForeground);
-			XSetBackground(display,labelGC,labelBackground);
-
-			XDrawString(display,drawOnThis,labelGC,boxx+1,disky+iconSize+boxh-1,tlable,strlen(tlable));
-*/
 			free(tlable);
 		}
 
 	if(debugDeskFlag==true)
 		debugDesk();
+
 
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }

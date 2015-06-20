@@ -29,7 +29,18 @@ struct	diskIconStruct
 		cairo_surface_t	*cairoImage;
 	};
 
-extern cairo_t	*cr;
+struct	cairoColor
+{
+	double	r,g,b,a;
+};
+
+extern cairo_t				*cr;
+extern char					*fontName;
+extern cairo_font_weight_t	weight;
+extern cairo_font_slant_t	slant;
+extern int					fontSize;
+extern cairoColor			backColour;
+extern cairoColor			foreColour;
 
 void drawImage(char *type,const char *catagory,int x,int y,bool mounted);
 

@@ -1,3 +1,10 @@
+0.0.9
+Added fontface/forecolour/backcolour to command line args.
+Added backcolour option to prefs.
+Added forecolour option to prefs.
+Added fontface option to prefs.
+
+Changed to cairo text from XLib text for nicer fonts for labels.
 0.0.8
 Added basic manpage.
 Added 'tidy' option to clean stale files from cache, custom positions/icons unnaffected.
