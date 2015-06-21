@@ -1,12 +1,17 @@
-#!/bin/bash -e
+#!/bin/bash
 
 #©keithhedger Mon 11 May 17:44:08 BST 2015 kdhedger68713@gmail.com
 
-prefs="$(cat ${HOME}/.config/LFS/lfsdesktop.rc|sed 's/ /=/g')"
+prefs="$(cat ${HOME}/.config/LFS/lfsdesktop.rc|sed 's/ /=/g;s/;//g')"
 eval "$prefs"
 
 theme=$(xfconf-query -c "xsettings" -p "/Net/ThemeName")
 iconetheme=$(xfconf-query -c "xsettings" -p "/Net/IconThemeName")
+fontname=$(xfconf-query -c "xsettings" -p "/Gtk/FontName")
+fontsize="${fontname##?* }"
+fontname="${fontname% ?*}"
+echo $fontsize
+echo $fontname
 
 iconsize=${iconsize:-32}
 gridborder=${gridborder:-32}
@@ -19,6 +24,9 @@ echo "icontheme $iconetheme" > ${HOME}/.config/LFS/lfsdesktop.rc
 echo "iconsize $iconsize" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "gridborder $gridborder" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "refreshrate $refreshrate" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "fontface ${fontname};1;0;${fontsize}" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "labelforeground 0xffffffff" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "labelbackground 0x10101060" >> ${HOME}/.config/LFS/lfsdesktop.rc
 
 imagestyle=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-style")
 case $imagestyle in

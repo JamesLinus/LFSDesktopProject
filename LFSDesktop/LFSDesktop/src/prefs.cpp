@@ -25,6 +25,7 @@ bool			showSuffix=false;
 char			*fontFace=NULL;
 char			*foreCol;
 char			*backCol;
+char			*ignores=NULL;
 
 Display			*display;
 Window			rootWin;
@@ -62,6 +63,7 @@ args			desktopPrefs[]=
 	{"fontface",TYPESTRING,&fontFace},
 	{"labelforeground",TYPESTRING,&foreCol},
 	{"labelbackground",TYPESTRING,&backCol},
+	{"noshow",TYPESTRING,&ignores},
 	{NULL,0,NULL}
 };
 

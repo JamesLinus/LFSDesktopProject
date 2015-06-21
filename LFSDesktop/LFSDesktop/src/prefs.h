@@ -31,6 +31,7 @@ extern bool				showSuffix;
 extern char				*fontFace;
 extern char				*foreCol;
 extern char				*backCol;
+extern char				*ignores;
 
 extern Display			*display;
 extern Window			rootWin;

@@ -1,4 +1,5 @@
 0.0.9
+Added 'ignores' list to prefs to not show disk whos label is in the  ';' delimited list.
 Added fontface/forecolour/backcolour to command line args.
 Added backcolour option to prefs.
 Added forecolour option to prefs.

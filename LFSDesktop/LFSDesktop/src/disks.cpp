@@ -252,6 +252,12 @@ void fillDesk(void)
 									deskIconsArray[deskIconsCnt].usb=isusb;
 									deskIconsArray[deskIconsCnt].file=false;
 									deskIconsArray[deskIconsCnt].iconhint=iconhint;
+									
+									if(ignores!=NULL)
+										{
+											if(strstr(ignores,deskIconsArray[deskIconsCnt].label)!=NULL)
+												deskIconsArray[deskIconsCnt].ignore=true;
+										}
 									sprintf(buffer,"%s/%s",diskInfoPath,deskIconsArray[deskIconsCnt].uuid);
 									
 									if(loadVarsFromFile(buffer,globalFileData))
