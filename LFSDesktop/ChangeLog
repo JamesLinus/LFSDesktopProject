@@ -7,6 +7,7 @@ Added fontface/forecolour/backcolour to command line args.
 Added backcolour option to prefs.
 Added forecolour option to prefs.
 Added fontface option to prefs.
+Icon labels now use cairo text for rendering anti alias text.
 
 Changed to cairo text from XLib text for nicer fonts for labels.
 0.0.8
