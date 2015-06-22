@@ -64,23 +64,23 @@ int main(int argc,char *argv[])
 		{
 			if(argv[1][0]!='c')
 			{
-			if(argv[1][0]=='m')
-				{
-					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-						{
-							x=win_x_return+32;
-							y=win_y_return+32;
-							makestatic=false;
-						}
-				}
-			else
-				{
-					if(argc>1)
-						x=atoi(argv[1]);
-					if(argc>2)
-						y=atoi(argv[2]);
-				}
-				}
+				if(argv[1][0]=='m')
+					{
+						if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+							{
+								x=win_x_return+32;
+								y=win_y_return+32;
+								makestatic=false;
+							}
+					}
+				else
+					{
+						if(argc>1)
+							x=atoi(argv[1]);
+						if(argc>2)
+							y=atoi(argv[2]);
+					}
+			}
 			if((argc>2) && (argv[3]!=NULL))
 				label=argv[3];
 			if((argc>3) && (argv[4]!=NULL))

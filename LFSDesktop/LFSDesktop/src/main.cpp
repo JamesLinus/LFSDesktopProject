@@ -52,6 +52,7 @@ struct	option long_options[] =
 	{"font",1,0,'f'},
 	{"fore-colour",1,0,'4'},
 	{"back-colour",1,0,'b'},
+	{"ignore",1,0,'i'},
 	{"debug",0,0,'d'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
@@ -73,6 +74,7 @@ void printhelp(void)
 			" -f,--font				Font face ( Sans;0;0;10 - Fontname;Weight(0/1);Slant(0/1/2);Fontsize )\n"
 			" -4,--fore-colour		Fore colour for label in RGBA hex notation ( default 0xffffffff )\n"
 			" -b,--back-colour		Back colour for label in RGBA hex notation ( default 0x0 )\n"
+			" -i,--ignore			List of ';' seperated disk labels to NOT show on desktop\n"
 			" -d,--debug			Debug\n"
 			" -v,--version			output version information and exit\n"
 			" -h,-?,--help			print this help\n\n"
@@ -374,7 +376,7 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hctdsa:x:f:4:b:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hctdsa:x:f:4:b:i:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -429,6 +431,12 @@ int main(int argc,char **argv)
 					if(backCol!=NULL)
 						free(backCol);
 					backCol=strdup(optarg);
+					break;
+
+				case 'i':
+					if(ignores!=NULL)
+						free(ignores);
+					ignores=strdup(optarg);
 					break;
 
 				case 'v':

@@ -1,4 +1,6 @@
 0.0.9
+Updated manpage.
+Added 'ignore' to command options.
 Added 'ignores' list to prefs to not show disk whos label is in the  ';' delimited list.
 Added fontface/forecolour/backcolour to command line args.
 Added backcolour option to prefs.
@@ -8,7 +10,7 @@ Added fontface option to prefs.
 Changed to cairo text from XLib text for nicer fonts for labels.
 0.0.8
 Added basic manpage.
-Added 'tidy' option to clean stale files from cache, custom positions/icons unnaffected.
+Added 'tidy' option to clean stale files from cache, custom positions/icons unaffected.
 Selection from 'Applications' popup now obeys 'Terminal=..' option in desktop file.
 Added 'showextension' to config options
 Added "show-extension" command opt to show file extensions ( default no show ).
@@ -23,7 +25,7 @@ Added 'Open' option to right click menu.
 Added remove custom icons.
 Added set custom icons.
 Added 'appmenu' resources file to /etc/X11/app-defaults.
-Application menu now pops up at mouse and dissapears if mouse is moved out of window.
+Application menu now pops up at mouse and disappears if mouse is moved out of window.
 Added 'Applications' menu.
 
 0.0.6
@@ -38,13 +40,13 @@ Fixed Segfault trying to eject some disks.
 Added right click on disk to mount/unmount/eject.
 
 0.0.5
-Use default icon for corrupt/unkown format icons.
+Use default icon for corrupt/unknown format icons.
 Set default icons for incomplete icon themes ( defaults taken from gnome theme ).
 Corrected wrong icons for bash scripts/text files.
 Now use libmagic to get mime types.
 Code clean.
 Files in~/Desktop now shown/opened ( with double click ).
-Better disk type regognition.
+Better disk type recognition.
 Disk icon data now held in memory instead of keep read hardrive.
 Switched to libudev.
 
