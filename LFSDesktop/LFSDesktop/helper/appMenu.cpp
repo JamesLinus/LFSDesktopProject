@@ -16,7 +16,6 @@
 #include <X11/Xaw/SimpleMenu.h>
 #include <X11/Xaw/Sme.h>
 #include <X11/Xaw/SmeBSB.h>
-
 #include <X11/Xaw/Cardinals.h>
 #include <X11/Xaw/Box.h>
 
@@ -48,6 +47,7 @@ String			fallback_resources[]=
 					(char*)"*box*.background:		grey",
 					(char*)"*box.Cancel.background:	grey40",
 					(char*)"*box.*.width:			100",
+					(char*)"*box.*.*menu.width:		0",
 					NULL,
 };
 

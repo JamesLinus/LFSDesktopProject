@@ -37,10 +37,6 @@ PKG_CHECK_MODULES(XT, $XT_MODULES)
 AC_SUBST(XT_LIBS)
 AC_SUBST(XT_CFLAGS)
 
-XAW_MODULES="xaw7 >= 1.0.12"
-PKG_CHECK_MODULES(XAW, $XAW_MODULES)
-AC_SUBST(XAW_LIBS)
-AC_SUBST(XAW_CFLAGS)
 
 CAIRO_MODULES="cairo >= 1.14.0"
 PKG_CHECK_MODULES(CAIRO, $CAIRO_MODULES)
@@ -52,10 +48,23 @@ PKG_CHECK_MODULES(LIBUDEV, $LIBUDEV_MODULES)
 AC_SUBST(LIBUDEV_LIBS)
 AC_SUBST(LIBUDEV_CFLAGS)
 
+AC_ARG_ENABLE(3dwidgets,AS_HELP_STRING([--enable-3dwidgets],[Enable Xaw 3D Widgets]),[enable_3dwidgets=$enableval],[enable_3dwidgets="no"])
+if test $enable_3dwidgets = "yes" ;then
+	XAW_MODULES="xaw3d >= 1.6.1"
+	PKG_CHECK_MODULES(XAW3D, $XAW_MODULES)
+	AC_SUBST(XAW_LIBS)
+	AC_SUBST(XAW_CFLAGS)
+else
+	XAW_MODULES="xaw7 >= 1.0.12"
+	PKG_CHECK_MODULES(XAW, $XAW_MODULES)
+	AC_SUBST(XAW_LIBS)
+	AC_SUBST(XAW_CFLAGS)
+fi
+AC_MSG_RESULT($enable_suidhelper)
+
 AC_MSG_CHECKING(Use SUID Helper)
 
 AC_ARG_ENABLE(suidhelper,AS_HELP_STRING([--enable-suidhelper],[Enable suid helper]),[enable_suidhelper=$enableval],[enable_suidhelper="yes"])
-
 if test $enable_suidhelper = "yes" ;then
 	AC_DEFINE([_USESUIDHELPER_], [], [Use suid helper])
 fi
