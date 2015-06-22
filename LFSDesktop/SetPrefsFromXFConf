@@ -10,12 +10,13 @@ iconetheme=$(xfconf-query -c "xsettings" -p "/Net/IconThemeName")
 fontname=$(xfconf-query -c "xsettings" -p "/Gtk/FontName")
 fontsize="${fontname##?* }"
 fontname="${fontname% ?*}"
-echo $fontsize
-echo $fontname
 
 iconsize=${iconsize:-32}
 gridborder=${gridborder:-32}
 refreshrate=${refreshrate:-2}
+labelforeground=${labelforeground:-"0xffffffff"}
+labelbackground=${labelbackground:-"0x10101060"}
+noshow=${noshow:-";;"}
 
 MON0=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-path")
 MON1=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor1/image-path")
@@ -25,8 +26,9 @@ echo "iconsize $iconsize" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "gridborder $gridborder" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "refreshrate $refreshrate" >> ${HOME}/.config/LFS/lfsdesktop.rc
 echo "fontface ${fontname};1;0;${fontsize}" >> ${HOME}/.config/LFS/lfsdesktop.rc
-echo "labelforeground 0xffffffff" >> ${HOME}/.config/LFS/lfsdesktop.rc
-echo "labelbackground 0x10101060" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "labelforeground $labelforeground" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "labelbackground $labelbackground" >> ${HOME}/.config/LFS/lfsdesktop.rc
+echo "noshow $noshow" >> ${HOME}/.config/LFS/lfsdesktop.rc
 
 imagestyle=$(xfconf-query -c "xfce4-desktop" -p "/backdrop/screen0/monitor0/image-style")
 case $imagestyle in

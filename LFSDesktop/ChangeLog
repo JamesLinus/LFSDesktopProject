@@ -2,7 +2,7 @@
 Added "--enable-3dwidgets" to configure script to allow linking against Xaw3D ( default is link against Xaw7 ).
 Updated manpage.
 Added 'ignore' to command options.
-Added 'ignores' list to prefs to not show disk whos label is in the  ';' delimited list.
+Added 'ignores' list to prefs to not show disk who's label is in the ';' delimited list.
 Added fontface/forecolour/backcolour to command line args.
 Added backcolour option to prefs.
 Added forecolour option to prefs.
