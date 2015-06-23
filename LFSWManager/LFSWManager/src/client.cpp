@@ -1,24 +1,35 @@
 /*
  * Copyright 2010 Johan Veenhuizen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted,free of charge,to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * to deal in the Software without restriction,including without limitation
+ * the rights to use,copy,modify,merge,publish,distribute,sublicense,
+ * and/or sell copies of the Software,and to permit persons to whom the
+ * Software is furnished to do so,subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * THE SOFTWARE IS PROVIDED "AS IS",WITHOUT WARRANTY OF ANY KIND,EXPRESS OR
+ * IMPLIED,INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,DAMAGES OR
+ * OTHER LIABILITY,WHETHER IN AN ACTION OF CONTRACT,TORT OR OTHERWISE,
+ * ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
 
 #include <assert.h>
 #include <stdio.h>
@@ -66,7 +77,7 @@ struct client
 
 	/*
 	 * If this counter is zero when an UnmapNotify event
-	 * is received, the client is considered withdrawn.
+	 * is received,the client is considered withdrawn.
 	 */
 	int ignoreunmapcount;
 
@@ -80,153 +91,94 @@ struct client
 	Bool initialized;
 };
 
-#if 0
-void cmap(struct client *);
-void cunmap(struct client *);
-void cpop(struct client *);
-void cpush(struct client *);
-void cfocusapp(struct client *, Time);
-void reloadwmtransientfor(struct client *);
-void reloadwmhints(struct client *);
-void reloadwmnormalhints(struct client *);
-void reloadwmname(struct client *);
-void reloadwmprotocols(struct client *);
-void cupdatedesk(struct client *);
-void buttonpress(struct client *, XButtonEvent *);
-void keypress(struct client *, XKeyEvent *);
-void keypress_delete(struct client *, unsigned, Time);
-void keypress_pushapp(struct client *, unsigned, Time);
-void keypress_fullscreen(struct client *, unsigned, Time);
-void keypress_sticky(struct client *, unsigned, Time);
-void focusin(struct client *, XFocusChangeEvent *);
-void focusout(struct client *, XFocusChangeEvent *);
-void configurerequest(struct client *, XConfigureRequestEvent *);
-void propertynotify(struct client *, XPropertyEvent *);
-void maprequest(struct client *, XMapRequestEvent *);
-void unmapnotify(struct client *, XUnmapEvent *);
-void destroynotify(struct client *, XDestroyWindowEvent *);
-void clientmessage(struct client *, XClientMessageEvent *);
-void colormapnotify(struct client *, XColormapEvent *);
-void event(void *, XEvent *);
-void cinstallcolormaps(struct client *);
-void crelease(struct client *, int);
-void getclientstack(struct client ***, int *);
-void csendwmproto(struct client *, Atom, Time);
-void creframe(struct client *);
-Bool cisframed(struct client *);
-struct client *getfronttask(void);
-Bool expectsfocus(struct client *);
-void cunmanage(struct client *);
-void cwithdraw(struct client *);
-void smartpos(struct client *);
-void randpos(struct geometry *);
-Bool samedesk(struct client *, struct client *);
-unsigned long overlaparea(struct geometry, struct geometry);
-void move(struct client *, int, int);
-#endif
-
 LIST_DEFINE(winstack);
 
 // Current desk
-Desk curdesk = 0;
+Desk curdesk=0;
 
 // Number of desks
-Desk ndesk = 1;
+Desk ndesk=1;
 
 // True if restacking needed
-Bool needrestack = False;
+Bool needrestack=False;
 
 // Dummy window for window stacking
-Window stacktop = None;
+Window stacktop=None;
 
-#if 0
-struct
+struct keymapstructclient
 {
 	KeySym keysym;
 	unsigned modifiers;
-	void (*function)(struct client *, unsigned, Time);
-} keymap[] =
-{
-	{ XK_BackSpace, Mod1Mask, keypress_delete },
-	{ XK_Escape, Mod1Mask, keypress_pushapp },
-	{ XK_Return, Mod1Mask, keypress_fullscreen },
-	{ XK_space, Mod1Mask, keypress_sticky },
-};
-#endif
-
-struct keymapstruct
-{
-	KeySym keysym;
-	unsigned modifiers;
-	void (*function)(struct client *, unsigned, Time);
+	void (*function)(struct client *,unsigned,Time);
 };
 
-void keypress_delete(struct client *c, unsigned state, Time time);
-void keypress_pushapp(struct client *c, unsigned state, Time time);
-void keypress_fullscreen(struct client *c, unsigned state, Time time);
-void keypress_sticky(struct client *c, unsigned state, Time time);
+void keypress_delete(struct client *c,unsigned state,Time time);
+void keypress_pushapp(struct client *c,unsigned state,Time time);
+void keypress_fullscreen(struct client *c,unsigned state,Time time);
+void keypress_sticky(struct client *c,unsigned state,Time time);
 
-keymapstruct keymap[] ={
-	{ XK_BackSpace, Mod1Mask, keypress_delete },
-	{ XK_Escape, Mod1Mask, keypress_pushapp },
-	{ XK_Return, Mod1Mask, keypress_fullscreen },
-	{ XK_space, Mod1Mask, keypress_sticky },
+keymapstructclient keymapclient[] =
+{
+	{ XK_BackSpace,Mod1Mask,keypress_delete },
+	{ XK_Escape,Mod1Mask,keypress_pushapp },
+	{ XK_Return,Mod1Mask,keypress_fullscreen },
+	{ XK_space,Mod1Mask,keypress_sticky },
 };
 
 
 /*
- * Return client stack, from bottom (first) to top (last).
+ * Return client stack,from bottom (first) to top (last).
  * Caller deallocates using free(3).
  */
-void getclientstack(struct client ***vp, int *np)
+void getclientstack(struct client ***vp,int *np)
 {
-	int n = 0;
+	int n=0;
 	List *lp;
-	LIST_FOREACH(lp, &winstack)
+	LIST_FOREACH(lp,&winstack)
 	n++;
-	struct client **v = (client**)xmalloc(n * sizeof *v);
-	struct client **p = v;
-	LIST_FOREACH(lp, &winstack)
-	*p++ = LIST_ITEM(lp, struct client, winstack);
-	*vp = v;
-	*np = n;
+	struct client **v=(client**)xmalloc(n * sizeof *v);
+	struct client **p=v;
+	LIST_FOREACH(lp,&winstack)
+	*p++=LIST_ITEM(lp,struct client,winstack);
+	*vp=v;
+	*np=n;
 }
 
 /*
- * Returns true if the window is, or should be, visible.
+ * Returns true if the window is,or should be,visible.
  */
 Bool cisvisible(struct client *c)
 {
-	return c->desk == curdesk || c->desk == DESK_ALL;
+	return c->desk==curdesk || c->desk==DESK_ALL;
 }
 
 void restack(void)
 {
 	if (!needrestack)
 		return;
-	int n = 1;
+	int n=1;
 	List *lp;
-	LIST_FOREACH(lp, &winstack)
+	LIST_FOREACH(lp,&winstack)
 	n++;
-	Window *v = (Window*)xmalloc(n * sizeof *v);
-	int i = 0;
+	Window *v=(Window*)xmalloc(n * sizeof *v);
+	int i=0;
 	assert(stacktop != None);
-	v[i++] = stacktop;
-	LIST_FOREACH_REV(lp, &winstack)
+	v[i++]=stacktop;
+	LIST_FOREACH_REV(lp,&winstack)
 	{
-		struct client *c = LIST_ITEM(lp, struct client, winstack);
-		v[i++] = c->frame == NULL ? c->window : fgetwin(c->frame);
+		struct client *c=LIST_ITEM(lp,struct client,winstack);
+		v[i++]=c->frame==NULL ? c->window : fgetwin(c->frame);
 	}
-	assert(i == n);
-	XRestackWindows(dpy, v, n);
+	assert(i==n);
+	XRestackWindows(dpy,v,n);
 	free(v);
-	needrestack = False;
+	needrestack=False;
 	ewmh_notifyrestack();
 }
 
 void cmap(struct client *c)
 {
-	assert(c->desk == curdesk || c->desk == DESK_ALL);
+	assert(c->desk==curdesk || c->desk==DESK_ALL);
 
 	// Prevent premature mapping
 	if (!c->initialized)
@@ -240,16 +192,16 @@ void cmap(struct client *c)
 			 */
 			restack();
 
-			setwmstate(c->window, NormalState);
+			setwmstate(c->window,NormalState);
 			if (c->frame != NULL)
 				{
-					Window f = fgetwin(c->frame);
-					XMapSubwindows(dpy, f);
-					XMapWindow(dpy, f);
+					Window f=fgetwin(c->frame);
+					XMapSubwindows(dpy,f);
+					XMapWindow(dpy,f);
 				}
 			else
-				XMapWindow(dpy, c->window);
-			c->ismapped = True;
+				XMapWindow(dpy,c->window);
+			c->ismapped=True;
 		}
 }
 
@@ -257,27 +209,27 @@ void cunmap(struct client *c)
 {
 	if (c->ismapped)
 		{
-			setwmstate(c->window, IconicState);
+			setwmstate(c->window,IconicState);
 			if (c->frame != NULL)
 				{
-					Window f = fgetwin(c->frame);
-					XUnmapWindow(dpy, f);
-					XUnmapSubwindows(dpy, f);
+					Window f=fgetwin(c->frame);
+					XUnmapWindow(dpy,f);
+					XUnmapSubwindows(dpy,f);
 				}
 			else
-				XUnmapWindow(dpy, c->window);
+				XUnmapWindow(dpy,c->window);
 			c->ignoreunmapcount++;
-			c->ismapped = False;
+			c->ismapped=False;
 		}
 }
 
-void csetdesk(struct client *c, Desk d)
+void csetdesk(struct client *c,Desk d)
 {
 	if (d >= ndesk && d != DESK_ALL)
-		d = ndesk - 1;
+		d=ndesk - 1;
 
-	c->desk = d;
-	ewmh_notifyclientdesktop(c->window, d);
+	c->desk=d;
+	ewmh_notifyclientdesktop(c->window,d);
 
 	if (cisvisible(c))
 		cmap(c);
@@ -291,25 +243,25 @@ void csetdesk(struct client *c, Desk d)
 
 void gotodesk(Desk d)
 {
-	if (d == curdesk || d >= ndesk || d == DESK_ALL)
+	if (d==curdesk || d >= ndesk || d==DESK_ALL)
 		return;
 
-	curdesk = d;
+	curdesk=d;
 
 	/*
 	 * Minimize the number of window exposures by first mapping
-	 * windows from the new desk top-down, and then unmapping
+	 * windows from the new desk top-down,and then unmapping
 	 * the windows from the old desk bottom-up.
 	 */
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
-	for (int i = n - 1; i >= 0; i--)
+	getclientstack(&v,&n);
+	for (int i=n - 1; i >= 0; i--)
 		if (cisvisible(v[i]))
 			cmap(v[i]);
-	for (int i = 0; i < n; i++)
+	for (int i=0; i<n; i++)
 		if (v[i]->followdesk && v[i]->desk != DESK_ALL)
-			csetdesk(v[i], curdesk);
+			csetdesk(v[i],curdesk);
 		else if (!cisvisible(v[i]))
 			cunmap(v[i]);
 	free(v);
@@ -319,11 +271,11 @@ void gotodesk(Desk d)
 
 void setndesk(Desk val)
 {
-	if (val == 0 || val >= 0xffffffffUL)
+	if (val==0 || val >= 0xffffffffUL)
 		return;
 
-	Desk oldval = ndesk;
-	ndesk = val;
+	Desk oldval=ndesk;
+	ndesk=val;
 
 	if (val >= oldval)
 		ewmh_notifyndesk(val);
@@ -333,24 +285,24 @@ void setndesk(Desk val)
 
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
-	for (int i = n - 1; i >= 0; i--)
+	getclientstack(&v,&n);
+	for (int i=n - 1; i >= 0; i--)
 		if (v[i]->desk != DESK_ALL && v[i]->desk >= val)
-			csetdesk(v[i], val - 1);
+			csetdesk(v[i],val - 1);
 	free(v);
 
-	if (val < oldval)
+	if (val<oldval)
 		ewmh_notifyndesk(val);
 }
 
-void csetappdesk(struct client *c, Desk d)
+void csetappdesk(struct client *c,Desk d)
 {
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
-	for (int i = 0; i < n; i++)
-		if (v[i]->app == c->app)
-			csetdesk(v[i], d);
+	getclientstack(&v,&n);
+	for (int i=0; i<n; i++)
+		if (v[i]->app==c->app)
+			csetdesk(v[i],d);
 	free(v);
 }
 
@@ -369,19 +321,19 @@ void creframe(struct client *c)
 {
 	if (cisframed(c))
 		{
-			if (c->frame == NULL)
-				c->frame = fcreate(c);
+			if (c->frame==NULL)
+				c->frame=fcreate(c);
 		}
 	else if (c->frame != NULL)
 		{
 			fdestroy(c->frame);
-			c->frame = NULL;
+			c->frame=NULL;
 		}
 }
 
-void csetdock(struct client *c, Bool isdock)
+void csetdock(struct client *c,Bool isdock)
 {
-	c->isdock = isdock;
+	c->isdock=isdock;
 	creframe(c);
 }
 
@@ -391,100 +343,100 @@ Bool cismapped(struct client *c)
 }
 
 /*
- * Change input focus to the specified client, which must be
+ * Change input focus to the specified client,which must be
  * mapped on the current desktop.
  *
  * This function ignores input hints and the WM_TAKE_FOCUS protocol.
  */
-void cfocus(struct client *c, Time time)
+void cfocus(struct client *c,Time time)
 {
 	if (!cismapped(c))
 		return;
 
-	XSetInputFocus(dpy, c->window, RevertToPointerRoot, time);
+	XSetInputFocus(dpy,c->window,RevertToPointerRoot,time);
 }
 
-void csetfull(struct client *c, Bool enabled)
+void csetfull(struct client *c,Bool enabled)
 {
 	if (enabled && !c->isfull)
 		{
-			Bool f = c->hasfocus;
+			Bool f=c->hasfocus;
 			cunmap(c);
 			if (c->frame != NULL)
 				{
 					fdestroy(c->frame);
-					c->frame = NULL;
+					c->frame=NULL;
 				}
-			c->isfull = True;
-			XMoveResizeWindow(dpy, c->window,
+			c->isfull=True;
+			XMoveResizeWindow(dpy,c->window,
 			                  -c->geometry.borderwidth,
 			                  -c->geometry.borderwidth,
-			                  DisplayWidth(dpy, scr),
-			                  DisplayHeight(dpy, scr));
+			                  DisplayWidth(dpy,scr),
+			                  DisplayHeight(dpy,scr));
 			if (cisvisible(c))
 				cmap(c);
 			if (f)
-				cfocus(c, CurrentTime);
-			ewmh_notifyfull(c->window, True);
+				cfocus(c,CurrentTime);
+			ewmh_notifyfull(c->window,True);
 		}
 	else if (!enabled && c->isfull)
 		{
-			assert(c->frame == NULL);
-			Bool f = c->hasfocus;
+			assert(c->frame==NULL);
+			Bool f=c->hasfocus;
 			cunmap(c);
-			c->isfull = False;
-			XMoveResizeWindow(dpy, c->window,
-			                  c->geometry.x, c->geometry.y,
-			                  c->geometry.width, c->geometry.height);
+			c->isfull=False;
+			XMoveResizeWindow(dpy,c->window,
+			                  c->geometry.x,c->geometry.y,
+			                  c->geometry.width,c->geometry.height);
 			if (cisframed(c))
-				c->frame = fcreate(c);
+				c->frame=fcreate(c);
 			if (cisvisible(c))
 				cmap(c);
 			if (f)
-				cfocus(c, CurrentTime);
-			ewmh_notifyfull(c->window, False);
+				cfocus(c,CurrentTime);
+			ewmh_notifyfull(c->window,False);
 		}
 }
 
-void csetundecorated(struct client *c, Bool enabled)
+void csetundecorated(struct client *c,Bool enabled)
 {
-	c->isundecorated = enabled;
+	c->isundecorated=enabled;
 	creframe(c);
 }
 
-void csetappfollowdesk(struct client *c, Bool enabled)
+void csetappfollowdesk(struct client *c,Bool enabled)
 {
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
-	for (int i = 0; i < n; i++)
-		if (v[i]->app == c->app)
-			v[i]->followdesk = enabled;
+	getclientstack(&v,&n);
+	for (int i=0; i<n; i++)
+		if (v[i]->app==c->app)
+			v[i]->followdesk=enabled;
 	free(v);
 }
 
 /*
- * Return client window stack, from bottom (first) to top (last).
+ * Return client window stack,from bottom (first) to top (last).
  * Caller deallocates using free(3).
  */
-void getwindowstack(Window **vp, size_t *np)
+void getwindowstack(Window **vp,size_t *np)
 {
 	List *lp;
 
-	size_t n = 0;
-	LIST_FOREACH(lp, &winstack)
+	size_t n=0;
+	LIST_FOREACH(lp,&winstack)
 	n++;
 
-	Window *v = (Window*)xmalloc(n * sizeof v[0]);
-	size_t i = 0;
-	LIST_FOREACH(lp, &winstack)
+	Window *v=(Window*)xmalloc(n * sizeof v[0]);
+	size_t i=0;
+	LIST_FOREACH(lp,&winstack)
 	{
-		struct client *c = LIST_ITEM(lp, struct client, winstack);
-		v[i++] = c->window;
+		struct client *c=LIST_ITEM(lp,struct client,winstack);
+		v[i++]=c->window;
 	}
 
-	*vp = v;
-	*np = n;
+	*vp=v;
+	*np=n;
 }
 
 void cpush(struct client *c)
@@ -492,8 +444,8 @@ void cpush(struct client *c)
 	if (LIST_HEAD(&winstack) != &c->winstack)
 		{
 			LIST_REMOVE(&c->winstack);
-			LIST_INSERT_HEAD(&winstack, &c->winstack);
-			needrestack = True;
+			LIST_INSERT_HEAD(&winstack,&c->winstack);
+			needrestack=True;
 		}
 }
 
@@ -501,9 +453,9 @@ void cpushapp(struct client *c)
 {
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
-	for (int i = n - 1; i >= 0; i--)
-		if (v[i]->app == c->app)
+	getclientstack(&v,&n);
+	for (int i=n - 1; i >= 0; i--)
+		if (v[i]->app==c->app)
 			cpush(v[i]);
 	free(v);
 }
@@ -513,39 +465,60 @@ void cpop(struct client *c)
 	if (LIST_TAIL(&winstack) != &c->winstack)
 		{
 			LIST_REMOVE(&c->winstack);
-			LIST_INSERT_TAIL(&winstack, &c->winstack);
-			needrestack = True;
+			LIST_INSERT_TAIL(&winstack,&c->winstack);
+			needrestack=True;
 		}
 }
 
 void cpopapp(struct client *c)
 {
-	struct client **v;
-	int n;
-	getclientstack(&v, &n);
+	struct client	**v;
+	int				n;
+	unsigned char	*data;
+	Atom			*atoms;
+	int				status,real_format;
+	Atom			real_type;
+	unsigned long	items_read,items_left;
+	int				result=1;
 
-	for (int i = 0; i < n; i++)
-		if (v[i]->app == c->app)
+	status=XGetWindowProperty(dpy,c->window,NET_WM_WINDOW_TYPE,0L,1L,False,XA_ATOM,&real_type,&real_format,&items_read,&items_left,&data);
+	if(status==Success)
+		{
+			atoms=(Atom *)data;
+
+			if(items_read && (atoms[0]==NET_WM_WINDOW_TYPE_DESKTOP ))
+				result=0;
+
+			XFree(data);
+		}
+
+	if(result==0)
+		return;
+
+	getclientstack(&v,&n);
+
+	for (int i=0; i<n; i++)
+		if (v[i]->app==c->app)
 			cpop(v[i]);
 
 	if (c->wmtransientfor != None)
 		{
-			for (int i = 0; i < n; i++)
-				if (v[i]->window == c->wmtransientfor)
+			for (int i=0; i<n; i++)
+				if (v[i]->window==c->wmtransientfor)
 					{
 						cpop(v[i]);
 						break;
 					}
-			for (int i = 0; i < n; i++)
-				if (v[i]->wmtransientfor == c->wmtransientfor)
+			for (int i=0; i<n; i++)
+				if (v[i]->wmtransientfor==c->wmtransientfor)
 					cpop(v[i]);
 			cpop(c);
 		}
 	else
 		{
 			cpop(c);
-			for (int i = 0; i < n; i++)
-				if (v[i]->wmtransientfor == c->window)
+			for (int i=0; i<n; i++)
+				if (v[i]->wmtransientfor==c->window)
 					cpop(v[i]);
 		}
 
@@ -554,46 +527,46 @@ void cpopapp(struct client *c)
 
 void cupdatedesk(struct client *c)
 {
-	Desk d = c->desk;
+	Desk d=c->desk;
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
+	getclientstack(&v,&n);
 	if (c->wmtransientfor != None)
 		{
-			for (int i = n - 1; i >= 0; i--)
-				if (v[i]->window == c->wmtransientfor)
+			for (int i=n - 1; i >= 0; i--)
+				if (v[i]->window==c->wmtransientfor)
 					{
-						d = v[i]->desk;
+						d=v[i]->desk;
 						break;
 					}
 		}
 	else if (c->app != c->window)
 		{
-			for (int i = n - 1; i >= 0; i--)
-				if (v[i]->app == c->app && v[i] != c)
+			for (int i=n - 1; i >= 0; i--)
+				if (v[i]->app==c->app && v[i] != c)
 					{
-						d = v[i]->desk;
+						d=v[i]->desk;
 						break;
 					}
 		}
 	free(v);
 	if (d != c->desk)
-		csetdesk(c, d);
+		csetdesk(c,d);
 }
 
 void reloadwmtransientfor(struct client *c)
 {
-	c->wmtransientfor = None;
-	XGetTransientForHint(dpy, c->window, &c->wmtransientfor);
+	c->wmtransientfor=None;
+	XGetTransientForHint(dpy,c->window,&c->wmtransientfor);
 
 	if (c->wmtransientfor != None)
 		{
-			c->app = c->wmtransientfor;
-			XWMHints *h = XGetWMHints(dpy, c->wmtransientfor);
+			c->app=c->wmtransientfor;
+			XWMHints *h=XGetWMHints(dpy,c->wmtransientfor);
 			if (h != NULL)
 				{
 					if (h->flags & WindowGroupHint)
-						c->app = h->window_group;
+						c->app=h->window_group;
 					XFree(h);
 				}
 			cupdatedesk(c);
@@ -610,49 +583,49 @@ void reloadwmhints(struct client *c)
 {
 	if (c->wmhints != NULL)
 		XFree(c->wmhints);
-	c->wmhints = XGetWMHints(dpy, c->window);
+	c->wmhints=XGetWMHints(dpy,c->window);
 
-	if (c->wmtransientfor == None)
+	if (c->wmtransientfor==None)
 		{
-			c->app = c->window;
+			c->app=c->window;
 			if (c->wmhints != NULL)
 				{
 					if (c->wmhints->flags & WindowGroupHint)
-						c->app = c->wmhints->window_group;
+						c->app=c->wmhints->window_group;
 				}
 			cupdatedesk(c);
 		}
 
 	if (cisurgent(c) && c->initialized)
 		{
-			XBell(dpy, 0);
+			XBell(dpy,0);
 			cpopapp(c);
 			gotodesk(c->desk);
-			cfocus(c, CurrentTime);
+			cfocus(c,CurrentTime);
 		}
 }
 
 void reloadwmnormalhints(struct client *c)
 {
-	if (c->wmnormalhints == NULL)
-		c->wmnormalhints = XAllocSizeHints();
+	if (c->wmnormalhints==NULL)
+		c->wmnormalhints=XAllocSizeHints();
 	if (c->wmnormalhints != NULL)
 		{
-			c->wmnormalhints->flags = 0;
+			c->wmnormalhints->flags=0;
 			long dummy;
-			XGetWMNormalHints(dpy, c->window, c->wmnormalhints, &dummy);
+			XGetWMNormalHints(dpy,c->window,c->wmnormalhints,&dummy);
 		}
 }
 
 void reloadwmname(struct client *c)
 {
 	free(c->wmname);
-	c->wmname = NULL;
+	c->wmname=NULL;
 
 	XTextProperty p;
-	if (XGetWMName(dpy, c->window, &p) != 0)
+	if (XGetWMName(dpy,c->window,&p) != 0)
 		{
-			c->wmname = decodetextproperty(&p);
+			c->wmname=decodetextproperty(&p);
 			if (p.value != NULL)
 				XFree(p.value);
 		}
@@ -666,79 +639,79 @@ void reloadwmprotocols(struct client *c)
 	if (c->wmprotocols != NULL)
 		{
 			XFree(c->wmprotocols);
-			c->wmprotocols = NULL;
+			c->wmprotocols=NULL;
 		}
-	c->wmprotocolscount = 0;
-	XGetWMProtocols(dpy, c->window,
-	                &c->wmprotocols, &c->wmprotocolscount);
+	c->wmprotocolscount=0;
+	XGetWMProtocols(dpy,c->window,
+	                &c->wmprotocols,&c->wmprotocolscount);
 
 	if (c->frame != NULL)
 		fupdate(c->frame);
 }
 
-void buttonpress(struct client *c, XButtonEvent *e)
+void buttonpress(struct client *c,XButtonEvent *e)
 {
 	cpopapp(c);
-	cfocus(c, e->time);
-	XAllowEvents(dpy, ReplayPointer, e->time);
+	cfocus(c,e->time);
+	XAllowEvents(dpy,ReplayPointer,e->time);
 }
 
-void keypress(struct client *c, XKeyEvent *e)
+void keypress(struct client *c,XKeyEvent *e)
 {
-	for (int i = 0; i < NELEM(keymap); i++)
-		if (XKeysymToKeycode(dpy, keymap[i].keysym) == e->keycode)
-			keymap[i].function(c, e->state, e->time);
+	for (unsigned int i=0; i<NELEM(keymapclient); i++)
+		if (XKeysymToKeycode(dpy,keymapclient[i].keysym)==e->keycode)
+			keymapclient[i].function(c,e->state,e->time);
 }
 
-Bool chaswmproto(struct client *c, Atom protocol)
+Bool chaswmproto(struct client *c,Atom protocol)
 {
-	for (int i = 0; i < c->wmprotocolscount; i++)
-		if (c->wmprotocols[i] == protocol)
+	for (int i=0; i<c->wmprotocolscount; i++)
+		if (c->wmprotocols[i]==protocol)
 			return True;
 	return False;
 }
 
-void csendwmproto(struct client *c, Atom protocol, Time time)
+void csendwmproto(struct client *c,Atom protocol,Time time)
 {
 	XEvent e;
 
-	memset(&e, 0, sizeof e);
-	e.xclient.type = ClientMessage;
-	e.xclient.window = c->window;
-	e.xclient.message_type = WM_PROTOCOLS;
-	e.xclient.format = 32;
-	e.xclient.data.l[0] = protocol;
-	e.xclient.data.l[1] = time;
+	memset(&e,0,sizeof e);
+	e.xclient.type=ClientMessage;
+	e.xclient.window=c->window;
+	e.xclient.message_type=WM_PROTOCOLS;
+	e.xclient.format=32;
+	e.xclient.data.l[0]=protocol;
+	e.xclient.data.l[1]=time;
 
-	XSendEvent(dpy, c->window, False, 0L, &e);
+	XSendEvent(dpy,c->window,False,0L,&e);
 }
 
-void cdelete(struct client *c, Time time)
+void cdelete(struct client *c,Time time)
 {
-	if (chaswmproto(c, WM_DELETE_WINDOW))
-		csendwmproto(c, WM_DELETE_WINDOW, time);
+	if (chaswmproto(c,WM_DELETE_WINDOW))
+		csendwmproto(c,WM_DELETE_WINDOW,time);
 }
 
-void keypress_delete(struct client *c, unsigned state, Time time)
+void keypress_delete(struct client *c,unsigned state,Time time)
 {
 	if (!c->isdock)
-		cdelete(c, time);
+		cdelete(c,time);
 }
 
 /*
- * Returns true if the window is a task, i.e. if it appears in taskbars.
+ * Returns true if the window is a task,i.e. if it appears in taskbars.
  */
 Bool cistask(struct client *c)
 {
-	return !c->skiptaskbar && c->wmtransientfor == None;
+	return !c->skiptaskbar && c->wmtransientfor==None;
 }
 
 struct client *getfronttask(void)
 {
 	List *lp;
-	LIST_FOREACH_REV(lp, &winstack)
+	LIST_FOREACH_REV(lp,&winstack)
 	{
-		struct client *c = LIST_ITEM(lp, struct client, winstack);
+		struct client *c=LIST_ITEM(lp,struct client,winstack);
 		if (cisvisible(c) && cistask(c))
 			return c;
 	}
@@ -753,37 +726,37 @@ struct client *getfronttask(void)
  */
 Bool expectsfocus(struct client *c)
 {
-	return c->wmhints == NULL ||
+	return c->wmhints==NULL ||
 	       !(c->wmhints->flags & InputHint) ||
 	       c->wmhints->input;
 }
 
-void cfocusapp(struct client *c, Time time)
+void cfocusapp(struct client *c,Time time)
 {
-	struct client *topmost = NULL;
-	struct client *focus = NULL;
+	struct client *topmost=NULL;
+	struct client *focus=NULL;
 
 	// Find a window of the application that expects focus.
 	List *lp;
-	LIST_FOREACH_REV(lp, &winstack)
+	LIST_FOREACH_REV(lp,&winstack)
 	{
-		struct client *x = LIST_ITEM(
-		                       lp, struct client, winstack);
-		if (x->app == c->app && cisvisible(x))
+		struct client *x=LIST_ITEM(
+		                     lp,struct client,winstack);
+		if (x->app==c->app && cisvisible(x))
 			{
-				if (topmost == NULL)
-					topmost = x;
-				if (focus == NULL && expectsfocus(x))
-					focus = x;
+				if (topmost==NULL)
+					topmost=x;
+				if (focus==NULL && expectsfocus(x))
+					focus=x;
 			}
 	}
 
-	if (focus == NULL)
-		focus = topmost;
+	if (focus==NULL)
+		focus=topmost;
 
 	assert(focus != NULL);
 
-	cfocus(focus, time);
+	cfocus(focus,time);
 }
 
 /*
@@ -791,34 +764,34 @@ void cfocusapp(struct client *c, Time time)
  */
 struct client *refocus(Time time)
 {
-	struct client *c = getfronttask();
+	struct client *c=getfronttask();
 	if (c != NULL)
-		cfocusapp(c, time);
+		cfocusapp(c,time);
 	return c;
 }
 
-void keypress_pushapp(struct client *c, unsigned state, Time time)
+void keypress_pushapp(struct client *c,unsigned state,Time time)
 {
 	cpushapp(c);
 	refocus(time);
 }
 
-void keypress_fullscreen(struct client *c, unsigned state, Time time)
+void keypress_fullscreen(struct client *c,unsigned state,Time time)
 {
 	if (!c->isdock)
-		csetfull(c, !c->isfull);
+		csetfull(c,!c->isfull);
 }
 
-void keypress_sticky(struct client *c, unsigned state, Time time)
+void keypress_sticky(struct client *c,unsigned state,Time time)
 {
 	if (c->isdock)
 		return;
 
-	if (cgetdesk(c) == DESK_ALL)
-		csetappdesk(c, curdesk);
+	if (cgetdesk(c)==DESK_ALL)
+		csetappdesk(c,curdesk);
 	else
 		{
-			csetappdesk(c, DESK_ALL);
+			csetappdesk(c,DESK_ALL);
 
 			// Make sure we are still on top when switching desks.
 			cpopapp(c);
@@ -827,55 +800,55 @@ void keypress_sticky(struct client *c, unsigned state, Time time)
 
 void cinstallcolormaps(struct client *c)
 {
-	XInstallColormap(dpy, c->colormap == None ?
-	                 DefaultColormap(dpy, scr) : c->colormap);
+	XInstallColormap(dpy,c->colormap==None ?
+	                 DefaultColormap(dpy,scr) : c->colormap);
 }
 
-void focusin(struct client *c, XFocusChangeEvent *e)
+void focusin(struct client *c,XFocusChangeEvent *e)
 {
-	if (e->mode == NotifyUngrab || e->detail == NotifyPointerRoot ||
-	        e->detail == NotifyPointer)
+	if (e->mode==NotifyUngrab || e->detail==NotifyPointerRoot ||
+	        e->detail==NotifyPointer)
 		return;
 
 	// This shouldn't happen.
 	if (c->hasfocus || !c->ismapped)
 		return;
 
-	c->hasfocus = True;
+	c->hasfocus=True;
 
-	ungrabbutton(AnyButton, AnyModifier, c->window);
+	ungrabbutton(AnyButton,AnyModifier,c->window);
 
 	cinstallcolormaps(c);
 
 	if (c->frame != NULL)
 		fupdate(c->frame);
 
-	ewmh_notifyfocus(None, c->window);
+	ewmh_notifyfocus(None,c->window);
 }
 
-void focusout(struct client *c, XFocusChangeEvent *e)
+void focusout(struct client *c,XFocusChangeEvent *e)
 {
-	if (e->mode == NotifyGrab)
+	if (e->mode==NotifyGrab)
 		return;
 
-	if (e->detail == NotifyPointerRoot ||
-	        e->detail == NotifyPointer ||
-	        e->detail == NotifyInferior)
+	if (e->detail==NotifyPointerRoot ||
+	        e->detail==NotifyPointer ||
+	        e->detail==NotifyInferior)
 		return;
 
 	// This shouldn't happen.
 	if (!c->hasfocus)
 		return;
 
-	c->hasfocus = False;
+	c->hasfocus=False;
 
-	grabbutton(AnyButton, AnyModifier, c->window, True, 0,
-	           GrabModeSync, GrabModeAsync, None, None);
+	grabbutton(AnyButton,AnyModifier,c->window,True,0,
+	           GrabModeSync,GrabModeAsync,None,None);
 
 	if (c->frame != NULL)
 		fupdate(c->frame);
 
-	ewmh_notifyfocus(c->window, None);
+	ewmh_notifyfocus(c->window,None);
 }
 
 struct geometry cgetgeom(struct client *c)
@@ -883,11 +856,11 @@ struct geometry cgetgeom(struct client *c)
 	if (c->isfull)
 		return (struct geometry)
 		{
-			.x = -c->geometry.borderwidth,
-			 .y = -c->geometry.borderwidth,
-			  .width = DisplayWidth(dpy, scr),
-			   .height = DisplayHeight(dpy, scr),
-			    .borderwidth = c->geometry.borderwidth
+			.x=-c->geometry.borderwidth,
+			 .y=-c->geometry.borderwidth,
+			  .width=DisplayWidth(dpy,scr),
+			   .height=DisplayHeight(dpy,scr),
+			    .borderwidth=c->geometry.borderwidth
 		};
 	else
 		return c->geometry;
@@ -895,40 +868,40 @@ struct geometry cgetgeom(struct client *c)
 
 void csendconf(struct client *c)
 {
-	struct geometry g = cgetgeom(c);
+	struct geometry g=cgetgeom(c);
 	XConfigureEvent ce;
 
-	ce.type = ConfigureNotify;
-	ce.event = c->window;
-	ce.window = c->window;
-	ce.x = g.x;
-	ce.y = g.y;
-	ce.width = g.width;
-	ce.height = g.height;
-	ce.border_width = g.borderwidth;
-	ce.above = None;
-	ce.override_redirect = False;
+	ce.type=ConfigureNotify;
+	ce.event=c->window;
+	ce.window=c->window;
+	ce.x=g.x;
+	ce.y=g.y;
+	ce.width=g.width;
+	ce.height=g.height;
+	ce.border_width=g.borderwidth;
+	ce.above=None;
+	ce.override_redirect=False;
 
-	XSendEvent(dpy, c->window, False, StructureNotifyMask,(XEvent*)&ce);
+	XSendEvent(dpy,c->window,False,StructureNotifyMask,(XEvent*)&ce);
 }
 
 
-void configurerequest(struct client *c, XConfigureRequestEvent *e)
+void configurerequest(struct client *c,XConfigureRequestEvent *e)
 {
 	XWindowChanges	wc;
 
 	if (c->frame != NULL)
 		{
 			/*
-			 * If this happens, we are processing an event that
+			 * If this happens,we are processing an event that
 			 * was sent before we created the frame. We need to
 			 * redirect the event manually. Note that this should
 			 * only happen immediately after creating a frame.
 			 *
 			 * XMMS is one program that triggers this particularly
-			 * often, and so is the "Save As" dialog of Firefox.
+			 * often,and so is the "Save As" dialog of Firefox.
 			 */
-			redirect((XEvent *)e, fgetwin(c->frame));
+			redirect((XEvent *)e,fgetwin(c->frame));
 			return;
 		}
 
@@ -939,30 +912,30 @@ void configurerequest(struct client *c, XConfigureRequestEvent *e)
 			return;
 		}
 
-	unsigned long mask = e->value_mask &
-	                     (CWX | CWY | CWWidth | CWHeight | CWBorderWidth);
+	unsigned long mask=e->value_mask &
+	                   (CWX | CWY | CWWidth | CWHeight | CWBorderWidth);
 
 	if (mask & CWX)
-		c->geometry.x = e->x;
+		c->geometry.x=e->x;
 	if (mask & CWY)
-		c->geometry.y = e->y;
+		c->geometry.y=e->y;
 	if (mask & CWWidth)
-		c->geometry.width = e->width;
+		c->geometry.width=e->width;
 	if (mask & CWHeight)
-		c->geometry.height = e->height;
+		c->geometry.height=e->height;
 	if (mask & CWBorderWidth)
-		c->geometry.borderwidth = e->border_width;
+		c->geometry.borderwidth=e->border_width;
 
-	wc.x = c->geometry.x;
-	wc.y = c->geometry.y;
-	wc.width = c->geometry.width;
-	wc.height = c->geometry.height;
-	wc.border_width = c->geometry.borderwidth;
+	wc.x=c->geometry.x;
+	wc.y=c->geometry.y;
+	wc.width=c->geometry.width;
+	wc.height=c->geometry.height;
+	wc.border_width=c->geometry.borderwidth;
 
-	XConfigureWindow(dpy, c->window, mask,&wc);
+	XConfigureWindow(dpy,c->window,mask,&wc);
 }
 
-void propertynotify(struct client *c, XPropertyEvent *e)
+void propertynotify(struct client *c,XPropertyEvent *e)
 {
 	switch (e->atom)
 		{
@@ -979,39 +952,39 @@ void propertynotify(struct client *c, XPropertyEvent *e)
 			reloadwmtransientfor(c);
 			break;
 		default:
-			if (e->atom == WM_PROTOCOLS)
+			if (e->atom==WM_PROTOCOLS)
 				reloadwmprotocols(c);
 			break;
 		}
 
-	ewmh_propertynotify(c, e);
-	mwm_propertynotify(c, e);
+	ewmh_propertynotify(c,e);
+	mwm_propertynotify(c,e);
 }
 
 /*
- * We don't listen to this event ourselves, but get it redirected to
+ * We don't listen to this event ourselves,but get it redirected to
  * us from the root listener and from the frame listener.
  */
-void maprequest(struct client *c, XMapRequestEvent *e)
+void maprequest(struct client *c,XMapRequestEvent *e)
 {
 	ewmh_maprequest(c);
 	cpopapp(c);
 	if (cisvisible(c))
 		{
 			cmap(c);
-			cfocus(c, CurrentTime);
+			cfocus(c,CurrentTime);
 		}
 }
 
 struct client *getfocus(void)
 {
 	List *lp;
-	LIST_FOREACH_REV(lp, &winstack)
+	LIST_FOREACH_REV(lp,&winstack)
 	{
-		struct client *c = LIST_ITEM(lp, struct client, winstack);
+		struct client *c=LIST_ITEM(lp,struct client,winstack);
 		if (c->hasfocus)
 			{
-				assert(c->desk == curdesk || c->desk == DESK_ALL);
+				assert(c->desk==curdesk || c->desk==DESK_ALL);
 				assert(c->ismapped);
 				return c;
 			}
@@ -1019,27 +992,27 @@ struct client *getfocus(void)
 	return NULL;
 }
 
-void crelease(struct client *c, Bool clientrequested)
+void crelease(struct client *c,Bool clientrequested)
 {
 	// Unset this or fdestroy() will refocus the window.
-	c->hasfocus = False;
+	c->hasfocus=False;
 
 	if (c->frame != NULL)
 		{
 			fdestroy(c->frame);
-			c->frame = NULL;
+			c->frame=NULL;
 		}
 
 	LIST_REMOVE(&c->winstack);
-	needrestack = True;
+	needrestack=True;
 
-	ungrabkey(AnyKey, AnyModifier, c->window);
+	ungrabkey(AnyKey,AnyModifier,c->window);
 
-	XSelectInput(dpy, c->window, 0);
-	setlistener(c->window, NULL);
+	XSelectInput(dpy,c->window,0);
+	setlistener(c->window,NULL);
 	if (!clientrequested)
-		XMapWindow(dpy, c->window);
-	XRemoveFromSaveSet(dpy, c->window);
+		XMapWindow(dpy,c->window);
+	XRemoveFromSaveSet(dpy,c->window);
 
 	if (c->wmnormalhints != NULL)
 		XFree(c->wmnormalhints);
@@ -1051,27 +1024,27 @@ void crelease(struct client *c, Bool clientrequested)
 	free(c->netwmname);
 	free(c);
 
-	if (getfocus() == NULL)
+	if (getfocus()==NULL)
 		refocus(CurrentTime);
 }
 
 void cwithdraw(struct client *c)
 {
 	ewmh_withdraw(c);
-	setwmstate(c->window, WithdrawnState);
-	crelease(c, True);
+	setwmstate(c->window,WithdrawnState);
+	crelease(c,True);
 }
 
 
-void unmapnotify(struct client *c, XUnmapEvent *e)
+void unmapnotify(struct client *c,XUnmapEvent *e)
 {
-	if (c->ignoreunmapcount > 0)
+	if (c->ignoreunmapcount>0)
 		c->ignoreunmapcount--;
 	else
 		cwithdraw(c);
 }
 
-void destroynotify(struct client *c, XDestroyWindowEvent *e)
+void destroynotify(struct client *c,XDestroyWindowEvent *e)
 {
 	cwithdraw(c);
 }
@@ -1081,67 +1054,67 @@ Bool chasfocus(struct client *c)
 	return c->hasfocus;
 }
 
-void clientmessage(struct client *c, XClientMessageEvent *e)
+void clientmessage(struct client *c,XClientMessageEvent *e)
 {
-	if (e->message_type == WM_CHANGE_STATE && e->format == 32 &&
-	        e->data.l[0] == IconicState)
+	if (e->message_type==WM_CHANGE_STATE && e->format==32 &&
+	        e->data.l[0]==IconicState)
 		{
 			/*
-			 * Wind doesn't allow hidden windows, so just push it.
+			 * Wind doesn't allow hidden windows,so just push it.
 			 */
 			cpushapp(c);
 			if (chasfocus(c))
 				refocus(CurrentTime);
 		}
 
-	ewmh_clientmessage(c, e);
+	ewmh_clientmessage(c,e);
 }
 
-void colormapnotify(struct client *c, myXColormapEvent *e)
+void colormapnotify(struct client *c,myXColormapEvent *e)
 {
 	if (e->mynew)
 		{
-			c->colormap = e->colormap;
+			c->colormap=e->colormap;
 			if (c->hasfocus)
 				cinstallcolormaps(c);
 		}
 }
 
-void clientevent(void *self, XEvent *e)
+void clientevent(void *self,XEvent *e)
 {
 	switch (e->type)
 		{
 		case ButtonPress:
-			buttonpress((client*)self, &e->xbutton);
+			buttonpress((client*)self,&e->xbutton);
 			break;
 		case KeyPress:
-			keypress((client*)self, &e->xkey);
+			keypress((client*)self,&e->xkey);
 			break;
 		case FocusIn:
-			focusin((client*)self, &e->xfocus);
+			focusin((client*)self,&e->xfocus);
 			break;
 		case FocusOut:
-			focusout((client*)self, &e->xfocus);
+			focusout((client*)self,&e->xfocus);
 			break;
 		case ConfigureRequest:
-			configurerequest((client*)self, &e->xconfigurerequest);
+			configurerequest((client*)self,&e->xconfigurerequest);
 			break;
 		case PropertyNotify:
-			propertynotify((client*)self, &e->xproperty);
+			propertynotify((client*)self,&e->xproperty);
 			break;
 		case MapRequest:
 			// We get this redirected to us from the root listener
 			// and from the frame listener.
-			maprequest((client*)self, &e->xmaprequest);
+			maprequest((client*)self,&e->xmaprequest);
 			break;
 		case UnmapNotify:
-			unmapnotify((client*)self, &e->xunmap);
+			unmapnotify((client*)self,&e->xunmap);
 			break;
 		case DestroyNotify:
-			destroynotify((client*)self, &e->xdestroywindow);
+			destroynotify((client*)self,&e->xdestroywindow);
 			break;
 		case ClientMessage:
-			clientmessage((client*)self, &e->xclient);
+			clientmessage((client*)self,&e->xclient);
 			break;
 		case ColormapNotify:
 			colormapnotify((client*)self,(myXColormapEvent*)&e->xcolormap);
@@ -1149,18 +1122,18 @@ void clientevent(void *self, XEvent *e)
 		}
 }
 
-void csetgeom(struct client *c, struct geometry g)
+void csetgeom(struct client *c,struct geometry g)
 {
-	c->geometry = g;
+	c->geometry=g;
 }
 
 /*
- * Return true if, and only if, the two clients are visible on the same desk.
+ * Return true if,and only if,the two clients are visible on the same desk.
  */
-Bool samedesk(struct client *c1, struct client *c2)
+Bool samedesk(struct client *c1,struct client *c2)
 {
-	return c1->desk == c2->desk ||
-	       c1->desk == DESK_ALL || c2->desk == DESK_ALL;
+	return c1->desk==c2->desk ||
+	       c1->desk==DESK_ALL || c2->desk==DESK_ALL;
 }
 
 /*
@@ -1168,28 +1141,28 @@ Bool samedesk(struct client *c1, struct client *c2)
  */
 void randpos(struct geometry *g)
 {
-	int maxx = DisplayWidth(dpy, scr) - (g->width + 2 * g->borderwidth);
-	int maxy = DisplayHeight(dpy, scr) - (g->height + 2 * g->borderwidth);
-	g->x = maxx > 0 ? rand() % maxx : 0;
-	g->y = maxy > 0 ? rand() % maxy : 0;
+	int maxx=DisplayWidth(dpy,scr) - (g->width + 2 * g->borderwidth);
+	int maxy=DisplayHeight(dpy,scr) - (g->height + 2 * g->borderwidth);
+	g->x=maxx>0 ? rand() % maxx : 0;
+	g->y=maxy>0 ? rand() % maxy : 0;
 }
 
-unsigned long overlaparea(struct geometry g1, struct geometry g2)
+unsigned long overlaparea(struct geometry g1,struct geometry g2)
 {
-	int x1 = g1.x;
-	int x2 = g2.x;
-	int x3 = g1.x + g1.width + 2 * g1.borderwidth;
-	int x4 = g2.x + g2.width + 2 * g2.borderwidth;
-	int y1 = g1.y;
-	int y2 = g2.y;
-	int y3 = g1.y + g1.height + 2 * g1.borderwidth;
-	int y4 = g2.y + g2.height + 2 * g2.borderwidth;
+	int x1=g1.x;
+	int x2=g2.x;
+	int x3=g1.x + g1.width + 2 * g1.borderwidth;
+	int x4=g2.x + g2.width + 2 * g2.borderwidth;
+	int y1=g1.y;
+	int y2=g2.y;
+	int y3=g1.y + g1.height + 2 * g1.borderwidth;
+	int y4=g2.y + g2.height + 2 * g2.borderwidth;
 
-	if (x1 < x4 && x2 < x3 && y1 < y4 && y2 < y3)
+	if (x1<x4 && x2<x3 && y1<y4 && y2<y3)
 		{
-			unsigned long x = MIN(x4 - x1, x3 - x2);
-			unsigned long y = MIN(y4 - y1, y3 - y2);
-			unsigned long area = x * y;
+			unsigned long x=MIN(x4 - x1,x3 - x2);
+			unsigned long y=MIN(y4 - y1,y3 - y2);
+			unsigned long area=x * y;
 			return area;
 		}
 	else
@@ -1200,23 +1173,23 @@ unsigned long overlaparea(struct geometry g1, struct geometry g2)
  * XXX: We move a window by simulating a ConfigureRequest from
  *      the client.
  */
-void move(struct client *c, int x, int y)
+void move(struct client *c,int x,int y)
 {
-	Window parent = c->frame == NULL ? root : fgetwin(c->frame);
+	Window parent=c->frame==NULL ? root : fgetwin(c->frame);
 	XEvent e;
 	XConfigureRequestEvent cre;
 
-	cre.type = ConfigureRequest;
-	cre.serial = 0;
-	cre.send_event = True;
-	cre.display = dpy;
-	cre.parent = parent;
-	cre.window = c->window;
-	cre.x = x;
-	cre.y = y;
-	cre.value_mask = CWX | CWY;
-	e.xconfigurerequest = (XConfigureRequestEvent)cre;
-	redirect(&e, parent);
+	cre.type=ConfigureRequest;
+	cre.serial=0;
+	cre.send_event=True;
+	cre.display=dpy;
+	cre.parent=parent;
+	cre.window=c->window;
+	cre.x=x;
+	cre.y=y;
+	cre.value_mask=CWX | CWY;
+	e.xconfigurerequest=(XConfigureRequestEvent)cre;
+	redirect(&e,parent);
 }
 
 /*
@@ -1224,42 +1197,42 @@ void move(struct client *c, int x, int y)
  *
  * A 'good' location is found by testing lots of random locations and
  * picking the one with the lowest 'badness' score. Overlapping another
- * window is very bad. Being far from screen edges is pretty bad, as
+ * window is very bad. Being far from screen edges is pretty bad,as
  * that tends to break up free areas.
  *
  * Window placement is about the only intelligent task of a window
- * manager, and it's worth to spend some extra CPU time here in order
+ * manager,and it's worth to spend some extra CPU time here in order
  * to find a really good location.
  */
 void smartpos(struct client *c)
 {
-	struct geometry g = c->frame == NULL ?
-	                    cgetgeom(c) : fgetgeom(c->frame);
+	struct geometry g=c->frame==NULL ?
+	                  cgetgeom(c) : fgetgeom(c->frame);
 
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
+	getclientstack(&v,&n);
 
-	// Exclude the window itself, and clients on other desks
-	for (int i = 0; i < n; i++)
-		if (v[i] == c || !samedesk(v[i], c))
-			v[i--] = v[--n];
+	// Exclude the window itself,and clients on other desks
+	for (int i=0; i<n; i++)
+		if (v[i]==c || !samedesk(v[i],c))
+			v[i--]=v[--n];
 
-	unsigned long min = ~0;
-	struct geometry best = g;
-	for (int k = 0; min != 0 && k < 100; k++)
+	unsigned long min=~0;
+	struct geometry best=g;
+	for (int k=0; min != 0 && k<100; k++)
 		{
 			randpos(&g);
-			unsigned long badness = 0;
-			unsigned overlaps = 0;
+			unsigned long badness=0;
+			unsigned overlaps=0;
 
 			// Compute overlapping area.
-			for (int i = 0; i < n; i++)
+			for (int i=0; i<n; i++)
 				{
-					struct geometry g2 = v[i]->frame == NULL ?
-					                     cgetgeom(v[i]) : fgetgeom(v[i]->frame);
-					unsigned long area = overlaparea(g, g2);
-					if (area > 0)
+					struct geometry g2=v[i]->frame==NULL ?
+					                   cgetgeom(v[i]) : fgetgeom(v[i]->frame);
+					unsigned long area=overlaparea(g,g2);
+					if (area>0)
 						{
 							badness += area;
 							overlaps++;
@@ -1269,19 +1242,19 @@ void smartpos(struct client *c)
 			badness *= overlaps * overlaps;
 
 			// Prefer to position a window near the edges of the display.
-			unsigned x2 = DisplayWidth(dpy, scr) - (g.x + g.width);
+			unsigned x2=DisplayWidth(dpy,scr) - (g.x + g.width);
 			badness += MIN((int)g.x,(int)x2);
-			unsigned y2 = DisplayHeight(dpy, scr) - (g.y + g.height);
+			unsigned y2=DisplayHeight(dpy,scr) - (g.y + g.height);
 			badness += MIN((int)g.y,(int)y2);
 
-			if (badness < min)
+			if (badness<min)
 				{
-					min = badness;
-					best = g;
+					min=badness;
+					best=g;
 				}
 		}
 
-	move(c, best.x, best.y);
+	move(c,best.x,best.y);
 
 	free(v);
 }
@@ -1289,60 +1262,60 @@ void smartpos(struct client *c)
 struct client *manage(Window window)
 {
 	XWindowAttributes attr;
-	if (!XGetWindowAttributes(dpy, window, &attr))
+	if (!XGetWindowAttributes(dpy,window,&attr))
 		return NULL;
 	if (attr.override_redirect)
 		return NULL;
 
-	long wmstate = getwmstate(window);
-	if (wmstate == WithdrawnState)
+	long wmstate=getwmstate(window);
+	if (wmstate==WithdrawnState)
 		{
-			XWMHints *h = XGetWMHints(dpy, window);
-			if (h == NULL)
-				wmstate = NormalState;
+			XWMHints *h=XGetWMHints(dpy,window);
+			if (h==NULL)
+				wmstate=NormalState;
 			else
 				{
 					if (h->flags & StateHint)
-						wmstate = h->initial_state;
+						wmstate=h->initial_state;
 					else
-						wmstate = NormalState;
+						wmstate=NormalState;
 					XFree(h);
 				}
 		}
-	if (wmstate == WithdrawnState)
+	if (wmstate==WithdrawnState)
 		return NULL;
 
-	struct client *c = (client*)xmalloc(sizeof *c);
+	struct client *c=(client*)xmalloc(sizeof *c);
 
 	LIST_INIT(&c->winstack);
-	LIST_INSERT_TAIL(&winstack, &c->winstack);
-	needrestack = True;
+	LIST_INSERT_TAIL(&winstack,&c->winstack);
+	needrestack=True;
 
-	c->desk = curdesk;
-	c->frame = NULL;
-	c->wmname = NULL;
-	c->netwmname = NULL;
-	c->wmhints = NULL;
-	c->wmnormalhints = NULL;
-	c->wmprotocols = NULL;
-	c->wmprotocolscount = 0;
-	c->wmtransientfor = None;
+	c->desk=curdesk;
+	c->frame=NULL;
+	c->wmname=NULL;
+	c->netwmname=NULL;
+	c->wmhints=NULL;
+	c->wmnormalhints=NULL;
+	c->wmprotocols=NULL;
+	c->wmprotocolscount=0;
+	c->wmtransientfor=None;
 
-	c->window = window;
-	c->app = window;
-	c->colormap = attr.colormap;
+	c->window=window;
+	c->app=window;
+	c->colormap=attr.colormap;
 
-	c->ignoreunmapcount = 0;
+	c->ignoreunmapcount=0;
 
-	c->hasfocus = False;
-	c->isfull = False;
-	c->isdock = False;
-	c->skiptaskbar = False;
-	c->isundecorated = False;
-	c->followdesk = False;
-	c->initialized = False;
+	c->hasfocus=False;
+	c->isfull=False;
+	c->isdock=False;
+	c->skiptaskbar=False;
+	c->isundecorated=False;
+	c->followdesk=False;
+	c->initialized=False;
 
-	csetgeom(c, (struct geometry)
+	csetgeom(c,(struct geometry)
 	{
 		attr.x,
 		attr.y,
@@ -1351,40 +1324,40 @@ struct client *manage(Window window)
 		attr.border_width
 	});
 
-	XAddToSaveSet(dpy, c->window);
+	XAddToSaveSet(dpy,c->window);
 
 	/*
 	 * Everything initialized to default values. Register
 	 * for events and THEN (re)load all attributes and
 	 * properties. This avoids losing update events.
 	 */
-	c->listener.function = clientevent;
-	c->listener.pointer = c;
-	setlistener(c->window, &c->listener);
-	XSelectInput(dpy, c->window,
+	c->listener.function=clientevent;
+	c->listener.pointer=c;
+	setlistener(c->window,&c->listener);
+	XSelectInput(dpy,c->window,
 	             StructureNotifyMask |
 	             PropertyChangeMask |
 	             ColormapChangeMask |
 	             FocusChangeMask);
 
-	XSync(dpy, False);
+	XSync(dpy,False);
 
 	/*
 	 * Done registering for events. What we read now is
-	 * safe to use, since any updates will be notified
+	 * safe to use,since any updates will be notified
 	 * to our event listener.
 	 */
 
-	c->ismapped = ismapped(c->window);
+	c->ismapped=ismapped(c->window);
 
-	if (!XGetWindowAttributes(dpy, c->window, &attr))
+	if (!XGetWindowAttributes(dpy,c->window,&attr))
 		{
 			// The window disappeared.
-			crelease(c, True);
+			crelease(c,True);
 			return NULL;
 		}
 
-	csetgeom(c, (struct geometry)
+	csetgeom(c,(struct geometry)
 	{
 		attr.x,
 		attr.y,
@@ -1393,7 +1366,7 @@ struct client *manage(Window window)
 		attr.border_width
 	});
 
-	c->colormap = attr.colormap;
+	c->colormap=attr.colormap;
 
 	reloadwmname(c);
 	reloadwmhints(c);
@@ -1402,46 +1375,46 @@ struct client *manage(Window window)
 	reloadwmtransientfor(c);
 
 	/*
-	 * Let the hints create the frame, if there should be one.
+	 * Let the hints create the frame,if there should be one.
 	 */
 	ewmh_manage(c);
 	mwm_manage(c);
 
-	grabbutton(AnyButton, AnyModifier, c->window, True, 0,
-	           GrabModeSync, GrabModeAsync, None, None);
+	grabbutton(AnyButton,AnyModifier,c->window,True,0,
+	           GrabModeSync,GrabModeAsync,None,None);
 
-	for (int i = 0; i < NELEM(keymap); i++)
-		grabkey(XKeysymToKeycode(dpy, keymap[i].keysym),
-		        keymap[i].modifiers, c->window, True,
-		        GrabModeAsync, GrabModeAsync);
+	for (unsigned int i=0; i<NELEM(keymapclient); i++)
+		grabkey(XKeysymToKeycode(dpy,keymapclient[i].keysym),
+		        keymapclient[i].modifiers,c->window,True,
+		        GrabModeAsync,GrabModeAsync);
 
-	if (c->geometry.width == DisplayWidth(dpy, scr) &&
-	        c->geometry.height == DisplayHeight(dpy, scr))
-		csetfull(c, True);
+	if (c->geometry.width==DisplayWidth(dpy,scr) &&
+	        c->geometry.height==DisplayHeight(dpy,scr))
+		csetfull(c,True);
 
 	if (!cisframed(c))
-		ewmh_notifyframeextents(c->window, (struct extents)
+		ewmh_notifyframeextents(c->window,(struct extents)
 		{
-			.top = 0,
-			 .bottom = 0,
-			  .left = 0,
-			   .right = 0
+			.top=0,
+			 .bottom=0,
+			  .left=0,
+			   .right=0
 		});
 
-	XSizeHints *h = c->wmnormalhints;
-	if (runlevel != RL_STARTUP && (h == NULL ||
-	                               (h->flags & (USPosition | PPosition)) == 0))
+	XSizeHints *h=c->wmnormalhints;
+	if (runlevel != RL_STARTUP && (h==NULL ||
+	                               (h->flags & (USPosition | PPosition))==0))
 		smartpos(c);
 
 	/*
 	 * Make sure WM_STATE is always initiated. We can't trust
 	 * the first call to cmap/cunmap.
 	 */
-	setwmstate(c->window, cisvisible(c) ? NormalState : IconicState);
+	setwmstate(c->window,cisvisible(c) ? NormalState : IconicState);
 
-	c->initialized = True;
+	c->initialized=True;
 
-	if (wmstate == IconicState && runlevel == RL_NORMAL)
+	if (wmstate==IconicState && runlevel==RL_NORMAL)
 		{
 			// Closest thing to iconic state
 			cpush(c);
@@ -1451,16 +1424,16 @@ struct client *manage(Window window)
 	else
 		{
 			cpopapp(c);
-			if (cisurgent(c) && runlevel == RL_NORMAL)
+			if (cisurgent(c) && runlevel==RL_NORMAL)
 				{
-					XBell(dpy, 0);
+					XBell(dpy,0);
 					gotodesk(c->desk);
 				}
 			if (cisvisible(c))
 				{
 					cmap(c);
-					if (runlevel == RL_NORMAL)
-						cfocus(c, CurrentTime);
+					if (runlevel==RL_NORMAL)
+						cfocus(c,CurrentTime);
 				}
 		}
 
@@ -1469,14 +1442,14 @@ struct client *manage(Window window)
 
 void manageall(void)
 {
-	assert(stacktop == None);
-	stacktop = XCreateWindow(dpy, root, 0, 0, 100, 100, 0, CopyFromParent,
-	                         InputOnly, CopyFromParent, 0, NULL);
-	Window r, p, *stack;
+	assert(stacktop==None);
+	stacktop=XCreateWindow(dpy,root,0,0,100,100,0,CopyFromParent,
+	                       InputOnly,CopyFromParent,0,NULL);
+	Window r,p,*stack;
 	unsigned n;
-	if (XQueryTree(dpy, root, &r, &p, &stack, &n) != 0)
+	if (XQueryTree(dpy,root,&r,&p,&stack,&n) != 0)
 		{
-			for (int i = 0; i < n; i++)
+			for (unsigned int i=0; i<n; i++)
 				{
 					if (ismapped(stack[i]))
 						manage(stack[i]);
@@ -1490,43 +1463,43 @@ void manageall(void)
 void cunmanage(struct client *c)
 {
 	ewmh_unmanage(c);
-	setwmstate(c->window, NormalState);
-	crelease(c, False);
+	setwmstate(c->window,NormalState);
+	crelease(c,False);
 }
 
 void unmanageall(void)
 {
 	struct client **v;
 	int n;
-	getclientstack(&v, &n);
-	for (int i = n - 1; i >= 0; i--)
+	getclientstack(&v,&n);
+	for (int i=n - 1; i >= 0; i--)
 		cunmanage(v[i]);
 	free(v);
 
 	if (stacktop != None)
 		{
-			XDestroyWindow(dpy, stacktop);
-			stacktop = None;
+			XDestroyWindow(dpy,stacktop);
+			stacktop=None;
 		}
 }
 
-int namewidth(struct font *font, struct client *c)
+int namewidth(struct font *font,struct client *c)
 {
 	if (c->netwmname != NULL)
-		return fttextwidth_utf8(font, c->netwmname);
+		return fttextwidth_utf8(font,c->netwmname);
 	else if (c->wmname != NULL)
-		return fttextwidth(font, c->wmname);
+		return fttextwidth(font,c->wmname);
 	else
 		return 0;
 }
 
-void drawname(Drawable d, struct font *font, struct fontcolor *color,
-              int x, int y, struct client *c)
+void drawname(Drawable d,struct font *font,struct fontcolor *color,
+              int x,int y,struct client *c)
 {
 	if (c->netwmname != NULL)
-		ftdrawstring_utf8(d, font, color, x, y, c->netwmname);
+		ftdrawstring_utf8(d,font,color,x,y,c->netwmname);
 	else if (c->wmname != NULL)
-		ftdrawstring(d, font, color, x, y, c->wmname);
+		ftdrawstring(d,font,color,x,y,c->wmname);
 }
 
 int cgetgrav(struct client *c)
@@ -1538,45 +1511,45 @@ int cgetgrav(struct client *c)
 		return NorthWestGravity;
 }
 
-void chintsize(struct client *c, int width, int height,
-               int *rwidth, int *rheight)
+void chintsize(struct client *c,int width,int height,
+               int *rwidth,int *rheight)
 {
-	width = MAX(1, width);
-	height = MAX(1, height);
+	width=MAX(1,width);
+	height=MAX(1,height);
 
-	XSizeHints *h = c->wmnormalhints;
-	if (h == NULL)
+	XSizeHints *h=c->wmnormalhints;
+	if (h==NULL)
 		{
-			*rwidth = width;
-			*rheight = height;
+			*rwidth=width;
+			*rheight=height;
 			return;
 		}
 
 	/*
-	 * Aspect ratio hints, with the following meaning:
+	 * Aspect ratio hints,with the following meaning:
 	 *
 	 *       min_aspect.x    width     max_aspect.x
-	 *   0 < ------------ <= ------ <= ------------ < inf
+	 *   0<------------ <= ------ <= ------------<inf
 	 *       min_aspect.y    height    max_aspect.y
 	 *
-	 * Ignore the hints if the values are negative, zero, or
+	 * Ignore the hints if the values are negative,zero,or
 	 * otherwise out of range. This also avoids division by zero.
 	 *
 	 * FIXME: We should avoid screwing up these limits further
 	 * down when adjusting for size increments and min/max size.
 	 */
 	if ((h->flags & PAspect) != 0 &&
-	        h->min_aspect.x > 0 && h->min_aspect.y > 0 &&
-	        h->max_aspect.x > 0 && h->max_aspect.y > 0 &&
+	        h->min_aspect.x>0 && h->min_aspect.y>0 &&
+	        h->max_aspect.x>0 && h->max_aspect.y>0 &&
 	        h->min_aspect.x * h->max_aspect.y <=
 	        h->max_aspect.x * h->min_aspect.y)
 		{
-			int minwidth = height * h->min_aspect.x / h->min_aspect.y;
-			if (width < minwidth)
-				width = minwidth;
-			int minheight = width * h->max_aspect.y / h->max_aspect.x;
-			if (height < minheight)
-				height = minheight;
+			int minwidth=height * h->min_aspect.x / h->min_aspect.y;
+			if (width<minwidth)
+				width=minwidth;
+			int minheight=width * h->max_aspect.y / h->max_aspect.x;
+			if (height<minheight)
+				height=minheight;
 		}
 
 	int basewidth;
@@ -1584,23 +1557,23 @@ void chintsize(struct client *c, int width, int height,
 
 	if (h->flags & PBaseSize)
 		{
-			basewidth = h->base_width;
-			baseheight = h->base_height;
+			basewidth=h->base_width;
+			baseheight=h->base_height;
 		}
 	else if (h->flags & PMinSize)
 		{
-			basewidth = h->min_width;
-			baseheight = h->min_height;
+			basewidth=h->min_width;
+			baseheight=h->min_height;
 		}
 	else
 		{
-			basewidth = 0;
-			baseheight = 0;
+			basewidth=0;
+			baseheight=0;
 		}
 
 	// Cannot be less than the base (or minimum)
-	width = MAX(basewidth, width);
-	height = MAX(baseheight, height);
+	width=MAX(basewidth,width);
+	height=MAX(baseheight,height);
 
 	if (h->flags & PResizeInc)
 		{
@@ -1612,15 +1585,15 @@ void chintsize(struct client *c, int width, int height,
 
 	if (h->flags & PMaxSize)
 		{
-			width = MIN(h->max_width, width);
-			height = MIN(h->max_height, height);
+			width=MIN(h->max_width,width);
+			height=MIN(h->max_height,height);
 		}
 
-	width = MAX(1, width);
-	height = MAX(1, height);
+	width=MAX(1,width);
+	height=MAX(1,height);
 
-	*rwidth = width;
-	*rheight = height;
+	*rwidth=width;
+	*rheight=height;
 }
 
 Window cgetwin(struct client *c)
@@ -1628,10 +1601,10 @@ Window cgetwin(struct client *c)
 	return c->window;
 }
 
-void csetnetwmname(struct client *c, const char *name)
+void csetnetwmname(struct client *c,const char *name)
 {
 	free(c->netwmname);
-	c->netwmname = (name == NULL) ? NULL : xstrdup(name);
+	c->netwmname=(name==NULL) ? NULL : xstrdup(name);
 
 	if (c->frame != NULL)
 		fupdate(c->frame);
@@ -1643,8 +1616,8 @@ void cignoreunmap(struct client *c)
 	c->ignoreunmapcount++;
 }
 
-void csetskiptaskbar(struct client *c, Bool skiptaskbar)
+void csetskiptaskbar(struct client *c,Bool skiptaskbar)
 {
-	c->skiptaskbar = skiptaskbar;
+	c->skiptaskbar=skiptaskbar;
 }
 

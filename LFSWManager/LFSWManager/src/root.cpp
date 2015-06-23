@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
@@ -28,34 +39,17 @@
 #include "lib.h"
 #include "client.h"
 #include "ewmh.h"
+#include "root.h"
 
-static void fnkey(KeySym,unsigned,Time,int);
-static void configurerequest(XConfigureRequestEvent *);
-static void maprequest(XMapRequestEvent *);
-static void keypress(XKeyEvent *);
-static void clientmessage(XClientMessageEvent *);
-static void unmapnotify(XUnmapEvent *);
-static void enternotify(XCrossingEvent *);
-static void leavenotify(XCrossingEvent *);
-static void event(void *,XEvent *);
-
-// True if the pointer is on this screen
-static Bool pointerhere;
-
-listener listener=
+void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
-	.function=event,
-	.pointer=NULL,
-};
+	if (state & ShiftMask)
+		setndesk(arg);
+	gotodesk(arg - 1);
+	refocus(time);
+}
 
-static struct keybind
-{
-	KeySym keysym;
-	unsigned modifiers;
-	void (*function)(KeySym key,unsigned state,Time t,int arg);
-	int arg;
-	KeyCode keycode;
-} keymap[] =
+keybind keymap[] =
 {
 	{ XK_F1,Mod1Mask,fnkey,1 },
 	{ XK_F2,Mod1Mask,fnkey,2 },
@@ -84,15 +78,58 @@ static struct keybind
 	{ XK_F12,ShiftMask | Mod1Mask,fnkey,12 },
 };
 
-static void fnkey(KeySym keysym,unsigned state,Time time,int arg)
+// True if the pointer is on this screen
+Bool pointerhere;
+
+void maprequest(XMapRequestEvent *e)
 {
-	if (state & ShiftMask)
-		setndesk(arg);
-	gotodesk(arg - 1);
-	refocus(time);
+	// Already managed?
+	if (redirect((XEvent *)e,e->window) == 0)
+		return;
+
+	// Try to manage it,otherwise just map it.
+	if (manage(e->window) == NULL)
+		XMapWindow(dpy,e->window);
 }
 
-static void configurerequest(XConfigureRequestEvent *e)
+/*
+ * Refer to the ICCCM section 4.1.4,"Changing Window State",
+ * for information on the synthetic UnmapNotify event sent
+ * by clients to the root window on withdrawal.
+ */
+void unmapnotify(XUnmapEvent *e)
+{
+	if (e->send_event)
+		redirect((XEvent *)e,e->window);
+}
+
+/*
+ * Refocus whenever the pointer enters our root window from
+ * another screen.
+ */
+void enternotify(XCrossingEvent *e)
+{
+	if (e->detail == NotifyNonlinear ||
+	        e->detail == NotifyNonlinearVirtual)
+		{
+			pointerhere=True;
+			refocus(e->time);
+		}
+}
+
+/*
+ * Give up focus if the pointer leaves our screen.
+ */
+void leavenotify(XCrossingEvent *e)
+{
+	if (e->detail == NotifyNonlinear ||
+	        e->detail == NotifyNonlinearVirtual)
+		{
+			pointerhere=False;
+			XSetInputFocus(dpy,PointerRoot,RevertToPointerRoot,e->time);
+		}
+}
+void configurerequest(XConfigureRequestEvent *e)
 {
 	// First try to redirect the event.
 	if (redirect((XEvent *)e,e->window) == 0)
@@ -116,20 +153,9 @@ static void configurerequest(XConfigureRequestEvent *e)
 	XConfigureWindow(dpy,e->window,e->value_mask,&wc);
 }
 
-static void maprequest(XMapRequestEvent *e)
+void keypress(XKeyEvent *e)
 {
-	// Already managed?
-	if (redirect((XEvent *)e,e->window) == 0)
-		return;
-
-	// Try to manage it,otherwise just map it.
-	if (manage(e->window) == NULL)
-		XMapWindow(dpy,e->window);
-}
-
-static void keypress(XKeyEvent *e)
-{
-	for (int i=0; i < NELEM(keymap); i++)
+	for (unsigned int i=0; i<NELEM(keymap); i++)
 		if (keymap[i].keycode == e->keycode)
 			{
 				keymap[i].function(keymap[i].keysym,e->state,e->time,keymap[i].arg);
@@ -137,50 +163,12 @@ static void keypress(XKeyEvent *e)
 			}
 }
 
-static void clientmessage(XClientMessageEvent *e)
+void clientmessage(XClientMessageEvent *e)
 {
 	ewmh_rootclientmessage(e);
 }
 
-/*
- * Refer to the ICCCM section 4.1.4,"Changing Window State",
- * for information on the synthetic UnmapNotify event sent
- * by clients to the root window on withdrawal.
- */
-static void unmapnotify(XUnmapEvent *e)
-{
-	if (e->send_event)
-		redirect((XEvent *)e,e->window);
-}
-
-/*
- * Refocus whenever the pointer enters our root window from
- * another screen.
- */
-static void enternotify(XCrossingEvent *e)
-{
-	if (e->detail == NotifyNonlinear ||
-	        e->detail == NotifyNonlinearVirtual)
-		{
-			pointerhere=True;
-			refocus(e->time);
-		}
-}
-
-/*
- * Give up focus if the pointer leaves our screen.
- */
-static void leavenotify(XCrossingEvent *e)
-{
-	if (e->detail == NotifyNonlinear ||
-	        e->detail == NotifyNonlinearVirtual)
-		{
-			pointerhere=False;
-			XSetInputFocus(dpy,PointerRoot,RevertToPointerRoot,e->time);
-		}
-}
-
-static void event(void *self,XEvent *e)
+void event(void *self,XEvent *e)
 {
 	switch (e->type)
 		{
@@ -208,6 +196,12 @@ static void event(void *self,XEvent *e)
 		}
 }
 
+listener listener=
+{
+	.function=event,
+	.pointer=NULL,
+};
+
 void initroot(void)
 {
 	listener.function=event;
@@ -228,7 +222,7 @@ void initroot(void)
 			exit(1);
 		}
 
-	for (int i=0; i < NELEM(keymap); i++)
+	for (unsigned int i=0; i<NELEM(keymap); i++)
 		{
 			struct keybind *k=&keymap[i];
 			k->keycode=XKeysymToKeycode(dpy,k->keysym);

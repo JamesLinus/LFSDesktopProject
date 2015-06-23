@@ -1,4 +1,15 @@
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #ifndef _WIND_H_
 #define _WIND_H_
 
@@ -6,10 +17,9 @@
 #include <X11/Xutil.h>
 
 #include "config.h"
-//#include "button.h"
 
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a)<(b) ? (a) : (b))
+#define MAX(a,b) ((a)>(b) ? (a) : (b))
 
 #define NELEM(v) (sizeof v / sizeof v[0])
 
@@ -57,11 +67,6 @@ struct bitmap
 			.pixmap=None \
 		}
 
-//struct button;
-//struct client;
-//struct dragger;
-//struct frame;
-
 struct font
 {
 	int ascent;
@@ -70,15 +75,16 @@ struct font
 	void *data;
 };
 
-typedef struct {
-        int type;       /* ColormapNotify */
-        unsigned long serial;   /* # of last request processed by server */
-        Bool send_event;        /* true if this came from a SendEvent request */
-        Display *display;       /* Display the event was read from */
-        Window window;
-        Colormap colormap;      /* colormap or None */
-        Bool mynew;
-        int state;      /* ColormapInstalled, ColormapUninstalled */
+typedef struct
+{
+	int type;       /* ColormapNotify */
+	unsigned long serial;   /* # of last request processed by server */
+	Bool send_event;        /* true if this came from a SendEvent request */
+	Display *display;       /* Display the event was read from */
+	Window window;
+	Colormap colormap;      /* colormap or None */
+	Bool mynew;
+	int state;      /* ColormapInstalled,ColormapUninstalled */
 } myXColormapEvent;
 
 
@@ -88,152 +94,47 @@ extern enum runlevel
 } runlevel;
 
 // The display name argument used in call to XOpenDisplay
-extern const char *displayname;
+extern const char		*displayname;
 
 // The last X error reported
-extern const char *xerror;
+extern const char		*xerror;
 
-extern Display *dpy;
-extern unsigned scr;
-extern Window root;
-
-// Normal colors
-extern unsigned long foregroundpixel;
-extern unsigned long backgroundpixel;
-
-// Highlight colors
-extern unsigned long hlforegroundpixel;
-extern unsigned long hlbackgroundpixel;
+extern Display			*dpy;
+extern unsigned			scr;
+extern Window			root;
 
 // Normal colors
-extern GC foreground;
-extern GC background;
+extern unsigned long	foregroundpixel;
+extern unsigned long	backgroundpixel;
 
 // Highlight colors
-extern GC hlforeground;
-extern GC hlbackground;
+extern unsigned long	hlforegroundpixel;
+extern unsigned long	hlbackgroundpixel;
 
-extern int lineheight;
-extern int halfleading;
+// Normal colors
+extern GC				foreground;
+extern GC				background;
 
-extern struct font *font;
-extern struct fontcolor *fhighlight;
-extern struct fontcolor *fnormal;
+// Highlight colors
+extern GC				hlforeground;
+extern GC				hlbackground;
 
-extern struct bitmap *deletebitmap;
+extern int				lineheight;
+extern int				halfleading;
 
-extern Atom WM_CHANGE_STATE;
-extern Atom WM_DELETE_WINDOW;
-extern Atom WM_PROTOCOLS;
-extern Atom WM_STATE;
+extern struct font		*font;
+extern struct fontcolor	*fhighlight;
+extern struct fontcolor	*fnormal;
+
+extern struct bitmap	*deletebitmap;
+
+extern Atom				WM_CHANGE_STATE;
+extern Atom				WM_DELETE_WINDOW;
+extern Atom				WM_PROTOCOLS;
+extern Atom				WM_STATE;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);
 int redirect(XEvent *,Window);
-
-//struct fontcolor *ftloadcolor(const char *);
-//void ftfreecolor(struct fontcolor *);
-//struct font *ftload(const char *);
-//void ftfree(struct font *);
-//void ftdrawstring(Drawable,struct font *,struct fontcolor *,int,int,const char *);
-//void ftdrawstring_utf8(Drawable,struct font *,struct fontcolor *,int,int,const char *);
-//int fttextwidth(struct font *,const char *);
-//int fttextwidth_utf8(struct font *,const char *);
-
-//void initroot(void);
-
-//struct frame *fcreate(struct client *);
-//void fdestroy(struct frame *);
-//void fupdate(struct frame *);
-//Window fgetwin(struct frame *);
-//struct geometry fgetgeom(struct frame *);
-//struct extents estimateframeextents(Window);
-
-#if 0
-struct client *manage(Window);
-void manageall(void);
-void unmanageall(void);
-void cpopapp(struct client *);
-void cpushapp(struct client *);
-void cdelete(struct client *,Time);
-void csetdesk(struct client *,Desk);
-void csetappdesk(struct client *,Desk);
-Desk cgetdesk(struct client *);
-void csetdock(struct client *,Bool);
-void csetfull(struct client *,Bool);
-void csetundecorated(struct client *,Bool);
-void csetappfollowdesk(struct client *,Bool);
-struct client *getfocus(void);
-void cfocus(struct client *,Time);
-struct client *refocus(Time);
-Bool cistask(struct client *);
-Bool cisvisible(struct client *);
-void setndesk(Desk);
-void gotodesk(Desk);
-void getwindowstack(Window **,size_t *);
-int namewidth(struct font *,struct client *);
-void drawname(Drawable,struct font *,struct fontcolor *,int,int,struct client *);
-Bool chaswmproto(struct client *,Atom);
-void restack(void);
-int cgetgrav(struct client *);
-struct geometry cgetgeom(struct client *);
-void csetgeom(struct client *,struct geometry);
-void csendconf(struct client *);
-Bool chasfocus(struct client *);
-Window cgetwin(struct client *);
-void csetnetwmname(struct client *,const char *);
-void cignoreunmap(struct client *);
-Bool cismapped(struct client *);
-Bool cisurgent(struct client *);
-void csetskiptaskbar(struct client *,Bool);
-void chintsize(struct client *,int,int,int *,int *);
-#endif
-
-//struct button *bcreate(void (*)(void *,Time),void *,struct bitmap *,Window,int,int,int,int,int);
-//void bdestroy(struct button *);
-
-//struct dragger *dcreate(Window,int,int,int,int,int,Cursor,void (*)(void *,int,int,unsigned long,Time),void *);
-//void ddestroy(struct dragger *);
-
-#if 0
-void ewmh_notifyndesk(unsigned long);
-void ewmh_notifycurdesk(unsigned long);
-void ewmh_notifyclientdesktop(Window,unsigned long);
-void ewmh_notifyframeextents(Window,struct extents);
-void ewmh_startwm(void);
-void ewmh_stopwm(void);
-void ewmh_maprequest(struct client *);
-void ewmh_notifyfull(Window,Bool);
-void ewmh_manage(struct client *);
-void ewmh_unmanage(struct client *);
-void ewmh_withdraw(struct client *);
-void ewmh_notifyfocus(Window,Window);
-void ewmh_notifyrestack(void);
-void ewmh_propertynotify(struct client *,XPropertyEvent *);
-void ewmh_clientmessage(struct client *,XClientMessageEvent *);
-void ewmh_rootclientmessage(XClientMessageEvent *);
-#endif
-
-//void mwm_startwm(void);
-//void mwm_manage(struct client *);
-//void mwm_propertynotify(struct client *,XPropertyEvent *);
-
-#if 0
-void *xmalloc(size_t);
-void *xrealloc(const void *,size_t);
-char *xstrdup(const char *);
-void grabkey(int,unsigned,Window,Bool,int,int);
-void ungrabkey(int,unsigned,Window);
-void grabbutton(unsigned,unsigned,Window,Bool,unsigned,int,int,Window,Cursor);
-void ungrabbutton(unsigned,unsigned,Window);
-long getwmstate(Window);
-void setwmstate(Window,long);
-Bool ismapped(Window);
-char *decodetextproperty(XTextProperty *);
-void setprop(Window,Atom,Atom,int,void *,int);
-void *getprop(Window,Atom,Atom,int,unsigned long *);
-void drawbitmap(Drawable,GC,struct bitmap *,int,int);
-unsigned long getpixel(const char *);
-#endif
 
 #endif

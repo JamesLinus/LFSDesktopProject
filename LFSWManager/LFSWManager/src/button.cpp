@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>

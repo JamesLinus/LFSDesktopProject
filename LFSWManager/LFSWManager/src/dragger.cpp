@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
@@ -40,9 +51,22 @@ struct dragger
 	int y;
 };
 
-static void event(void *,XEvent *);
-static void buttonpress(struct dragger *,XButtonEvent *);
-static void motionnotify(struct dragger *,XMotionEvent *);
+void buttonpress(struct dragger *,XButtonEvent *);
+void motionnotify(struct dragger *,XMotionEvent *);
+
+void draggerevent(void *self,XEvent *e)
+{
+	switch (e->type)
+		{
+		case MotionNotify:
+			motionnotify((dragger*)self,&e->xmotion);
+			break;
+		case ButtonPress:
+			buttonpress((dragger*)self,&e->xbutton);
+			break;
+		}
+}
+
 
 struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)
 {
@@ -53,8 +77,8 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 
 	struct dragger *d=(dragger*)xmalloc(sizeof *d);
 	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,
-	                          &sa);
-	d->listener.function=event;
+	                        &sa);
+	d->listener.function=draggerevent;
 	d->listener.pointer=d;
 	setlistener(d->window,&d->listener);
 	d->counter=0;
@@ -119,20 +143,7 @@ void ddestroy(struct dragger *d)
 	free(d);
 }
 
-static void event(void *self,XEvent *e)
-{
-	switch (e->type)
-		{
-		case MotionNotify:
-			motionnotify((dragger*)self,&e->xmotion);
-			break;
-		case ButtonPress:
-			buttonpress((dragger*)self,&e->xbutton);
-			break;
-		}
-}
-
-static void buttonpress(struct dragger *d,XButtonEvent *e)
+void buttonpress(struct dragger *d,XButtonEvent *e)
 {
 	d->counter=0;
 	d->x=e->x - d->x0;
@@ -141,7 +152,7 @@ static void buttonpress(struct dragger *d,XButtonEvent *e)
 		d->dragnotify(d->arg,e->x_root - d->x,e->y_root - d->y,d->counter++,e->time);
 }
 
-static void motionnotify(struct dragger *d,XMotionEvent *e)
+void motionnotify(struct dragger *d,XMotionEvent *e)
 {
 	if (d->dragnotify != NULL)
 		d->dragnotify(d->arg,e->x_root - d->x,e->y_root - d->y,d->counter++,e->time);

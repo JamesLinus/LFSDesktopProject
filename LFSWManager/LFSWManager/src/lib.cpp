@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -29,7 +40,7 @@
 
 // Lock-mask permutations that should be grabbed in addition
 // to the modifiers specified to the functions below.
-static const unsigned lockmasks[] =
+const unsigned lockmasks[] =
 {
 	0,LockMask,	// Caps Lock
 	Mod2Mask,	// Num Lock
@@ -75,7 +86,7 @@ void grabkey(int keycode,unsigned modifiers,Window grabwin,Bool ownerevents,int 
 	if (modifiers == AnyModifier)
 		XGrabKey(dpy,keycode,modifiers,grabwin,ownerevents,ptrmode,keymode);
 	else
-		for (int i=0; i < NELEM(lockmasks); i++)
+		for (unsigned int i=0; i<NELEM(lockmasks); i++)
 			XGrabKey(dpy,keycode,modifiers | lockmasks[i],grabwin,ownerevents,ptrmode,keymode);
 }
 
@@ -87,7 +98,7 @@ void ungrabkey(int keycode,unsigned modifiers,Window grabwin)
 	if (modifiers == AnyModifier)
 		XUngrabKey(dpy,keycode,AnyModifier,grabwin);
 	else
-		for (int i=0; i < NELEM(lockmasks); i++)
+		for (unsigned int i=0; i<NELEM(lockmasks); i++)
 			XUngrabKey(dpy,keycode,modifiers | lockmasks[i],grabwin);
 }
 
@@ -99,7 +110,7 @@ void grabbutton(unsigned button,unsigned modifiers,Window grabwin,Bool ownereven
 	if (modifiers == AnyModifier)
 		XGrabButton(dpy,button,AnyModifier,grabwin,ownerevents,eventmask,ptrmode,keymode,confineto,cursor);
 	else
-		for (int i=0; i < NELEM(lockmasks); i++)
+		for (unsigned int i=0; i<NELEM(lockmasks); i++)
 			XGrabButton(dpy,button,modifiers | lockmasks[i],grabwin,ownerevents,eventmask,ptrmode,keymode,confineto,cursor);
 }
 
@@ -111,7 +122,7 @@ void ungrabbutton(unsigned button,unsigned modifiers,Window grabwin)
 	if (modifiers == AnyModifier)
 		XUngrabButton(dpy,button,modifiers,grabwin);
 	else
-		for (int i=0; i < lockmasks[i]; i++)
+		for (unsigned int i=0; i<lockmasks[i]; i++)
 			XUngrabButton(dpy,button,modifiers | lockmasks[i],grabwin);
 }
 
@@ -129,7 +140,7 @@ long getwmstate(Window w)
 	                       &actualtype,&actualformat,&nitems,
 	                       &bytesafter,&prop) == Success)
 		{
-			if (nitems > 0)
+			if (nitems>0)
 				state=((long *)prop)[0];
 			XFree(prop);
 		}
@@ -142,7 +153,7 @@ long getwmstate(Window w)
  */
 void setwmstate(Window w,long state)
 {
-	long data[2]={ state,None };
+	long data[2]= { state,None };
 	XChangeProperty(dpy,w,WM_STATE,WM_STATE,32,PropModeReplace,(unsigned char *)data,2);
 }
 
@@ -161,7 +172,7 @@ char *decodetextproperty(XTextProperty *p)
 	char **v=NULL;
 	int n=0;
 	XmbTextPropertyToTextList(dpy,p,&v,&n);
-	if (n > 0)
+	if (n>0)
 		s=xstrdup(v[0]);
 	if (v != NULL)
 		XFreeStringList(v);
@@ -193,7 +204,7 @@ void *getprop(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp)
 					// Does not exist (type=None),or wrong type/format
 					return NULL;
 				}
-			else if (rafter > 0)
+			else if (rafter>0)
 				{
 					XFree(ptr);
 					ptr=NULL;

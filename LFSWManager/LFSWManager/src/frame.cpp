@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,26 +71,26 @@ struct frame
 };
 
 #if 0
-static void reorder(Window,Window);
-static void setgrav(Window,int);
-static void gravitate(int,int,int *,int *);
-static void confrequest(struct frame *,XConfigureRequestEvent *);
-static void repaint(struct frame *);
-static void buttonpress(struct frame *,XButtonEvent *);
-static void buttonrelease(struct frame *,XButtonEvent *);
-static void moveresize(struct frame *,int,int,int,int);
-static void motionnotify(struct frame *,XMotionEvent*);
-static void maprequest(struct frame *,XMapRequestEvent *);
-static void expose(struct frame *,XExposeEvent *);
-static void event(void *,XEvent *);
-static void mydelete(void *,Time);
-static void resizetopleft(void *,int,int,unsigned long,Time);
-static void resizetopright(void *,int,int,unsigned long,Time);
+void reorder(Window,Window);
+void setgrav(Window,int);
+void gravitate(int,int,int *,int *);
+void confrequest(struct frame *,XConfigureRequestEvent *);
+void repaint(struct frame *);
+void buttonpress(struct frame *,XButtonEvent *);
+void buttonrelease(struct frame *,XButtonEvent *);
+void moveresize(struct frame *,int,int,int,int);
+void motionnotify(struct frame *,XMotionEvent*);
+void maprequest(struct frame *,XMapRequestEvent *);
+void expose(struct frame *,XExposeEvent *);
+void event(void *,XEvent *);
+void mydelete(void *,Time);
+void resizetopleft(void *,int,int,unsigned long,Time);
+void resizetopright(void *,int,int,unsigned long,Time);
 #endif
 
-static size_t fcount;
-static Cursor cursortopleft=None;
-static Cursor cursortopright=None;
+size_t fcount;
+Cursor cursortopleft=None;
+Cursor cursortopright=None;
 
 void mydelete(void *myclient,Time t)
 {
@@ -105,13 +116,13 @@ struct extents estimateframeextents(Window w)
 	};
 }
 
-static void reorder(Window ref,Window below)
+void reorder(Window ref,Window below)
 {
-	Window	w[2]={ref,below};
+	Window	w[2]= {ref,below};
 	XRestackWindows(dpy,w,2);
 }
 
-static void setgrav(Window win,int grav)
+void setgrav(Window win,int grav)
 {
 	XSetWindowAttributes	wa;
 	wa.win_gravity=grav;
@@ -119,7 +130,7 @@ static void setgrav(Window win,int grav)
 	XChangeWindowAttributes(dpy,win,CWWinGravity,&wa);
 }
 
-static void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
+void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
 {
 	switch (wingrav)
 		{
@@ -230,7 +241,7 @@ void fupdate(struct frame *f)
 			f->pixmap=None;
 		}
 	f->namewidth=namewidth(font,f->client);
-	if (f->namewidth > 0)
+	if (f->namewidth>0)
 		{
 			f->pixmap=XCreatePixmap(dpy,root,f->namewidth,lineheight,DefaultDepth(dpy,scr));
 			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,lineheight);
@@ -310,14 +321,14 @@ void confrequest(struct frame *f,XConfigureRequestEvent *e)
 	moveresize(f,x,y,width,height);
 }
 
-static void buttonpress(struct frame *f,XButtonEvent *e)
+void buttonpress(struct frame *f,XButtonEvent *e)
 {
 	if (e->button == Button1)
 		{
 			cpopapp(f->client);
 			cfocus(f->client,e->time);
 
-			if (e->y < EXT_TOP || (e->state & Mod1Mask) != 0)
+			if (e->y<EXT_TOP || (e->state & Mod1Mask) != 0)
 				{
 					f->grabbed=True;
 					csetappfollowdesk(f->client,True);
@@ -328,7 +339,7 @@ static void buttonpress(struct frame *f,XButtonEvent *e)
 		}
 }
 
-static void buttonrelease(struct frame *f,XButtonEvent *e)
+void buttonrelease(struct frame *f,XButtonEvent *e)
 {
 	if (e->button == Button1 && f->grabbed)
 		{
@@ -338,19 +349,19 @@ static void buttonrelease(struct frame *f,XButtonEvent *e)
 		}
 }
 
-static void motionnotify(struct frame *f,XMotionEvent *e)
+void motionnotify(struct frame *f,XMotionEvent *e)
 {
 	moveresize(f,e->x_root - f->downx,e->y_root - f->downy,f->width,f->height);
 }
 
-static void maprequest(struct frame *f,XMapRequestEvent *e)
+void maprequest(struct frame *f,XMapRequestEvent *e)
 {
 	Window win=cgetwin(f->client);
 	if (e->window == win)
 		redirect((XEvent *)e,win);
 }
 
-static void expose(struct frame *f,XExposeEvent *e)
+void expose(struct frame *f,XExposeEvent *e)
 {
 	if (e->count == 0)
 		repaint(f);
@@ -556,7 +567,7 @@ void fdestroy(struct frame *f)
 	XDestroyWindow(dpy,f->window);
 	free(f);
 
-	assert(fcount > 0);
+	assert(fcount>0);
 	fcount--;
 	if (fcount == 0)
 		{

@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,19 +50,6 @@
 #define NET_WM_STATE_ADD 1
 #define NET_WM_STATE_TOGGLE 2
 
-static void addclient(Window);
-static void delclient(Window);
-static unsigned long ewmh_getndesktops(void);
-static void setcurrentdesktop(unsigned long);
-static void reloadwindowname(struct client *);
-static void reloadwindowstate(struct client *);
-static void reloadwindowtype(struct client *);
-static void reloadwindowdesktop(struct client *);
-static Bool hasstate(Window,Atom);
-static void removestate(Window,Atom);
-static void addstate(Window,Atom);
-static void changestate(Window,int,Atom);
-
 /*
  * The list of supported properties. Note that we need to
  * include some properties that we actually never use in
@@ -61,48 +59,49 @@ static void changestate(Window,int,Atom);
  *
  * NB: Keep this list sorted.
  */
-static Atom NET_ACTIVE_WINDOW;
-static Atom NET_CLIENT_LIST;
-static Atom NET_CLIENT_LIST_STACKING;
-static Atom NET_CLOSE_WINDOW;
-static Atom NET_CURRENT_DESKTOP;
-static Atom NET_DESKTOP_GEOMETRY;
-static Atom NET_DESKTOP_VIEWPORT;
-static Atom NET_FRAME_EXTENTS;
-static Atom NET_NUMBER_OF_DESKTOPS;
-static Atom NET_REQUEST_FRAME_EXTENTS;
-static Atom NET_SUPPORTED;
-static Atom NET_SUPPORTING_WM_CHECK;
-static Atom NET_WM_ACTION_CHANGE_DESKTOP;
-static Atom NET_WM_ACTION_CLOSE;
-static Atom NET_WM_ACTION_FULLSCREEN;
-static Atom NET_WM_ACTION_MINIMIZE;
-static Atom NET_WM_ALLOWED_ACTIONS;
-static Atom NET_WM_DESKTOP;
-static Atom NET_WM_ICON_NAME;
-static Atom NET_WM_NAME;
-static Atom NET_WM_STATE;
-static Atom NET_WM_STATE_ABOVE;
-static Atom NET_WM_STATE_BELOW;
-static Atom NET_WM_STATE_FULLSCREEN;
-static Atom NET_WM_STATE_HIDDEN;
-static Atom NET_WM_STATE_SKIP_TASKBAR;
-static Atom NET_WM_VISIBLE_ICON_NAME;
-static Atom NET_WM_VISIBLE_NAME;
-static Atom NET_WM_WINDOW_TYPE;
-static Atom NET_WM_WINDOW_TYPE_DOCK;
-static Atom NET_WORKAREA;
+Atom NET_ACTIVE_WINDOW;
+Atom NET_CLIENT_LIST;
+Atom NET_CLIENT_LIST_STACKING;
+Atom NET_CLOSE_WINDOW;
+Atom NET_CURRENT_DESKTOP;
+Atom NET_DESKTOP_GEOMETRY;
+Atom NET_DESKTOP_VIEWPORT;
+Atom NET_FRAME_EXTENTS;
+Atom NET_NUMBER_OF_DESKTOPS;
+Atom NET_REQUEST_FRAME_EXTENTS;
+Atom NET_SUPPORTED;
+Atom NET_SUPPORTING_WM_CHECK;
+Atom NET_WM_ACTION_CHANGE_DESKTOP;
+Atom NET_WM_ACTION_CLOSE;
+Atom NET_WM_ACTION_FULLSCREEN;
+Atom NET_WM_ACTION_MINIMIZE;
+Atom NET_WM_ALLOWED_ACTIONS;
+Atom NET_WM_DESKTOP;
+Atom NET_WM_ICON_NAME;
+Atom NET_WM_NAME;
+Atom NET_WM_STATE;
+Atom NET_WM_STATE_ABOVE;
+Atom NET_WM_STATE_BELOW;
+Atom NET_WM_STATE_FULLSCREEN;
+Atom NET_WM_STATE_HIDDEN;
+Atom NET_WM_STATE_SKIP_TASKBAR;
+Atom NET_WM_VISIBLE_ICON_NAME;
+Atom NET_WM_VISIBLE_NAME;
+Atom NET_WM_WINDOW_TYPE;
+Atom NET_WM_WINDOW_TYPE_DOCK;
+Atom NET_WORKAREA;
+Atom NET_WM_WINDOW_TYPE_DESKTOP;
 
-static Atom UTF8_STRING;
+Atom UTF8_STRING;
 
-static Window wmcheckwin=None;
+Window wmcheckwin=None;
 
-static struct
+struct
 {
 	Window *v;
 	size_t n;
 	size_t lim;
-} clientlist={ NULL,0,0 };
+} clientlist= { NULL,0,0 };
 
 void ewmh_notifyclientdesktop(Window w,unsigned long i)
 {
@@ -116,11 +115,11 @@ void ewmh_notifycurdesk(unsigned long n)
 
 void ewmh_notifyframeextents(Window w,struct extents e)
 {
-	unsigned long v[4]={ e.left,e.right,e.top,e.bottom };
+	unsigned long v[4]= { (unsigned long)e.left,(unsigned long)e.right,(unsigned long)e.top,(unsigned long)e.bottom };
 	setprop(w,NET_FRAME_EXTENTS,XA_CARDINAL,32,v,NELEM(v));
 }
 
-static void addclient(Window w)
+void addclient(Window w)
 {
 	if (clientlist.n == clientlist.lim)
 		{
@@ -131,14 +130,14 @@ static void addclient(Window w)
 	setprop(root,NET_CLIENT_LIST,XA_WINDOW,32,clientlist.v,clientlist.n);
 }
 
-static void delclient(Window w)
+void delclient(Window w)
 {
-	int i;
-	for (i=0; i < clientlist.n && clientlist.v[i] != w; i++)
+	unsigned int i;
+	for (i=0; i<clientlist.n && clientlist.v[i] != w; i++)
 		;
-	if (i < clientlist.n)
+	if (i<clientlist.n)
 		{
-			for (; i < clientlist.n - 1; i++)
+			for (; i<clientlist.n - 1; i++)
 				clientlist.v[i]=clientlist.v[i + 1];
 			clientlist.n--;
 		}
@@ -151,7 +150,7 @@ static void delclient(Window w)
 		}
 }
 
-static unsigned long ewmh_getndesktops(void)
+unsigned long ewmh_getndesktops(void)
 {
 	unsigned long ndesk=DEFAULT_NUMBER_OF_DESKTOPS;
 	unsigned long n;
@@ -169,7 +168,7 @@ void ewmh_notifyndesk(unsigned long n)
 {
 	long *viewport=(long int*)xmalloc(n * 2 * sizeof (long));
 	long *workarea=(long int*)xmalloc(n * 4 * sizeof (long));
-	for (unsigned long i=0; i < n; i++)
+	for (unsigned long i=0; i<n; i++)
 		{
 			viewport[2 * i + 0]=0;
 			viewport[2 * i + 1]=0;
@@ -187,7 +186,7 @@ void ewmh_notifyndesk(unsigned long n)
 	setprop(root,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL,32,&n,1);
 }
 
-static void setcurrentdesktop(unsigned long i)
+void setcurrentdesktop(unsigned long i)
 {
 	setprop(root,NET_CURRENT_DESKTOP,XA_CARDINAL,32,&i,1);
 }
@@ -202,11 +201,11 @@ void ewmh_startwm(void)
 		NET_ACTIVE_WINDOW=xatom("_NET_ACTIVE_WINDOW"),NET_CLIENT_LIST=xatom("_NET_CLIENT_LIST"),NET_CLIENT_LIST_STACKING=xatom("_NET_CLIENT_LIST_STACKING"),NET_CLOSE_WINDOW=xatom("_NET_CLOSE_WINDOW"),NET_CURRENT_DESKTOP=xatom("_NET_CURRENT_DESKTOP"),NET_DESKTOP_GEOMETRY=xatom("_NET_DESKTOP_GEOMETRY"),NET_DESKTOP_VIEWPORT=xatom("_NET_DESKTOP_VIEWPORT"),NET_FRAME_EXTENTS=xatom("_NET_FRAME_EXTENTS"),NET_NUMBER_OF_DESKTOPS=xatom("_NET_NUMBER_OF_DESKTOPS"),NET_REQUEST_FRAME_EXTENTS =
 		xatom("_NET_REQUEST_FRAME_EXTENTS"),NET_SUPPORTED=xatom("_NET_SUPPORTED"),NET_SUPPORTING_WM_CHECK=xatom("_NET_SUPPORTING_WM_CHECK"),NET_WM_ACTION_CHANGE_DESKTOP =
 		xatom("_NET_WM_ACTION_CHANGE_DESKTOP"),NET_WM_ACTION_CLOSE=xatom("_NET_WM_ACTION_CLOSE"),NET_WM_ACTION_FULLSCREEN=xatom("_NET_WM_ACTION_FULLSCREEN"),NET_WM_ACTION_MINIMIZE=xatom("_NET_WM_ACTION_MINIMIZE"),NET_WM_ALLOWED_ACTIONS=xatom("_NET_WM_ALLOWED_ACTIONS"),NET_WM_DESKTOP=xatom("_NET_WM_DESKTOP"),NET_WM_ICON_NAME=xatom("_NET_WM_ICON_NAME"),NET_WM_NAME=xatom("_NET_WM_NAME"),NET_WM_STATE=xatom("_NET_WM_STATE"),NET_WM_STATE_ABOVE=xatom("_NET_WM_STATE_ABOVE"),NET_WM_STATE_BELOW=xatom("_NET_WM_STATE_BELOW"),NET_WM_STATE_FULLSCREEN=xatom("_NET_WM_STATE_FULLSCREEN"),NET_WM_STATE_HIDDEN=xatom("_NET_WM_STATE_HIDDEN"),NET_WM_STATE_SKIP_TASKBAR =
-		xatom("_NET_WM_STATE_SKIP_TASKBAR"),NET_WM_VISIBLE_ICON_NAME=xatom("_NET_WM_VISIBLE_ICON_NAME"),NET_WM_VISIBLE_NAME=xatom("_NET_WM_VISIBLE_NAME"),NET_WM_WINDOW_TYPE=xatom("_NET_WM_WINDOW_TYPE"),NET_WM_WINDOW_TYPE_DOCK=xatom("_NET_WM_WINDOW_TYPE_DOCK"),NET_WORKAREA=xatom("_NET_WORKAREA"),
+		xatom("_NET_WM_STATE_SKIP_TASKBAR"),NET_WM_VISIBLE_ICON_NAME=xatom("_NET_WM_VISIBLE_ICON_NAME"),NET_WM_VISIBLE_NAME=xatom("_NET_WM_VISIBLE_NAME"),NET_WM_WINDOW_TYPE=xatom("_NET_WM_WINDOW_TYPE"),NET_WM_WINDOW_TYPE_DOCK=xatom("_NET_WM_WINDOW_TYPE_DOCK"),NET_WORKAREA=xatom("_NET_WORKAREA"),NET_WM_WINDOW_TYPE_DESKTOP=xatom("_NET_WM_WINDOW_TYPE_DESKTOP")
 	};
 	setprop(root,NET_SUPPORTED,XA_ATOM,32,v,NELEM(v));
 
-	long geometry[2]={ DisplayWidth(dpy,scr),DisplayHeight(dpy,scr) };
+	long geometry[2]= { DisplayWidth(dpy,scr),DisplayHeight(dpy,scr) };
 	setprop(root,NET_DESKTOP_GEOMETRY,XA_CARDINAL,32,geometry,2);
 
 	setndesk(ewmh_getndesktops());
@@ -241,7 +240,7 @@ void ewmh_stopwm(void)
 	XDestroyWindow(dpy,wmcheckwin);
 }
 
-static void reloadwindowname(struct client *c)
+void reloadwindowname(struct client *c)
 {
 	unsigned long n=0;
 	char *name=(char*)getprop(cgetwin(c),NET_WM_NAME,UTF8_STRING,8,&n);
@@ -250,7 +249,23 @@ static void reloadwindowname(struct client *c)
 		XFree(name);
 }
 
-static void reloadwindowstate(struct client *c)
+/*
+ * Removes a _NET_WM_STATE property (including duplicates).
+ */
+void removestate(Window w,Atom state)
+{
+	unsigned long n=0;
+	Atom *v=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
+	unsigned long k=0;
+	for (unsigned long i=0; i<n; i++)
+		if (v[i] != state)
+			v[k++]=v[i];
+	setprop(w,NET_WM_STATE,XA_ATOM,32,v,k);
+	if (v != NULL)
+		XFree(v);
+}
+
+void reloadwindowstate(struct client *c)
 {
 	Window w=cgetwin(c);
 	Bool skiptaskbar=False;
@@ -258,7 +273,7 @@ static void reloadwindowstate(struct client *c)
 
 	unsigned long n=0;
 	Atom *states=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
-	for (int i=0; i < n; i++)
+	for (unsigned int i=0; i<n; i++)
 		if (states[i] == NET_WM_STATE_SKIP_TASKBAR)
 			skiptaskbar=True;
 		else if (states[i] == NET_WM_STATE_FULLSCREEN)
@@ -272,7 +287,7 @@ static void reloadwindowstate(struct client *c)
 	csetfull(c,isfullscreen);
 }
 
-static void reloadwindowtype(struct client *c)
+void reloadwindowtype(struct client *c)
 {
 	Bool isdock=False;
 
@@ -280,7 +295,7 @@ static void reloadwindowtype(struct client *c)
 	Atom *types=(Atom*)getprop(cgetwin(c),NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
 	if (types != NULL)
 		{
-			for (unsigned long i=0; i < n; i++)
+			for (unsigned long i=0; i<n; i++)
 				if (types[i] == NET_WM_WINDOW_TYPE_DOCK)
 					isdock=True;
 			XFree(types);
@@ -289,7 +304,7 @@ static void reloadwindowtype(struct client *c)
 	csetdock(c,isdock);
 }
 
-static void reloadwindowdesktop(struct client *c)
+void reloadwindowdesktop(struct client *c)
 {
 	Window w=cgetwin(c);
 	unsigned long n=0;
@@ -359,7 +374,7 @@ void ewmh_manage(struct client *c)
 void ewmh_notifyfocus(Window old,Window mynew)
 {
 	// The last recorded focus window
-	static Window current=None;
+	Window current=None;
 
 	if (old == None || old == current)
 		{
@@ -401,12 +416,12 @@ void ewmh_propertynotify(struct client *c,XPropertyEvent *e)
 		reloadwindowname(c);
 }
 
-static Bool hasstate(Window w,Atom state)
+Bool hasstate(Window w,Atom state)
 {
 	unsigned long n=0;
 	Atom *v=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	Bool found=False;
-	for (unsigned long i=0; i < n; i++)
+	for (unsigned long i=0; i<n; i++)
 		if (v[i] == state)
 			{
 				found=True;
@@ -418,30 +433,14 @@ static Bool hasstate(Window w,Atom state)
 }
 
 /*
- * Removes a _NET_WM_STATE property (including duplicates).
- */
-static void removestate(Window w,Atom state)
-{
-	unsigned long n=0;
-	Atom *v=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
-	unsigned long k=0;
-	for (unsigned long i=0; i < n; i++)
-		if (v[i] != state)
-			v[k++]=v[i];
-	setprop(w,NET_WM_STATE,XA_ATOM,32,v,k);
-	if (v != NULL)
-		XFree(v);
-}
-
-/*
  * Adds a _NET_WM_STATE property,unless it is already present.
  */
-static void addstate(Window w,Atom state)
+void addstate(Window w,Atom state)
 {
 	unsigned long n=0;
 	Atom *old=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	Bool present=False;
-	for (unsigned long i=0; i < n; i++)
+	for (unsigned long i=0; i<n; i++)
 		if (old[i] == state)
 			{
 				present=True;
@@ -459,7 +458,7 @@ static void addstate(Window w,Atom state)
 		XFree(old);
 }
 
-static void changestate(Window w,int how,Atom state)
+void changestate(Window w,int how,Atom state)
 {
 	switch (how)
 		{

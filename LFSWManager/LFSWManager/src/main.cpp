@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <errno.h>
 #include <locale.h>
 #include <signal.h>
@@ -45,62 +56,43 @@
 #include "deleven.xbm"
 #include "delodd.xbm"
 
-static int errhandler(Display *,XErrorEvent *);
-static void onsignal(int);
-static int waitevent(void);
-static void usage(FILE *);
-static struct listener *getlistener(Window);
+DEFINE_BITMAP(deleven);
+DEFINE_BITMAP(delodd);
 
-enum runlevel runlevel=RL_STARTUP;
+enum			runlevel runlevel=RL_STARTUP;
 
-static DEFINE_BITMAP(deleven);
-static DEFINE_BITMAP(delodd);
-
-struct bitmap *deletebitmap;
-
-static const char *progname;
-
-static int exitstatus;
+bitmap			*deletebitmap;
+const char		*progname;
+int				exitstatus;
 
 /*
  * If true,enable debug mode. This will enable synchronous
  * X11 transactions,and print Xlib errors to standard error.
  */
-static Bool debug=False;
+Bool			debug=False;
 
 // The display name used in call to XOpenDisplay
-const char *displayname=NULL;
+const char		*displayname=NULL;
 
 // The last X error reported
-const char *xerror=NULL;
+const char		*xerror=NULL;
 
-Display *dpy;
 unsigned scr;
 Window root;
-unsigned long foregroundpixel;
-unsigned long backgroundpixel;
-unsigned long hlforegroundpixel;
-unsigned long hlbackgroundpixel;
-GC foreground;
-GC background;
-GC hlforeground;
-GC hlbackground;
+unsigned long	foregroundpixel;
+unsigned long	backgroundpixel;
+unsigned long	hlforegroundpixel;
+unsigned long	hlbackgroundpixel;
+GC				foreground;
+GC				background;
+GC				hlforeground;
+GC				hlbackground;
 
-int lineheight;
-int halfleading;
+int				lineheight;
+int				halfleading;
 
-//struct font *font;
-//struct fontcolor *fhighlight;
-//struct fontcolor *fnormal;
-
-Atom WM_CHANGE_STATE;
-Atom WM_DELETE_WINDOW;
-Atom WM_PROTOCOLS;
-Atom WM_STATE;
-
-static XContext listeners;
-
-static sigset_t sigmask;
+XContext		listeners;
+sigset_t		sigmask;
 
 /*
  * Print formatted error message
@@ -123,7 +115,7 @@ void setlistener(Window w,const struct listener *l)
 		XSaveContext(dpy,w,listeners,(XPointer)l);
 }
 
-static struct listener *getlistener(Window w)
+struct listener *getlistener(Window w)
 {
 	struct listener *l;
 	if (XFindContext(dpy,w,listeners,(XPointer *)&l) == 0)
@@ -141,9 +133,9 @@ int redirect(XEvent *e,Window w)
 	return 0;
 }
 
-static int errhandler(Display *dpy,XErrorEvent *e)
+int errhandler(Display *dpy,XErrorEvent *e)
 {
-	static char buf[128];
+	char buf[128];
 	buf[0]='\0';
 	XGetErrorText(dpy,e->error_code,buf,sizeof buf);
 	if (debug)
@@ -152,13 +144,13 @@ static int errhandler(Display *dpy,XErrorEvent *e)
 	return 0;
 }
 
-static void onsignal(int signo)
+void onsignal(int signo)
 {
 }
 
-static int waitevent(void)
+int waitevent(void)
 {
-	if (XPending(dpy) > 0)
+	if (XPending(dpy)>0)
 		return 0;
 
 	fd_set rfds;
@@ -189,7 +181,7 @@ static int waitevent(void)
 		}
 }
 
-static void usage(FILE *f)
+void usage(FILE *f)
 {
 	fprintf(f,"usage: %s [ -v ]"
 	        " [ -n number ]"
@@ -214,10 +206,10 @@ int main(int argc,char *argv[])
 
 	char *ftname=NULL;
 
-	char *fname="rgb:00/00/00";
-	char *bname="rgb:ff/ff/ff";
-	char *hlfname="rgb:00/00/00";
-	char *hlbname="rgb:00/ff/ff";
+	const char *fname="rgb:00/00/00";
+	const char *bname="rgb:ff/ff/ff";
+	const char *hlfname="rgb:00/00/00";
+	const char *hlbname="rgb:00/ff/ff";
 
 	Desk ndesk=0;
 
@@ -242,7 +234,7 @@ int main(int argc,char *argv[])
 					errno=0;
 					char *p;
 					long n=strtol(optarg,&p,10);
-					if ((n < 0) || (errno != 0) || (*optarg == '\0') || (*p != '\0'))
+					if ((n<0) || (errno != 0) || (*optarg == '\0') || (*p != '\0'))
 						{
 							errorf("%s: invalid desktop count",optarg);
 							exit(1);
@@ -261,10 +253,10 @@ int main(int argc,char *argv[])
 				exit(1);
 			}
 
-	if (optind < argc)
+	if (optind<argc)
 		displayname=argv[optind++];
 
-	if (optind < argc)
+	if (optind<argc)
 		{
 			errorf("unexpected argument -- %s",argv[optind]);
 			usage(stderr);

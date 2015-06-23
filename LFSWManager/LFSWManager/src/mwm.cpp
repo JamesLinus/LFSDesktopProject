@@ -20,6 +20,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+	Thanks to Johan for the original code available here:
+	http://sourceforge.net/projects/windwm/?source=navbar
+
+	Changes/additions
+	©keithhedger Tue 23 Jun 09:56:25 BST 2015 kdhedger68713@gmail.com
+
+	Extra code released under GPL3
+
+*/
+
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
@@ -55,10 +66,10 @@ typedef struct
 	long status;
 } mwmhints;
 
-static Atom MOTIF_WM_HINTS;
+Atom MOTIF_WM_HINTS;
 
-static void reloadmwmhints(struct client *);
-static mwmhints *getmwmhints(struct client *);
+void reloadmwmhints(struct client *);
+mwmhints *getmwmhints(struct client *);
 
 void mwm_startwm(void)
 {
@@ -80,7 +91,7 @@ void mwm_propertynotify(struct client *c,XPropertyEvent *e)
  * We ignore all hints except the title decor hint. If the window
  * doesn't want a title,we remove it's frame completely.
  */
-static void reloadmwmhints(struct client *c)
+void reloadmwmhints(struct client *c)
 {
 	Bool undecorated=False;
 
@@ -105,7 +116,7 @@ static void reloadmwmhints(struct client *c)
 	csetundecorated(c,undecorated);
 }
 
-static mwmhints *getmwmhints(struct client *c)
+mwmhints *getmwmhints(struct client *c)
 {
 	unsigned long n=0;
 	mwmhints *h=(mwmhints*)getprop(cgetwin(c),MOTIF_WM_HINTS,MOTIF_WM_HINTS,32,&n);
