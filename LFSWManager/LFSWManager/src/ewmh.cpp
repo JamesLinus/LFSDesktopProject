@@ -175,8 +175,8 @@ void ewmh_notifyndesk(unsigned long n)
 
 			workarea[4 * i + 0]=0;
 			workarea[4 * i + 1]=0;
-			workarea[4 * i + 2]=DisplayWidth(dpy,scr);
-			workarea[4 * i + 3]=DisplayHeight(dpy,scr);
+			workarea[4 * i + 2]=DisplayWidth(dpy,screen);
+			workarea[4 * i + 3]=DisplayHeight(dpy,screen);
 		}
 	setprop(root,NET_DESKTOP_VIEWPORT,XA_CARDINAL,32,viewport,n * 2);
 	setprop(root,NET_WORKAREA,XA_CARDINAL,32,workarea,n * 4);
@@ -205,7 +205,7 @@ void ewmh_startwm(void)
 	};
 	setprop(root,NET_SUPPORTED,XA_ATOM,32,v,NELEM(v));
 
-	long geometry[2]= { DisplayWidth(dpy,scr),DisplayHeight(dpy,scr) };
+	long geometry[2]= { DisplayWidth(dpy,screen),DisplayHeight(dpy,screen) };
 	setprop(root,NET_DESKTOP_GEOMETRY,XA_CARDINAL,32,geometry,2);
 
 	setndesk(ewmh_getndesktops());

@@ -22,3 +22,5 @@ Atom				WM_DELETE_WINDOW;
 Atom				WM_PROTOCOLS;
 Atom				WM_STATE;
 
+unsigned int		screen;
+int					displayWidth;

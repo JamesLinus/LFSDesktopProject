@@ -227,6 +227,6 @@ void drawbitmap(Drawable d,GC gc,struct bitmap *b,int x,int y)
 unsigned long getpixel(const char *name)
 {
 	XColor tc,sc;
-	XAllocNamedColor(dpy,DefaultColormap(dpy,scr),name,&sc,&tc);
+	XAllocNamedColor(dpy,DefaultColormap(dpy,screen),name,&sc,&tc);
 	return sc.pixel;
 }

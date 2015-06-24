@@ -371,8 +371,8 @@ void csetfull(struct client *c,Bool enabled)
 			XMoveResizeWindow(dpy,c->window,
 			                  -c->geometry.borderwidth,
 			                  -c->geometry.borderwidth,
-			                  DisplayWidth(dpy,scr),
-			                  DisplayHeight(dpy,scr));
+			                  DisplayWidth(dpy,screen),
+			                  DisplayHeight(dpy,screen));
 			if (cisvisible(c))
 				cmap(c);
 			if (f)
@@ -801,7 +801,7 @@ void keypress_sticky(struct client *c,unsigned state,Time time)
 void cinstallcolormaps(struct client *c)
 {
 	XInstallColormap(dpy,c->colormap==None ?
-	                 DefaultColormap(dpy,scr) : c->colormap);
+	                 DefaultColormap(dpy,screen) : c->colormap);
 }
 
 void focusin(struct client *c,XFocusChangeEvent *e)
@@ -858,8 +858,8 @@ struct geometry cgetgeom(struct client *c)
 		{
 			.x=-c->geometry.borderwidth,
 			 .y=-c->geometry.borderwidth,
-			  .width=DisplayWidth(dpy,scr),
-			   .height=DisplayHeight(dpy,scr),
+			  .width=DisplayWidth(dpy,screen),
+			   .height=DisplayHeight(dpy,screen),
 			    .borderwidth=c->geometry.borderwidth
 		};
 	else
@@ -1080,6 +1080,11 @@ void colormapnotify(struct client *c,myXColormapEvent *e)
 		}
 }
 
+void csetgeom(struct client *c,struct geometry g)
+{
+	c->geometry=g;
+}
+
 void clientevent(void *self,XEvent *e)
 {
 	switch (e->type)
@@ -1122,11 +1127,6 @@ void clientevent(void *self,XEvent *e)
 		}
 }
 
-void csetgeom(struct client *c,struct geometry g)
-{
-	c->geometry=g;
-}
-
 /*
  * Return true if,and only if,the two clients are visible on the same desk.
  */
@@ -1141,8 +1141,8 @@ Bool samedesk(struct client *c1,struct client *c2)
  */
 void randpos(struct geometry *g)
 {
-	int maxx=DisplayWidth(dpy,scr) - (g->width + 2 * g->borderwidth);
-	int maxy=DisplayHeight(dpy,scr) - (g->height + 2 * g->borderwidth);
+	int maxx=DisplayWidth(dpy,screen) - (g->width + 2 * g->borderwidth);
+	int maxy=DisplayHeight(dpy,screen) - (g->height + 2 * g->borderwidth);
 	g->x=maxx>0 ? rand() % maxx : 0;
 	g->y=maxy>0 ? rand() % maxy : 0;
 }
@@ -1242,9 +1242,9 @@ void smartpos(struct client *c)
 			badness *= overlaps * overlaps;
 
 			// Prefer to position a window near the edges of the display.
-			unsigned x2=DisplayWidth(dpy,scr) - (g.x + g.width);
+			unsigned x2=DisplayWidth(dpy,screen) - (g.x + g.width);
 			badness += MIN((int)g.x,(int)x2);
-			unsigned y2=DisplayHeight(dpy,scr) - (g.y + g.height);
+			unsigned y2=DisplayHeight(dpy,screen) - (g.y + g.height);
 			badness += MIN((int)g.y,(int)y2);
 
 			if (badness<min)
@@ -1341,7 +1341,6 @@ struct client *manage(Window window)
 	             FocusChangeMask);
 
 	XSync(dpy,False);
-
 	/*
 	 * Done registering for events. What we read now is
 	 * safe to use,since any updates will be notified
@@ -1388,8 +1387,8 @@ struct client *manage(Window window)
 		        keymapclient[i].modifiers,c->window,True,
 		        GrabModeAsync,GrabModeAsync);
 
-	if (c->geometry.width==DisplayWidth(dpy,scr) &&
-	        c->geometry.height==DisplayHeight(dpy,scr))
+	if (c->geometry.width==DisplayWidth(dpy,screen) &&
+	        c->geometry.height==DisplayHeight(dpy,screen))
 		csetfull(c,True);
 
 	if (!cisframed(c))

@@ -70,33 +70,16 @@ struct frame
 	Bool grabbed;
 };
 
-#if 0
-void reorder(Window,Window);
-void setgrav(Window,int);
-void gravitate(int,int,int *,int *);
-void confrequest(struct frame *,XConfigureRequestEvent *);
-void repaint(struct frame *);
-void buttonpress(struct frame *,XButtonEvent *);
-void buttonrelease(struct frame *,XButtonEvent *);
-void moveresize(struct frame *,int,int,int,int);
-void motionnotify(struct frame *,XMotionEvent*);
-void maprequest(struct frame *,XMapRequestEvent *);
-void expose(struct frame *,XExposeEvent *);
-void event(void *,XEvent *);
-void mydelete(void *,Time);
-void resizetopleft(void *,int,int,unsigned long,Time);
-void resizetopright(void *,int,int,unsigned long,Time);
-#endif
-
-size_t fcount;
-Cursor cursortopleft=None;
-Cursor cursortopright=None;
+size_t	fcount;
+Cursor	cursortopleft=None;
+Cursor	cursortopright=None;
+bool	swapdesk=false;
+int		nx;
 
 void mydelete(void *myclient,Time t)
 {
 	cdelete((client*)myclient,t);
 }
-
 
 /*
  * XXX: We cheat here and always estimate normal frame
@@ -243,7 +226,7 @@ void fupdate(struct frame *f)
 	f->namewidth=namewidth(font,f->client);
 	if (f->namewidth>0)
 		{
-			f->pixmap=XCreatePixmap(dpy,root,f->namewidth,lineheight,DefaultDepth(dpy,scr));
+			f->pixmap=XCreatePixmap(dpy,root,f->namewidth,lineheight,DefaultDepth(dpy,screen));
 			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,lineheight);
 			drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,halfleading + font->ascent,f->client);
 
@@ -262,6 +245,11 @@ void fupdate(struct frame *f)
  */
 void moveresize(struct frame *f,int x,int y,int w,int h)
 {
+	int		offset;
+	bool	left;
+	Desk	newd;
+	Desk	d;
+
 	if (x == f->x && y == f->y && w == f->width && h == f->height)
 		return;
 
@@ -274,10 +262,49 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 		.height=h - EXT_TOP - EXT_BOTTOM,
 		.borderwidth=old.borderwidth,
 	};
+
+	if((x>0) && (x<displayWidth-w))
+		swapdesk=false;
+	if(swapdesk==false)
+		nx=x;
+
+	if(((x<0) || (x+w>displayWidth)) && (swapdesk==false))
+		{
+			if(x+w>displayWidth)
+				{
+					left=false;
+					offset=10;
+				}
+			else
+				{
+					left=true;
+					offset=displayWidth-old.width-10;
+				}
+			mynew.x=offset;
+			swapdesk=true;
+			nx=offset;
+			d=cgetdesk(f->client);
+			if(left==true)
+				{
+					newd=d-1;
+					if(newd<0)
+						newd=ndesk-1;
+				}
+			else
+				{
+					newd=d+1;
+					if(newd>ndesk-1)
+						newd=0;
+				}
+			gotodesk(newd);
+			csetdesk(f->client,newd);
+			restack();
+		}
+	
 	csetgeom(f->client,mynew);
 
-	XMoveResizeWindow(dpy,f->window,x,y,w,h);
-	f->x=x;
+	XMoveResizeWindow(dpy,f->window,nx,y,w,h);
+	f->x=nx;
 	f->y=y;
 	f->width=w;
 	f->height=h;
@@ -287,7 +314,6 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	else
 		XResizeWindow(dpy,cgetwin(f->client),mynew.width,mynew.height);
 }
-
 
 void confrequest(struct frame *f,XConfigureRequestEvent *e)
 {

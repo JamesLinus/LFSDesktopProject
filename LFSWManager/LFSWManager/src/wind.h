@@ -100,7 +100,6 @@ extern const char		*displayname;
 extern const char		*xerror;
 
 extern Display			*dpy;
-extern unsigned			scr;
 extern Window			root;
 
 // Normal colors
@@ -132,6 +131,9 @@ extern Atom				WM_CHANGE_STATE;
 extern Atom				WM_DELETE_WINDOW;
 extern Atom				WM_PROTOCOLS;
 extern Atom				WM_STATE;
+
+extern unsigned int		screen;
+extern int				displayWidth;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);

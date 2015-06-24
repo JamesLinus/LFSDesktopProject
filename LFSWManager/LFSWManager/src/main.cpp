@@ -77,8 +77,7 @@ const char		*displayname=NULL;
 // The last X error reported
 const char		*xerror=NULL;
 
-unsigned scr;
-Window root;
+Window 			root;
 unsigned long	foregroundpixel;
 unsigned long	backgroundpixel;
 unsigned long	hlforegroundpixel;
@@ -281,7 +280,9 @@ int main(int argc,char *argv[])
 
 	XSynchronize(dpy,debug);
 
-	scr=DefaultScreen(dpy);
+	screen=DefaultScreen(dpy);
+	displayWidth=DisplayWidth(dpy,screen);
+
 	root=DefaultRootWindow(dpy);
 
 	font=ftload(ftname);

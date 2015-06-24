@@ -14,6 +14,8 @@
 #define _CLIENT_
 
 struct client *manage(Window);
+extern Desk curdesk;
+extern Desk ndesk;
 
 void manageall(void);
 void unmanageall(void);

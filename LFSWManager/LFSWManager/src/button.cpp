@@ -143,7 +143,7 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 	b->bitmap=bitmap;
 	b->width=width;
 	b->height=height;
-	b->pixmap=XCreatePixmap(dpy,root,width,height,DefaultDepth(dpy,scr));
+	b->pixmap=XCreatePixmap(dpy,root,width,height,DefaultDepth(dpy,screen));
 	b->pressed=False;
 	b->entered=False;
 	b->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&sa);

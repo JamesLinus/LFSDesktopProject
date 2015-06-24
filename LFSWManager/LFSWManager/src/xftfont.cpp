@@ -46,15 +46,15 @@ struct font *ftload(const char *name)
 
 	if (name != NULL)
 		{
-			font=XftFontOpenXlfd(dpy,scr,name);
+			font=XftFontOpenXlfd(dpy,screen,name);
 			if (font == NULL)
-				font=XftFontOpenName(dpy,scr,name);
+				font=XftFontOpenName(dpy,screen,name);
 			if (font == NULL)
 				errorf("cannot not load font %s",name);
 		}
 
 	if (font == NULL)
-		font=XftFontOpenName(dpy,scr,DEFAULT);
+		font=XftFontOpenName(dpy,screen,DEFAULT);
 
 	if (font == NULL)
 		return NULL;
@@ -80,8 +80,8 @@ struct fontcolor *ftloadcolor(const char *name)
 {
 	XftDraw *draw;
 	XftColor color;
-	Visual *visual=DefaultVisual(dpy,scr);
-	Colormap colormap=DefaultColormap(dpy,scr);
+	Visual *visual=DefaultVisual(dpy,screen);
+	Colormap colormap=DefaultColormap(dpy,screen);
 
 	if ((draw=XftDrawCreate(dpy,root,visual,colormap)) == NULL)
 		return NULL;
