@@ -1,6 +1,7 @@
 0.0.4
 Drag window off of left/right edge cycles desktop.
 Desktop windows now stay below and don't get raised.
+Removed x11font code, now only xft fonts used.
 Code clean.
 
 0.0.0-0.0.3
