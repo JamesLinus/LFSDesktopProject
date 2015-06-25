@@ -370,6 +370,7 @@ int main(int argc,char **argv)
 	asprintf(&foreCol,"0xffffffff");
 	asprintf(&backCol,"0x00000000");
 	showSuffix=false;
+	asprintf(&terminalCommand,"xterm -e ");
 
 	loadVarsFromFile(prefsPath,desktopPrefs);
 
@@ -475,7 +476,7 @@ int main(int argc,char **argv)
 	screen=DefaultScreen(display);
 	displayWidth=DisplayWidth(display,screen);
 	displayHeight=DisplayHeight(display,screen);
-	screen=DefaultScreen(display);
+	//screen=DefaultScreen(display);
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
 	cm=DefaultColormap(display,screen);

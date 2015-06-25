@@ -1,3 +1,6 @@
+0.0.10
+Fixed default terminal command not being set.
+
 0.0.9
 Added "--enable-3dwidgets" to configure script to allow linking against Xaw3D ( default is link against Xaw7 ).
 Updated manpage.
