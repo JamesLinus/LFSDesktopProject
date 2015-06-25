@@ -1,3 +1,9 @@
+0.0.5
+All windows of type desktop now stay below windows  with below state set regardless of creation time.
+Fixed putting windows below.
+Fixed default cursor not being set.
+Made windows of type NET_WM_WINDOW_TYPE_DESKTOP 'sticky'.
+
 0.0.4
 Drag window off of left/right edge cycles desktop.
 Desktop windows now stay below and don't get raised.

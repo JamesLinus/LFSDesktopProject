@@ -16,7 +16,9 @@
 struct client *manage(Window);
 extern Desk curdesk;
 extern Desk ndesk;
+//extern listnode winstack;
 
+void shuffle(void);
 void manageall(void);
 void unmanageall(void);
 void cpopapp(struct client *);

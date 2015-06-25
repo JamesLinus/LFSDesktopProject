@@ -44,9 +44,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
+#include <X11/cursorfont.h>
 
 #include "wind.h"
 #include "x11font.h"
+#include "list.h"
 #include "lib.h"
 #include "root.h"
 #include "ewmh.h"
@@ -378,6 +380,9 @@ int main(int argc,char *argv[])
 	if (ndesk != 0)
 		setndesk(ndesk);
 
+	Cursor curs=XCreateFontCursor(dpy,XC_left_ptr);
+	XDefineCursor(dpy,root,curs);
+
 	XSetInputFocus(dpy,PointerRoot,RevertToPointerRoot,CurrentTime);
 	manageall();
 
@@ -399,6 +404,8 @@ int main(int argc,char *argv[])
 					if (e.type == ClientMessage)
 						redirect(&e,root);
 				}
+
+			shuffle();
 			restack();
 		}
 

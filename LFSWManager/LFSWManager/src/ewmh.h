@@ -45,6 +45,7 @@ extern Atom NET_WM_WINDOW_TYPE;
 extern Atom NET_WM_WINDOW_TYPE_DOCK;
 extern Atom NET_WORKAREA;
 extern Atom NET_WM_WINDOW_TYPE_DESKTOP;
+extern Atom NET_WM_STATE_STICKY;
 
 void ewmh_notifyndesk(unsigned long);
 void ewmh_notifycurdesk(unsigned long);
@@ -62,5 +63,6 @@ void ewmh_notifyrestack(void);
 void ewmh_propertynotify(struct client *,XPropertyEvent *);
 void ewmh_clientmessage(struct client *,XClientMessageEvent *);
 void ewmh_rootclientmessage(XClientMessageEvent *);
+void reloadwindowdesktop(struct client *c);
 
 #endif

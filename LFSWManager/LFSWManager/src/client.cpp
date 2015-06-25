@@ -89,6 +89,7 @@ struct client
 	Bool isundecorated;
 	Bool followdesk;
 	Bool initialized;
+	Bool isDesktop;
 };
 
 LIST_DEFINE(winstack);
@@ -164,6 +165,7 @@ void restack(void)
 	int i=0;
 	assert(stacktop != None);
 	v[i++]=stacktop;
+
 	LIST_FOREACH_REV(lp,&winstack)
 	{
 		struct client *c=LIST_ITEM(lp,struct client,winstack);
@@ -173,6 +175,7 @@ void restack(void)
 	XRestackWindows(dpy,v,n);
 	free(v);
 	needrestack=False;
+
 	ewmh_notifyrestack();
 }
 
@@ -203,6 +206,28 @@ void cmap(struct client *c)
 				XMapWindow(dpy,c->window);
 			c->ismapped=True;
 		}
+}
+
+void shuffle(void)
+{
+	List	*lp;
+	bool	goagain=false;
+
+	do
+		{
+			goagain=false;
+			LIST_FOREACH_REV(lp,&winstack)
+				{
+					struct client *c=LIST_ITEM(lp,struct client,winstack);
+					if(c->isDesktop==true)
+						{
+							LIST_REMOVE(&c->winstack);
+							LIST_INSERT_HEAD(&winstack,&c->winstack);
+							goagain=true;
+						}
+				}
+		}
+	while(goagain==false);
 }
 
 void cunmap(struct client *c)
@@ -487,8 +512,10 @@ void cpopapp(struct client *c)
 			atoms=(Atom *)data;
 
 			if(items_read && (atoms[0]==NET_WM_WINDOW_TYPE_DESKTOP ))
-				result=0;
-
+				{
+					result=0;
+					//c->followdesk=true;
+				}
 			XFree(data);
 		}
 
@@ -1259,9 +1286,48 @@ void smartpos(struct client *c)
 	free(v);
 }
 
+int findLastDesk(void)
+{
+	List *stack;
+
+	stack=(List*)LIST_TAIL(&winstack);
+	
+//	for(i
+/*
+	XGetWindowProperty(dpy,c->window,NET_WM_STATE,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
+
+	for (int j=0;j<nItem;j++)
+		{
+			if(((long *)(properties))[j]==NET_WM_STATE_STICKY)
+				{
+					c->followdesk=true;
+					down=true;
+				}
+
+			if(((long *)(properties))[j]==NET_WM_STATE_BELOW)
+				down=true;
+
+			if(((long *)(properties))[j]==NET_WM_WINDOW_TYPE_DESKTOP)
+				{
+				printf("is desk\n");
+					c->isDesktop=True;
+					down=true;
+				}
+		}
+*/
+}
+
 struct client *manage(Window window)
 {
-	XWindowAttributes attr;
+	XWindowAttributes	attr;
+	Atom				type;
+	int					format;
+	unsigned long		nItem,bytesAfter;
+	unsigned char		*properties=NULL;
+	bool 				down=false;
+	unsigned long		n=0;
+	Atom				*types=NULL;
+
 	if (!XGetWindowAttributes(dpy,window,&attr))
 		return NULL;
 	if (attr.override_redirect)
@@ -1314,6 +1380,7 @@ struct client *manage(Window window)
 	c->isundecorated=False;
 	c->followdesk=False;
 	c->initialized=False;
+	c->isDesktop=False;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1373,6 +1440,38 @@ struct client *manage(Window window)
 	reloadwmprotocols(c);
 	reloadwmtransientfor(c);
 
+	properties=NULL;
+	XGetWindowProperty(dpy,c->window,NET_WM_STATE,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
+
+	for (int j=0;j<nItem;j++)
+		{
+			if(((long *)(properties))[j]==NET_WM_STATE_STICKY)
+				{
+					c->followdesk=true;
+					down=true;
+				}
+
+			if(((long *)(properties))[j]==NET_WM_STATE_BELOW)
+				{
+					down=true;
+				}
+		}
+	XFree(properties);
+
+	types=(Atom*)getprop(c->window,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
+	if (types != NULL)
+		{
+			for (unsigned long i=0; i<n; i++)
+				if (types[i] == NET_WM_WINDOW_TYPE_DESKTOP)
+				{
+					c->followdesk=true;
+					c->isDesktop=True;
+					down=true;
+				}
+			XFree(types);
+			types=NULL;
+		}
+
 	/*
 	 * Let the hints create the frame,if there should be one.
 	 */
@@ -1401,8 +1500,7 @@ struct client *manage(Window window)
 		});
 
 	XSizeHints *h=c->wmnormalhints;
-	if (runlevel != RL_STARTUP && (h==NULL ||
-	                               (h->flags & (USPosition | PPosition))==0))
+	if (runlevel != RL_STARTUP && (h==NULL || (h->flags & (USPosition | PPosition))==0))
 		smartpos(c);
 
 	/*
@@ -1436,6 +1534,14 @@ struct client *manage(Window window)
 				}
 		}
 
+	if(down==true)
+		{
+			LIST_REMOVE(&c->winstack);
+			LIST_INSERT_HEAD(&winstack,&c->winstack);
+			if(c->isDesktop==true)
+				reloadwindowdesktop(c);
+			needrestack=True;
+		}
 	return c;
 }
 
