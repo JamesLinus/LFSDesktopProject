@@ -13,6 +13,56 @@
 #ifndef _CLIENT_
 #define _CLIENT_
 
+#include "list.h"
+#include "wind.h"
+
+struct client
+{
+	struct listener listener;
+	List winstack;
+	Window window;
+	Colormap colormap;
+
+	struct geometry geometry;
+
+	XWMHints *wmhints;
+	XSizeHints *wmnormalhints;
+	Atom *wmprotocols;
+	int wmprotocolscount;
+	Window wmtransientfor;
+
+	// WM_NAME property in current locale encoding
+	char *wmname;
+
+	// _NET_WM_NAME property in UTF-8 encoding
+	char *netwmname;
+
+	// Application id of this client
+	XID app;
+
+	struct frame *frame;
+
+	Desk desk;
+
+	/*
+	 * If this counter is zero when an UnmapNotify event
+	 * is received,the client is considered withdrawn.
+	 */
+	int ignoreunmapcount;
+
+	Bool ismapped;
+	Bool hasfocus;
+	Bool isfull;
+	Bool isdock;
+	Bool skiptaskbar;
+	Bool isundecorated;
+	Bool followdesk;
+	Bool initialized;
+	Bool isDesktop;
+
+	unsigned int monitorNumber;
+};
+
 struct client *manage(Window);
 extern Desk curdesk;
 extern Desk ndesk;

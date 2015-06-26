@@ -24,3 +24,7 @@ Atom				WM_STATE;
 
 unsigned int		screen;
 int					displayWidth;
+int					displayHeight;
+int					placement=MOUSEMONITOR;
+monitors			*monitorData;
+unsigned int		numberOfMonitors;

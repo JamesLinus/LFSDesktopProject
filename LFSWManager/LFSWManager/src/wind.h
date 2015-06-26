@@ -28,6 +28,8 @@
 
 typedef unsigned long Desk;
 
+enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
+
 struct geometry
 {
 	int x;
@@ -87,6 +89,13 @@ typedef struct
 	int state;      /* ColormapInstalled,ColormapUninstalled */
 } myXColormapEvent;
 
+struct	monitors
+{
+	int		monW;
+	int		monH;
+	int		monX;
+	int		monY;
+};
 
 extern enum runlevel
 {
@@ -134,6 +143,10 @@ extern Atom				WM_STATE;
 
 extern unsigned int		screen;
 extern int				displayWidth;
+extern int				displayHeight;
+extern int				placement;
+extern monitors			*monitorData;
+extern unsigned int		numberOfMonitors;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);

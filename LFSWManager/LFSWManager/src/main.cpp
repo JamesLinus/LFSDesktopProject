@@ -45,6 +45,7 @@
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
+#include <X11/extensions/Xinerama.h>
 
 #include "wind.h"
 #include "x11font.h"
@@ -184,20 +185,24 @@ int waitevent(void)
 
 void usage(FILE *f)
 {
-	fprintf(f,"usage: %s [ -v ]"
-	        " [ -n number ]"
-	        " [ -t font ]"
-	        " [ -f color ]"
-	        " [ -b color ]"
-	        " [ -F color ]"
-	        " [ -B color ]"
-	        " [ display ]\n",progname);
+	fprintf(f,"Usage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
+	        "-n number Number of desktops\n"
+	        "-t font Title font\n"
+	        "-f colour Forecolour\n"
+	        "-b colour back colour\n"
+	        "-F colour Focused forecolour\n"
+	        "-B colour Focusud backcolour\n"
+	        "-p New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
+			"-v Debug mode\n"
+	        ,progname);
 }
 
 int main(int argc,char *argv[])
 {
-	progname=argv[0];
+	int					cnt=-1;
+	XineramaScreenInfo	*p=NULL;
 
+	progname=argv[0];
 	// The Xmb* functions use LC_CTYPE
 	setlocale(LC_CTYPE,"");
 
@@ -214,8 +219,10 @@ int main(int argc,char *argv[])
 
 	Desk ndesk=0;
 
+	placement=CENTREMMONITOR;
+
 	int opt;
-	while ((opt=getopt(argc,argv,"B:b:F:f:n:t:v")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:v")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -245,6 +252,9 @@ int main(int argc,char *argv[])
 				break;
 			case 't':
 				ftname=optarg;
+				break;
+			case 'p':
+				placement=atoi(optarg);
 				break;
 			case 'v':
 				debug=True;
@@ -284,8 +294,31 @@ int main(int argc,char *argv[])
 
 	screen=DefaultScreen(dpy);
 	displayWidth=DisplayWidth(dpy,screen);
+	displayHeight=DisplayHeight(dpy,screen);
 
 	root=DefaultRootWindow(dpy);
+
+	cnt=ScreenCount(dpy);
+	p=XineramaQueryScreens(dpy,&cnt);
+	if(p!=NULL)
+		{
+			if(cnt>0)
+				{
+					monitorData=(monitors*)malloc(sizeof(monitors)*cnt);
+					//lfsmonitors_rc=(args*)malloc(sizeof(args)*cnt*2);
+					numberOfMonitors=cnt;
+
+					for (int x=0; x<cnt; x++)
+						{
+							monitorData[x].monW=p[x].width;
+							monitorData[x].monH=p[x].height;
+							monitorData[x].monX=p[x].x_org;
+							monitorData[x].monY=p[x].y_org;
+						}
+				}
+			free(p);
+		}
+	
 
 	font=ftload(ftname);
 	if (font == NULL)

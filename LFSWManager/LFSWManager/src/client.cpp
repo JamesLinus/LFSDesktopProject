@@ -39,6 +39,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "client.h"
 #include "list.h"
 #include "wind.h"
 #include "ewmh.h"
@@ -46,51 +47,6 @@
 #include "frame.h"
 #include "mwm.h"
 #include "x11font.h"
-
-struct client
-{
-	struct listener listener;
-	List winstack;
-	Window window;
-	Colormap colormap;
-
-	struct geometry geometry;
-
-	XWMHints *wmhints;
-	XSizeHints *wmnormalhints;
-	Atom *wmprotocols;
-	int wmprotocolscount;
-	Window wmtransientfor;
-
-	// WM_NAME property in current locale encoding
-	char *wmname;
-
-	// _NET_WM_NAME property in UTF-8 encoding
-	char *netwmname;
-
-	// Application id of this client
-	XID app;
-
-	struct frame *frame;
-
-	Desk desk;
-
-	/*
-	 * If this counter is zero when an UnmapNotify event
-	 * is received,the client is considered withdrawn.
-	 */
-	int ignoreunmapcount;
-
-	Bool ismapped;
-	Bool hasfocus;
-	Bool isfull;
-	Bool isdock;
-	Bool skiptaskbar;
-	Bool isundecorated;
-	Bool followdesk;
-	Bool initialized;
-	Bool isDesktop;
-};
 
 LIST_DEFINE(winstack);
 
@@ -1166,13 +1122,55 @@ Bool samedesk(struct client *c1,struct client *c2)
 /*
  * Find a random location for the specified geometry.
  */
-void randpos(struct geometry *g)
+void randposx(struct geometry *g)
 {
 	int maxx=DisplayWidth(dpy,screen) - (g->width + 2 * g->borderwidth);
 	int maxy=DisplayHeight(dpy,screen) - (g->height + 2 * g->borderwidth);
 	g->x=maxx>0 ? rand() % maxx : 0;
 	g->y=maxy>0 ? rand() % maxy : 0;
 }
+
+/*
+ * Find a random location for the specified geometry.
+ */
+void randomPosition(struct geometry *g,int monnum)
+{
+	int wid;
+	int hite;
+	int xoff;
+	int yoff;
+	int maxx;
+	int maxy;
+
+	if(monnum==-1)
+		{
+			wid=displayWidth;
+			hite=displayHeight;
+			xoff=0;
+			yoff=0;
+		}
+	else
+		{
+			wid=monitorData[monnum].monW;
+			hite=monitorData[monnum].monH;
+			xoff=monitorData[monnum].monX;
+			yoff=monitorData[monnum].monY;
+		}
+
+	maxx=wid - (g->width + 2 * g->borderwidth);
+	maxy=hite - (g->height + 2 * g->borderwidth);
+	
+	if(maxx>0)
+		g->x=(rand() % maxx)+xoff;
+	else
+		g->x=0;
+
+	if(maxy>0)
+		g->y=(rand() % maxy)+yoff;
+	else
+		g->y=0;
+}
+
 
 unsigned long overlaparea(struct geometry g1,struct geometry g2)
 {
@@ -1219,6 +1217,26 @@ void move(struct client *c,int x,int y)
 	redirect(&e,parent);
 }
 
+int getMouseMonitor(client *c)
+{
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+
+	XQueryPointer(dpy,c->window,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return);
+
+	for(int j=0;j<numberOfMonitors;j++)
+		{
+			if((win_x_return>monitorData[j].monX) && (win_x_return<monitorData[j].monW+monitorData[j].monX) && (win_y_return>monitorData[j].monY) && (win_y_return<monitorData[j].monH+monitorData[j].monY))
+				return(j);
+		}
+	return(0);
+}
+
 /*
  * Find a good location for the specified client and move it there.
  *
@@ -1233,8 +1251,67 @@ void move(struct client *c,int x,int y)
  */
 void smartpos(struct client *c)
 {
-	struct geometry g=c->frame==NULL ?
-	                  cgetgeom(c) : fgetgeom(c->frame);
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+	int				inmonitor;
+
+//	placement=MOUSEMONITOR;
+
+	geometry		g;
+
+	if(c->frame==NULL)
+		g=cgetgeom(c);
+	else
+		g=fgetgeom(c->frame);
+
+	switch(placement)
+		{
+			case UNDERMOUSE:
+				XQueryPointer(dpy,c->window,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return);
+				root_x_return=win_x_return-(g.width/2);
+				if(root_x_return<0)
+					root_x_return=0;
+				if(root_x_return+g.width>displayWidth)
+					root_x_return=displayWidth-g.width;
+
+				root_y_return=win_y_return-(g.height/2);
+				if(root_y_return<0)
+					root_y_return=0;
+				if(root_y_return+g.height>displayHeight)
+					root_y_return=displayHeight-g.height;
+
+				move(c,root_x_return,root_y_return);
+				return;
+				break;
+
+			case CENTRESCREEN:
+				win_x_return=(displayWidth/2)-(g.width/2);
+				win_y_return=(displayHeight/2)-(g.height/2);
+				move(c,win_x_return,win_y_return);
+				return;
+				break;
+	
+			case CENTREMMONITOR:
+				inmonitor=getMouseMonitor(c);
+				win_x_return=monitorData[inmonitor].monX+((monitorData[inmonitor].monW/2)-(g.width/2));
+				win_y_return=monitorData[inmonitor].monY+((monitorData[inmonitor].monH/2)-(g.height/2));
+				move(c,win_x_return,win_y_return);
+				return;
+				break;
+
+			case MOUSEMONITOR:
+				inmonitor=getMouseMonitor(c);
+				break;
+
+			case NOPLACE:
+				inmonitor=-1;
+				break;
+		}
 
 	struct client **v;
 	int n;
@@ -1242,6 +1319,7 @@ void smartpos(struct client *c)
 
 	// Exclude the window itself,and clients on other desks
 	for (int i=0; i<n; i++)
+		//if (v[i]==c || !samedesk(v[i],c))
 		if (v[i]==c || !samedesk(v[i],c))
 			v[i--]=v[--n];
 
@@ -1249,7 +1327,8 @@ void smartpos(struct client *c)
 	struct geometry best=g;
 	for (int k=0; min != 0 && k<100; k++)
 		{
-			randpos(&g);
+			//randpos(&g);
+			randomPosition(&g,inmonitor);
 			unsigned long badness=0;
 			unsigned overlaps=0;
 
@@ -1327,7 +1406,7 @@ struct client *manage(Window window)
 	bool 				down=false;
 	unsigned long		n=0;
 	Atom				*types=NULL;
-
+	int					thisdesk=curdesk;
 	if (!XGetWindowAttributes(dpy,window,&attr))
 		return NULL;
 	if (attr.override_redirect)
@@ -1381,6 +1460,7 @@ struct client *manage(Window window)
 	c->followdesk=False;
 	c->initialized=False;
 	c->isDesktop=False;
+	c->monitorNumber=0;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1503,6 +1583,7 @@ struct client *manage(Window window)
 	if (runlevel != RL_STARTUP && (h==NULL || (h->flags & (USPosition | PPosition))==0))
 		smartpos(c);
 
+	c->desk=curdesk;
 	/*
 	 * Make sure WM_STATE is always initiated. We can't trust
 	 * the first call to cmap/cunmap.
@@ -1523,6 +1604,7 @@ struct client *manage(Window window)
 			cpopapp(c);
 			if (cisurgent(c) && runlevel==RL_NORMAL)
 				{
+				printf(">>>%i<<<\n",curdesk);
 					XBell(dpy,0);
 					gotodesk(c->desk);
 				}
@@ -1534,6 +1616,9 @@ struct client *manage(Window window)
 				}
 		}
 
+	c->desk=curdesk;
+csetdesk(c,thisdesk);
+
 	if(down==true)
 		{
 			LIST_REMOVE(&c->winstack);
@@ -1542,6 +1627,7 @@ struct client *manage(Window window)
 				reloadwindowdesktop(c);
 			needrestack=True;
 		}
+printf("this desk=%i cdesk=%i\n",thisdesk,c->desk);
 	return c;
 }
 
