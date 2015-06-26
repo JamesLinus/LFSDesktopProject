@@ -1229,7 +1229,7 @@ int getMouseMonitor(client *c)
 
 	XQueryPointer(dpy,c->window,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return);
 
-	for(int j=0;j<numberOfMonitors;j++)
+	for(unsigned int j=0;j<numberOfMonitors;j++)
 		{
 			if((win_x_return>monitorData[j].monX) && (win_x_return<monitorData[j].monW+monitorData[j].monX) && (win_y_return>monitorData[j].monY) && (win_y_return<monitorData[j].monH+monitorData[j].monY))
 				return(j);
@@ -1259,8 +1259,6 @@ void smartpos(struct client *c)
 	int				win_y_return;
 	unsigned int	mask_return;
 	int				inmonitor;
-
-//	placement=MOUSEMONITOR;
 
 	geometry		g;
 
@@ -1363,37 +1361,6 @@ void smartpos(struct client *c)
 	move(c,best.x,best.y);
 
 	free(v);
-}
-
-int findLastDesk(void)
-{
-	List *stack;
-
-	stack=(List*)LIST_TAIL(&winstack);
-	
-//	for(i
-/*
-	XGetWindowProperty(dpy,c->window,NET_WM_STATE,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
-
-	for (int j=0;j<nItem;j++)
-		{
-			if(((long *)(properties))[j]==NET_WM_STATE_STICKY)
-				{
-					c->followdesk=true;
-					down=true;
-				}
-
-			if(((long *)(properties))[j]==NET_WM_STATE_BELOW)
-				down=true;
-
-			if(((long *)(properties))[j]==NET_WM_WINDOW_TYPE_DESKTOP)
-				{
-				printf("is desk\n");
-					c->isDesktop=True;
-					down=true;
-				}
-		}
-*/
 }
 
 struct client *manage(Window window)
@@ -1523,15 +1490,15 @@ struct client *manage(Window window)
 	properties=NULL;
 	XGetWindowProperty(dpy,c->window,NET_WM_STATE,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
 
-	for (int j=0;j<nItem;j++)
+	for (unsigned int j=0;j<nItem;j++)
 		{
-			if(((long *)(properties))[j]==NET_WM_STATE_STICKY)
+			if(((unsigned long *)(properties))[j]==NET_WM_STATE_STICKY)
 				{
 					c->followdesk=true;
 					down=true;
 				}
 
-			if(((long *)(properties))[j]==NET_WM_STATE_BELOW)
+			if(((unsigned long *)(properties))[j]==NET_WM_STATE_BELOW)
 				{
 					down=true;
 				}
@@ -1604,7 +1571,7 @@ struct client *manage(Window window)
 			cpopapp(c);
 			if (cisurgent(c) && runlevel==RL_NORMAL)
 				{
-				printf(">>>%i<<<\n",curdesk);
+				//printf(">>>%i<<<\n",curdesk);
 					XBell(dpy,0);
 					gotodesk(c->desk);
 				}
@@ -1627,7 +1594,7 @@ csetdesk(c,thisdesk);
 				reloadwindowdesktop(c);
 			needrestack=True;
 		}
-printf("this desk=%i cdesk=%i\n",thisdesk,c->desk);
+//printf("this desk=%i cdesk=%i\n",thisdesk,c->desk);
 	return c;
 }
 
