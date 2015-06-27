@@ -244,7 +244,7 @@ void ewmh_stopwm(void)
 void reloadwindowname(struct client *c)
 {
 	unsigned long n=0;
-	char *name=(char*)getprop(cgetwin(c),NET_WM_NAME,UTF8_STRING,8,&n);
+	char *name=(char*)getprop(c->window,NET_WM_NAME,UTF8_STRING,8,&n);
 	csetnetwmname(c,name);
 	if (name != NULL)
 		XFree(name);
@@ -266,26 +266,56 @@ void removestate(Window w,Atom state)
 		XFree(v);
 }
 
+
 void reloadwindowstate(struct client *c)
 {
-	Window w=cgetwin(c);
-	Bool skiptaskbar=False;
-	Bool isfullscreen=False;
+	Window			w=c->window;
+	unsigned long	n=0;
+	bool			handled;
 
-	unsigned long n=0;
+	csetfull(c,false);
+	c->followdesk=false;
+	c->skiptaskbar=false;
+	c->isAbove=false;
+	c->isBelow=false;
+
 	Atom *states=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	for (unsigned int i=0; i<n; i++)
-		if (states[i] == NET_WM_STATE_SKIP_TASKBAR)
-			skiptaskbar=True;
-		else if (states[i] == NET_WM_STATE_FULLSCREEN)
-			isfullscreen=True;
-		else
-			removestate(w,states[i]);
+		{
+			handled=false;
+			if(states[i]==NET_WM_STATE_SKIP_TASKBAR)
+				{
+					c->skiptaskbar=true;
+					handled=true;
+				}
+			if(states[i]==NET_WM_STATE_FULLSCREEN)
+				{
+					csetfull(c,true);
+					handled=true;
+				}
+			if(states[i]==NET_WM_STATE_STICKY)
+				{
+					c->followdesk=true;
+					handled=true;
+				}
+
+			if(states[i]==NET_WM_STATE_ABOVE)
+				{
+					c->isAbove=true;
+					handled=true;
+				}
+
+			if(states[i]==NET_WM_STATE_BELOW)
+				{
+					c->isBelow=true;
+					handled=true;
+				}
+			if(handled==false)
+				removestate(w,states[i]);
+		}
+
 	if (states != NULL)
 		XFree(states);
-
-	csetskiptaskbar(c,skiptaskbar);
-	csetfull(c,isfullscreen);
 }
 
 void reloadwindowtype(struct client *c)
@@ -293,7 +323,7 @@ void reloadwindowtype(struct client *c)
 	Bool isdock=False;
 
 	unsigned long n=0;
-	Atom *types=(Atom*)getprop(cgetwin(c),NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
+	Atom *types=(Atom*)getprop(c->window,NET_WM_WINDOW_TYPE,XA_ATOM,32,&n);
 	if (types != NULL)
 		{
 			for (unsigned long i=0; i<n; i++)
@@ -307,7 +337,7 @@ void reloadwindowtype(struct client *c)
 
 void reloadwindowdesktop(struct client *c)
 {
-	Window w=cgetwin(c);
+	Window w=c->window;
 	unsigned long n=0;
 	long *deskp=(long*)getprop(w,NET_WM_DESKTOP,XA_CARDINAL,32,&n);
 	if (deskp != NULL)
@@ -317,7 +347,7 @@ void reloadwindowdesktop(struct client *c)
 			XFree(deskp);
 		}
 	else
-		ewmh_notifyclientdesktop(w,cgetdesk(c));
+		ewmh_notifyclientdesktop(w,c->desk);
 }
 
 void ewmh_maprequest(struct client *c)
@@ -333,7 +363,7 @@ void ewmh_maprequest(struct client *c)
 
 void ewmh_manage(struct client *c)
 {
-	Window w=cgetwin(c);
+	Window w=c->window;
 
 	addclient(w);
 
@@ -386,7 +416,7 @@ void ewmh_notifyfocus(Window old,Window mynew)
 
 void ewmh_unmanage(struct client *c)
 {
-	Window w=cgetwin(c);
+	Window w=c->window;
 	ewmh_notifyfocus(w,None);
 	delclient(w);
 	XDeleteProperty(dpy,w,NET_WM_ALLOWED_ACTIONS);
@@ -394,7 +424,7 @@ void ewmh_unmanage(struct client *c)
 
 void ewmh_withdraw(struct client *c)
 {
-	Window w=cgetwin(c);
+	Window w=c->window;
 	ewmh_notifyfocus(w,None);
 	delclient(w);
 	XDeleteProperty(dpy,w,NET_WM_ALLOWED_ACTIONS);
@@ -459,6 +489,7 @@ void addstate(Window w,Atom state)
 		XFree(old);
 }
 
+//IMPORTANT//
 void changestate(Window w,int how,Atom state)
 {
 	switch (how)
@@ -470,6 +501,7 @@ void changestate(Window w,int how,Atom state)
 			addstate(w,state);
 			break;
 		case NET_WM_STATE_TOGGLE:
+			printf("atom =%i stick=%i\n",state,NET_WM_STATE_STICKY);
 			if (hasstate(w,state))
 				removestate(w,state);
 			else
@@ -494,7 +526,7 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 	if (e->message_type == NET_ACTIVE_WINDOW && e->format == 32)
 		{
 			cpopapp(c);
-			gotodesk(cgetdesk(c));
+			gotodesk(c->desk);
 			cfocus(c,(Time)e->data.l[1]);
 		}
 	else if (e->message_type == NET_CLOSE_WINDOW && e->format == 32)
@@ -510,7 +542,7 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 			int how=e->data.l[0];
 			for (int i=1; i <= 2; i++)
 				if (e->data.l[i] != 0)
-					changestate(cgetwin(c),how,e->data.l[i]);
+					changestate(c->window,how,e->data.l[i]);
 			reloadwindowstate(c);
 		}
 }

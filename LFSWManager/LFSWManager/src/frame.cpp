@@ -230,7 +230,7 @@ void fupdate(struct frame *f)
 			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,lineheight);
 			drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,halfleading + font->ascent,f->client);
 
-			if (cgetdesk(f->client) == DESK_ALL)
+			if (f->client->desk == DESK_ALL)
 				{
 					int y=halfleading + font->ascent + font->descent / 2;
 					XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
@@ -283,7 +283,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 			mynew.x=offset;
 			swapdesk=true;
 			nx=offset;
-			d=cgetdesk(f->client);
+			d=f->client->desk;
 			if(left==true)
 				{
 					newd=d-1;
@@ -312,7 +312,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	if (mynew.width == old.width && mynew.height == old.height)
 		csendconf(f->client);
 	else
-		XResizeWindow(dpy,cgetwin(f->client),mynew.width,mynew.height);
+		XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
 }
 
 void confrequest(struct frame *f,XConfigureRequestEvent *e)
@@ -357,7 +357,7 @@ void buttonpress(struct frame *f,XButtonEvent *e)
 			if (e->y<EXT_TOP || (e->state & Mod1Mask) != 0)
 				{
 					f->grabbed=True;
-					csetappfollowdesk(f->client,True);
+					//csetappfollowdesk(f->client,True);
 					f->downx=e->x;
 					f->downy=e->y;
 					XGrabPointer(dpy,f->window,False,Button1MotionMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None,e->time);
@@ -370,7 +370,7 @@ void buttonrelease(struct frame *f,XButtonEvent *e)
 	if (e->button == Button1 && f->grabbed)
 		{
 			XUngrabPointer(dpy,e->time);
-			csetappfollowdesk(f->client,False);
+			//csetappfollowdesk(f->client,False);
 			f->grabbed=False;
 		}
 }
@@ -382,7 +382,7 @@ void motionnotify(struct frame *f,XMotionEvent *e)
 
 void maprequest(struct frame *f,XMapRequestEvent *e)
 {
-	Window win=cgetwin(f->client);
+	Window win=f->client->window;
 	if (e->window == win)
 		redirect((XEvent *)e,win);
 }
@@ -494,7 +494,7 @@ struct frame *fcreate(struct client *c)
 	wa.bit_gravity=NorthWestGravity;
 	f->window=XCreateWindow(dpy,root,f->x,f->y,f->width,f->height,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 
-	Window clientwin=cgetwin(f->client);
+	Window clientwin=f->client->window;
 
 	reorder(clientwin,f->window);
 
@@ -526,7 +526,7 @@ struct frame *fcreate(struct client *c)
 
 	XSetWindowBorderWidth(dpy,clientwin,0);
 	setgrav(clientwin,NorthWestGravity);
-	if (cismapped(f->client))
+	if (f->client->ismapped)
 		cignoreunmap(f->client);
 	XReparentWindow(dpy,clientwin,f->window,EXT_LEFT,EXT_TOP);
 
@@ -546,7 +546,7 @@ struct frame *fcreate(struct client *c)
 
 	fupdate(f);
 
-	if (cismapped(f->client))
+	if (f->client->ismapped)
 		XMapWindow(dpy,f->window);
 	return f;
 }
@@ -558,14 +558,14 @@ void fdestroy(struct frame *f)
 	XUnmapWindow(dpy,f->window);
 
 	struct geometry g=cgetgeom(f->client);
-	Window clientwin=cgetwin(f->client);
+	Window clientwin=f->client->window;
 
 	XSetWindowBorderWidth(dpy,clientwin,g.borderwidth);
 	int grav=cgetgrav(f->client);
 	setgrav(clientwin,grav);
 	int dx,dy;
 	gravitate(grav,g.borderwidth,&dx,&dy);
-	if (cismapped(f->client))
+	if (f->client->ismapped)
 		cignoreunmap(f->client);
 	g.x=f->x - dx;
 	g.y=f->y - dy;

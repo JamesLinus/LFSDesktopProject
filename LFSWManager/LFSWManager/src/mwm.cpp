@@ -119,7 +119,7 @@ void reloadmwmhints(struct client *c)
 mwmhints *getmwmhints(struct client *c)
 {
 	unsigned long n=0;
-	mwmhints *h=(mwmhints*)getprop(cgetwin(c),MOTIF_WM_HINTS,MOTIF_WM_HINTS,32,&n);
+	mwmhints *h=(mwmhints*)getprop(c->window,MOTIF_WM_HINTS,MOTIF_WM_HINTS,32,&n);
 	if (h != NULL && n != 5)
 		{
 			XFree(h);

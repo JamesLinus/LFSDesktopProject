@@ -59,6 +59,9 @@ struct client
 	Bool followdesk;
 	Bool initialized;
 	Bool isDesktop;
+	Bool isAbove;
+	bool isBelow;
+	bool checked;
 
 	unsigned int monitorNumber;
 };
@@ -75,11 +78,9 @@ void cpushapp(struct client *);
 void cdelete(struct client *,Time);
 void csetdesk(struct client *,Desk);
 void csetappdesk(struct client *,Desk);
-Desk cgetdesk(struct client *);
 void csetdock(struct client *,Bool);
 void csetfull(struct client *,Bool);
 void csetundecorated(struct client *,Bool);
-void csetappfollowdesk(struct client *,Bool);
 struct client *getfocus(void);
 void cfocus(struct client *,Time);
 struct client *refocus(Time);
@@ -97,12 +98,9 @@ struct geometry cgetgeom(struct client *);
 void csetgeom(struct client *,struct geometry);
 void csendconf(struct client *);
 Bool chasfocus(struct client *);
-Window cgetwin(struct client *);
 void csetnetwmname(struct client *,const char *);
 void cignoreunmap(struct client *);
-Bool cismapped(struct client *);
 Bool cisurgent(struct client *);
-void csetskiptaskbar(struct client *,Bool);
 void chintsize(struct client *,int,int,int *,int *);
 
 #endif

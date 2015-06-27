@@ -1,8 +1,14 @@
 0.0.6
+Fixed widows above all otheres changing state.
+Fixed 'sticky' windows changing state.
+Fixed dragging certain application windows to new desktop pulling all other windows of the app there.
+Added 'ALT-!' key binding to group all application windows of focused application into current desktop.
+Removed some redundant code.
+Redone man page.
 Redone printing help.
 Added '-?' and '-h' to commandline options.
 Added '-p' option to command line to set window placement, 0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ).
-Added multi monitor support.
+Added multi monitor support for window placement.
 
 0.0.5
 All windows of type desktop now stay below windows  with below state set regardless of creation time.

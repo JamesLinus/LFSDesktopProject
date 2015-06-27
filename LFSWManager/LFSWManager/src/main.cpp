@@ -454,7 +454,7 @@ int main(int argc,char *argv[])
 		{
 			cpopapp(c);
 			restack();
-			w=cgetwin(c);
+			w=c->window;
 			g=cgetgeom(c);
 		}
 

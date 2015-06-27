@@ -73,6 +73,7 @@ void keypress_delete(struct client *c,unsigned state,Time time);
 void keypress_pushapp(struct client *c,unsigned state,Time time);
 void keypress_fullscreen(struct client *c,unsigned state,Time time);
 void keypress_sticky(struct client *c,unsigned state,Time time);
+void keypress_group(struct client *c,unsigned state,Time time);
 
 keymapstructclient keymapclient[] =
 {
@@ -80,6 +81,7 @@ keymapstructclient keymapclient[] =
 	{ XK_Escape,Mod1Mask,keypress_pushapp },
 	{ XK_Return,Mod1Mask,keypress_fullscreen },
 	{ XK_space,Mod1Mask,keypress_sticky },
+	{ XK_exclam,Mod1Mask,keypress_group },
 };
 
 
@@ -164,26 +166,85 @@ void cmap(struct client *c)
 		}
 }
 
+bool shuffleDesktop(void)
+{
+	List	*lp;
+	
+	LIST_FOREACH(lp,&winstack)
+		{
+			struct client *c=LIST_ITEM(lp,struct client,winstack);
+			if((c->checked==false) && (c->isDesktop==true))
+				{
+					LIST_REMOVE(&c->winstack);
+					LIST_INSERT_HEAD(&winstack,&c->winstack);
+					c->checked=true;
+					return(true);
+				}
+		}
+	return(false);
+}
+
+bool shuffleAbove(void)
+{
+	List	*lp;
+	
+	LIST_FOREACH(lp,&winstack)
+		{
+			struct client *c=LIST_ITEM(lp,struct client,winstack);
+			if((c->checked==false) && (c->isAbove==true))
+				{
+					LIST_REMOVE(&c->winstack);
+					LIST_INSERT_TAIL(&winstack,&c->winstack);
+					c->checked=true;
+					return(true);
+				}
+		}
+	return(false);
+}
+
+bool shuffleBelow(void)
+{
+	List	*lp;
+	
+	LIST_FOREACH(lp,&winstack)
+		{
+			struct client *c=LIST_ITEM(lp,struct client,winstack);
+			if((c->checked==false) && (c->isBelow==true))
+				{
+					LIST_REMOVE(&c->winstack);
+					LIST_INSERT_HEAD(&winstack,&c->winstack);
+					c->checked=true;
+					return(true);
+				}
+		}
+	return(false);
+}
+
 void shuffle(void)
 {
 	List	*lp;
-	bool	goagain=false;
 
-	do
+	LIST_FOREACH(lp,&winstack)
 		{
-			goagain=false;
-			LIST_FOREACH_REV(lp,&winstack)
-				{
-					struct client *c=LIST_ITEM(lp,struct client,winstack);
-					if(c->isDesktop==true)
-						{
-							LIST_REMOVE(&c->winstack);
-							LIST_INSERT_HEAD(&winstack,&c->winstack);
-							goagain=true;
-						}
-				}
+			struct client *c=LIST_ITEM(lp,struct client,winstack);
+			c->checked=false;
 		}
-	while(goagain==false);
+	while(shuffleBelow()==true);
+
+	LIST_FOREACH(lp,&winstack)
+		{
+			struct client *c=LIST_ITEM(lp,struct client,winstack);
+			c->checked=false;
+		}
+	while(shuffleDesktop()==true);
+
+	LIST_FOREACH(lp,&winstack)
+		{
+			struct client *c=LIST_ITEM(lp,struct client,winstack);
+			c->checked=false;
+		}
+	while(shuffleAbove()==true);
+
 }
 
 void cunmap(struct client *c)
@@ -287,12 +348,6 @@ void csetappdesk(struct client *c,Desk d)
 	free(v);
 }
 
-Desk cgetdesk(struct client *c)
-{
-	return c->desk;
-}
-
-
 Bool cisframed(struct client *c)
 {
 	return !c->isfull && !c->isdock && !c->isundecorated;
@@ -318,11 +373,6 @@ void csetdock(struct client *c,Bool isdock)
 	creframe(c);
 }
 
-Bool cismapped(struct client *c)
-{
-	return c->ismapped;
-}
-
 /*
  * Change input focus to the specified client,which must be
  * mapped on the current desktop.
@@ -331,7 +381,7 @@ Bool cismapped(struct client *c)
  */
 void cfocus(struct client *c,Time time)
 {
-	if (!cismapped(c))
+	if (!c->ismapped)
 		return;
 
 	XSetInputFocus(dpy,c->window,RevertToPointerRoot,time);
@@ -383,17 +433,6 @@ void csetundecorated(struct client *c,Bool enabled)
 {
 	c->isundecorated=enabled;
 	creframe(c);
-}
-
-void csetappfollowdesk(struct client *c,Bool enabled)
-{
-	struct client **v;
-	int n;
-	getclientstack(&v,&n);
-	for (int i=0; i<n; i++)
-		if (v[i]->app==c->app)
-			v[i]->followdesk=enabled;
-	free(v);
 }
 
 /*
@@ -470,7 +509,6 @@ void cpopapp(struct client *c)
 			if(items_read && (atoms[0]==NET_WM_WINDOW_TYPE_DESKTOP ))
 				{
 					result=0;
-					//c->followdesk=true;
 				}
 			XFree(data);
 		}
@@ -770,7 +808,7 @@ void keypress_sticky(struct client *c,unsigned state,Time time)
 	if (c->isdock)
 		return;
 
-	if (cgetdesk(c)==DESK_ALL)
+	if (c->desk==DESK_ALL)
 		csetappdesk(c,curdesk);
 	else
 		{
@@ -779,6 +817,25 @@ void keypress_sticky(struct client *c,unsigned state,Time time)
 			// Make sure we are still on top when switching desks.
 			cpopapp(c);
 		}
+}
+
+void keypress_group(struct client *c,unsigned state,Time time)
+{
+	struct client	**v;
+	int				n;
+	int				cd=curdesk;
+
+	getclientstack(&v,&n);
+	for (int i=0; i<n; i++)
+		{
+		if (v[i]->app==c->app)
+			{
+				v[i]->desk=curdesk;
+			}
+		}
+	free(v);
+	curdesk=-1;
+	gotodesk(cd);
 }
 
 void cinstallcolormaps(struct client *c)
@@ -1122,17 +1179,6 @@ Bool samedesk(struct client *c1,struct client *c2)
 /*
  * Find a random location for the specified geometry.
  */
-void randposx(struct geometry *g)
-{
-	int maxx=DisplayWidth(dpy,screen) - (g->width + 2 * g->borderwidth);
-	int maxy=DisplayHeight(dpy,screen) - (g->height + 2 * g->borderwidth);
-	g->x=maxx>0 ? rand() % maxx : 0;
-	g->y=maxy>0 ? rand() % maxy : 0;
-}
-
-/*
- * Find a random location for the specified geometry.
- */
 void randomPosition(struct geometry *g,int monnum)
 {
 	int wid;
@@ -1371,6 +1417,7 @@ struct client *manage(Window window)
 	unsigned long		nItem,bytesAfter;
 	unsigned char		*properties=NULL;
 	bool 				down=false;
+	bool 				up=false;
 	unsigned long		n=0;
 	Atom				*types=NULL;
 	int					thisdesk=curdesk;
@@ -1428,6 +1475,8 @@ struct client *manage(Window window)
 	c->initialized=False;
 	c->isDesktop=False;
 	c->monitorNumber=0;
+	c->isAbove=false;
+	c->isBelow=false;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1495,12 +1544,22 @@ struct client *manage(Window window)
 			if(((unsigned long *)(properties))[j]==NET_WM_STATE_STICKY)
 				{
 					c->followdesk=true;
+					//printf("sticky - %s\n",c->wmname);
 					down=true;
 				}
 
 			if(((unsigned long *)(properties))[j]==NET_WM_STATE_BELOW)
 				{
+					//printf("below - %s\n",c->wmname);
+					c->isBelow=true;
 					down=true;
+				}
+
+			if(((unsigned long *)(properties))[j]==NET_WM_STATE_ABOVE)
+				{
+					//printf("above - %s\n",c->wmname);
+					c->isAbove=true;
+					up=true;
 				}
 		}
 	XFree(properties);
@@ -1510,11 +1569,11 @@ struct client *manage(Window window)
 		{
 			for (unsigned long i=0; i<n; i++)
 				if (types[i] == NET_WM_WINDOW_TYPE_DESKTOP)
-				{
-					c->followdesk=true;
-					c->isDesktop=True;
-					down=true;
-				}
+					{
+						c->followdesk=true;
+						c->isDesktop=True;
+						down=true;
+					}
 			XFree(types);
 			types=NULL;
 		}
@@ -1571,7 +1630,6 @@ struct client *manage(Window window)
 			cpopapp(c);
 			if (cisurgent(c) && runlevel==RL_NORMAL)
 				{
-				//printf(">>>%i<<<\n",curdesk);
 					XBell(dpy,0);
 					gotodesk(c->desk);
 				}
@@ -1583,8 +1641,7 @@ struct client *manage(Window window)
 				}
 		}
 
-	c->desk=curdesk;
-csetdesk(c,thisdesk);
+	csetdesk(c,thisdesk);
 
 	if(down==true)
 		{
@@ -1594,7 +1651,14 @@ csetdesk(c,thisdesk);
 				reloadwindowdesktop(c);
 			needrestack=True;
 		}
-//printf("this desk=%i cdesk=%i\n",thisdesk,c->desk);
+
+	if(up==true)
+		{
+			LIST_REMOVE(&c->winstack);
+			LIST_INSERT_TAIL(&winstack,&c->winstack);
+			needrestack=True;
+		}
+
 	return c;
 }
 
@@ -1754,11 +1818,6 @@ void chintsize(struct client *c,int width,int height,
 	*rheight=height;
 }
 
-Window cgetwin(struct client *c)
-{
-	return c->window;
-}
-
 void csetnetwmname(struct client *c,const char *name)
 {
 	free(c->netwmname);
@@ -1772,10 +1831,5 @@ void cignoreunmap(struct client *c)
 {
 	assert(c->ismapped);
 	c->ignoreunmapcount++;
-}
-
-void csetskiptaskbar(struct client *c,Bool skiptaskbar)
-{
-	c->skiptaskbar=skiptaskbar;
 }
 
