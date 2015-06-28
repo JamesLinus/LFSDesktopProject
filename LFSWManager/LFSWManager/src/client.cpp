@@ -184,25 +184,7 @@ bool shuffleDesktop(void)
 	return(false);
 }
 
-bool shuffleAbove(void)
-{
-	List	*lp;
-	
-	LIST_FOREACH(lp,&winstack)
-		{
-			struct client *c=LIST_ITEM(lp,struct client,winstack);
-			if((c->checked==false) && (c->isAbove==true))
-				{
-					LIST_REMOVE(&c->winstack);
-					LIST_INSERT_TAIL(&winstack,&c->winstack);
-					c->checked=true;
-					return(true);
-				}
-		}
-	return(false);
-}
-
-bool shuffleBelow(void)
+bool shuffleDownUp(void)
 {
 	List	*lp;
 	
@@ -216,9 +198,17 @@ bool shuffleBelow(void)
 					c->checked=true;
 					return(true);
 				}
+			if((c->checked==false) && (c->isAbove==true))
+				{
+					LIST_REMOVE(&c->winstack);
+					LIST_INSERT_TAIL(&winstack,&c->winstack);
+					c->checked=true;
+					return(true);
+				}
 		}
 	return(false);
 }
+
 
 void shuffle(void)
 {
@@ -229,7 +219,7 @@ void shuffle(void)
 			struct client *c=LIST_ITEM(lp,struct client,winstack);
 			c->checked=false;
 		}
-	while(shuffleBelow()==true);
+	while(shuffleDownUp()==true);
 
 	LIST_FOREACH(lp,&winstack)
 		{
@@ -237,14 +227,6 @@ void shuffle(void)
 			c->checked=false;
 		}
 	while(shuffleDesktop()==true);
-
-	LIST_FOREACH(lp,&winstack)
-		{
-			struct client *c=LIST_ITEM(lp,struct client,winstack);
-			c->checked=false;
-		}
-	while(shuffleAbove()==true);
-
 }
 
 void cunmap(struct client *c)
@@ -1127,6 +1109,7 @@ void csetgeom(struct client *c,struct geometry g)
 
 void clientevent(void *self,XEvent *e)
 {
+//printf("client event\n");
 	switch (e->type)
 		{
 		case ButtonPress:

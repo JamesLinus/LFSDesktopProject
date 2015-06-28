@@ -1,3 +1,7 @@
+0.0.7
+Mouse wheel now moves between desktops.
+Above/Below code tightened up.
+
 0.0.6
 Fixed widows above all otheres changing state.
 Fixed 'sticky' windows changing state.

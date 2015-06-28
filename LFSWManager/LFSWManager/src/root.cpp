@@ -41,6 +41,8 @@
 #include "ewmh.h"
 #include "root.h"
 
+int	t=0;
+
 void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
 	if (state & ShiftMask)
@@ -172,6 +174,33 @@ void event(void *self,XEvent *e)
 {
 	switch (e->type)
 		{
+		case ButtonRelease:
+			if((e->xbutton.time-t<1000) && (e->xbutton.time-t>150))
+				{
+					int newdesk=curdesk;
+					newdesk=curdesk;
+					if(e->xbutton.button==Button5)
+						{
+							newdesk--;
+							if(newdesk<0)
+								newdesk=ndesk-1;
+							gotodesk(newdesk);
+						}
+
+					if(e->xbutton.button==Button4)
+						{
+							newdesk++;
+							if(newdesk>ndesk-1)
+								newdesk=0;
+							gotodesk(newdesk);
+						}
+				}
+			t=e->xbutton.time;
+			break;
+
+		case ButtonPress:	
+printf("root b pressed event button %i\n",e->xbutton.button);
+			break;
 		case MapRequest:
 			maprequest(&e->xmaprequest);
 			break;
@@ -211,7 +240,7 @@ void initroot(void)
 
 	XSync(dpy,False);
 	xerror=NULL;
-	XSelectInput(dpy,root,EnterWindowMask |
+	XSelectInput(dpy,root,ButtonReleaseMask|EnterWindowMask |
 	             LeaveWindowMask |
 	             SubstructureRedirectMask |
 	             SubstructureNotifyMask);

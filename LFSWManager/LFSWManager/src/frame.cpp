@@ -395,6 +395,7 @@ void expose(struct frame *f,XExposeEvent *e)
 
 void frameevent(void *self,XEvent *e)
 {
+//printf("frame event\n");
 	switch (e->type)
 		{
 		case Expose:

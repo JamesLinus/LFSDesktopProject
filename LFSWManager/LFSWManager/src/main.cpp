@@ -154,7 +154,6 @@ int waitevent(void)
 {
 	if (XPending(dpy)>0)
 		return 0;
-
 	fd_set rfds;
 	int nfds=0;
 	FD_ZERO(&rfds);

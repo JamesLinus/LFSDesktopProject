@@ -501,7 +501,6 @@ void changestate(Window w,int how,Atom state)
 			addstate(w,state);
 			break;
 		case NET_WM_STATE_TOGGLE:
-			printf("atom =%i stick=%i\n",state,NET_WM_STATE_STICKY);
 			if (hasstate(w,state))
 				removestate(w,state);
 			else
