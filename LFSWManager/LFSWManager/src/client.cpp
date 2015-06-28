@@ -180,6 +180,13 @@ bool shuffleDesktop(void)
 					c->checked=true;
 					return(true);
 				}
+			if((c->checked==false) && (c->isDock==true))
+				{
+					LIST_REMOVE(&c->winstack);
+					LIST_INSERT_TAIL(&winstack,&c->winstack);
+					c->checked=true;
+					return(true);
+				}
 		}
 	return(false);
 }
@@ -332,7 +339,7 @@ void csetappdesk(struct client *c,Desk d)
 
 Bool cisframed(struct client *c)
 {
-	return !c->isfull && !c->isdock && !c->isundecorated;
+	return !c->isfull && !c->isDock && !c->isundecorated;
 }
 
 void creframe(struct client *c)
@@ -351,7 +358,7 @@ void creframe(struct client *c)
 
 void csetdock(struct client *c,Bool isdock)
 {
-	c->isdock=isdock;
+	c->isDock=isdock;
 	creframe(c);
 }
 
@@ -697,7 +704,7 @@ void cdelete(struct client *c,Time time)
 
 void keypress_delete(struct client *c,unsigned state,Time time)
 {
-	if (!c->isdock)
+	if (!c->isDock)
 		cdelete(c,time);
 }
 
@@ -781,13 +788,13 @@ void keypress_pushapp(struct client *c,unsigned state,Time time)
 
 void keypress_fullscreen(struct client *c,unsigned state,Time time)
 {
-	if (!c->isdock)
+	if (!c->isDock)
 		csetfull(c,!c->isfull);
 }
 
 void keypress_sticky(struct client *c,unsigned state,Time time)
 {
-	if (c->isdock)
+	if (c->isDock)
 		return;
 
 	if (c->desk==DESK_ALL)
@@ -1451,7 +1458,7 @@ struct client *manage(Window window)
 
 	c->hasfocus=False;
 	c->isfull=False;
-	c->isdock=False;
+	c->isDock=False;
 	c->skiptaskbar=False;
 	c->isundecorated=False;
 	c->followdesk=False;
@@ -1460,6 +1467,7 @@ struct client *manage(Window window)
 	c->monitorNumber=0;
 	c->isAbove=false;
 	c->isBelow=false;
+	c->isDock=false;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1551,12 +1559,20 @@ struct client *manage(Window window)
 	if (types != NULL)
 		{
 			for (unsigned long i=0; i<n; i++)
+				{
 				if (types[i] == NET_WM_WINDOW_TYPE_DESKTOP)
 					{
 						c->followdesk=true;
 						c->isDesktop=True;
 						down=true;
 					}
+				if (types[i] == NET_WM_WINDOW_TYPE_DOCK)
+					{
+						c->followdesk=true;
+						c->isDock=true;
+						up=true;
+					}
+				}
 			XFree(types);
 			types=NULL;
 		}

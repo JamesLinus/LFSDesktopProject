@@ -53,12 +53,12 @@ struct client
 	Bool ismapped;
 	Bool hasfocus;
 	Bool isfull;
-	Bool isdock;
 	Bool skiptaskbar;
 	Bool isundecorated;
 	Bool followdesk;
 	Bool initialized;
 	Bool isDesktop;
+	bool isDock;
 	Bool isAbove;
 	bool isBelow;
 	bool checked;

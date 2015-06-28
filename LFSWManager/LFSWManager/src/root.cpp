@@ -190,7 +190,7 @@ void event(void *self,XEvent *e)
 					if(e->xbutton.button==Button4)
 						{
 							newdesk++;
-							if(newdesk>ndesk-1)
+							if(newdesk>(int)ndesk-1)
 								newdesk=0;
 							gotodesk(newdesk);
 						}
