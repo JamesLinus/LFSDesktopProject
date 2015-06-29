@@ -46,6 +46,8 @@ extern Atom NET_WM_WINDOW_TYPE_DOCK;
 extern Atom NET_WORKAREA;
 extern Atom NET_WM_WINDOW_TYPE_DESKTOP;
 extern Atom NET_WM_STATE_STICKY;
+extern Atom NET_WM_ACTION_MAXIMIZE_HORZ;
+extern Atom NET_WM_ACTION_MAXIMIZE_VERT;
 
 void ewmh_notifyndesk(unsigned long);
 void ewmh_notifycurdesk(unsigned long);

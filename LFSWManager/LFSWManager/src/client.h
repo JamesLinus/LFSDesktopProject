@@ -62,6 +62,7 @@ struct client
 	Bool isAbove;
 	bool isBelow;
 	bool checked;
+	bool canMaximize;
 
 	unsigned int monitorNumber;
 };

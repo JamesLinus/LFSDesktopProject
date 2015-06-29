@@ -16,19 +16,22 @@
 
 #include "wind.h"
 
-struct button
+struct			button
 {
-	listener listen;
-	void (*function)(void *,Time);
-	void *arg;
-	struct bitmap *bitmap;
-	Pixmap pixmap;
-	int width;
-	int height;
-	Window window;
-	Bool pressed;
-	Bool entered;
+					listener listen;
+					void (*function)(void *,Time);
+					void *arg;
+					struct bitmap *bitmap;
+					Pixmap pixmap;
+					int width;
+					int height;
+					Window window;
+					Bool pressed;
+					Bool entered;
 };
+
+extern bitmap	*deletebitmap;
+extern bitmap	*maximizeBitmap;
 
 void update(struct button *b);
 void buttonpress(struct button *,XButtonEvent *);

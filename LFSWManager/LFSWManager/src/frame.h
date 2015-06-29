@@ -13,6 +13,32 @@
 #ifndef _FRAME_
 #define _FRAME_
 
+struct frame
+{
+	struct listener listener;
+	struct client *client;
+	struct button *deletebutton;
+	struct button *maximize;
+	struct dragger *topleftresizer;
+	struct dragger *toprightresizer;
+	Pixmap pixmap;
+	GC *background;
+	int namewidth;
+	int x;
+	int y;
+	int width;
+	int height;
+	int oldX;
+	int oldY;
+	int oldWidth;
+	int oldHeight;
+	Window window;
+	int downx;	// window relative pointer x at button press
+	int downy;	// window relative pointer y at button press
+	Bool grabbed;
+	bool isMaximized;
+};
+
 struct frame *fcreate(struct client *);
 void fdestroy(struct frame *);
 void fupdate(struct frame *);

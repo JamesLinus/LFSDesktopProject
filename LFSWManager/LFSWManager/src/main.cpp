@@ -56,16 +56,19 @@
 #include "client.h"
 #include "mwm.h"
 #include "prefs.h"
+#include "button.h"
 
 #include "deleven.xbm"
 #include "delodd.xbm"
+#include "maxeven.xbm"
+#include "maxodd.xbm"
 
 DEFINE_BITMAP(deleven);
 DEFINE_BITMAP(delodd);
+DEFINE_BITMAP(maxeven);
+DEFINE_BITMAP(maxodd);
 
 enum			runlevel runlevel=RL_STARTUP;
-
-bitmap			*deletebitmap;
 int				exitstatus;
 
 /*
@@ -304,6 +307,11 @@ int main(int argc,char *argv[])
 		deletebitmap=&deleven;
 	else
 		deletebitmap=&delodd;
+
+	if (lineheight % 2==0)
+		maximizeBitmap=&maxeven;
+	else
+		maximizeBitmap=&maxodd;
 
 	foregroundpixel=getpixel(fontColours[FORE]);
 	backgroundpixel=getpixel(fontColours[BACK]);

@@ -97,7 +97,7 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 		case NorthEastGravity:
 		case EastGravity:
 		case SouthEastGravity:
-			d->x0=width - 1;
+			d->x0=width-1;
 			break;
 		default:
 			d->x0=0;
@@ -119,7 +119,7 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 		case SouthWestGravity:
 		case SouthGravity:
 		case SouthEastGravity:
-			d->y0=height - 1;
+			d->y0=height-1;
 			break;
 		default:
 			d->y0=0;
@@ -145,14 +145,14 @@ void ddestroy(struct dragger *d)
 void buttonpress(struct dragger *d,XButtonEvent *e)
 {
 	d->counter=0;
-	d->x=e->x - d->x0;
-	d->y=e->y - d->y0;
+	d->x=e->x-d->x0;
+	d->y=e->y-d->y0;
 	if (d->dragnotify != NULL)
-		d->dragnotify(d->arg,e->x_root - d->x,e->y_root - d->y,d->counter++,e->time);
+		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
 }
 
 void motionnotify(struct dragger *d,XMotionEvent *e)
 {
 	if (d->dragnotify != NULL)
-		d->dragnotify(d->arg,e->x_root - d->x,e->y_root - d->y,d->counter++,e->time);
+		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
 }

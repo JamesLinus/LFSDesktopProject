@@ -135,7 +135,7 @@ extern struct font		*font;
 extern struct fontcolor	*fhighlight;
 extern struct fontcolor	*fnormal;
 
-extern struct bitmap	*deletebitmap;
+//extern struct bitmap	*deletebitmap;
 
 extern Atom				WM_CHANGE_STATE;
 extern Atom				WM_DELETE_WINDOW;

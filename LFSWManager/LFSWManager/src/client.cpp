@@ -257,7 +257,7 @@ void cunmap(struct client *c)
 void csetdesk(struct client *c,Desk d)
 {
 	if (d >= numberOfDesktops && d != DESK_ALL)
-		d=numberOfDesktops - 1;
+		d=numberOfDesktops-1;
 
 	c->desk=d;
 	ewmh_notifyclientdesktop(c->window,d);
@@ -287,7 +287,7 @@ void gotodesk(Desk d)
 	struct client **v;
 	int n;
 	getclientstack(&v,&n);
-	for (int i=n - 1; i >= 0; i--)
+	for (int i=n-1; i >= 0; i--)
 		if (cisvisible(v[i]))
 			cmap(v[i]);
 	for (int i=0; i<n; i++)
@@ -311,14 +311,14 @@ void setndesk(Desk val)
 		ewmh_notifyndesk(val);
 
 	if (curdesk >= val)
-		gotodesk(val - 1);
+		gotodesk(val-1);
 
 	struct client **v;
 	int n;
 	getclientstack(&v,&n);
-	for (int i=n - 1; i >= 0; i--)
+	for (int i=n-1; i >= 0; i--)
 		if (v[i]->desk != DESK_ALL && v[i]->desk >= val)
-			csetdesk(v[i],val - 1);
+			csetdesk(v[i],val-1);
 	free(v);
 
 	if (val<oldval)
@@ -462,7 +462,7 @@ void cpushapp(struct client *c)
 	struct client **v;
 	int n;
 	getclientstack(&v,&n);
-	for (int i=n - 1; i >= 0; i--)
+	for (int i=n-1; i >= 0; i--)
 		if (v[i]->app==c->app)
 			cpush(v[i]);
 	free(v);
@@ -542,7 +542,7 @@ void cupdatedesk(struct client *c)
 	getclientstack(&v,&n);
 	if (c->wmtransientfor != None)
 		{
-			for (int i=n - 1; i >= 0; i--)
+			for (int i=n-1; i >= 0; i--)
 				if (v[i]->window==c->wmtransientfor)
 					{
 						d=v[i]->desk;
@@ -551,7 +551,7 @@ void cupdatedesk(struct client *c)
 		}
 	else if (c->app != c->window)
 		{
-			for (int i=n - 1; i >= 0; i--)
+			for (int i=n-1; i >= 0; i--)
 				if (v[i]->app==c->app && v[i] != c)
 					{
 						d=v[i]->desk;
@@ -1192,8 +1192,8 @@ void randomPosition(struct geometry *g,int monnum)
 			yoff=monitorData[monnum].monY;
 		}
 
-	maxx=wid - (g->width + 2 * g->borderwidth);
-	maxy=hite - (g->height + 2 * g->borderwidth);
+	maxx=wid-(g->width + 2 * g->borderwidth);
+	maxy=hite-(g->height + 2 * g->borderwidth);
 	
 	if(maxx>0)
 		g->x=(rand() % maxx)+xoff;
@@ -1220,8 +1220,8 @@ unsigned long overlaparea(struct geometry g1,struct geometry g2)
 
 	if (x1<x4 && x2<x3 && y1<y4 && y2<y3)
 		{
-			unsigned long x=MIN(x4 - x1,x3 - x2);
-			unsigned long y=MIN(y4 - y1,y3 - y2);
+			unsigned long x=MIN(x4-x1,x3-x2);
+			unsigned long y=MIN(y4-y1,y3-y2);
 			unsigned long area=x * y;
 			return area;
 		}
@@ -1381,9 +1381,9 @@ void smartpos(struct client *c)
 			badness *= overlaps * overlaps;
 
 			// Prefer to position a window near the edges of the display.
-			unsigned x2=DisplayWidth(dpy,screen) - (g.x + g.width);
+			unsigned x2=DisplayWidth(dpy,screen)-(g.x + g.width);
 			badness += MIN((int)g.x,(int)x2);
-			unsigned y2=DisplayHeight(dpy,screen) - (g.y + g.height);
+			unsigned y2=DisplayHeight(dpy,screen)-(g.y + g.height);
 			badness += MIN((int)g.y,(int)y2);
 
 			if (badness<min)
@@ -1467,6 +1467,7 @@ struct client *manage(Window window)
 	c->isAbove=false;
 	c->isBelow=false;
 	c->isDock=false;
+	c->canMaximize=false;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1526,28 +1527,28 @@ struct client *manage(Window window)
 	reloadwmprotocols(c);
 	reloadwmtransientfor(c);
 
+
 	properties=NULL;
 	XGetWindowProperty(dpy,c->window,NET_WM_STATE,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
-
 	for (unsigned int j=0;j<nItem;j++)
 		{
 			if(((unsigned long *)(properties))[j]==NET_WM_STATE_STICKY)
 				{
 					c->followdesk=true;
-					//printf("sticky - %s\n",c->wmname);
+					//printf("sticky-%s\n",c->wmname);
 					down=true;
 				}
 
 			if(((unsigned long *)(properties))[j]==NET_WM_STATE_BELOW)
 				{
-					//printf("below - %s\n",c->wmname);
+					//printf("below-%s\n",c->wmname);
 					c->isBelow=true;
 					down=true;
 				}
 
 			if(((unsigned long *)(properties))[j]==NET_WM_STATE_ABOVE)
 				{
-					//printf("above - %s\n",c->wmname);
+					//printf("above-%s\n",c->wmname);
 					c->isAbove=true;
 					up=true;
 				}
@@ -1579,7 +1580,20 @@ struct client *manage(Window window)
 	/*
 	 * Let the hints create the frame,if there should be one.
 	 */
+
 	ewmh_manage(c);
+
+	properties=NULL;
+	XGetWindowProperty(dpy,c->window,NET_WM_ALLOWED_ACTIONS,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
+	for (unsigned int j=0;j<nItem;j++)
+		{
+			if((((unsigned long *)(properties))[j]==NET_WM_ACTION_MAXIMIZE_HORZ) || ((unsigned long *)(properties))[j]==NET_WM_ACTION_MAXIMIZE_VERT)
+				{
+					c->canMaximize=true;
+				}
+		}
+	XFree(properties);
+
 	mwm_manage(c);
 
 	grabbutton(AnyButton,AnyModifier,c->window,True,0,
@@ -1615,6 +1629,9 @@ struct client *manage(Window window)
 	setwmstate(c->window,cisvisible(c) ? NormalState : IconicState);
 
 	c->initialized=True;
+
+
+
 
 	if (wmstate==IconicState && runlevel==RL_NORMAL)
 		{
@@ -1692,7 +1709,7 @@ void unmanageall(void)
 	struct client **v;
 	int n;
 	getclientstack(&v,&n);
-	for (int i=n - 1; i >= 0; i--)
+	for (int i=n-1; i >= 0; i--)
 		cunmanage(v[i]);
 	free(v);
 
@@ -1798,9 +1815,9 @@ void chintsize(struct client *c,int width,int height,
 	if (h->flags & PResizeInc)
 		{
 			if (h->width_inc != 0)
-				width -= (width - basewidth) % h->width_inc;
+				width -= (width-basewidth) % h->width_inc;
 			if (h->height_inc != 0)
-				height -= (height - baseheight) % h->height_inc;
+				height -= (height-baseheight) % h->height_inc;
 		}
 
 	if (h->flags & PMaxSize)

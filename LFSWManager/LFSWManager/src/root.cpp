@@ -45,7 +45,7 @@ void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
 	if (state & ShiftMask)
 		setndesk(arg);
-	gotodesk(arg - 1);
+	gotodesk(arg-1);
 	refocus(time);
 }
 

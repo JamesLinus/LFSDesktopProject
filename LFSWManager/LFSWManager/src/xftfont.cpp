@@ -135,7 +135,7 @@ int fttextwidth(struct font *f,const char *s)
 	XftFont *font=(XftFont*)f->data;
 	XGlyphInfo info;
 	XftTextExtents8(dpy,font,(XftChar8 *)s,strlen(s),&info);
-	return info.width - info.x; // [sic]
+	return info.width-info.x; // [sic]
 }
 
 int fttextwidth_utf8(struct font *f,const char *s)
@@ -143,5 +143,5 @@ int fttextwidth_utf8(struct font *f,const char *s)
 	XftFont *font=(XftFont*)f->data;
 	XGlyphInfo info;
 	XftTextExtentsUtf8(dpy,font,(XftChar8 *)s,strlen(s),&info);
-	return info.width - info.x; // [sic]
+	return info.width-info.x; // [sic]
 }

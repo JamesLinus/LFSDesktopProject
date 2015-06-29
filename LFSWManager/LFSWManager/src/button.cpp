@@ -39,6 +39,9 @@
 #include "button.h"
 #include "lib.h"
 
+bitmap			*deletebitmap;
+bitmap			*maximizeBitmap;
+
 void update(struct button *b)
 {
 	Bool invert=b->pressed && b->entered;
@@ -48,13 +51,13 @@ void update(struct button *b)
 	XFillRectangle(dpy,b->pixmap,bg,0,0,b->width,b->height);
 
 	drawbitmap(b->pixmap,fg,b->bitmap,
-	           (b->width - b->bitmap->width) / 2,
-	           (b->height - b->bitmap->height) / 2);
+	           (b->width-b->bitmap->width) / 2,
+	           (b->height-b->bitmap->height) / 2);
 
 	if (!invert)
 		{
 			XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * halfleading : 0,LineSolid,CapButt,JoinMiter);
-			XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width - 1,b->height - 1);
+			XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
 			XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
 		}
 

@@ -44,201 +44,18 @@
 #include "lib.h"
 #include "ewmh.h"
 #include "dragger.h"
+#include "frame.h"
 
 #define EXT_TOP (lineheight + 2)
 #define EXT_BOTTOM (halfleading + 1)
 #define EXT_LEFT (halfleading + 1)
 #define EXT_RIGHT (halfleading + 1)
 
-struct frame
-{
-	struct listener listener;
-	struct client *client;
-	struct button *deletebutton;
-	struct dragger *topleftresizer;
-	struct dragger *toprightresizer;
-	Pixmap pixmap;
-	GC *background;
-	int namewidth;
-	int x;
-	int y;
-	int width;
-	int height;
-	Window window;
-	int downx;	// window relative pointer x at button press
-	int downy;	// window relative pointer y at button press
-	Bool grabbed;
-};
-
 size_t	fcount;
 Cursor	cursortopleft=None;
 Cursor	cursortopright=None;
 bool	swapdesk=false;
 int		nx;
-
-void mydelete(void *myclient,Time t)
-{
-	cdelete((client*)myclient,t);
-}
-
-/*
- * XXX: We cheat here and always estimate normal frame
- * extents,even if the window is of a type that will
- * not get a frame. This is hopefully okay since most
- * clients requesting estimates of frame extents will
- * probably be interested in having a frame.
- */
-struct extents estimateframeextents(Window w)
-{
-	return (struct extents)
-	{
-		.top=EXT_TOP,
-		 .bottom=EXT_BOTTOM,
-		  .left=EXT_LEFT,
-		   .right=EXT_RIGHT
-	};
-}
-
-void reorder(Window ref,Window below)
-{
-	Window	w[2]= {ref,below};
-	XRestackWindows(dpy,w,2);
-}
-
-void setgrav(Window win,int grav)
-{
-	XSetWindowAttributes	wa;
-	wa.win_gravity=grav;
-
-	XChangeWindowAttributes(dpy,win,CWWinGravity,&wa);
-}
-
-void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
-{
-	switch (wingrav)
-		{
-		case NorthWestGravity:
-			*dx=0;
-			*dy=0;
-			break;
-		case NorthGravity:
-			*dx=borderwidth - (EXT_LEFT + EXT_RIGHT) / 2;
-			*dy=0;
-			break;
-		case NorthEastGravity:
-			*dx=(2 * borderwidth) - (EXT_LEFT + EXT_RIGHT);
-			*dy=0;
-			break;
-
-		case WestGravity:
-			*dx=0;
-			*dy=borderwidth - (EXT_TOP + EXT_BOTTOM) / 2;
-			break;
-		case CenterGravity:
-			*dx=borderwidth - (EXT_LEFT + EXT_RIGHT) / 2;
-			*dy=borderwidth - (EXT_TOP + EXT_BOTTOM) / 2;
-			break;
-		case EastGravity:
-			*dx=(2 * borderwidth) - (EXT_LEFT + EXT_RIGHT);
-			*dy=borderwidth - (EXT_TOP + EXT_BOTTOM) / 2;
-			break;
-
-		case SouthWestGravity:
-			*dx=0;
-			*dy=(2 * borderwidth) - (EXT_TOP + EXT_BOTTOM);
-			break;
-		case SouthGravity:
-			*dx=borderwidth - (EXT_LEFT + EXT_RIGHT) / 2;
-			*dy=(2 * borderwidth) - (EXT_TOP + EXT_BOTTOM);
-			break;
-		case SouthEastGravity:
-			*dx=(2 * borderwidth) - (EXT_LEFT + EXT_RIGHT);
-			*dy=(2 * borderwidth) - (EXT_TOP + EXT_BOTTOM);
-			break;
-
-		case StaticGravity:
-			*dx=borderwidth - EXT_LEFT;
-			*dy=borderwidth - EXT_TOP;;
-			break;
-
-		default:
-			errorf("unknown window gravity %d",wingrav);
-			*dx=0;
-			*dy=0;
-			break;
-		}
-}
-
-void repaint(struct frame *f)
-{
-	int namewidth=f->namewidth;
-	namewidth=MIN(namewidth,f->width - 2 * (1 + font->size));
-	namewidth=MAX(namewidth,0);
-
-	// Title area
-	int x=1;
-	XFillRectangle(dpy,f->window,*f->background,x,1,font->size,lineheight);
-	x += font->size;
-	if (f->pixmap != None)
-		XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,lineheight,x,1);
-	x += namewidth;
-	XFillRectangle(dpy,f->window,*f->background,x,1,f->width - 1 - x,lineheight);
-
-	// Border
-	XDrawRectangle(dpy,f->window,foreground,0,0,f->width - 1,f->height - 1);
-
-	// Title bottom border
-	XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP - 1,f->width - EXT_RIGHT - 1,EXT_TOP - 1);
-
-	// Window area
-	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width - 2,f->height - 1 - EXT_TOP);
-
-	// Small areas to the left and right of the title bottom border
-	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP - 1,EXT_LEFT - 1,1);
-	XFillRectangle(dpy,f->window,*f->background,f->width - EXT_RIGHT,EXT_TOP - 1,EXT_RIGHT - 1,1);
-}
-
-void fupdate(struct frame *f)
-{
-	if (chaswmproto(f->client,WM_DELETE_WINDOW))
-		{
-			if (f->deletebutton==NULL)
-				{
-					int sz=lineheight + 2;
-					f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width - 1 - font->size - sz,0,sz,sz,NorthEastGravity);
-				}
-		}
-	else if (f->deletebutton != NULL)
-		{
-			bdestroy(f->deletebutton);
-			f->deletebutton=NULL;
-		}
-
-	Bool hasfocus=chasfocus(f->client);
-
-	f->background=hasfocus ? &hlbackground : &background;
-
-	if (f->pixmap != None)
-		{
-			XFreePixmap(dpy,f->pixmap);
-			f->pixmap=None;
-		}
-	f->namewidth=namewidth(font,f->client);
-	if (f->namewidth>0)
-		{
-			f->pixmap=XCreatePixmap(dpy,root,f->namewidth,lineheight,DefaultDepth(dpy,screen));
-			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,lineheight);
-			drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,halfleading + font->ascent,f->client);
-
-			if (f->client->desk==DESK_ALL)
-				{
-					int y=halfleading + font->ascent + font->descent / 2;
-					XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
-				}
-		}
-
-	repaint(f);
-}
 
 /*
  * Move and resize the frame,and update the client window.
@@ -258,8 +75,8 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	{
 		.x=x + EXT_LEFT,
 		.y=y + EXT_TOP,
-		.width=w - EXT_LEFT - EXT_RIGHT,
-		.height=h - EXT_TOP - EXT_BOTTOM,
+		.width=w-EXT_LEFT-EXT_RIGHT,
+		.height=h-EXT_TOP-EXT_BOTTOM,
 		.borderwidth=old.borderwidth,
 	};
 
@@ -313,6 +130,203 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 		csendconf(f->client);
 	else
 		XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
+}
+
+void mydelete(void *myclient,Time t)
+{
+	cdelete((client*)myclient,t);
+}
+
+void maximizeWindow(void *myclient,Time t)
+{
+
+	if(((client*)myclient)->frame->isMaximized==false)
+		{
+			((client*)myclient)->frame->oldX=((client*)myclient)->frame->x;
+			((client*)myclient)->frame->oldY=((client*)myclient)->frame->y;
+			((client*)myclient)->frame->oldWidth=((client*)myclient)->frame->width;
+			((client*)myclient)->frame->oldHeight=((client*)myclient)->frame->height;
+			((client*)myclient)->frame->isMaximized=true;
+			moveresize(((client*)myclient)->frame,0,0,displayWidth,displayHeight);
+		}
+	else
+		{
+			moveresize(((client*)myclient)->frame,((client*)myclient)->frame->oldX,((client*)myclient)->frame->oldY,((client*)myclient)->frame->oldWidth,((client*)myclient)->frame->oldHeight);
+			((client*)myclient)->frame->x=((client*)myclient)->frame->oldX;
+			((client*)myclient)->frame->y=((client*)myclient)->frame->oldY;
+			((client*)myclient)->frame->width=((client*)myclient)->frame->oldWidth;
+			((client*)myclient)->frame->height=((client*)myclient)->frame->oldHeight;
+			((client*)myclient)->frame->isMaximized=false;
+		}		
+}
+
+
+/*
+ * XXX: We cheat here and always estimate normal frame
+ * extents,even if the window is of a type that will
+ * not get a frame. This is hopefully okay since most
+ * clients requesting estimates of frame extents will
+ * probably be interested in having a frame.
+ */
+struct extents estimateframeextents(Window w)
+{
+	return (struct extents)
+	{
+		.top=EXT_TOP,
+		 .bottom=EXT_BOTTOM,
+		  .left=EXT_LEFT,
+		   .right=EXT_RIGHT
+	};
+}
+
+void reorder(Window ref,Window below)
+{
+	Window	w[2]= {ref,below};
+	XRestackWindows(dpy,w,2);
+}
+
+void setgrav(Window win,int grav)
+{
+	XSetWindowAttributes	wa;
+	wa.win_gravity=grav;
+
+	XChangeWindowAttributes(dpy,win,CWWinGravity,&wa);
+}
+
+void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
+{
+	switch (wingrav)
+		{
+		case NorthWestGravity:
+			*dx=0;
+			*dy=0;
+			break;
+		case NorthGravity:
+			*dx=borderwidth-(EXT_LEFT + EXT_RIGHT) / 2;
+			*dy=0;
+			break;
+		case NorthEastGravity:
+			*dx=(2 * borderwidth)-(EXT_LEFT + EXT_RIGHT);
+			*dy=0;
+			break;
+
+		case WestGravity:
+			*dx=0;
+			*dy=borderwidth-(EXT_TOP + EXT_BOTTOM) / 2;
+			break;
+		case CenterGravity:
+			*dx=borderwidth-(EXT_LEFT + EXT_RIGHT) / 2;
+			*dy=borderwidth-(EXT_TOP + EXT_BOTTOM) / 2;
+			break;
+		case EastGravity:
+			*dx=(2 * borderwidth)-(EXT_LEFT + EXT_RIGHT);
+			*dy=borderwidth-(EXT_TOP + EXT_BOTTOM) / 2;
+			break;
+
+		case SouthWestGravity:
+			*dx=0;
+			*dy=(2 * borderwidth)-(EXT_TOP + EXT_BOTTOM);
+			break;
+		case SouthGravity:
+			*dx=borderwidth-(EXT_LEFT + EXT_RIGHT) / 2;
+			*dy=(2 * borderwidth)-(EXT_TOP + EXT_BOTTOM);
+			break;
+		case SouthEastGravity:
+			*dx=(2 * borderwidth)-(EXT_LEFT + EXT_RIGHT);
+			*dy=(2 * borderwidth)-(EXT_TOP + EXT_BOTTOM);
+			break;
+
+		case StaticGravity:
+			*dx=borderwidth-EXT_LEFT;
+			*dy=borderwidth-EXT_TOP;;
+			break;
+
+		default:
+			errorf("unknown window gravity %d",wingrav);
+			*dx=0;
+			*dy=0;
+			break;
+		}
+}
+
+void repaint(struct frame *f)
+{
+	int namewidth=f->namewidth;
+	namewidth=MIN(namewidth,f->width-2 * (1 + font->size));
+	namewidth=MAX(namewidth,0);
+
+	// Title area
+	int x=1;
+	XFillRectangle(dpy,f->window,*f->background,x,1,font->size,lineheight);
+	x += font->size;
+	if (f->pixmap != None)
+		XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,lineheight,x,1);
+	x += namewidth;
+	XFillRectangle(dpy,f->window,*f->background,x,1,f->width-1-x,lineheight);
+
+	// Border
+	XDrawRectangle(dpy,f->window,foreground,0,0,f->width-1,f->height-1);
+
+	// Title bottom border
+	XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP-1,f->width-EXT_RIGHT-1,EXT_TOP-1);
+
+	// Window area
+	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
+
+	// Small areas to the left and right of the title bottom border
+	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP-1,EXT_LEFT-1,1);
+	XFillRectangle(dpy,f->window,*f->background,f->width-EXT_RIGHT,EXT_TOP-1,EXT_RIGHT-1,1);
+}
+
+void fupdate(struct frame *f)
+{
+	if (chaswmproto(f->client,WM_DELETE_WINDOW))
+		{
+			if (f->deletebutton==NULL)
+				{
+					int sz=lineheight + 2;
+					f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-sz,0,sz,sz,NorthEastGravity);
+				}
+		}
+	else if (f->deletebutton != NULL)
+		{
+			bdestroy(f->deletebutton);
+			f->deletebutton=NULL;
+		}
+
+	if(f->client->canMaximize==true)
+		{
+			if (f->maximize==NULL)
+				{
+					int sz=lineheight + 2;
+					f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-sz-font->size-sz,0,sz,sz,NorthEastGravity);
+				}
+		}
+
+	Bool hasfocus=chasfocus(f->client);
+
+	f->background=hasfocus ? &hlbackground : &background;
+
+	if (f->pixmap != None)
+		{
+			XFreePixmap(dpy,f->pixmap);
+			f->pixmap=None;
+		}
+	f->namewidth=namewidth(font,f->client);
+	if (f->namewidth>0)
+		{
+			f->pixmap=XCreatePixmap(dpy,root,f->namewidth,lineheight,DefaultDepth(dpy,screen));
+			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,lineheight);
+			drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,halfleading + font->ascent,f->client);
+
+			if (f->client->desk==DESK_ALL)
+				{
+					int y=halfleading + font->ascent + font->descent / 2;
+					XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
+				}
+		}
+
+	repaint(f);
 }
 
 void confrequest(struct frame *f,XConfigureRequestEvent *e)
@@ -377,7 +391,7 @@ void buttonrelease(struct frame *f,XButtonEvent *e)
 
 void motionnotify(struct frame *f,XMotionEvent *e)
 {
-	moveresize(f,e->x_root - f->downx,e->y_root - f->downy,f->width,f->height);
+	moveresize(f,e->x_root-f->downx,e->y_root-f->downy,f->width,f->height);
 }
 
 void maprequest(struct frame *f,XMapRequestEvent *e)
@@ -423,8 +437,8 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
 	struct frame *f=(frame*)self;
 
-	int w=f->width - (xdrag - f->x);
-	int h=f->height - (ydrag - f->y);
+	int w=f->width-(xdrag-f->x);
+	int h=f->height-(ydrag-f->y);
 
 	w -= EXT_LEFT + EXT_RIGHT;
 	h -= EXT_TOP + EXT_BOTTOM;
@@ -432,8 +446,8 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	w += EXT_LEFT + EXT_RIGHT;
 	h += EXT_TOP + EXT_BOTTOM;
 
-	int x=f->x + f->width - w;
-	int y=f->y + f->height - h;
+	int x=f->x + f->width-w;
+	int y=f->y + f->height-h;
 	if (counter==0)
 		{
 			cpopapp(f->client);
@@ -446,8 +460,8 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
 	struct frame *f=(frame*)self;
 
-	int w=xdrag + 1 - f->x;
-	int h=f->height - (ydrag - f->y);
+	int w=xdrag + 1-f->x;
+	int h=f->height-(ydrag-f->y);
 
 	w -= EXT_LEFT + EXT_RIGHT;
 	h -= EXT_TOP + EXT_BOTTOM;
@@ -456,7 +470,7 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	h += EXT_TOP + EXT_BOTTOM;
 
 	int x=f->x;
-	int y=f->y + f->height - h;
+	int y=f->y + f->height-h;
 	if (counter==0)
 		{
 			cpopapp(f->client);
@@ -491,6 +505,11 @@ struct frame *fcreate(struct client *c)
 	f->height=g.height + EXT_TOP + EXT_BOTTOM;
 
 	f->grabbed=False;
+	f->oldX=f->x;
+	f->oldY=f->y;
+	f->oldWidth=f->width;
+	f->oldHeight=f->height;
+	f->isMaximized=false;
 
 	wa.bit_gravity=NorthWestGravity;
 	f->window=XCreateWindow(dpy,root,f->x,f->y,f->width,f->height,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
@@ -521,9 +540,10 @@ struct frame *fcreate(struct client *c)
 	int dw=font->size + 1;
 	int dh=lineheight + 2;
 	f->topleftresizer=dcreate(f->window,0,0,dw,dh,NorthWestGravity,cursortopleft,resizetopleft,f);
-	f->toprightresizer=dcreate(f->window,f->width - dw,0,dw,dh,NorthEastGravity,cursortopright,resizetopright,f);
+	f->toprightresizer=dcreate(f->window,f->width-dw,0,dw,dh,NorthEastGravity,cursortopright,resizetopright,f);
 
 	f->deletebutton=NULL;
+	f->maximize=NULL;
 
 	XSetWindowBorderWidth(dpy,clientwin,0);
 	setgrav(clientwin,NorthWestGravity);
@@ -568,8 +588,8 @@ void fdestroy(struct frame *f)
 	gravitate(grav,g.borderwidth,&dx,&dy);
 	if (f->client->ismapped)
 		cignoreunmap(f->client);
-	g.x=f->x - dx;
-	g.y=f->y - dy;
+	g.x=f->x-dx;
+	g.y=f->y-dy;
 	csetgeom(f->client,g);
 	XReparentWindow(dpy,clientwin,root,g.x,g.y);
 
