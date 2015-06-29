@@ -166,6 +166,7 @@ int main(int argc,char *argv[])
 {
 	int					cnt=-1;
 	XineramaScreenInfo	*p=NULL;
+	char				*prefsfile;
 
 	progname=argv[0];
 	// The Xmb* functions use LC_CTYPE
@@ -184,7 +185,10 @@ int main(int argc,char *argv[])
 	placement=CENTREMMONITOR;
 	titleFont=strdup(DEFAULTFONT);
 
-	loadVarsFromFile("/home/keithhedger/.config/LFS/lfswmanager.rc",wmPrefs);
+	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
+	loadVarsFromFile(prefsfile,wmPrefs);
+	free(prefsfile);
+
 	ndesk=numberOfDesktops;
 
 	int opt;
