@@ -55,6 +55,7 @@
 #include "ewmh.h"
 #include "client.h"
 #include "mwm.h"
+#include "prefs.h"
 
 #include "deleven.xbm"
 #include "delodd.xbm"
@@ -65,7 +66,6 @@ DEFINE_BITMAP(delodd);
 enum			runlevel runlevel=RL_STARTUP;
 
 bitmap			*deletebitmap;
-const char		*progname;
 int				exitstatus;
 
 /*
@@ -92,48 +92,7 @@ GC				hlbackground;
 
 int				lineheight;
 int				halfleading;
-
-XContext		listeners;
 sigset_t		sigmask;
-
-/*
- * Print formatted error message
- */
-void errorf(const char *fmt,...)
-{
-	va_list ap;
-	fprintf(stderr,"%s: ",progname);
-	va_start(ap,fmt);
-	vfprintf(stderr,fmt,ap);
-	va_end(ap);
-	fprintf(stderr,"\n");
-}
-
-void setlistener(Window w,const struct listener *l)
-{
-	if (l == NULL)
-		XDeleteContext(dpy,w,listeners);
-	else
-		XSaveContext(dpy,w,listeners,(XPointer)l);
-}
-
-struct listener *getlistener(Window w)
-{
-	struct listener *l;
-	if (XFindContext(dpy,w,listeners,(XPointer *)&l) == 0)
-		return l;
-	else
-		return NULL;
-}
-
-int redirect(XEvent *e,Window w)
-{
-	struct listener *l=getlistener(w);
-	if (l == NULL)
-		return -1;
-	l->function(l->pointer,e);
-	return 0;
-}
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
@@ -162,7 +121,7 @@ int waitevent(void)
 	FD_SET(conn,&rfds);
 	nfds=MAX(conn + 1,nfds);
 
-	if (pselect(nfds,&rfds,NULL,NULL,NULL,&sigmask) == -1)
+	if (pselect(nfds,&rfds,NULL,NULL,NULL,&sigmask)==-1)
 		{
 			errorf("pselect: %s",strerror(errno));
 			exitstatus=1;
@@ -184,7 +143,7 @@ int waitevent(void)
 
 void usage(FILE *f)
 {
-	fprintf(f,"Usage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
+	fprintf(f,"%s\nUsage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
 	        "-n number Number of desktops\n"
 	        "-t font Title font\n"
 	        "-f colour Forecolour\n"
@@ -193,7 +152,7 @@ void usage(FILE *f)
 	        "-B colour Focusud backcolour\n"
 	        "-p New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-v Debug mode\n"
-	        ,progname);
+	        ,PACKAGE_STRING,progname);
 }
 
 int main(int argc,char *argv[])
@@ -209,39 +168,44 @@ int main(int argc,char *argv[])
 
 	runlevel=RL_STARTUP;
 
-	char *ftname=NULL;
-
-	const char *fname="rgb:00/00/00";
-	const char *bname="rgb:ff/ff/ff";
-	const char *hlfname="rgb:00/00/00";
-	const char *hlbname="rgb:00/ff/ff";
-
+	fontColours[FOCUSEDFORE]=strdup("rgb:00/00/00");
+	fontColours[FOCUSEDBACK]=strdup("rgb:00/ff/ff");
+	fontColours[FORE]=strdup("rgb:00/00/00");
+	fontColours[BACK]=strdup("rgb:ff/ff/ff");
 	Desk ndesk=0;
-
+	numberOfDesktops=4;
 	placement=CENTREMMONITOR;
+	titleFont=strdup(DEFAULTFONT);
+
+	loadVarsFromFile("/home/keithhedger/.config/LFS/lfswmanager.rc",wmPrefs);
+	ndesk=numberOfDesktops;
 
 	int opt;
 	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:v")) != -1)
 		switch (opt)
 			{
 			case 'B':
-				hlbname=optarg;
+				free(fontColours[FOCUSEDBACK]);
+				fontColours[FOCUSEDBACK]=strdup(optarg);
 				break;
 			case 'b':
-				bname=optarg;
+				free(fontColours[BACK]);
+				fontColours[BACK]=strdup(optarg);
 				break;
 			case 'F':
-				hlfname=optarg;
+				free(fontColours[FOCUSEDFORE]);
+				fontColours[FOCUSEDFORE]=strdup(optarg);
 				break;
 			case 'f':
-				fname=optarg;
+				free(fontColours[FORE]);
+				fontColours[FORE]=strdup(optarg);
 				break;
 			case 'n':
 				{
 					errno=0;
 					char *p;
 					long n=strtol(optarg,&p,10);
-					if ((n<0) || (errno != 0) || (*optarg == '\0') || (*p != '\0'))
+					if ((n<0) || (errno != 0) || (*optarg=='\0') || (*p != '\0'))
 						{
 							errorf("%s: invalid desktop count",optarg);
 							exit(1);
@@ -250,7 +214,8 @@ int main(int argc,char *argv[])
 				}
 				break;
 			case 't':
-				ftname=optarg;
+				free(titleFont);
+				titleFont=strdup(optarg);
 				break;
 			case 'p':
 				placement=atoi(optarg);
@@ -278,12 +243,12 @@ int main(int argc,char *argv[])
 			fprintf(stderr,"%s\n",PACKAGE_STRING);
 			fprintf(stderr,"Synchronous DEBUG mode enabled. "
 			        "Printing Xlib errors on standard error.\n");
-			fprintf(stderr,"Report bugs to <%s>.\n",PACKAGE_BUGREPORT);
+			fprintf(stderr,"Report bugs to <kdhedger68713@gmail.com>.\n");
 		}
 
 	XSetErrorHandler(errhandler);
 
-	if ((dpy=XOpenDisplay(displayname)) == NULL)
+	if ((dpy=XOpenDisplay(displayname))==NULL)
 		{
 			errorf("cannot open display \"%s\"",XDisplayName(displayname));
 			exit(1);
@@ -304,7 +269,6 @@ int main(int argc,char *argv[])
 			if(cnt>0)
 				{
 					monitorData=(monitors*)malloc(sizeof(monitors)*cnt);
-					//lfsmonitors_rc=(args*)malloc(sizeof(args)*cnt*2);
 					numberOfMonitors=cnt;
 
 					for (int x=0; x<cnt; x++)
@@ -319,15 +283,15 @@ int main(int argc,char *argv[])
 		}
 	
 
-	font=ftload(ftname);
-	if (font == NULL)
+	font=ftload(titleFont);
+	if (font==NULL)
 		{
 			errorf("cannot load font");
 			exit(1);
 		}
-	fnormal=ftloadcolor(fname);
-	fhighlight=ftloadcolor(hlfname);
-	if (fnormal == NULL || fhighlight == NULL)
+	fnormal=ftloadcolor(fontColours[FORE]);
+	fhighlight=ftloadcolor(fontColours[FOCUSEDFORE]);
+	if (fnormal==NULL || fhighlight==NULL)
 		{
 			errorf("cannot load font colors");
 			exit(1);
@@ -336,15 +300,15 @@ int main(int argc,char *argv[])
 	halfleading=(3 * font->size / 10) / 2;
 	lineheight=font->size + 2 * halfleading;
 
-	if (lineheight % 2 == 0)
+	if (lineheight % 2==0)
 		deletebitmap=&deleven;
 	else
 		deletebitmap=&delodd;
 
-	foregroundpixel=getpixel(fname);
-	backgroundpixel=getpixel(bname);
-	hlforegroundpixel=getpixel(hlfname);
-	hlbackgroundpixel=getpixel(hlbname);
+	foregroundpixel=getpixel(fontColours[FORE]);
+	backgroundpixel=getpixel(fontColours[BACK]);
+	hlforegroundpixel=getpixel(fontColours[FOCUSEDFORE]);
+	hlbackgroundpixel=getpixel(fontColours[FOCUSEDBACK]);
 
 	XGCValues	gcv;
 
@@ -426,14 +390,14 @@ int main(int argc,char *argv[])
 		{
 			XEvent e;
 			XNextEvent(dpy,&e);
-			if (redirect(&e,e.xany.window) == -1)
+			if (redirect(&e,e.xany.window)==-1)
 				{
 					/*
 					 * EWMH specifies some root window client
 					 * messages with a non-root event window,
 					 * so we need to redirect those manually.
 					 */
-					if (e.type == ClientMessage)
+					if (e.type==ClientMessage)
 						redirect(&e,root);
 				}
 

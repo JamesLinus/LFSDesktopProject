@@ -29,6 +29,7 @@
 typedef unsigned long Desk;
 
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
+enum {FOCUSEDFORE=0,FOCUSEDBACK,FORE,BACK};
 
 struct geometry
 {
@@ -144,12 +145,20 @@ extern Atom				WM_STATE;
 extern unsigned int		screen;
 extern int				displayWidth;
 extern int				displayHeight;
-extern int				placement;
 extern monitors			*monitorData;
 extern unsigned int		numberOfMonitors;
+extern XContext			listeners;
+extern const char		*progname;
+
+//wm prefs
+extern int				placement;
+extern	unsigned int	numberOfDesktops;
+extern char				*titleFont;
+extern char				*fontColours[4];
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);
 int redirect(XEvent *,Window);
+
 
 #endif

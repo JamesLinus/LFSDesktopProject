@@ -122,7 +122,7 @@ void ewmh_notifyframeextents(Window w,struct extents e)
 
 void addclient(Window w)
 {
-	if (clientlist.n == clientlist.lim)
+	if (clientlist.n==clientlist.lim)
 		{
 			clientlist.lim += 32;
 			clientlist.v=(Window*)xrealloc(clientlist.v,clientlist.lim * sizeof clientlist.v[0]);
@@ -143,7 +143,7 @@ void delclient(Window w)
 			clientlist.n--;
 		}
 	setprop(root,NET_CLIENT_LIST,XA_WINDOW,32,clientlist.v,clientlist.n);
-	if (clientlist.n == 0)
+	if (clientlist.n==0)
 		{
 			free(clientlist.v);
 			clientlist.v=NULL;
@@ -153,16 +153,16 @@ void delclient(Window w)
 
 unsigned long ewmh_getndesktops(void)
 {
-	unsigned long ndesk=DEFAULT_NUMBER_OF_DESKTOPS;
+	unsigned long nd=DEFAULT_NUMBER_OF_DESKTOPS;
 	unsigned long n;
 	unsigned long *p=(long unsigned int*)getprop(root,NET_NUMBER_OF_DESKTOPS,XA_CARDINAL,32,&n);
 	if (p != NULL)
 		{
-			if (n == 1)
-				ndesk=*p & 0xffffffffUL;
+			if (n==1)
+				nd=*p & 0xffffffffUL;
 			XFree(p);
 		}
-	return ndesk;
+	return nd;
 }
 
 void ewmh_notifyndesk(unsigned long n)
@@ -216,7 +216,7 @@ void ewmh_startwm(void)
 	setcurrentdesktop(0);
 	if (deskp != NULL)
 		{
-			if (n == 1)
+			if (n==1)
 				{
 					gotodesk(*deskp & 0xffffffffUL);
 					refocus(CurrentTime);
@@ -327,7 +327,7 @@ void reloadwindowtype(struct client *c)
 	if (types != NULL)
 		{
 			for (unsigned long i=0; i<n; i++)
-				if (types[i] == NET_WM_WINDOW_TYPE_DOCK)
+				if (types[i]==NET_WM_WINDOW_TYPE_DOCK)
 					isdock=True;
 			XFree(types);
 		}
@@ -342,7 +342,7 @@ void reloadwindowdesktop(struct client *c)
 	long *deskp=(long*)getprop(w,NET_WM_DESKTOP,XA_CARDINAL,32,&n);
 	if (deskp != NULL)
 		{
-			if (n == 1)
+			if (n==1)
 				csetdesk(c,*deskp & 0xffffffffUL);
 			XFree(deskp);
 		}
@@ -407,7 +407,7 @@ void ewmh_notifyfocus(Window old,Window mynew)
 	// The last recorded focus window
 	Window current=None;
 
-	if (old == None || old == current)
+	if (old==None || old==current)
 		{
 			setprop(root,NET_ACTIVE_WINDOW,XA_WINDOW,32,&mynew,1);
 			current=mynew;
@@ -443,7 +443,7 @@ void ewmh_notifyrestack(void)
 
 void ewmh_propertynotify(struct client *c,XPropertyEvent *e)
 {
-	if (e->atom == NET_WM_NAME)
+	if (e->atom==NET_WM_NAME)
 		reloadwindowname(c);
 }
 
@@ -453,7 +453,7 @@ Bool hasstate(Window w,Atom state)
 	Atom *v=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	Bool found=False;
 	for (unsigned long i=0; i<n; i++)
-		if (v[i] == state)
+		if (v[i]==state)
 			{
 				found=True;
 				break;
@@ -472,7 +472,7 @@ void addstate(Window w,Atom state)
 	Atom *old=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	Bool present=False;
 	for (unsigned long i=0; i<n; i++)
-		if (old[i] == state)
+		if (old[i]==state)
 			{
 				present=True;
 				break;
@@ -522,21 +522,21 @@ void ewmh_notifyfull(Window w,Bool full)
 
 void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 {
-	if (e->message_type == NET_ACTIVE_WINDOW && e->format == 32)
+	if (e->message_type==NET_ACTIVE_WINDOW && e->format==32)
 		{
 			cpopapp(c);
 			gotodesk(c->desk);
 			cfocus(c,(Time)e->data.l[1]);
 		}
-	else if (e->message_type == NET_CLOSE_WINDOW && e->format == 32)
+	else if (e->message_type==NET_CLOSE_WINDOW && e->format==32)
 		{
 			cdelete(c,(Time)e->data.l[0]);
 		}
-	else if (e->message_type == NET_WM_DESKTOP && e->format == 32)
+	else if (e->message_type==NET_WM_DESKTOP && e->format==32)
 		{
 			csetappdesk(c,e->data.l[0] & 0xffffffff);
 		}
-	else if (e->message_type == NET_WM_STATE && e->format == 32)
+	else if (e->message_type==NET_WM_STATE && e->format==32)
 		{
 			int how=e->data.l[0];
 			for (int i=1; i <= 2; i++)
@@ -548,18 +548,18 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 
 void ewmh_rootclientmessage(XClientMessageEvent *e)
 {
-	if (e->message_type == NET_CURRENT_DESKTOP && e->format == 32)
+	if (e->message_type==NET_CURRENT_DESKTOP && e->format==32)
 		{
 			gotodesk(e->data.l[0]);
 			refocus((Time)e->data.l[1]);
 		}
-	else if (e->message_type == NET_REQUEST_FRAME_EXTENTS)
+	else if (e->message_type==NET_REQUEST_FRAME_EXTENTS)
 		{
 			struct extents ext=estimateframeextents(e->window);
 			ewmh_notifyframeextents(e->window,ext);
 		}
-	else if (e->message_type == NET_NUMBER_OF_DESKTOPS &&
-	         e->format == 32)
+	else if (e->message_type==NET_NUMBER_OF_DESKTOPS &&
+	         e->format==32)
 		{
 			setndesk(e->data.l[0]);
 			refocus(CurrentTime);

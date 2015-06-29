@@ -68,7 +68,7 @@ struct client
 
 struct client *manage(Window);
 extern Desk curdesk;
-extern Desk ndesk;
+//extern Desk ndesk;
 
 void shuffle(void);
 void manageall(void);

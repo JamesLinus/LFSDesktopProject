@@ -51,7 +51,7 @@ const unsigned lockmasks[] =
 void *xmalloc(size_t size)
 {
 	void *p;
-	while ((p=malloc(size)) == NULL && size != 0)
+	while ((p=malloc(size))==NULL && size != 0)
 		{
 			errorf("out of memory");
 			sleep(1);
@@ -62,7 +62,7 @@ void *xmalloc(size_t size)
 void *xrealloc(const void *p,size_t size)
 {
 	void *q;
-	while ((q=realloc((void *)p,size)) == NULL && size != 0)
+	while ((q=realloc((void *)p,size))==NULL && size != 0)
 		{
 			errorf("out of memory");
 			sleep(1);
@@ -83,7 +83,7 @@ char *xstrdup(const char *s)
  */
 void grabkey(int keycode,unsigned modifiers,Window grabwin,Bool ownerevents,int ptrmode,int keymode)
 {
-	if (modifiers == AnyModifier)
+	if (modifiers==AnyModifier)
 		XGrabKey(dpy,keycode,modifiers,grabwin,ownerevents,ptrmode,keymode);
 	else
 		for (unsigned int i=0; i<NELEM(lockmasks); i++)
@@ -95,7 +95,7 @@ void grabkey(int keycode,unsigned modifiers,Window grabwin,Bool ownerevents,int 
  */
 void ungrabkey(int keycode,unsigned modifiers,Window grabwin)
 {
-	if (modifiers == AnyModifier)
+	if (modifiers==AnyModifier)
 		XUngrabKey(dpy,keycode,AnyModifier,grabwin);
 	else
 		for (unsigned int i=0; i<NELEM(lockmasks); i++)
@@ -107,7 +107,7 @@ void ungrabkey(int keycode,unsigned modifiers,Window grabwin)
  */
 void grabbutton(unsigned button,unsigned modifiers,Window grabwin,Bool ownerevents,unsigned eventmask,int ptrmode,int keymode,Window confineto,Cursor cursor)
 {
-	if (modifiers == AnyModifier)
+	if (modifiers==AnyModifier)
 		XGrabButton(dpy,button,AnyModifier,grabwin,ownerevents,eventmask,ptrmode,keymode,confineto,cursor);
 	else
 		for (unsigned int i=0; i<NELEM(lockmasks); i++)
@@ -119,7 +119,7 @@ void grabbutton(unsigned button,unsigned modifiers,Window grabwin,Bool ownereven
  */
 void ungrabbutton(unsigned button,unsigned modifiers,Window grabwin)
 {
-	if (modifiers == AnyModifier)
+	if (modifiers==AnyModifier)
 		XUngrabButton(dpy,button,modifiers,grabwin);
 	else
 		for (unsigned int i=0; i<lockmasks[i]; i++)
@@ -138,7 +138,7 @@ long getwmstate(Window w)
 	long state=WithdrawnState;
 	if (XGetWindowProperty(dpy,w,WM_STATE,0L,2L,False,WM_STATE,
 	                       &actualtype,&actualformat,&nitems,
-	                       &bytesafter,&prop) == Success)
+	                       &bytesafter,&prop)==Success)
 		{
 			if (nitems>0)
 				state=((long *)prop)[0];
@@ -219,7 +219,7 @@ void *getprop(Window w,Atom prop,Atom type,int fmt,unsigned long *rcountp)
 
 void drawbitmap(Drawable d,GC gc,struct bitmap *b,int x,int y)
 {
-	if (b->pixmap == None)
+	if (b->pixmap==None)
 		b->pixmap=XCreateBitmapFromData(dpy,d,(char *)b->bits,b->width,b->height);
 	XCopyPlane(dpy,b->pixmap,d,gc,0,0,b->width,b->height,x,y,1);
 }

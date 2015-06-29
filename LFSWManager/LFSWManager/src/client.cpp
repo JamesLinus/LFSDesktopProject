@@ -54,7 +54,7 @@ LIST_DEFINE(winstack);
 Desk curdesk=0;
 
 // Number of desks
-Desk ndesk=1;
+//Desk ndesk=1;
 
 // True if restacking needed
 Bool needrestack=False;
@@ -256,8 +256,8 @@ void cunmap(struct client *c)
 
 void csetdesk(struct client *c,Desk d)
 {
-	if (d >= ndesk && d != DESK_ALL)
-		d=ndesk - 1;
+	if (d >= numberOfDesktops && d != DESK_ALL)
+		d=numberOfDesktops - 1;
 
 	c->desk=d;
 	ewmh_notifyclientdesktop(c->window,d);
@@ -274,7 +274,7 @@ void csetdesk(struct client *c,Desk d)
 
 void gotodesk(Desk d)
 {
-	if (d==curdesk || d >= ndesk || d==DESK_ALL)
+	if (d==curdesk || d >= numberOfDesktops || d==DESK_ALL)
 		return;
 
 	curdesk=d;
@@ -304,9 +304,8 @@ void setndesk(Desk val)
 {
 	if (val==0 || val >= 0xffffffffUL)
 		return;
-
-	Desk oldval=ndesk;
-	ndesk=val;
+	Desk oldval=numberOfDesktops;
+	numberOfDesktops=val;
 
 	if (val >= oldval)
 		ewmh_notifyndesk(val);
@@ -1560,13 +1559,13 @@ struct client *manage(Window window)
 		{
 			for (unsigned long i=0; i<n; i++)
 				{
-				if (types[i] == NET_WM_WINDOW_TYPE_DESKTOP)
+				if (types[i]==NET_WM_WINDOW_TYPE_DESKTOP)
 					{
 						c->followdesk=true;
 						c->isDesktop=True;
 						down=true;
 					}
-				if (types[i] == NET_WM_WINDOW_TYPE_DOCK)
+				if (types[i]==NET_WM_WINDOW_TYPE_DOCK)
 					{
 						c->followdesk=true;
 						c->isDock=true;

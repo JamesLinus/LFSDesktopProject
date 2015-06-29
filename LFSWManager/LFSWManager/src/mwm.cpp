@@ -83,7 +83,7 @@ void mwm_manage(struct client *c)
 
 void mwm_propertynotify(struct client *c,XPropertyEvent *e)
 {
-	if (e->atom == MOTIF_WM_HINTS)
+	if (e->atom==MOTIF_WM_HINTS)
 		reloadmwmhints(c);
 }
 
@@ -107,7 +107,7 @@ void reloadmwmhints(struct client *c)
 					if ((h->decorations & MWM_DECOR_ALL) != 0)
 						h->decorations=~h->decorations;
 
-					if ((h->decorations & MWM_DECOR_TITLE) == 0)
+					if ((h->decorations & MWM_DECOR_TITLE)==0)
 						undecorated=True;
 				}
 			XFree(h);

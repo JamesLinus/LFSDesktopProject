@@ -1,5 +1,9 @@
 0.0.7
-Improved 'doc' type window handling but still needs tweeking.
+Added number of desktops to prefs file.
+Added font and size to prefs.
+Added placement to prefs file.
+Added prefs file, for/back colours.
+Improved 'dock' type window handling but still needs tweeking.
 Mouse wheel now moves between desktops.
 Above/Below code tightened up.
 

@@ -37,8 +37,7 @@
 
 #include "wind.h"
 #include "lib.h"
-
-#define DEFAULT "sans-serif:size=10"
+#include "x11font.h"
 
 struct font *ftload(const char *name)
 {
@@ -47,16 +46,16 @@ struct font *ftload(const char *name)
 	if (name != NULL)
 		{
 			font=XftFontOpenXlfd(dpy,screen,name);
-			if (font == NULL)
+			if (font==NULL)
 				font=XftFontOpenName(dpy,screen,name);
-			if (font == NULL)
+			if (font==NULL)
 				errorf("cannot not load font %s",name);
 		}
 
-	if (font == NULL)
-		font=XftFontOpenName(dpy,screen,DEFAULT);
+	if (font==NULL)
+		font=XftFontOpenName(dpy,screen,DEFAULTFONT);
 
-	if (font == NULL)
+	if (font==NULL)
 		return NULL;
 
 	struct font *f=(struct font*)xmalloc(sizeof *f);
@@ -83,7 +82,7 @@ struct fontcolor *ftloadcolor(const char *name)
 	Visual *visual=DefaultVisual(dpy,screen);
 	Colormap colormap=DefaultColormap(dpy,screen);
 
-	if ((draw=XftDrawCreate(dpy,root,visual,colormap)) == NULL)
+	if ((draw=XftDrawCreate(dpy,root,visual,colormap))==NULL)
 		return NULL;
 
 	if (!XftColorAllocName(dpy,visual,colormap,name,&color))

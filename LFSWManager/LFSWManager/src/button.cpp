@@ -69,7 +69,7 @@ void buttonpress(struct button *b,XButtonEvent *e)
 
 void buttonrelease(struct button *b,XButtonEvent *e)
 {
-	if (e->button == Button1)
+	if (e->button==Button1)
 		{
 			if (b->pressed && b->entered)
 				b->function(b->arg,e->time);

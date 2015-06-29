@@ -202,7 +202,7 @@ void fupdate(struct frame *f)
 {
 	if (chaswmproto(f->client,WM_DELETE_WINDOW))
 		{
-			if (f->deletebutton == NULL)
+			if (f->deletebutton==NULL)
 				{
 					int sz=lineheight + 2;
 					f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width - 1 - font->size - sz,0,sz,sz,NorthEastGravity);
@@ -230,7 +230,7 @@ void fupdate(struct frame *f)
 			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,lineheight);
 			drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,halfleading + font->ascent,f->client);
 
-			if (f->client->desk == DESK_ALL)
+			if (f->client->desk==DESK_ALL)
 				{
 					int y=halfleading + font->ascent + font->descent / 2;
 					XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
@@ -250,7 +250,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	Desk	newd;
 	Desk	d;
 
-	if (x == f->x && y == f->y && w == f->width && h == f->height)
+	if (x==f->x && y==f->y && w==f->width && h==f->height)
 		return;
 
 	struct geometry old=cgetgeom(f->client);
@@ -288,12 +288,12 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 				{
 					newd=d-1;
 					if(newd<0)
-						newd=ndesk-1;
+						newd=numberOfDesktops-1;
 				}
 			else
 				{
 					newd=d+1;
-					if(newd>ndesk-1)
+					if(newd>numberOfDesktops-1)
 						newd=0;
 				}
 			gotodesk(newd);
@@ -309,7 +309,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	f->width=w;
 	f->height=h;
 
-	if (mynew.width == old.width && mynew.height == old.height)
+	if (mynew.width==old.width && mynew.height==old.height)
 		csendconf(f->client);
 	else
 		XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
@@ -349,7 +349,7 @@ void confrequest(struct frame *f,XConfigureRequestEvent *e)
 
 void buttonpress(struct frame *f,XButtonEvent *e)
 {
-	if (e->button == Button1)
+	if (e->button==Button1)
 		{
 			cpopapp(f->client);
 			cfocus(f->client,e->time);
@@ -367,7 +367,7 @@ void buttonpress(struct frame *f,XButtonEvent *e)
 
 void buttonrelease(struct frame *f,XButtonEvent *e)
 {
-	if (e->button == Button1 && f->grabbed)
+	if (e->button==Button1 && f->grabbed)
 		{
 			XUngrabPointer(dpy,e->time);
 			//csetappfollowdesk(f->client,False);
@@ -383,13 +383,13 @@ void motionnotify(struct frame *f,XMotionEvent *e)
 void maprequest(struct frame *f,XMapRequestEvent *e)
 {
 	Window win=f->client->window;
-	if (e->window == win)
+	if (e->window==win)
 		redirect((XEvent *)e,win);
 }
 
 void expose(struct frame *f,XExposeEvent *e)
 {
-	if (e->count == 0)
+	if (e->count==0)
 		repaint(f);
 }
 
@@ -434,7 +434,7 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 
 	int x=f->x + f->width - w;
 	int y=f->y + f->height - h;
-	if (counter == 0)
+	if (counter==0)
 		{
 			cpopapp(f->client);
 			cfocus(f->client,t);
@@ -457,7 +457,7 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 
 	int x=f->x;
 	int y=f->y + f->height - h;
-	if (counter == 0)
+	if (counter==0)
 		{
 			cpopapp(f->client);
 			cfocus(f->client,t);
@@ -469,7 +469,7 @@ struct frame *fcreate(struct client *c)
 {
 	XSetWindowAttributes wa;
 
-	if (fcount == 0)
+	if (fcount==0)
 		{
 			cursortopleft=XCreateFontCursor(dpy,XC_top_left_corner);
 			cursortopright=XCreateFontCursor(dpy,XC_top_right_corner);
@@ -596,7 +596,7 @@ void fdestroy(struct frame *f)
 
 	assert(fcount>0);
 	fcount--;
-	if (fcount == 0)
+	if (fcount==0)
 		{
 			XFreeCursor(dpy,cursortopleft);
 			XFreeCursor(dpy,cursortopright);

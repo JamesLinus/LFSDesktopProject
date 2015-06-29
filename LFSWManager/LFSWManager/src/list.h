@@ -108,10 +108,10 @@ struct listnode
 #define LIST_INIT(lp)	((lp)->prev=(lp)->next=(lp))
 
 /* Return the first node of list,or NULL if empty. */
-#define LIST_HEAD(list) ((list)->next == (list) ? (void *)0 : (list)->next)
+#define LIST_HEAD(list) ((list)->next==(list) ? (void *)0 : (list)->next)
 
 /* Return the last node of list,or NULL if empty. */
-#define LIST_TAIL(list) ((list)->prev == (list) ? (void *)0 : (list)->prev)
+#define LIST_TAIL(list) ((list)->prev==(list) ? (void *)0 : (list)->prev)
 
 /* Insert node before elem. */
 #define LIST_INSERT_BEFORE(elem,node) do { \
@@ -146,7 +146,7 @@ struct listnode
 } while (0)
 
 /* Test if list if empty. */
-#define LIST_EMPTY(list)	((list)->next == (list))
+#define LIST_EMPTY(list)	((list)->next==(list))
 
 /* Test if node is a member of a list. */
 #define LIST_MEMBER(node)	((node)->next != (node))

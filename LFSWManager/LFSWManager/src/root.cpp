@@ -41,8 +41,6 @@
 #include "ewmh.h"
 #include "root.h"
 
-int	t=0;
-
 void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
 	if (state & ShiftMask)
@@ -86,11 +84,11 @@ Bool pointerhere;
 void maprequest(XMapRequestEvent *e)
 {
 	// Already managed?
-	if (redirect((XEvent *)e,e->window) == 0)
+	if (redirect((XEvent *)e,e->window)==0)
 		return;
 
 	// Try to manage it,otherwise just map it.
-	if (manage(e->window) == NULL)
+	if (manage(e->window)==NULL)
 		XMapWindow(dpy,e->window);
 }
 
@@ -111,8 +109,8 @@ void unmapnotify(XUnmapEvent *e)
  */
 void enternotify(XCrossingEvent *e)
 {
-	if (e->detail == NotifyNonlinear ||
-	        e->detail == NotifyNonlinearVirtual)
+	if (e->detail==NotifyNonlinear ||
+	        e->detail==NotifyNonlinearVirtual)
 		{
 			pointerhere=True;
 			refocus(e->time);
@@ -124,8 +122,8 @@ void enternotify(XCrossingEvent *e)
  */
 void leavenotify(XCrossingEvent *e)
 {
-	if (e->detail == NotifyNonlinear ||
-	        e->detail == NotifyNonlinearVirtual)
+	if (e->detail==NotifyNonlinear ||
+	        e->detail==NotifyNonlinearVirtual)
 		{
 			pointerhere=False;
 			XSetInputFocus(dpy,PointerRoot,RevertToPointerRoot,e->time);
@@ -134,7 +132,7 @@ void leavenotify(XCrossingEvent *e)
 void configurerequest(XConfigureRequestEvent *e)
 {
 	// First try to redirect the event.
-	if (redirect((XEvent *)e,e->window) == 0)
+	if (redirect((XEvent *)e,e->window)==0)
 		return;
 
 	// Nobody listens to this window so we'll just
@@ -158,7 +156,7 @@ void configurerequest(XConfigureRequestEvent *e)
 void keypress(XKeyEvent *e)
 {
 	for (unsigned int i=0; i<NELEM(keymap); i++)
-		if (keymap[i].keycode == e->keycode)
+		if (keymap[i].keycode==e->keycode)
 			{
 				keymap[i].function(keymap[i].keysym,e->state,e->time,keymap[i].arg);
 				break;
@@ -170,32 +168,36 @@ void clientmessage(XClientMessageEvent *e)
 	ewmh_rootclientmessage(e);
 }
 
+int scrollcnt;
+int scrollcntmax=2;
+
 void event(void *self,XEvent *e)
 {
 	switch (e->type)
 		{
 		case ButtonRelease:
-			if((e->xbutton.time-t<1000) && (e->xbutton.time-t>150))
+			scrollcnt++;
+			if(scrollcnt>scrollcntmax)
 				{
+					scrollcnt=0;
 					int newdesk=curdesk;
 					newdesk=curdesk;
-					if(e->xbutton.button==Button5)
+					if(e->xbutton.button==Button4)
 						{
 							newdesk--;
 							if(newdesk<0)
-								newdesk=ndesk-1;
+								newdesk=numberOfDesktops-1;
 							gotodesk(newdesk);
 						}
 
-					if(e->xbutton.button==Button4)
+					if(e->xbutton.button==Button5)
 						{
 							newdesk++;
-							if(newdesk>(int)ndesk-1)
+							if(newdesk>(int)numberOfDesktops-1)
 								newdesk=0;
 							gotodesk(newdesk);
 						}
 				}
-			t=e->xbutton.time;
 			break;
 
 		case ButtonPress:	
@@ -262,5 +264,5 @@ void initroot(void)
 	int rx,ry,x,y;
 	unsigned m;
 	XQueryPointer(dpy,root,&r,&c,&rx,&ry,&x,&y,&m);
-	pointerhere=(r == root);
+	pointerhere=(r==root);
 }
