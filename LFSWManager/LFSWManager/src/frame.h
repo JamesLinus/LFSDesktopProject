@@ -37,6 +37,7 @@ struct frame
 	int downy;	// window relative pointer y at button press
 	Bool grabbed;
 	bool isMaximized;
+	bool isMinimized;
 };
 
 struct frame *fcreate(struct client *);

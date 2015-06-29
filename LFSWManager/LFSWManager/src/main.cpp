@@ -62,11 +62,15 @@
 #include "delodd.xbm"
 #include "maxeven.xbm"
 #include "maxodd.xbm"
+#include "mineven.xbm"
+#include "minodd.xbm"
 
 DEFINE_BITMAP(deleven);
 DEFINE_BITMAP(delodd);
 DEFINE_BITMAP(maxeven);
 DEFINE_BITMAP(maxodd);
+DEFINE_BITMAP(mineven);
+DEFINE_BITMAP(minodd);
 
 enum			runlevel runlevel=RL_STARTUP;
 int				exitstatus;
