@@ -1592,6 +1592,8 @@ struct client *manage(Window window)
 					 * If MWM_DECOR_ALL is set,it means use all
 					 * decorations EXCEPT the ones specified...
 					 */
+					if ((hints->decorations & MWM_DECOR_ALL) != 0)
+						hints->decorations=~hints->decorations;
 					if ((hints->decorations & MWM_DECOR_MAXIMIZE) == 0)
 						c->canMaximize=false;
 				}
