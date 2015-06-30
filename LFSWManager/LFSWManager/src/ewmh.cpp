@@ -365,7 +365,8 @@ void ewmh_maprequest(struct client *c)
 
 void ewmh_manage(struct client *c)
 {
-	Window w=c->window;
+	Window	w=c->window;
+	int		vcnt=3;
 
 	addclient(w);
 
@@ -378,25 +379,15 @@ void ewmh_manage(struct client *c)
 	v[0]=NET_WM_ACTION_CHANGE_DESKTOP;
 	v[1]=NET_WM_ACTION_CLOSE;
 	v[2]=NET_WM_ACTION_FULLSCREEN;
-//	v[0]=NET_WM_ACTION_MAXIMIZE_HORZ
-//	v[0]=NET_WM_ACTION_MAXIMIZE_VERT
-	int vcnt=3;
-	if(c->wmnormalhints->min_width!=c->wmnormalhints->max_width)
-		{
-			v[vcnt]=NET_WM_ACTION_MAXIMIZE_HORZ;
-			vcnt++;
-		}
-	if(c->wmnormalhints->min_height!=c->wmnormalhints->max_height)
-		{
-			v[vcnt]=NET_WM_ACTION_MAXIMIZE_VERT;
-			vcnt++;
-		}
+	v[3]=0;
+	v[4]=0;
 
-//	Atom v[] =
-//	{
-//		NET_WM_ACTION_CHANGE_DESKTOP,NET_WM_ACTION_CLOSE,NET_WM_ACTION_FULLSCREEN,
-//	};
-	//setprop(w,NET_WM_ALLOWED_ACTIONS,XA_ATOM,32,v,NELEM(v));
+	if(c->canMaximize==true)
+		{
+			v[3]=NET_WM_ACTION_MAXIMIZE_HORZ;
+			v[4]=NET_WM_ACTION_MAXIMIZE_VERT;
+			vcnt=5;
+		}
 	setprop(w,NET_WM_ALLOWED_ACTIONS,XA_ATOM,32,v,vcnt);
 
 	/*

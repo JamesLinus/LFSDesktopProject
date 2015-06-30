@@ -1410,6 +1410,8 @@ struct client *manage(Window window)
 	unsigned long		n=0;
 	Atom				*types=NULL;
 	int					thisdesk=curdesk;
+	mwmhints			*hints;
+
 	if (!XGetWindowAttributes(dpy,window,&attr))
 		return NULL;
 	if (attr.override_redirect)
@@ -1467,7 +1469,7 @@ struct client *manage(Window window)
 	c->isAbove=false;
 	c->isBelow=false;
 	c->isDock=false;
-	c->canMaximize=false;
+	c->canMaximize=true;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1581,19 +1583,21 @@ struct client *manage(Window window)
 	 * Let the hints create the frame,if there should be one.
 	 */
 
-	ewmh_manage(c);
-
-	properties=NULL;
-	XGetWindowProperty(dpy,c->window,NET_WM_ALLOWED_ACTIONS,0,(~0L),False,AnyPropertyType,&type,&format,&nItem,&bytesAfter,&properties);
-	for (unsigned int j=0;j<nItem;j++)
+	hints=getmwmhints(c);
+	if (hints!=NULL)
 		{
-			if((((unsigned long *)(properties))[j]==NET_WM_ACTION_MAXIMIZE_HORZ) || ((unsigned long *)(properties))[j]==NET_WM_ACTION_MAXIMIZE_VERT)
+			if (hints->flags & MWM_HINTS_DECORATIONS)
 				{
-					c->canMaximize=true;
+					/*
+					 * If MWM_DECOR_ALL is set,it means use all
+					 * decorations EXCEPT the ones specified...
+					 */
+					if ((hints->decorations & MWM_DECOR_MAXIMIZE) == 0)
+						c->canMaximize=false;
 				}
+			XFree(hints);
 		}
-	XFree(properties);
-
+	ewmh_manage(c);
 	mwm_manage(c);
 
 	grabbutton(AnyButton,AnyModifier,c->window,True,0,
