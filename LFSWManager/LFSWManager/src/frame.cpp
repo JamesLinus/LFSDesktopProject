@@ -80,6 +80,9 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 		.borderwidth=old.borderwidth,
 	};
 
+	if(mynew.height<0)
+		mynew.height=0;
+
 	if((x>0) && (x<displayWidth-w))
 		swapdesk=false;
 	if(swapdesk==false)
@@ -117,14 +120,26 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 			csetdesk(f->client,newd);
 			restack();
 		}
-	
+
 	csetgeom(f->client,mynew);
 
-	XMoveResizeWindow(dpy,f->window,nx,y,w,h);
-	f->x=nx;
-	f->y=y;
-	f->width=w;
-	f->height=h;
+	if(f->isShaded==false)
+		{
+			XMoveResizeWindow(dpy,f->window,nx,y,w,h);
+			f->x=nx;
+			f->y=y;
+			f->width=w;
+			f->height=h;
+		
+		}
+	else
+		{
+			XMoveResizeWindow(dpy,f->window,nx,y,w,EXT_TOP);
+			f->x=nx;
+			f->y=y;
+			f->width=w;
+			f->height=EXT_TOP;
+		}
 
 	if (mynew.width==old.width && mynew.height==old.height)
 		csendconf(f->client);
@@ -140,6 +155,21 @@ void mydelete(void *myclient,Time t)
 void minimizeWindow(void *myclient,Time t)
 {
 	XIconifyWindow(dpy,((client*)myclient)->window,screen);
+}
+
+void shadeWindow(void *myclient,Time t)
+{
+	if(((client*)myclient)->frame->isShaded==false)
+		{
+			((client*)myclient)->frame->oldHeight=((client*)myclient)->frame->height;
+			((client*)myclient)->frame->isShaded=true;
+			moveresize(((client*)myclient)->frame,((client*)myclient)->frame->x,((client*)myclient)->frame->y,((client*)myclient)->frame->width,EXT_TOP);
+		}
+	else
+		{
+			((client*)myclient)->frame->isShaded=false;
+			moveresize(((client*)myclient)->frame,((client*)myclient)->frame->x,((client*)myclient)->frame->y,((client*)myclient)->frame->width,((client*)myclient)->frame->oldHeight);
+ 		}		
 }
 
 void maximizeWindow(void *myclient,Time t)
@@ -165,7 +195,7 @@ void maximizeWindow(void *myclient,Time t)
 			((client*)myclient)->frame->isMaximized=false;
 			changestate(((client*)myclient)->window,NET_WM_STATE_REMOVE,NET_WM_STATE_MAXIMIZED_VERT);
 			changestate(((client*)myclient)->window,NET_WM_STATE_REMOVE,NET_WM_STATE_MAXIMIZED_HORZ);
-		}		
+		}
 }
 
 /*
@@ -278,11 +308,15 @@ void repaint(struct frame *f)
 	XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP-1,f->width-EXT_RIGHT-1,EXT_TOP-1);
 
 	// Window area
-	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
-
+//	if(f->isShaded==false)
+		XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
+//	else
+//	{
+//		printf("shaded\n");
 	// Small areas to the left and right of the title bottom border
 	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP-1,EXT_LEFT-1,1);
 	XFillRectangle(dpy,f->window,*f->background,f->width-EXT_RIGHT,EXT_TOP-1,EXT_RIGHT-1,1);
+//	}
 }
 
 void fupdate(struct frame *f)
@@ -317,6 +351,12 @@ void fupdate(struct frame *f)
 					int sz=lineheight + 2;
 					f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-sz-sz-font->size-sz,0,sz,sz,NorthEastGravity);
 				}
+		}
+
+	if (f->shade==NULL)
+		{
+			int sz=lineheight + 2;
+			f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-sz-sz-sz-font->size-sz,0,sz,sz,NorthEastGravity);
 		}
 
 	Bool hasfocus=chasfocus(f->client);
@@ -529,6 +569,7 @@ struct frame *fcreate(struct client *c)
 	f->oldWidth=f->width;
 	f->oldHeight=f->height;
 	f->isMaximized=false;
+	f->isShaded=false;
 
 	wa.bit_gravity=NorthWestGravity;
 	f->window=XCreateWindow(dpy,root,f->x,f->y,f->width,f->height,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
@@ -564,6 +605,7 @@ struct frame *fcreate(struct client *c)
 	f->deletebutton=NULL;
 	f->maximize=NULL;
 	f->minimize=NULL;
+	f->shade=NULL;
 
 	XSetWindowBorderWidth(dpy,clientwin,0);
 	setgrav(clientwin,NorthWestGravity);

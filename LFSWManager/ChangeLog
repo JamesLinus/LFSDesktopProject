@@ -1,4 +1,5 @@
 0.0.8
+Added 'Shade' window button, bit of a kludge needs improving.
 More compliance with extended window manager hints standard.
 Code clean and simplify.
 Plays better with pagers etc, ie cairo-dock/xfce-panel can now min/max/close/show window from popup menu and shows iconized thimbnail.

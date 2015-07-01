@@ -64,6 +64,8 @@
 #include "maxodd.xbm"
 #include "mineven.xbm"
 #include "minodd.xbm"
+#include "shadeeven.xbm"
+#include "shadeodd.xbm"
 
 DEFINE_BITMAP(deleven);
 DEFINE_BITMAP(delodd);
@@ -71,6 +73,8 @@ DEFINE_BITMAP(maxeven);
 DEFINE_BITMAP(maxodd);
 DEFINE_BITMAP(mineven);
 DEFINE_BITMAP(minodd);
+DEFINE_BITMAP(shadeeven);
+DEFINE_BITMAP(shadeodd);
 
 enum			runlevel runlevel=RL_STARTUP;
 int				exitstatus;
@@ -325,6 +329,11 @@ int main(int argc,char *argv[])
 		minimizeBitmap=&mineven;
 	else
 		minimizeBitmap=&minodd;
+
+	if (lineheight % 2==0)
+		shadeBitmap=&shadeeven;
+	else
+		shadeBitmap=&shadeodd;
 
 	foregroundpixel=getpixel(fontColours[FORE]);
 	backgroundpixel=getpixel(fontColours[BACK]);

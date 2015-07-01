@@ -42,6 +42,7 @@
 bitmap			*deletebitmap;
 bitmap			*maximizeBitmap;
 bitmap			*minimizeBitmap;
+bitmap			*shadeBitmap;
 
 void update(struct button *b)
 {

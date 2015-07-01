@@ -33,6 +33,7 @@ struct			button
 extern bitmap	*deletebitmap;
 extern bitmap	*maximizeBitmap;
 extern bitmap	*minimizeBitmap;
+extern bitmap	*shadeBitmap;
 
 void update(struct button *b);
 void buttonpress(struct button *,XButtonEvent *);

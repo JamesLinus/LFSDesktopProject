@@ -20,6 +20,7 @@ struct frame
 	struct button *deletebutton;
 	struct button *maximize;
 	struct button *minimize;
+	struct button *shade;
 	struct dragger *topleftresizer;
 	struct dragger *toprightresizer;
 	Pixmap pixmap;
@@ -38,7 +39,7 @@ struct frame
 	int downy;	// window relative pointer y at button press
 	Bool grabbed;
 	bool isMaximized;
-	bool isMinimized;
+	bool isShaded;
 };
 
 struct frame *fcreate(struct client *);
@@ -48,5 +49,6 @@ Window fgetwin(struct frame *);
 struct geometry fgetgeom(struct frame *);
 struct extents estimateframeextents(Window);
 void maximizeWindow(void *myclient,Time t);
+void repaint(struct frame *f);
 
 #endif

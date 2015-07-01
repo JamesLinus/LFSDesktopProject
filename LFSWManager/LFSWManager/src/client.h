@@ -108,5 +108,7 @@ Bool cisurgent(struct client *);
 void chintsize(struct client *,int,int,int *,int *);
 void cunmap(struct client *c);
 void cmap(struct client *c);
+void cpop(struct client *c);
+void cpopapp(struct client *c);
 
 #endif
