@@ -13,46 +13,6 @@
 #include "prefs.h"
 #include "wind.h"
 
-//#include "files.h"
-
-#if 0
-char			*iconTheme;
-
-int				iconSize=40;
-int				gridBorder=32;
-int				gridSize=iconSize+gridBorder;
-int				refreshRate=2;
-char			*terminalCommand=NULL;
-bool			showSuffix=false;
-char			*fontFace=NULL;
-char			*foreCol;
-char			*backCol;
-char			*ignores=NULL;
-
-Display			*display;
-Window			rootWin;
-int				displayWidth;
-int				displayHeight;
-GC				gc;
-Region			rg;
-XdbeBackBuffer	buffer;
-XdbeSwapInfo	swapInfo;
-Drawable		drawOnThis;
-Colormap		cm;
-Visual			*visual=NULL;
-int				depth=0;
-int				screen;
-int				blackColor;
-int				whiteColor;
-
-GC				labelGC;
-XFontStruct		*labelFont;
-
-unsigned long	labelBackground;
-unsigned long	labelForeground;
-
-int				**xySlot;
-#endif
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 args	wmPrefs[]=

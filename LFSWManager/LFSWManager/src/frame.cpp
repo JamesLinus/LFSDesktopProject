@@ -45,6 +45,7 @@
 #include "ewmh.h"
 #include "dragger.h"
 #include "frame.h"
+#include "atoms.h"
 
 #define EXT_TOP (lineheight + 2)
 #define EXT_BOTTOM (halfleading + 1)
@@ -308,25 +309,23 @@ void repaint(struct frame *f)
 	XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP-1,f->width-EXT_RIGHT-1,EXT_TOP-1);
 
 	// Window area
-//	if(f->isShaded==false)
 		XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
-//	else
-//	{
-//		printf("shaded\n");
-	// Small areas to the left and right of the title bottom border
+
 	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP-1,EXT_LEFT-1,1);
 	XFillRectangle(dpy,f->window,*f->background,f->width-EXT_RIGHT,EXT_TOP-1,EXT_RIGHT-1,1);
-//	}
 }
 
 void fupdate(struct frame *f)
 {
+	int sz=lineheight+2;
+	int	buttonspacing=sz;
+
 	if (chaswmproto(f->client,WM_DELETE_WINDOW))
 		{
 			if (f->deletebutton==NULL)
 				{
-					int sz=lineheight + 2;
-					f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-sz,0,sz,sz,NorthEastGravity);
+					f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-buttonspacing,0,sz,sz,NorthEastGravity);
+					buttonspacing+=sz;
 				}
 		}
 	else if (f->deletebutton != NULL)
@@ -339,8 +338,8 @@ void fupdate(struct frame *f)
 		{
 			if (f->maximize==NULL)
 				{
-					int sz=lineheight + 2;
-					f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-sz-font->size-sz,0,sz,sz,NorthEastGravity);
+					f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size-buttonspacing,0,sz,sz,NorthEastGravity);
+					buttonspacing+=sz;
 				}
 		}
 
@@ -348,15 +347,14 @@ void fupdate(struct frame *f)
 		{
 			if (f->minimize==NULL)
 				{
-					int sz=lineheight + 2;
-					f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-sz-sz-font->size-sz,0,sz,sz,NorthEastGravity);
+					f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity);
+					buttonspacing+=sz;
 				}
 		}
 
 	if (f->shade==NULL)
 		{
-			int sz=lineheight + 2;
-			f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-sz-sz-sz-font->size-sz,0,sz,sz,NorthEastGravity);
+			f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity);
 		}
 
 	Bool hasfocus=chasfocus(f->client);

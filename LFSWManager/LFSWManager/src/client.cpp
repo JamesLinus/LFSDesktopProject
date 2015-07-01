@@ -47,6 +47,7 @@
 #include "frame.h"
 #include "mwm.h"
 #include "x11font.h"
+#include "atoms.h"
 
 LIST_DEFINE(winstack);
 

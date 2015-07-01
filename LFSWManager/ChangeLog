@@ -1,3 +1,7 @@
+0.0.9
+Code clean.
+Fixed button spacing when not all buttons are used.
+
 0.0.8
 Added 'Shade' window button, bit of a kludge needs improving.
 More compliance with extended window manager hints standard.

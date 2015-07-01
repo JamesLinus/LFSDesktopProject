@@ -57,6 +57,7 @@
 #include "mwm.h"
 #include "prefs.h"
 #include "button.h"
+#include "atoms.h"
 
 #include "deleven.xbm"
 #include "delodd.xbm"

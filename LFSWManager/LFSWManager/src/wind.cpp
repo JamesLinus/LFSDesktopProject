@@ -20,11 +20,6 @@ struct font 		*font;
 struct fontcolor	*fhighlight;
 struct fontcolor	*fnormal;
 
-Atom				WM_CHANGE_STATE;
-Atom				WM_DELETE_WINDOW;
-Atom				WM_PROTOCOLS;
-Atom				WM_STATE;
-
 unsigned int		screen;
 int					displayWidth;
 int					displayHeight;
@@ -38,7 +33,6 @@ int					placement=MOUSEMONITOR;
 unsigned int		numberOfDesktops;
 char				*titleFont;
 char				*fontColours[4];
-
 
 /*
  * Print formatted error message

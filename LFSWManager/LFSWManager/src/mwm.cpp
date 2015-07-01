@@ -39,27 +39,7 @@
 #include "client.h"
 #include "lib.h"
 #include "mwm.h"
-
-Atom MOTIF_WM_HINTS;
-
-void reloadmwmhints(struct client *);
-mwmhints *getmwmhints(struct client *);
-
-void mwm_startwm(void)
-{
-	MOTIF_WM_HINTS=XInternAtom(dpy,"_MOTIF_WM_HINTS",False);
-}
-
-void mwm_manage(struct client *c)
-{
-	reloadmwmhints(c);
-}
-
-void mwm_propertynotify(struct client *c,XPropertyEvent *e)
-{
-	if (e->atom==MOTIF_WM_HINTS)
-		reloadmwmhints(c);
-}
+#include "atoms.h"
 
 /*
  * We ignore all hints except the title decor hint. If the window
@@ -101,3 +81,21 @@ mwmhints *getmwmhints(struct client *c)
 		}
 	return h;
 }
+
+void mwm_startwm(void)
+{
+	MOTIF_WM_HINTS=XInternAtom(dpy,"_MOTIF_WM_HINTS",False);
+}
+
+void mwm_manage(struct client *c)
+{
+	reloadmwmhints(c);
+}
+
+void mwm_propertynotify(struct client *c,XPropertyEvent *e)
+{
+	if (e->atom==MOTIF_WM_HINTS)
+		reloadmwmhints(c);
+}
+
+
