@@ -168,7 +168,6 @@ void maximizeWindow(void *myclient,Time t)
 		}		
 }
 
-
 /*
  * XXX: We cheat here and always estimate normal frame
  * extents,even if the window is of a type that will

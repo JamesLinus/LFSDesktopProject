@@ -1,3 +1,9 @@
+0.0.8
+More compliance with extended window manager hints standard.
+Code clean and simplify.
+Plays better with pagers etc, ie cairo-dock/xfce-panel can now min/max/close/show window from popup menu and shows iconized thimbnail.
+Added 'Minimize' button.
+
 0.0.7
 Started handling MOTIF_WM_HINTS properly.
 Added 'maximize' button.

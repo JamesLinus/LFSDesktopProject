@@ -43,10 +43,6 @@
 #include "frame.h"
 #include "ewmh.h"
 
-#define DEFAULT_NUMBER_OF_DESKTOPS 12
-
-#define xatom(name) XInternAtom(dpy,(name),False)
-
 /*
  * The list of supported properties. Note that we need to
  * include some properties that we actually never use in
@@ -207,14 +203,6 @@ void ewmh_startwm(void)
 	};
 	setprop(root,NET_SUPPORTED,XA_ATOM,32,v,NELEM(v));
 
-//for(int j=0;j<NELEM(v);j++)
-//	printf("Atom %i=%s\n",v[j],XGetAtomName(dpy,v[j]));
-//
-//printf("--%i--\n",WM_CHANGE_STATE);
-//printf("--%i--\n",WM_DELETE_WINDOW);
-//printf("--%i--\n",WM_PROTOCOLS);
-//printf("--%i--\n",WM_STATE);
-
 	long geometry[2]= { DisplayWidth(dpy,screen),DisplayHeight(dpy,screen) };
 	setprop(root,NET_DESKTOP_GEOMETRY,XA_CARDINAL,32,geometry,2);
 
@@ -281,13 +269,13 @@ void reloadwindowstate(struct client *c)
 	Window			w=c->window;
 	unsigned long	n=0;
 	bool			handled;
+	bool			unmax=true;
 
 	csetfull(c,false);
 	c->followdesk=false;
 	c->skiptaskbar=false;
 	c->isAbove=false;
 	c->isBelow=false;
-	bool	unmax=true;
 
 	Atom *states=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	for (unsigned int i=0; i<n; i++)
@@ -323,7 +311,6 @@ void reloadwindowstate(struct client *c)
 			
 			if((states[i]==NET_WM_STATE_MAXIMIZED_HORZ) || (states[i]==NET_WM_STATE_MAXIMIZED_VERT))
 				{
-			//	printf("maximed\n");
 					unmax=false;
 					if(c->frame->isMaximized==false)
 						maximizeWindow(c,666);
@@ -332,7 +319,6 @@ void reloadwindowstate(struct client *c)
 
 			if(states[i]==NET_WM_STATE_HIDDEN)
 				{
-				//printf("hidden\n");
 					if(c->frame->isMaximized==false)
 						maximizeWindow(c,666);
 					handled=true;
@@ -343,9 +329,7 @@ void reloadwindowstate(struct client *c)
 		}
 
 	if((c->frame!=NULL) && ((unmax==true) and (c->frame->isMaximized==true)))
-		{	
-			maximizeWindow(c,666);
-		}
+		maximizeWindow(c,666);
 
 	if (states != NULL)
 		XFree(states);
@@ -578,7 +562,6 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 			setwmstate(c->window,NormalState);
 			cmap(c);
 			changestate(c->window,NET_WM_STATE_REMOVE,NET_WM_STATE_HIDDEN);
-			//printf("atcivate window %s\n",c->wmname);
 			cpopapp(c);
 			gotodesk(c->desk);
 			cfocus(c,(Time)e->data.l[1]);
@@ -598,7 +581,7 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 		}
 
 #if 0
-	if(e->message_type==NET_WM_STATE && e->format==32)
+	if(((e->message_type==NET_WM_STATE) || (e->message_type==WM_CHANGE_STATE)) && e->format==32)
 		{
 		char *name=NULL;
 		
@@ -608,17 +591,27 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 					{
 						name=XGetAtomName(dpy,e->data.l[i]);
 						if(name!=NULL)
-						{
-						printf("how=%i atom %i name=%s\n",e->data.l[0],e->data.l[1],name);
-						XFree(name);
-						name=NULL;
-						}
+							{
+								printf("how=%i atom %i name=%s\n",e->data.l[0],e->data.l[1],name);
+								XFree(name);
+								name=NULL;
+							}
 					}
-//		printf("atom %i name=%s\n",e->data.l[1],XGetAtomName(dpy,e->data.l[2]));
-//			printf("net_wm_state 0=%i 1=%i\n",e->data.l[0],e->data.l[1]);
 			}
 		}
 #endif
+
+	if ((e->message_type==WM_CHANGE_STATE) && (e->format==32))
+		{
+			if(e->data.l[0]==IconicState)
+				{
+					cunmap(c);
+					setwmstate(c->window,IconicState);
+					c->isIcon=true;
+					changestate(c->window,NET_WM_STATE_ADD,NET_WM_STATE_HIDDEN);
+					return;
+				}
+		}
 
 	if (e->message_type==NET_WM_STATE && e->format==32)
 		{
@@ -629,33 +622,6 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 			reloadwindowstate(c);
 		}
 }
-
-void HOLDewmh_clientmessage(struct client *c,XClientMessageEvent *e)
-{
-	if (e->message_type==NET_ACTIVE_WINDOW && e->format==32)
-		{
-			cpopapp(c);
-			gotodesk(c->desk);
-			cfocus(c,(Time)e->data.l[1]);
-		}
-	else if (e->message_type==NET_CLOSE_WINDOW && e->format==32)
-		{
-			cdelete(c,(Time)e->data.l[0]);
-		}
-	else if (e->message_type==NET_WM_DESKTOP && e->format==32)
-		{
-			csetappdesk(c,e->data.l[0] & 0xffffffff);
-		}
-	else if (e->message_type==NET_WM_STATE && e->format==32)
-		{
-			int how=e->data.l[0];
-			for (int i=1; i <= 2; i++)
-				if (e->data.l[i] != 0)
-					changestate(c->window,how,e->data.l[i]);
-			reloadwindowstate(c);
-		}
-}
-
 
 void ewmh_rootclientmessage(XClientMessageEvent *e)
 {

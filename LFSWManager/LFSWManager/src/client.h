@@ -106,13 +106,6 @@ void csetnetwmname(struct client *,const char *);
 void cignoreunmap(struct client *);
 Bool cisurgent(struct client *);
 void chintsize(struct client *,int,int,int *,int *);
-
-
-void reloadwmhints(struct client *c);
-void reloadwmnormalhints(struct client *c);
-void reloadwmprotocols(struct client *c);
-void reloadwmtransientfor(struct client *c);
-void reloadwmname(struct client *c);
 void cunmap(struct client *c);
 void cmap(struct client *c);
 

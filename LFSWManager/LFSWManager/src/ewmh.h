@@ -17,6 +17,10 @@
 #define NET_WM_STATE_ADD 1
 #define NET_WM_STATE_TOGGLE 2
 
+#define DEFAULT_NUMBER_OF_DESKTOPS 12
+
+#define xatom(name) XInternAtom(dpy,(name),False)
+
 extern Atom NET_ACTIVE_WINDOW;
 extern Atom NET_CLIENT_LIST;
 extern Atom NET_CLIENT_LIST_STACKING;
