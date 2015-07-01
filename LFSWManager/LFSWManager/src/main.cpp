@@ -321,6 +321,11 @@ int main(int argc,char *argv[])
 	else
 		maximizeBitmap=&maxodd;
 
+	if (lineheight % 2==0)
+		minimizeBitmap=&mineven;
+	else
+		minimizeBitmap=&minodd;
+
 	foregroundpixel=getpixel(fontColours[FORE]);
 	backgroundpixel=getpixel(fontColours[BACK]);
 	hlforegroundpixel=getpixel(fontColours[FOCUSEDFORE]);

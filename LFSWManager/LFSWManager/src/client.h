@@ -63,6 +63,8 @@ struct client
 	bool isBelow;
 	bool checked;
 	bool canMaximize;
+	bool canMinimize;
+	bool isIcon;
 
 	unsigned int monitorNumber;
 };
@@ -70,6 +72,7 @@ struct client
 struct client *manage(Window);
 extern Desk curdesk;
 //extern Desk ndesk;
+extern Bool needrestack;
 
 void shuffle(void);
 void manageall(void);
@@ -103,5 +106,14 @@ void csetnetwmname(struct client *,const char *);
 void cignoreunmap(struct client *);
 Bool cisurgent(struct client *);
 void chintsize(struct client *,int,int,int *,int *);
+
+
+void reloadwmhints(struct client *c);
+void reloadwmnormalhints(struct client *c);
+void reloadwmprotocols(struct client *c);
+void reloadwmtransientfor(struct client *c);
+void reloadwmname(struct client *c);
+void cunmap(struct client *c);
+void cmap(struct client *c);
 
 #endif

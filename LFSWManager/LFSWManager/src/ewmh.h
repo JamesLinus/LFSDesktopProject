@@ -13,6 +13,10 @@
 #ifndef _EWMH_
 #define _EWMH_
 
+#define NET_WM_STATE_REMOVE 0
+#define NET_WM_STATE_ADD 1
+#define NET_WM_STATE_TOGGLE 2
+
 extern Atom NET_ACTIVE_WINDOW;
 extern Atom NET_CLIENT_LIST;
 extern Atom NET_CLIENT_LIST_STACKING;
@@ -48,6 +52,8 @@ extern Atom NET_WM_WINDOW_TYPE_DESKTOP;
 extern Atom NET_WM_STATE_STICKY;
 extern Atom NET_WM_ACTION_MAXIMIZE_HORZ;
 extern Atom NET_WM_ACTION_MAXIMIZE_VERT;
+extern Atom NET_WM_STATE_MAXIMIZED_VERT;
+extern Atom NET_WM_STATE_MAXIMIZED_HORZ;
 
 void ewmh_notifyndesk(unsigned long);
 void ewmh_notifycurdesk(unsigned long);
@@ -66,5 +72,6 @@ void ewmh_propertynotify(struct client *,XPropertyEvent *);
 void ewmh_clientmessage(struct client *,XClientMessageEvent *);
 void ewmh_rootclientmessage(XClientMessageEvent *);
 void reloadwindowdesktop(struct client *c);
+void changestate(Window w,int how,Atom state);
 
 #endif

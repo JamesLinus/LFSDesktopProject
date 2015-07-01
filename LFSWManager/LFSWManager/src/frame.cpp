@@ -137,9 +137,13 @@ void mydelete(void *myclient,Time t)
 	cdelete((client*)myclient,t);
 }
 
+void minimizeWindow(void *myclient,Time t)
+{
+	XIconifyWindow(dpy,((client*)myclient)->window,screen);
+}
+
 void maximizeWindow(void *myclient,Time t)
 {
-
 	if(((client*)myclient)->frame->isMaximized==false)
 		{
 			((client*)myclient)->frame->oldX=((client*)myclient)->frame->x;
@@ -148,6 +152,8 @@ void maximizeWindow(void *myclient,Time t)
 			((client*)myclient)->frame->oldHeight=((client*)myclient)->frame->height;
 			((client*)myclient)->frame->isMaximized=true;
 			moveresize(((client*)myclient)->frame,0,0,displayWidth,displayHeight);
+			changestate(((client*)myclient)->window,NET_WM_STATE_ADD,NET_WM_STATE_MAXIMIZED_VERT);
+			changestate(((client*)myclient)->window,NET_WM_STATE_ADD,NET_WM_STATE_MAXIMIZED_HORZ);
 		}
 	else
 		{
@@ -157,6 +163,8 @@ void maximizeWindow(void *myclient,Time t)
 			((client*)myclient)->frame->width=((client*)myclient)->frame->oldWidth;
 			((client*)myclient)->frame->height=((client*)myclient)->frame->oldHeight;
 			((client*)myclient)->frame->isMaximized=false;
+			changestate(((client*)myclient)->window,NET_WM_STATE_REMOVE,NET_WM_STATE_MAXIMIZED_VERT);
+			changestate(((client*)myclient)->window,NET_WM_STATE_REMOVE,NET_WM_STATE_MAXIMIZED_HORZ);
 		}		
 }
 
@@ -303,6 +311,15 @@ void fupdate(struct frame *f)
 				}
 		}
 
+	if(f->client->canMinimize==true)
+		{
+			if (f->minimize==NULL)
+				{
+					int sz=lineheight + 2;
+					f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-sz-sz-font->size-sz,0,sz,sz,NorthEastGravity);
+				}
+		}
+
 	Bool hasfocus=chasfocus(f->client);
 
 	f->background=hasfocus ? &hlbackground : &background;
@@ -413,6 +430,7 @@ void frameevent(void *self,XEvent *e)
 	switch (e->type)
 		{
 		case Expose:
+//printf("expose event\n");
 			expose((frame*)self,&e->xexpose);
 			break;
 		case MotionNotify:
@@ -425,9 +443,11 @@ void frameevent(void *self,XEvent *e)
 			buttonrelease((frame*)self,&e->xbutton);
 			break;
 		case ConfigureRequest:
+//printf("ConfigureRequest event\n");
 			confrequest((frame*)self,&e->xconfigurerequest);
 			break;
 		case MapRequest:
+//printf("MapRequest event\n");
 			maprequest((frame*)self,&e->xmaprequest);
 			break;
 		}
@@ -544,6 +564,7 @@ struct frame *fcreate(struct client *c)
 
 	f->deletebutton=NULL;
 	f->maximize=NULL;
+	f->minimize=NULL;
 
 	XSetWindowBorderWidth(dpy,clientwin,0);
 	setgrav(clientwin,NorthWestGravity);

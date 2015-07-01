@@ -108,7 +108,7 @@ void getclientstack(struct client ***vp,int *np)
  */
 Bool cisvisible(struct client *c)
 {
-	return c->desk==curdesk || c->desk==DESK_ALL;
+	return (c->desk==curdesk || c->desk==DESK_ALL) && (c->isIcon==false);
 }
 
 void restack(void)
@@ -1084,17 +1084,83 @@ Bool chasfocus(struct client *c)
 
 void clientmessage(struct client *c,XClientMessageEvent *e)
 {
-	if (e->message_type==WM_CHANGE_STATE && e->format==32 &&
-	        e->data.l[0]==IconicState)
+
+//	printf("--state %i type=%i<<\n",e->data.l[0],e->message_type);
+
+/*
+	if(e->message_type==NET_ACTIVE_WINDOW)
 		{
+			c->isIcon=false;
+			setwmstate(c->window,NormalState);
+			cmap(c);
+			printf("atcivate window %s\n",c->wmname);
+		}
+*/
+
+
+	if (e->message_type==WM_CHANGE_STATE)
+		{
+			if(e->data.l[0]==IconicState)
+				{
+					cunmap(c);
+					setwmstate(c->window,IconicState);
+					c->isIcon=true;
+					//printf("minimize window %s\n",c->wmname);
+					changestate(c->window,NET_WM_STATE_ADD,NET_WM_STATE_HIDDEN);
+				}
+	//printf(">>state0 %i state1 %i type=%i<<\n",e->data.l[0],e->data.l[1],e->message_type);
+		}
+
+/*
+	if(e->message_type==NET_WM_STATE)
+		{
+		printf("atom %i name=%s\n",e->data.l[1],XGetAtomName(dpy,e->data.l[2]));
+			printf("net_wm_state 0=%i 1=%i\n",e->data.l[0],e->data.l[1]);
+		}
+*/
+//if((e->data.l[0]==2) && (e->message_type==NET_ACTIVE_WINDOW))
+//{
+//	c->isIcon=false;
+//	setwmstate(c->window,NormalState);
+//	cmap(c);
+//}
+
+//if((e->data.l[0]==3) && (e->message_type==WM_CHANGE_STATE))
+//{
+//	c->isIcon=false;
+//	setwmstate(c->window,NormalState);
+//	cmap(c);
+//}
+
+
+#if 0
+	if (e->message_type==WM_CHANGE_STATE && e->format==32 && e->data.l[0]==IconicState)
+		{
+		//setwmstate(c->window,NormalState);
+		cunmap(c);
+		//cisvisible
+		//return;
+		
+	//	if(c->isIcon==true)
+		//	{	
+			//cmap(c);
+			//c->isIcon=false;
+		//	}
+		#if 0
 			/*
 			 * Wind doesn't allow hidden windows,so just push it.
 			 */
+			//if(c->isIcon==true)
+			//	{
+			//		c->isIcon=false;
+					
+			//	}
 			cpushapp(c);
 			if (chasfocus(c))
 				refocus(CurrentTime);
+		#endif
 		}
-
+#endif
 	ewmh_clientmessage(c,e);
 }
 
@@ -1137,6 +1203,7 @@ void clientevent(void *self,XEvent *e)
 			propertynotify((client*)self,&e->xproperty);
 			break;
 		case MapRequest:
+//printf("MapRequest client event\n");
 			// We get this redirected to us from the root listener
 			// and from the frame listener.
 			maprequest((client*)self,&e->xmaprequest);
@@ -1148,6 +1215,7 @@ void clientevent(void *self,XEvent *e)
 			destroynotify((client*)self,&e->xdestroywindow);
 			break;
 		case ClientMessage:
+//printf("ClientMessage client event\n");
 			clientmessage((client*)self,&e->xclient);
 			break;
 		case ColormapNotify:
@@ -1470,6 +1538,8 @@ struct client *manage(Window window)
 	c->isBelow=false;
 	c->isDock=false;
 	c->canMaximize=true;
+	c->canMinimize=true;
+	c->isIcon=false;
 
 	csetgeom(c,(struct geometry)
 	{
@@ -1596,6 +1666,8 @@ struct client *manage(Window window)
 						hints->decorations=~hints->decorations;
 					if ((hints->decorations & MWM_DECOR_MAXIMIZE) == 0)
 						c->canMaximize=false;
+					if ((hints->decorations & MWM_DECOR_MINIMIZE) == 0)
+						c->canMinimize=false;
 				}
 			XFree(hints);
 		}

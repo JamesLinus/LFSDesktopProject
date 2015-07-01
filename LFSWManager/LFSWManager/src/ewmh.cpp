@@ -41,14 +41,11 @@
 #include "lib.h"
 #include "client.h"
 #include "frame.h"
+#include "ewmh.h"
 
 #define DEFAULT_NUMBER_OF_DESKTOPS 12
 
 #define xatom(name) XInternAtom(dpy,(name),False)
-
-#define NET_WM_STATE_REMOVE 0
-#define NET_WM_STATE_ADD 1
-#define NET_WM_STATE_TOGGLE 2
 
 /*
  * The list of supported properties. Note that we need to
@@ -94,6 +91,8 @@ Atom NET_WM_WINDOW_TYPE_DESKTOP;
 Atom NET_WM_STATE_STICKY;
 Atom NET_WM_ACTION_MAXIMIZE_HORZ;
 Atom NET_WM_ACTION_MAXIMIZE_VERT;
+Atom NET_WM_STATE_MAXIMIZED_VERT;
+Atom NET_WM_STATE_MAXIMIZED_HORZ;
 
 Atom UTF8_STRING;
 
@@ -204,9 +203,17 @@ void ewmh_startwm(void)
 		NET_ACTIVE_WINDOW=xatom("_NET_ACTIVE_WINDOW"),NET_CLIENT_LIST=xatom("_NET_CLIENT_LIST"),NET_CLIENT_LIST_STACKING=xatom("_NET_CLIENT_LIST_STACKING"),NET_CLOSE_WINDOW=xatom("_NET_CLOSE_WINDOW"),NET_CURRENT_DESKTOP=xatom("_NET_CURRENT_DESKTOP"),NET_DESKTOP_GEOMETRY=xatom("_NET_DESKTOP_GEOMETRY"),NET_DESKTOP_VIEWPORT=xatom("_NET_DESKTOP_VIEWPORT"),NET_FRAME_EXTENTS=xatom("_NET_FRAME_EXTENTS"),NET_NUMBER_OF_DESKTOPS=xatom("_NET_NUMBER_OF_DESKTOPS"),NET_REQUEST_FRAME_EXTENTS =
 		xatom("_NET_REQUEST_FRAME_EXTENTS"),NET_SUPPORTED=xatom("_NET_SUPPORTED"),NET_SUPPORTING_WM_CHECK=xatom("_NET_SUPPORTING_WM_CHECK"),NET_WM_ACTION_CHANGE_DESKTOP =
 		xatom("_NET_WM_ACTION_CHANGE_DESKTOP"),NET_WM_ACTION_CLOSE=xatom("_NET_WM_ACTION_CLOSE"),NET_WM_ACTION_FULLSCREEN=xatom("_NET_WM_ACTION_FULLSCREEN"),NET_WM_ACTION_MINIMIZE=xatom("_NET_WM_ACTION_MINIMIZE"),NET_WM_ALLOWED_ACTIONS=xatom("_NET_WM_ALLOWED_ACTIONS"),NET_WM_DESKTOP=xatom("_NET_WM_DESKTOP"),NET_WM_ICON_NAME=xatom("_NET_WM_ICON_NAME"),NET_WM_NAME=xatom("_NET_WM_NAME"),NET_WM_STATE=xatom("_NET_WM_STATE"),NET_WM_STATE_ABOVE=xatom("_NET_WM_STATE_ABOVE"),NET_WM_STATE_BELOW=xatom("_NET_WM_STATE_BELOW"),NET_WM_STATE_FULLSCREEN=xatom("_NET_WM_STATE_FULLSCREEN"),NET_WM_STATE_HIDDEN=xatom("_NET_WM_STATE_HIDDEN"),NET_WM_STATE_SKIP_TASKBAR =
-		xatom("_NET_WM_STATE_SKIP_TASKBAR"),NET_WM_VISIBLE_ICON_NAME=xatom("_NET_WM_VISIBLE_ICON_NAME"),NET_WM_VISIBLE_NAME=xatom("_NET_WM_VISIBLE_NAME"),NET_WM_WINDOW_TYPE=xatom("_NET_WM_WINDOW_TYPE"),NET_WM_WINDOW_TYPE_DOCK=xatom("_NET_WM_WINDOW_TYPE_DOCK"),NET_WORKAREA=xatom("_NET_WORKAREA"),NET_WM_WINDOW_TYPE_DESKTOP=xatom("_NET_WM_WINDOW_TYPE_DESKTOP"),NET_WM_STATE_STICKY=xatom("_NET_WM_STATE_STICKY"),NET_WM_ACTION_MAXIMIZE_HORZ=xatom("_NET_WM_ACTION_MAXIMIZE_HORZ"),NET_WM_ACTION_MAXIMIZE_VERT=xatom("_NET_WM_ACTION_MAXIMIZE_VERT")
+		xatom("_NET_WM_STATE_SKIP_TASKBAR"),NET_WM_VISIBLE_ICON_NAME=xatom("_NET_WM_VISIBLE_ICON_NAME"),NET_WM_VISIBLE_NAME=xatom("_NET_WM_VISIBLE_NAME"),NET_WM_WINDOW_TYPE=xatom("_NET_WM_WINDOW_TYPE"),NET_WM_WINDOW_TYPE_DOCK=xatom("_NET_WM_WINDOW_TYPE_DOCK"),NET_WORKAREA=xatom("_NET_WORKAREA"),NET_WM_WINDOW_TYPE_DESKTOP=xatom("_NET_WM_WINDOW_TYPE_DESKTOP"),NET_WM_STATE_STICKY=xatom("_NET_WM_STATE_STICKY"),NET_WM_ACTION_MAXIMIZE_HORZ=xatom("_NET_WM_ACTION_MAXIMIZE_HORZ"),NET_WM_ACTION_MAXIMIZE_VERT=xatom("_NET_WM_ACTION_MAXIMIZE_VERT"),NET_WM_STATE_MAXIMIZED_VERT=xatom("_NET_WM_STATE_MAXIMIZED_VERT"),NET_WM_STATE_MAXIMIZED_HORZ=xatom("_NET_WM_STATE_MAXIMIZED_HORZ")
 	};
 	setprop(root,NET_SUPPORTED,XA_ATOM,32,v,NELEM(v));
+
+//for(int j=0;j<NELEM(v);j++)
+//	printf("Atom %i=%s\n",v[j],XGetAtomName(dpy,v[j]));
+//
+//printf("--%i--\n",WM_CHANGE_STATE);
+//printf("--%i--\n",WM_DELETE_WINDOW);
+//printf("--%i--\n",WM_PROTOCOLS);
+//printf("--%i--\n",WM_STATE);
 
 	long geometry[2]= { DisplayWidth(dpy,screen),DisplayHeight(dpy,screen) };
 	setprop(root,NET_DESKTOP_GEOMETRY,XA_CARDINAL,32,geometry,2);
@@ -280,6 +287,7 @@ void reloadwindowstate(struct client *c)
 	c->skiptaskbar=false;
 	c->isAbove=false;
 	c->isBelow=false;
+	bool	unmax=true;
 
 	Atom *states=(Atom*)getprop(w,NET_WM_STATE,XA_ATOM,32,&n);
 	for (unsigned int i=0; i<n; i++)
@@ -312,8 +320,31 @@ void reloadwindowstate(struct client *c)
 					c->isBelow=true;
 					handled=true;
 				}
+			
+			if((states[i]==NET_WM_STATE_MAXIMIZED_HORZ) || (states[i]==NET_WM_STATE_MAXIMIZED_VERT))
+				{
+			//	printf("maximed\n");
+					unmax=false;
+					if(c->frame->isMaximized==false)
+						maximizeWindow(c,666);
+					handled=true;
+				}
+
+			if(states[i]==NET_WM_STATE_HIDDEN)
+				{
+				//printf("hidden\n");
+					if(c->frame->isMaximized==false)
+						maximizeWindow(c,666);
+					handled=true;
+				}
+
 			if(handled==false)
 				removestate(w,states[i]);
+		}
+
+	if((c->frame!=NULL) && ((unmax==true) and (c->frame->isMaximized==true)))
+		{	
+			maximizeWindow(c,666);
 		}
 
 	if (states != NULL)
@@ -381,12 +412,18 @@ void ewmh_manage(struct client *c)
 	v[2]=NET_WM_ACTION_FULLSCREEN;
 	v[3]=0;
 	v[4]=0;
+	v[5]=0;
+	v[6]=0;
 
 	if(c->canMaximize==true)
 		{
-			v[3]=NET_WM_ACTION_MAXIMIZE_HORZ;
-			v[4]=NET_WM_ACTION_MAXIMIZE_VERT;
-			vcnt=5;
+			v[vcnt++]=NET_WM_ACTION_MAXIMIZE_HORZ;
+			v[vcnt++]=NET_WM_ACTION_MAXIMIZE_VERT;
+			//vcnt=5;
+		}
+	if(c->canMinimize==true)
+		{
+			v[vcnt++]=NET_WM_ACTION_MINIMIZE;
 		}
 	setprop(w,NET_WM_ALLOWED_ACTIONS,XA_ATOM,32,v,vcnt);
 
@@ -537,6 +574,66 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 {
 	if (e->message_type==NET_ACTIVE_WINDOW && e->format==32)
 		{
+			c->isIcon=false;
+			setwmstate(c->window,NormalState);
+			cmap(c);
+			changestate(c->window,NET_WM_STATE_REMOVE,NET_WM_STATE_HIDDEN);
+			//printf("atcivate window %s\n",c->wmname);
+			cpopapp(c);
+			gotodesk(c->desk);
+			cfocus(c,(Time)e->data.l[1]);
+			return;
+		}
+
+	if (e->message_type==NET_CLOSE_WINDOW && e->format==32)
+		{
+			cdelete(c,(Time)e->data.l[0]);
+			return;
+		}
+
+	if (e->message_type==NET_WM_DESKTOP && e->format==32)
+		{
+			csetappdesk(c,e->data.l[0] & 0xffffffff);
+			return;
+		}
+
+#if 0
+	if(e->message_type==NET_WM_STATE && e->format==32)
+		{
+		char *name=NULL;
+		
+		for (int i=1; i <= 2; i++)
+			{
+				if (e->data.l[i] != 0)
+					{
+						name=XGetAtomName(dpy,e->data.l[i]);
+						if(name!=NULL)
+						{
+						printf("how=%i atom %i name=%s\n",e->data.l[0],e->data.l[1],name);
+						XFree(name);
+						name=NULL;
+						}
+					}
+//		printf("atom %i name=%s\n",e->data.l[1],XGetAtomName(dpy,e->data.l[2]));
+//			printf("net_wm_state 0=%i 1=%i\n",e->data.l[0],e->data.l[1]);
+			}
+		}
+#endif
+
+	if (e->message_type==NET_WM_STATE && e->format==32)
+		{
+			int how=e->data.l[0];
+			for (int i=1; i <= 2; i++)
+				if (e->data.l[i] != 0)
+					changestate(c->window,how,e->data.l[i]);
+			reloadwindowstate(c);
+		}
+}
+
+void HOLDewmh_clientmessage(struct client *c,XClientMessageEvent *e)
+{
+	if (e->message_type==NET_ACTIVE_WINDOW && e->format==32)
+		{
 			cpopapp(c);
 			gotodesk(c->desk);
 			cfocus(c,(Time)e->data.l[1]);
@@ -558,6 +655,7 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 			reloadwindowstate(c);
 		}
 }
+
 
 void ewmh_rootclientmessage(XClientMessageEvent *e)
 {

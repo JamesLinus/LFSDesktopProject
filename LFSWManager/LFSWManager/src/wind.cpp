@@ -39,6 +39,7 @@ unsigned int		numberOfDesktops;
 char				*titleFont;
 char				*fontColours[4];
 
+
 /*
  * Print formatted error message
  */
