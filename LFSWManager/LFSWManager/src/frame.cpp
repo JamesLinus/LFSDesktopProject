@@ -141,6 +141,38 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 
 	csetgeom(f->client,mynew);
 
+#if 0
+	if(f->isShaded==false)
+		{
+		printf("111\n");
+			//XMoveResizeWindow(dpy,f->window,nx,y,w,h);
+			XMoveWindow(dpy,f->window,nx,y);
+			f->x=nx;
+			f->y=y;
+			f->width=w;
+			f->height=h;
+		}
+	else
+		{
+			XMoveResizeWindow(dpy,f->window,nx,y,w,EXT_TOP);
+			f->x=nx;
+			f->y=y;
+			f->width=w;
+			f->height=EXT_TOP;
+		}
+
+	if (mynew.width==old.width && mynew.height==old.height)
+//		csendconf(f->client);
+		printf("xxxx\n");
+	else
+		{
+			XResizeWindow(dpy,f->window,w,h);
+			//XMoveResizeWindow(dpy,f->window,nx,y,w,h);
+			//XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
+		}
+
+#endif
+
 	if(f->isShaded==false)
 		{
 			XMoveResizeWindow(dpy,f->window,nx,y,w,h);
@@ -148,7 +180,6 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 			f->y=y;
 			f->width=w;
 			f->height=h;
-		
 		}
 	else
 		{
