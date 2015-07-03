@@ -1,4 +1,6 @@
 0.0.9
+Updated man page.
+Fixed dragging windows to new desktop on multiple monitors of differernt widths.
 Dragging windows to next/previous desktop now works properly. 
 Code clean.
 Fixed button spacing when not all buttons are used.
