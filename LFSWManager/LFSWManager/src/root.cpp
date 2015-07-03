@@ -40,6 +40,7 @@
 #include "client.h"
 #include "ewmh.h"
 #include "root.h"
+#include "atoms.h"
 
 void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
@@ -162,6 +163,7 @@ void keypress(XKeyEvent *e)
 				break;
 			}
 }
+#include <unistd.h>
 
 void clientmessage(XClientMessageEvent *e)
 {
@@ -176,26 +178,14 @@ void event(void *self,XEvent *e)
 	switch (e->type)
 		{
 		case ButtonRelease:
-//printf("11111111111111\n");
-//		if(flipDesk==true)
-//			{
-//			printf("XXXXXXXXXXXXXXXXX\n");
-//				printf("flip to %i\n",flipToDesk);
-//				//gotodesk(flipToDesk);
-//			flipDesk=false;
-//			flipToDesk=-1;
-//			}
 			scrollcnt++;
-//	printf("root scroll button\n");
 			if(scrollcnt>scrollcntmax)
 				{
-//	printf("root scroll button = %i serial=%i time=%i\n",e->xbutton.button,e->xbutton.serial,e->xbutton.time);
 					scrollcnt=0;
 					int newdesk=curdesk;
 					newdesk=curdesk;
 					if(e->xbutton.button==Button4)
 						{
-//		printf("root button4\n");
 							newdesk--;
 							if(newdesk<0)
 								newdesk=numberOfDesktops-1;
@@ -205,7 +195,6 @@ void event(void *self,XEvent *e)
 					if(e->xbutton.button==Button5)
 						{
 							newdesk++;
-//		printf("root button5\n");
 							if(newdesk>(int)numberOfDesktops-1)
 								newdesk=0;
 							gotodesk(newdesk);
@@ -214,7 +203,6 @@ void event(void *self,XEvent *e)
 			break;
 
 		case ButtonPress:	
-//printf("root b pressed event button %i\n",e->xbutton.button);
 			break;
 		case MapRequest:
 			maprequest(&e->xmaprequest);
@@ -223,20 +211,7 @@ void event(void *self,XEvent *e)
 			configurerequest(&e->xconfigurerequest);
 			break;
 		case KeyPress:
-//		printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 			keypress(&e->xkey);
-//			if(flipDesk==true)
-//			{
-//			printf("XXXXXXXXXXXXXXXXX\n");
-//				printf("flip to %i\n",flipToDesk);
-//				gotodesk(flipToDesk);
-		//	gotodesk(arg-1);
-//			refocus(e->xkey.time);
-//			//e->xkey.keycode=
-//			flipDesk=false;
-//			flipToDesk=-1;
-//			}
-
 			break;
 		case ClientMessage:
 			clientmessage(&e->xclient);
@@ -250,6 +225,12 @@ void event(void *self,XEvent *e)
 		case LeaveNotify:
 			leavenotify(&e->xcrossing);
 			break;
+		}
+
+	if(doswapdesk!=-1)
+		{
+			gotodesk(doswapdesk);
+			doswapdesk=-1;
 		}
 }
 

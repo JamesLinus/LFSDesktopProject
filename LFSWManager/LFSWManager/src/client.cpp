@@ -50,6 +50,7 @@
 #include "atoms.h"
 
 LIST_DEFINE(winstack);
+client *cc;
 
 // Current desk
 Desk curdesk=0;
@@ -1145,6 +1146,9 @@ void clientevent(void *self,XEvent *e)
 		case ColormapNotify:
 			colormapnotify((client*)self,(myXColormapEvent*)&e->xcolormap);
 			break;
+		case Expose:
+//printf("expose event\n");
+			break;
 		}
 }
 
@@ -1255,10 +1259,9 @@ int getMouseMonitor(client *c)
 	unsigned int	mask_return;
 
 	XQueryPointer(dpy,c->window,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return);
-
 	for(unsigned int j=0;j<numberOfMonitors;j++)
 		{
-			if((win_x_return>monitorData[j].monX) && (win_x_return<monitorData[j].monW+monitorData[j].monX) && (win_y_return>monitorData[j].monY) && (win_y_return<monitorData[j].monH+monitorData[j].monY))
+			if((root_x_return>monitorData[j].monX) && (root_x_return<monitorData[j].monW+monitorData[j].monX) && (root_y_return>monitorData[j].monY) && (root_y_return<monitorData[j].monH+monitorData[j].monY))
 				return(j);
 		}
 	return(0);

@@ -16,6 +16,7 @@
 #include "list.h"
 #include "wind.h"
 
+
 struct client
 {
 	struct listener listener;
@@ -68,6 +69,7 @@ struct client
 
 	unsigned int monitorNumber;
 };
+extern client *cc;
 
 struct client *manage(Window);
 extern Desk curdesk;
@@ -114,5 +116,6 @@ void cupdatedesk(struct client *c);
 void cpush(struct client *c);
 void clientevent(void *self,XEvent *e);
 void getclientstack(struct client ***vp,int *np);
+int getMouseMonitor(client *c);
 
 #endif

@@ -297,7 +297,6 @@ int main(int argc,char *argv[])
 				}
 			free(p);
 		}
-	
 
 	font=ftload(titleFont);
 	if (font==NULL)

@@ -37,5 +37,7 @@ void ewmh_clientmessage(struct client *,XClientMessageEvent *);
 void ewmh_rootclientmessage(XClientMessageEvent *);
 void reloadwindowdesktop(struct client *c);
 void changestate(Window w,int how,Atom state);
+void reloadwindowstate(struct client *c);
+void reloadwindowtype(struct client *c);
 
 #endif
