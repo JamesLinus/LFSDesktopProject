@@ -65,11 +65,24 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 {
 	int		offset;
 	bool	left;
-	Desk	newd;
+	int		newd=-1;
 	Desk	d;
+
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+	int				flipborder=10;
+	int				flippedoffset=flipborder;
 
 	if (x==f->x && y==f->y && w==f->width && h==f->height)
 		return;
+
+	XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return);
+	flippedoffset=win_x_return-x;
 
 	struct geometry old=cgetgeom(f->client);
 	struct geometry mynew =
@@ -84,22 +97,24 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	if(mynew.height<0)
 		mynew.height=0;
 
-	if((x>0) && (x<displayWidth-w))
+	if((win_x_return>flipborder) && (win_x_return<displayWidth-flipborder))
 		swapdesk=false;
 	if(swapdesk==false)
 		nx=x;
 
-	if(((x<0) || (x+w>displayWidth)) && (swapdesk==false))
+	if(((win_x_return<flipborder) || (win_x_return>(displayWidth-flipborder))) && (swapdesk==false))
 		{
-			if(x+w>displayWidth)
+			if(win_x_return>(displayWidth-flipborder))
 				{
 					left=false;
-					offset=10;
+					offset=flipborder-flippedoffset;
+					XWarpPointer(dpy,None,None,0,0,0,0,0-displayWidth+flipborder,0);
 				}
 			else
 				{
 					left=true;
-					offset=displayWidth-old.width-10;
+					offset=displayWidth-flippedoffset;
+					XWarpPointer(dpy,None,None,0,0,0,0,displayWidth-flipborder,0);
 				}
 			mynew.x=offset;
 			swapdesk=true;
@@ -107,19 +122,23 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 			d=f->client->desk;
 			if(left==true)
 				{
-					newd=d-1;
+					newd=(int)d-1;
 					if(newd<0)
 						newd=numberOfDesktops-1;
 				}
 			else
 				{
 					newd=d+1;
-					if(newd>numberOfDesktops-1)
+					if(newd>(int)numberOfDesktops-1)
 						newd=0;
 				}
-			gotodesk(newd);
+
 			csetdesk(f->client,newd);
-			restack();
+		}
+
+	if(newd!=-1)
+		{
+			gotodesk(newd);
 		}
 
 	csetgeom(f->client,mynew);
@@ -309,6 +328,7 @@ void repaint(struct frame *f)
 	XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP-1,f->width-EXT_RIGHT-1,EXT_TOP-1);
 
 	// Window area
+//	printf("fwidth=%i fhite=%i\n",f->width,f->height);
 		XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
 
 	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP-1,EXT_LEFT-1,1);
@@ -359,7 +379,11 @@ void fupdate(struct frame *f)
 
 	Bool hasfocus=chasfocus(f->client);
 
-	f->background=hasfocus ? &hlbackground : &background;
+//	f->background=hasfocus ? &hlbackground : &background;
+	if(hasfocus)
+		f->background=&hlbackground;
+	else
+		f->background=&background;
 
 	if (f->pixmap != None)
 		{
@@ -472,6 +496,85 @@ void frameevent(void *self,XEvent *e)
 			break;
 		case MotionNotify:
 			motionnotify((frame*)self,&e->xmotion);
+#if 0
+//			if(flipDesk==true)
+//				{
+				//XClientMessageEvent em;
+				/*
+					XClientMessageEvent em;
+					em.type=ClientMessage;
+					em.message_type=NET_CURRENT_DESKTOP;
+					em.format=32;
+					em.data.l[0]=flipToDesk;
+					em.data.l[1]=6666;
+					//XSendEvent(dpy,e->xany.window,False,0L,(XEvent*)&em);
+					//ewmh_rootclientmessage(&em);
+					*/
+					
+										//printf(">>%i<<\n",flipToDesk);
+					//gotodesk(flipToDesk);
+					//refocus(6666);
+					//gotodesk(flipToDesk);
+
+XKeyPressedEvent em;
+					em.display=dpy;
+					em.root=root;
+					em.time=66666;
+					em.x=10;
+					em.y=10;
+					em.serial=897654321;
+					em.time=12345678;
+					em.send_event=true;			
+					em.type=KeyPress;
+					flipDesk=true;
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+					XSendEvent(dpy,root,true,KeyPressMask,(XEvent*)&em);
+
+/*
+					XButtonEvent em;
+					//em.type=ButtonPress;	
+				em.window=((client*)self)->window;
+					em.button=333;
+					em.display=dpy;
+					em.root=root;
+					em.time=66666;
+					em.x=10;
+					em.y=10;
+					em.serial=897654321;
+					em.time=12345678;
+					em.send_event=true;
+					//em->message_type=NET_CURRENT_DESKTOP;
+					//em->format=32;
+					//em->data.l[0]=flipToDesk;
+					//em->data.l[1]=6666;
+					em.type=ButtonRelease;
+					//XSendEvent(dpy,((frame*)self)->window,false,ButtonReleaseMask,(XEvent*)&em);
+					flipDesk=true;
+					gotodesk(flipToDesk);
+					XSendEvent(dpy,root,false,ButtonReleaseMask,(XEvent*)&em);
+					flipDesk=true;
+					//XSendEvent(dpy,((frame*)self)->window,true,ButtonReleaseMask,(XEvent*)&em);
+					//XSendEvent(dpy,((frame*)self)->window,true,ButtonReleaseMask,(XEvent*)&em);
+					//clientevent(self,(XEvent *)&em);
+					//em.time=66666;
+					//XSendEvent(dpy,((frame*)self)->window,true,ButtonReleaseMask,(XEvent*)&em);
+					//ewmh_rootclientmessage(em);
+					//clientevent(self,(XEvent *)&em);
+					//	gotodesk(flipToDesk);
+*/			
+//				}
+#endif
 			break;
 		case ButtonPress:
 			buttonpress((frame*)self,&e->xbutton);

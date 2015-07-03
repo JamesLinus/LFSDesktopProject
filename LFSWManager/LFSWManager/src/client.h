@@ -110,5 +110,9 @@ void cunmap(struct client *c);
 void cmap(struct client *c);
 void cpop(struct client *c);
 void cpopapp(struct client *c);
+void cupdatedesk(struct client *c);
+void cpush(struct client *c);
+void clientevent(void *self,XEvent *e);
+void getclientstack(struct client ***vp,int *np);
 
 #endif

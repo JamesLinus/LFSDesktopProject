@@ -34,6 +34,9 @@ unsigned int		numberOfDesktops;
 char				*titleFont;
 char				*fontColours[4];
 
+//bool				flipDesk=false;
+//int					flipToDesk=0;
+
 /*
  * Print formatted error message
  */

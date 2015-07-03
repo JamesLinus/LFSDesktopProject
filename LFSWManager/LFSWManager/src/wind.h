@@ -149,6 +149,9 @@ extern	unsigned int	numberOfDesktops;
 extern char				*titleFont;
 extern char				*fontColours[4];
 
+//extern bool				flipDesk;
+//extern int				flipToDesk;
+
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);
 int redirect(XEvent *,Window);

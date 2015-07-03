@@ -13,8 +13,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-#include "wind.h"
-
 //atoms
 #define xatom(name) XInternAtom(dpy,(name),False)
 
