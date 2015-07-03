@@ -50,7 +50,7 @@
 #include "atoms.h"
 
 LIST_DEFINE(winstack);
-client *cc;
+//client *cc;
 
 // Current desk
 Desk curdesk=0;

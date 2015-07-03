@@ -80,7 +80,9 @@ keybind keymap[] =
 };
 
 // True if the pointer is on this screen
-Bool pointerhere;
+Bool	pointerhere;
+int		scrollcnt;
+int		scrollcntmax=2;
 
 void maprequest(XMapRequestEvent *e)
 {
@@ -169,9 +171,6 @@ void clientmessage(XClientMessageEvent *e)
 {
 	ewmh_rootclientmessage(e);
 }
-
-int scrollcnt;
-int scrollcntmax=2;
 
 void event(void *self,XEvent *e)
 {

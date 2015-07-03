@@ -139,13 +139,6 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 			f->client->desk=newd;
 		}
 
-//	if(newd!=-1)
-//		{
-//			XClearArea(dpy,f->window,0,0,100,100,true);
-//			XClearWindow(dpy,f->window);
-//			cc=f->client;
-//		}
-
 	csetgeom(f->client,mynew);
 
 	if(f->isShaded==false)
@@ -473,7 +466,6 @@ void buttonrelease(struct frame *f,XButtonEvent *e)
 	if (e->button==Button1 && f->grabbed)
 		{
 			XUngrabPointer(dpy,e->time);
-			//csetappfollowdesk(f->client,False);
 			f->grabbed=False;
 		}
 }
@@ -507,7 +499,6 @@ void frameevent(void *self,XEvent *e)
 			break;
 		case MotionNotify:
 			motionnotify((frame*)self,&e->xmotion);
-
 			break;
 		case ButtonPress:
 			buttonpress((frame*)self,&e->xbutton);

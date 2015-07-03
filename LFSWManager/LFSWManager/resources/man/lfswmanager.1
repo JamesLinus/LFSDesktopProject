@@ -1,4 +1,4 @@
-.TH "LFSWMANAGER" "1" "0.0.6" "K. D. Hedger" ""
+.TH "LFSWMANAGER" "1" "0.0.9" "K. D. Hedger" ""
 .SH "NAME"
 lfswmanager - window manager
 .br
@@ -63,6 +63,10 @@ The following options are recognized:
 	0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ).
 .br
 
+	All the above can be placed in a preferences file at ~/.config/LFS/lfswmanager.rc.
+.br
+	
+.br
 Window focus
 .br
 	Press a pointer button inside the window to raise it and give it the keyboard input focus.
@@ -70,7 +74,9 @@ Window focus
 
 Moving a window
 .br
-	Drag the window by its title bar to the desired location.  Alternatively, hold down the \fBAlt \fRkey and grab the window from anywhere inside its frame.  A moving window follows desktop switches.
+	Drag the window by its title bar to the desired location.  Alternatively, hold down the \fBAlt \fRkey and grab the window from anywhere inside its frame.
+.br
+	Dragging a window off of the left/right edge of the screen will now flip the desktop.
 .br
 
 Resizing a window
@@ -83,17 +89,9 @@ Deleting a window
 	Push the \fB× \fRbutton in the upper right corner of the frame to ask the window to delete itself.
 .br
 
-Minimizing a window
-.br
-	There are no minimized windows in \fIWind\fR, but there are two substitutes: virtual desktops help organizing related windows, and the \fBAlt-Esc \fRkey binding cycles between the applications on the current desktop.
-.br
-
 Virtual desktops
 .br
 	\fIWind\fR supports virtual desktops as defined by the Extended Window Manager Hints specification.  The first twelve desktops are addressable using the \fBAlt-F\fR\fIn\fR key bindings.  An external pager is needed to address more than twelve desktops.
-.br
-
-	You can drag a window to the left/right edge to flip to the previous/next desktop.
 .br
 
 The following key bindings are provided:
@@ -139,6 +137,27 @@ The following key bindings are provided:
 \fBLFSWManager\fR terminates gracefully upon receipt of any of the SIGHUP, SIGINT, and SIGTERM signals.
 .br
 
+.SH "FILES"
+Preference file is at ~/.config/LFS/lfswmanager.rc.
+.br
+
+Sample prefs file:
+.br
+
+focusedfore	white
+.br
+focusedback	#5E3300
+.br
+fore	    grey60
+.br
+back		#62503A
+.br
+placement	2
+.br
+titlefont	sans:size=10
+.br
+desktops	6
+.br
 .SH "AUTHOR"
 K. D. Hedger, \fIkdhedger68713@gmail.com\fR
 .br
@@ -147,7 +166,6 @@ Original code:
 .br
 Johan Veenhuizen, \fIveenhuizen@users.sourceforge.net\fR
 .br
-
 .SH "BUGS"
 Report bugs to:
 .br

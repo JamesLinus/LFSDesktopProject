@@ -69,11 +69,10 @@ struct client
 
 	unsigned int monitorNumber;
 };
-extern client *cc;
+//extern client *cc;
 
 struct client *manage(Window);
 extern Desk curdesk;
-//extern Desk ndesk;
 extern Bool needrestack;
 
 void shuffle(void);
