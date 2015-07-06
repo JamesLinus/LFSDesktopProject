@@ -217,8 +217,21 @@ void shadeWindow(void *myclient,Time t)
  		}		
 }
 
+int getFrameMonitor(frame *f)
+{
+	for(unsigned int j=0;j<numberOfMonitors;j++)
+		{
+			if((f->x>monitorData[j].monX) && (f->x<monitorData[j].monW+monitorData[j].monX) && (f->y>monitorData[j].monY) && (f->y<monitorData[j].monH+monitorData[j].monY))
+				return(j);
+		}
+	return(0);
+
+}
+
 void maximizeWindow(void *myclient,Time t)
 {
+	int		monnum=getFrameMonitor(((client*)myclient)->frame);
+
 	if(((client*)myclient)->frame->isMaximized==false)
 		{
 			((client*)myclient)->frame->oldX=((client*)myclient)->frame->x;
@@ -226,7 +239,7 @@ void maximizeWindow(void *myclient,Time t)
 			((client*)myclient)->frame->oldWidth=((client*)myclient)->frame->width;
 			((client*)myclient)->frame->oldHeight=((client*)myclient)->frame->height;
 			((client*)myclient)->frame->isMaximized=true;
-			moveresize(((client*)myclient)->frame,0,0,displayWidth,displayHeight);
+			moveresize(((client*)myclient)->frame,monitorData[monnum].monX,monitorData[monnum].monY,monitorData[monnum].monW,monitorData[monnum].monH);
 			changestate(((client*)myclient)->window,NET_WM_STATE_ADD,NET_WM_STATE_MAXIMIZED_VERT);
 			changestate(((client*)myclient)->window,NET_WM_STATE_ADD,NET_WM_STATE_MAXIMIZED_HORZ);
 		}

@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSWManager],[0.0.9],[PROJ],[LFSWManager])
+AC_INIT([LFSWManager],[0.0.10],[PROJ],[LFSWManager])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX

@@ -1,3 +1,6 @@
+0.0.10
+Maximize now maximizes to monitor of window.
+
 0.0.9
 Added -l option to command line to set number of updates to window when resisizing, 0=no updates until mouse button released, >0 number of updates defaults to 5.
 Updated man page.
