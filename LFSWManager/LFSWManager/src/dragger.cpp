@@ -65,12 +65,14 @@ void draggerevent(void *self,XEvent *e)
 					XResizeWindow(dpy,windowToUpdate,newwid,newhite);
 					windowToUpdate=None;
 				}
+			fromDragger=false;
 			break;
 
 		case MotionNotify:
 			motionnotify((dragger*)self,&e->xmotion);
 			break;
 		case ButtonPress:
+			fromDragger=true;
 			buttonpress((dragger*)self,&e->xbutton);
 			break;
 		}

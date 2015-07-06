@@ -61,6 +61,7 @@ Window	windowToUpdate=None;
 int		newwid,newhite;
 int		updatecnt=0;
 int		maxupdatecnt=10;
+bool	fromDragger=false;
 
 /*
  * Move and resize the frame,and update the client window.
@@ -173,7 +174,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 		csendconf(f->client);
 	else
 		{
-			if(liveUpdate>0 && updatecnt>liveUpdate)
+			if((liveUpdate>0 && updatecnt>liveUpdate) || (fromDragger==false))
 				{
 					XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
 					updatecnt=0;

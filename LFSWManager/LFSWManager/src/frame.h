@@ -44,6 +44,7 @@ struct frame
 
 extern Window	windowToUpdate;
 extern int		newwid,newhite;
+extern bool		fromDragger;
 
 
 struct frame *fcreate(struct client *);
