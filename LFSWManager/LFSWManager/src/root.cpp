@@ -32,6 +32,7 @@
 */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
 
@@ -41,6 +42,7 @@
 #include "ewmh.h"
 #include "root.h"
 #include "atoms.h"
+#include "frame.h"
 
 void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
@@ -165,7 +167,6 @@ void keypress(XKeyEvent *e)
 				break;
 			}
 }
-#include <unistd.h>
 
 void clientmessage(XClientMessageEvent *e)
 {
@@ -201,7 +202,7 @@ void event(void *self,XEvent *e)
 				}
 			break;
 
-		case ButtonPress:	
+		case ButtonPress:
 			break;
 		case MapRequest:
 			maprequest(&e->xmaprequest);

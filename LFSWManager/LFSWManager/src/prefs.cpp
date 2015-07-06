@@ -24,6 +24,7 @@ args	wmPrefs[]=
 	{"placement",TYPEINT,&placement},
 	{"titlefont",TYPESTRING,&titleFont},
 	{"desktops",TYPEINT,&numberOfDesktops},
+	{"liveupdate",TYPEINT,&liveUpdate},
 	{NULL,0,NULL}
 };
 

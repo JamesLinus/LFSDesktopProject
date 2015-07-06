@@ -1106,9 +1106,10 @@ void csetgeom(struct client *c,struct geometry g)
 
 void clientevent(void *self,XEvent *e)
 {
-//printf("client event\n");
 	switch (e->type)
 		{
+		case ButtonRelease:
+			break;
 		case ButtonPress:
 			buttonpress((client*)self,&e->xbutton);
 			break;

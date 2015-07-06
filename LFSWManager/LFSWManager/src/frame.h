@@ -42,6 +42,10 @@ struct frame
 	bool isShaded;
 };
 
+extern Window	windowToUpdate;
+extern int		newwid,newhite;
+
+
 struct frame *fcreate(struct client *);
 void fdestroy(struct frame *);
 void fupdate(struct frame *);

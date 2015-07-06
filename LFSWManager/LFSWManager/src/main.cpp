@@ -163,6 +163,7 @@ void usage(FILE *f)
 	        "-F colour Focused forecolour\n"
 	        "-B colour Focusud backcolour\n"
 	        "-p New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
+			"-l Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
 			"-v Debug mode\n"
 	        ,PACKAGE_STRING,progname);
 }
@@ -189,6 +190,7 @@ int main(int argc,char *argv[])
 	numberOfDesktops=4;
 	placement=CENTREMMONITOR;
 	titleFont=strdup(DEFAULTFONT);
+	liveUpdate=5;
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	loadVarsFromFile(prefsfile,wmPrefs);
@@ -197,7 +199,7 @@ int main(int argc,char *argv[])
 	ndesk=numberOfDesktops;
 
 	int opt;
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:v")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:v")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -236,6 +238,11 @@ int main(int argc,char *argv[])
 			case 'p':
 				placement=atoi(optarg);
 				break;
+
+			case 'l':
+				liveUpdate=atoi(optarg);
+				break;
+
 			case 'v':
 				debug=True;
 				break;

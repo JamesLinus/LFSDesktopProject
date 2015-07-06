@@ -148,6 +148,7 @@ extern int				placement;
 extern	unsigned int	numberOfDesktops;
 extern char				*titleFont;
 extern char				*fontColours[4];
+extern int				liveUpdate;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);

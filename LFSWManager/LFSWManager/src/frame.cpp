@@ -57,6 +57,10 @@ Cursor	cursortopleft=None;
 Cursor	cursortopright=None;
 bool	swapdesk=false;
 int		nx;
+Window	windowToUpdate=None;
+int		newwid,newhite;
+int		updatecnt=0;
+int		maxupdatecnt=10;
 
 /*
  * Move and resize the frame,and update the client window.
@@ -82,6 +86,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 
 	if (x==f->x && y==f->y && w==f->width && h==f->height)
 		return;
+
 	doswapdesk=-1;
 	monitorwidth=monitorData[getMouseMonitor(f->client)].monW;
 
@@ -141,41 +146,12 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 
 	csetgeom(f->client,mynew);
 
-#if 0
-	if(f->isShaded==false)
-		{
-		printf("111\n");
-			//XMoveResizeWindow(dpy,f->window,nx,y,w,h);
-			XMoveWindow(dpy,f->window,nx,y);
-			f->x=nx;
-			f->y=y;
-			f->width=w;
-			f->height=h;
-		}
-	else
-		{
-			XMoveResizeWindow(dpy,f->window,nx,y,w,EXT_TOP);
-			f->x=nx;
-			f->y=y;
-			f->width=w;
-			f->height=EXT_TOP;
-		}
-
-	if (mynew.width==old.width && mynew.height==old.height)
-//		csendconf(f->client);
-		printf("xxxx\n");
-	else
-		{
-			XResizeWindow(dpy,f->window,w,h);
-			//XMoveResizeWindow(dpy,f->window,nx,y,w,h);
-			//XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
-		}
-
-#endif
-
 	if(f->isShaded==false)
 		{
 			XMoveResizeWindow(dpy,f->window,nx,y,w,h);
+			windowToUpdate=f->client->window;
+			newwid=mynew.width;
+			newhite=mynew.height;
 			f->x=nx;
 			f->y=y;
 			f->width=w;
@@ -184,6 +160,9 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	else
 		{
 			XMoveResizeWindow(dpy,f->window,nx,y,w,EXT_TOP);
+			windowToUpdate=f->client->window;
+			newwid=mynew.width;
+			newhite=mynew.height;
 			f->x=nx;
 			f->y=y;
 			f->width=w;
@@ -193,7 +172,15 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	if (mynew.width==old.width && mynew.height==old.height)
 		csendconf(f->client);
 	else
-		XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
+		{
+			if(liveUpdate>0 && updatecnt>liveUpdate)
+				{
+					XResizeWindow(dpy,f->client->window,mynew.width,mynew.height);
+					updatecnt=0;
+				}
+			else
+				updatecnt++;
+		}
 
 	if(newd!=-1)
 		{
@@ -484,7 +471,6 @@ void buttonpress(struct frame *f,XButtonEvent *e)
 			if (e->y<EXT_TOP || (e->state & Mod1Mask) != 0)
 				{
 					f->grabbed=True;
-					//csetappfollowdesk(f->client,True);
 					f->downx=e->x;
 					f->downy=e->y;
 					XGrabPointer(dpy,f->window,False,Button1MotionMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None,e->time);

@@ -37,6 +37,7 @@
 
 #include "wind.h"
 #include "lib.h"
+#include "frame.h"
 
 struct dragger
 {
@@ -58,6 +59,14 @@ void draggerevent(void *self,XEvent *e)
 {
 	switch (e->type)
 		{
+		case ButtonRelease:
+			if((windowToUpdate!=None) )
+				{
+					XResizeWindow(dpy,windowToUpdate,newwid,newhite);
+					windowToUpdate=None;
+				}
+			break;
+
 		case MotionNotify:
 			motionnotify((dragger*)self,&e->xmotion);
 			break;
@@ -75,8 +84,7 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 	sa.cursor=cursor;
 
 	struct dragger *d=(dragger*)xmalloc(sizeof *d);
-	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,
-	                        &sa);
+	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,&sa);
 	d->listener.function=draggerevent;
 	d->listener.pointer=d;
 	setlistener(d->window,&d->listener);
@@ -130,7 +138,8 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 	d->y=0;
 	d->dragnotify=dragnotify;
 	d->arg=arg;
-	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask,GrabModeAsync,GrabModeAsync,None,cursor);
+//	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask,GrabModeAsync,GrabModeAsync,None,cursor);
+	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,cursor);
 	XMapWindow(dpy,d->window);
 	return d;
 }

@@ -33,7 +33,8 @@ int					placement=MOUSEMONITOR;
 unsigned int		numberOfDesktops;
 char				*titleFont;
 char				*fontColours[4];
-int doswapdesk=-1;
+int					doswapdesk=-1;
+int					liveUpdate=1;
 
 /*
  * Print formatted error message

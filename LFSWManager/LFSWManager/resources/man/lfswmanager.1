@@ -3,7 +3,7 @@
 lfswmanager - window manager
 .br
 .SH "SYNOPSIS"
-\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ display ]
+\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ display ]
 .br
 
 .SH "DESCRIPTION"
@@ -61,6 +61,11 @@ The following options are recognized:
 	Set new window placement.
 .br
 	0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ).
+.br
+
+\fB-l\fR liveupdate
+.br
+	Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest"
 .br
 
 	All the above can be placed in a preferences file at ~/.config/LFS/lfswmanager.rc.
