@@ -322,6 +322,7 @@ int main(int argc,char *argv[])
 	halfleading=(3 * font->size / 10) / 2;
 	lineheight=font->size + 2 * halfleading;
 
+//lineheight=24;
 	if (lineheight % 2==0)
 		deletebitmap=&deleven;
 	else

@@ -31,7 +31,9 @@
 
 */
 
-#include <assert.h>
+//#define NDEBUG
+//#include <assert.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -352,6 +354,7 @@ void repaint(struct frame *f)
 	// Title area
 	int x=1;
 	XFillRectangle(dpy,f->window,*f->background,x,1,font->size,lineheight);
+	//XFillRectangle(dpy,f->window,*f->background,x,1,font->size,64);
 	x += font->size;
 	if (f->pixmap != None)
 		XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,lineheight,x,1);
@@ -732,7 +735,7 @@ void fdestroy(struct frame *f)
 	XDestroyWindow(dpy,f->window);
 	free(f);
 
-	assert(fcount>0);
+	//assert(fcount>0);
 	fcount--;
 	if (fcount==0)
 		{
