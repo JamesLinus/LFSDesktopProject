@@ -3,7 +3,7 @@
 lfswmanager - window manager
 .br
 .SH "SYNOPSIS"
-\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ display ]
+\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ \fB-w\fR outfile ] [ display ]
 .br
 
 .SH "DESCRIPTION"
@@ -65,10 +65,17 @@ The following options are recognized:
 
 \fB-l\fR liveupdate
 .br
-	Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest"
+	Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest.
 .br
 
-	All the above can be placed in a preferences file at ~/.config/LFS/lfswmanager.rc.
+\fB-w\fR outfile
+.br
+	After setting prefs from default, prefsfile and command line write out a prefsfile to outfile and quit ( MUST be last option ).
+.br
+	Use '-' to write to stdout.
+.br
+
+	All the above except '-w' can be placed in a preferences file at ~/.config/LFS/lfswmanager.rc.
 .br
 	
 .br

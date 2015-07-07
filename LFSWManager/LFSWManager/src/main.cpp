@@ -156,15 +156,15 @@ int waitevent(void)
 void usage(FILE *f)
 {
 	fprintf(f,"%s\nUsage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
-	        "-n number Number of desktops\n"
-	        "-t font Title font\n"
-	        "-f colour Forecolour\n"
-	        "-b colour back colour\n"
-	        "-F colour Focused forecolour\n"
-	        "-B colour Focusud backcolour\n"
-	        "-p New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
-			"-l Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
-			"-v Debug mode\n"
+	        "-n	number		Number of desktops\n"
+	        "-t	font		Title font\n"
+	        "-f	colour		Forecolour\n"
+	        "-b	colour		back colour\n"
+	        "-F	colour		Focused forecolour\n"
+	        "-B	colour		Focusud backcolour\n"
+	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
+			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
+			"-w	outfile		After setting prefs from default, prefsfile and command line write out a prefsfile and quit ( MUST be last option ).\n"
 	        ,PACKAGE_STRING,progname);
 }
 
@@ -199,7 +199,7 @@ int main(int argc,char *argv[])
 	ndesk=numberOfDesktops;
 
 	int opt;
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:v")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:w:v")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -241,6 +241,11 @@ int main(int argc,char *argv[])
 
 			case 'l':
 				liveUpdate=atoi(optarg);
+				break;
+
+			case 'w':
+				saveVarsToFile(optarg,wmPrefs);
+				exit(0);
 				break;
 
 			case 'v':
