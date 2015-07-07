@@ -1,4 +1,5 @@
 0.0.10
+Removed old debug code ( assert's ).
 Maximize now maximizes to monitor of window.
 
 0.0.9
