@@ -40,6 +40,9 @@
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
 
+#include <cairo.h>
+#include <cairo-xlib.h>
+
 #include "wind.h"
 #include "client.h"
 #include "button.h"
@@ -351,28 +354,72 @@ void repaint(struct frame *f)
 	namewidth=MIN(namewidth,f->width-2 * (1 + font->size));
 	namewidth=MAX(namewidth,0);
 
+	if(theme.useTheme==true)
+		{
+			double	alpha=1.0;
+			cairo_pattern_t *pattern;
+	cairo_surface_t *sfc;
+	sfc=cairo_xlib_surface_create(dpy,f->window,visual,f->width,f->height);
+	cairo_xlib_surface_set_size(sfc,f->width,f->height);
+	cairo_t	*cr=cairo_create(sfc);
+
+			//int blackColor=BlackPixel(dpy,screen);
+			//f->pixmap=None;
+			//f->background=None;
+			//GC gc=XCreateGC(dpy,f->window,0,NULL);
+			//XSetForeground(dpy,gc,blackColor);
+			//XSetFillStyle(dpy,gc,FillSolid);
+			//XFillRectangle(display,bottomSnow.pixmap,gc,0,0,displayWidth,bottomSnow.maxHeight);
+			//	XSetClipOrigin(dpy,gc,0,0);
+//XSetClipMask(dpy,gc,None);			
+			//XFillRectangle(dpy,f->window,gc,0,0,f->width,f->height);
+			//XClearWindow(dpy,f->window);
+			XClearArea(dpy,f->window,0,0,f->width,f->height,false);
+			
+			cairo_save(cr);
+				cairo_translate(cr,0,0);
+				cairo_set_source_surface(cr,theme.parts[TOPLEFTACTIVE],0,0);
+				cairo_paint_with_alpha(cr,alpha);
+			cairo_restore(cr);
+			cairo_save(cr);
+				cairo_translate(cr,f->width-theme.partsWidth[TOPRIGHTACTIVE],0);
+				cairo_set_source_surface(cr,theme.parts[TOPRIGHTACTIVE],0,0);
+				cairo_paint_with_alpha(cr,alpha);
+			cairo_restore(cr);
+
+			cairo_save(cr);
+				pattern=cairo_pattern_create_for_surface(theme.parts[TITLE1ACTIVE]);
+				cairo_pattern_set_extend(pattern,CAIRO_EXTEND_REPEAT);
+				cairo_translate(cr,0+theme.partsWidth[TOPLEFTACTIVE],0);
+				cairo_set_source (cr, pattern);
+				cairo_rectangle (cr, 0, 0,f->width-theme.partsWidth[TOPRIGHTACTIVE]-theme.partsWidth[TOPLEFTACTIVE],theme.titleBarHeight);
+				cairo_fill (cr);
+			cairo_restore(cr);
+
+		}
+	else
+		{
 	// Title area
-	int x=1;
-	XFillRectangle(dpy,f->window,*f->background,x,1,font->size,lineheight);
-	//XFillRectangle(dpy,f->window,*f->background,x,1,font->size,64);
-	x += font->size;
-	if (f->pixmap != None)
-		XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,lineheight,x,1);
-	x += namewidth;
-	XFillRectangle(dpy,f->window,*f->background,x,1,f->width-1-x,lineheight);
+			int x=1;
+			XFillRectangle(dpy,f->window,*f->background,x,1,font->size,lineheight);
+			x += font->size;
+			if (f->pixmap != None)
+				XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,lineheight,x,1);
+			x += namewidth;
+			XFillRectangle(dpy,f->window,*f->background,x,1,f->width-1-x,lineheight);
 
 	// Border
-	XDrawRectangle(dpy,f->window,foreground,0,0,f->width-1,f->height-1);
+			XDrawRectangle(dpy,f->window,foreground,0,0,f->width-1,f->height-1);
 
 	// Title bottom border
-	XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP-1,f->width-EXT_RIGHT-1,EXT_TOP-1);
+			XDrawLine(dpy,f->window,foreground,EXT_LEFT,EXT_TOP-1,f->width-EXT_RIGHT-1,EXT_TOP-1);
 
 	// Window area
-//	printf("fwidth=%i fhite=%i\n",f->width,f->height);
-		XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
+			XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP,f->width-2,f->height-1-EXT_TOP);
 
-	XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP-1,EXT_LEFT-1,1);
-	XFillRectangle(dpy,f->window,*f->background,f->width-EXT_RIGHT,EXT_TOP-1,EXT_RIGHT-1,1);
+			XFillRectangle(dpy,f->window,*f->background,1,EXT_TOP-1,EXT_LEFT-1,1);
+			XFillRectangle(dpy,f->window,*f->background,f->width-EXT_RIGHT,EXT_TOP-1,EXT_RIGHT-1,1);
+		}
 }
 
 void fupdate(struct frame *f)
@@ -596,10 +643,42 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 		}
 	moveresize(f,x,y,w,h);
 }
+#include <X11/extensions/shape.h>
+int				depth=0;
+
+int get_argb_visual(Visual** vis, int *depth)
+{
+	/* code from gtk project, gdk_screen_get_rgba_visual */
+	XVisualInfo visual_template;
+	XVisualInfo *visual_list=NULL;
+	int nxvisuals = 0, i;
+	visual_template.screen = screen;
+	visual_list = XGetVisualInfo (dpy,0,&visual_template, &nxvisuals);
+
+	for (i = 0; i < nxvisuals; i++)
+		{
+			if (visual_list[i].depth == 32 &&
+			        (visual_list[i].red_mask   == 0xff0000 &&
+			         visual_list[i].green_mask == 0x00ff00 &&
+			         visual_list[i].blue_mask  == 0x0000ff ))
+				{
+					*vis = visual_list[i].visual;
+					*depth = visual_list[i].depth;
+					XFree(visual_list);
+					return 0;
+				}
+		}
+	// no argb visual available
+	printf("no rgb\n");
+	XFree(visual_list);
+	return 1;
+}
 
 struct frame *fcreate(struct client *c)
 {
 	XSetWindowAttributes wa;
+	cairo_surface_t *sfc;
+	int		rc=0;
 
 	if (fcount==0)
 		{
@@ -630,8 +709,33 @@ struct frame *fcreate(struct client *c)
 	f->isMaximized=false;
 	f->isShaded=false;
 
+
 	wa.bit_gravity=NorthWestGravity;
+//	f->window=XCreateWindow(dpy,root,f->x,f->y,f->width,f->height,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
+
+if(theme.useTheme==true)
+{
+			rc=get_argb_visual(&visual,&depth);
+			if(rc==0)
+				{
+					XSetWindowAttributes attr;
+					attr.colormap=XCreateColormap(dpy,DefaultRootWindow(dpy),visual,AllocNone);
+					attr.border_pixel=0;
+					attr.background_pixel=0;
+					attr.bit_gravity=NorthWestGravity;
+
+					f->window=XCreateWindow(dpy,DefaultRootWindow(dpy),f->x,f->y,f->width,f->height,0,depth,InputOutput,visual,CWColormap | CWBorderPixel | CWBackPixel|CWBitGravity,&attr);
+}
+}
+else
+{
 	f->window=XCreateWindow(dpy,root,f->x,f->y,f->width,f->height,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
+}
+
+
+	//sfc=cairo_xlib_surface_create(dpy,f->window,visual,f->width,f->height);
+	//cairo_xlib_surface_set_size(sfc,f->width,f->height);
+	//f->cr=cairo_create(sfc);
 
 	Window clientwin=f->client->window;
 
@@ -690,6 +794,9 @@ struct frame *fcreate(struct client *c)
 
 	if (f->client->ismapped)
 		XMapWindow(dpy,f->window);
+//Region rg=XCreateRegion();
+//	XShapeCombineRegion(dpy,f->window,ShapeInput,0,0,rg,ShapeSet);
+
 	return f;
 }
 

@@ -21,6 +21,7 @@ struct fontcolor	*fhighlight;
 struct fontcolor	*fnormal;
 
 unsigned int		screen;
+Visual				*visual;
 int					displayWidth;
 int					displayHeight;
 monitors			*monitorData;
@@ -35,6 +36,16 @@ char				*titleFont;
 char				*fontColours[4];
 int					doswapdesk=-1;
 int					liveUpdate=1;
+
+//theme
+themeStruct			theme;
+//cairo_t				*cr;
+char				*fontName;
+cairo_font_weight_t weight;
+cairo_font_slant_t	slant;
+int					fontSize;
+//cairoColor			backColour;
+//cairoColor			foreColour;
 
 /*
  * Print formatted error message

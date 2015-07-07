@@ -40,6 +40,7 @@ struct frame
 	Bool grabbed;
 	bool isMaximized;
 	bool isShaded;
+	cairo_t	*crf;
 };
 
 extern Window	windowToUpdate;

@@ -15,6 +15,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <cairo.h>
 
 #include "config.h"
 
@@ -98,6 +99,17 @@ struct	monitors
 	int		monY;
 };
 
+enum {TOPLEFTACTIVE=0,TOPLEFTINACTIVE,TOPRIGHTACTIVE,TOPRIGHTINACTIVE,TITLE1ACTIVE,TITLE2ACTIVE,TITLE3ACTIVE,TITLE1INACTIVE,TITLE2INACTIVE,TITLE3INACTIVE,NUMBEROFPARTS};
+struct	themeStruct
+{
+	bool			useTheme;
+	char			*pathToTheme;
+	int				titleBarHeight;
+	cairo_surface_t	*parts[NUMBEROFPARTS];
+	int				partsWidth[NUMBEROFPARTS];
+	int				partsHeight[NUMBEROFPARTS];
+};
+
 extern enum runlevel
 {
 	RL_STARTUP,RL_NORMAL,RL_SHUTDOWN,
@@ -136,6 +148,7 @@ extern struct fontcolor	*fhighlight;
 extern struct fontcolor	*fnormal;
 
 extern unsigned int		screen;
+extern Visual			*visual;
 extern int				displayWidth;
 extern int				displayHeight;
 extern monitors			*monitorData;
@@ -149,6 +162,16 @@ extern	unsigned int	numberOfDesktops;
 extern char				*titleFont;
 extern char				*fontColours[4];
 extern int				liveUpdate;
+
+//theme
+extern themeStruct		theme;
+//extern cairo_t				*cr;
+extern char				*fontName;
+extern cairo_font_weight_t weight;
+extern cairo_font_slant_t	slant;
+extern int					fontSize;
+//extern cairoColor			backColour;
+//extern cairoColor			foreColour;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);

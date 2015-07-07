@@ -168,6 +168,67 @@ void usage(FILE *f)
 	        ,PACKAGE_STRING,progname);
 }
 
+/*
+void makeImage(char *imagepath,diskIconStruct *hashdata)
+{
+	hashdata->cairoImage=cairo_image_surface_create_from_png(imagepath);
+	if(cairo_surface_status(hashdata->cairoImage)!=CAIRO_STATUS_SUCCESS)
+		{
+			fprintf(stderr,"Can't use file:%s\n",imagepath);
+			hashdata->cairoImage=cairo_image_surface_create_from_png("/usr/share/icons/gnome/256x256/mimetypes/empty.png");
+		}
+	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
+}
+
+	cairo_surface_t	*;
+	cairo_surface_t	*topLeftInActive;
+	cairo_surface_t	*topRightActive;
+	cairo_surface_t	*topRightInActive;
+	cairo_surface_t	*title1Active;
+	cairo_surface_t	*title2Active;
+	cairo_surface_t	*title3Active;
+	cairo_surface_t	*title1InActive;
+	cairo_surface_t	*title2InActive;
+	cairo_surface_t	*title3InActive;
+
+*/
+
+const char	*themePartNames[]=
+{
+	"top-left-active.png",
+	"top-left-inactive.png",
+	"top-right-active.png",
+	"top-right-inactive.png",
+	"title-1-active.png",
+	"title-2-active.png",
+	"title-3-active.png",
+	"title-1-inactive.png",
+	"title-2-inactive.png",
+	"title-3-inactive.png",
+	NULL
+};
+
+void loadTheme(void)
+{
+	char	buffer[2048];
+	int		partcnt=0;
+	int		hite=0;
+
+	theme.titleBarHeight=0;
+
+	while(themePartNames[partcnt]!=NULL)
+		{
+			sprintf(buffer,"%s/xfwm4/%s",theme.pathToTheme,themePartNames[partcnt]);
+			theme.parts[partcnt]=cairo_image_surface_create_from_png(buffer);
+			hite=cairo_image_surface_get_height(theme.parts[partcnt]);
+			if(hite>theme.titleBarHeight)
+				theme.titleBarHeight=hite;
+			theme.partsWidth[partcnt]=cairo_image_surface_get_width(theme.parts[partcnt]);
+			theme.partsHeight[partcnt]=hite;
+			partcnt++;
+		}
+}
+
 int main(int argc,char *argv[])
 {
 	int					cnt=-1;
@@ -266,6 +327,11 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
+	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
+	loadTheme();
+	theme.useTheme=false;
+
 	if (debug)
 		{
 			fprintf(stderr,"%s\n",PACKAGE_STRING);
@@ -289,6 +355,7 @@ int main(int argc,char *argv[])
 	displayHeight=DisplayHeight(dpy,screen);
 
 	root=DefaultRootWindow(dpy);
+	visual=DefaultVisual(dpy,screen);
 
 	cnt=ScreenCount(dpy);
 	p=XineramaQueryScreens(dpy,&cnt);
@@ -328,6 +395,9 @@ int main(int argc,char *argv[])
 	lineheight=font->size + 2 * halfleading;
 
 //lineheight=24;
+	if(theme.useTheme==true)
+		lineheight=theme.titleBarHeight;
+
 	if (lineheight % 2==0)
 		deletebitmap=&deleven;
 	else
