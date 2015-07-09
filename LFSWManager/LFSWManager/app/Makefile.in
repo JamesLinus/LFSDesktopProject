@@ -224,6 +224,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GREP = @GREP@
+IMLIB_CFLAGS = @IMLIB_CFLAGS@
+IMLIB_LIBS = @IMLIB_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -240,6 +242,7 @@ LIBS = $(XEXT_LIBS) \
 				$(XCOMPOSITE_LIBS) \
 				$(XINERAMA_LIBS) \
 				$(CAIRO_LIBS) \
+				$(IMLIB_LIBS) \
 				 -lm
 
 LTLIBOBJS = @LTLIBOBJS@
@@ -331,6 +334,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				$(XFT_CFLAGS) \
 				$(XINERAMA_CFLAGS) \
 				$(CAIRO_CFLAGS) \
+				$(IMLIB_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
