@@ -41,12 +41,16 @@ int					liveUpdate=1;
 themeStruct			theme;
 //cairo_t				*cr;
 char				*fontName;
-cairo_font_weight_t weight;
-cairo_font_slant_t	slant;
+//cairo_font_weight_t weight;
+//cairo_font_slant_t	slant;
 int					fontSize;
 //cairoColor			backColour;
 //cairoColor			foreColour;
 
+int					frameTop;
+int					frameBottom;
+int					frameLeft;
+int					frameRight;
 /*
  * Print formatted error message
  */

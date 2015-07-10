@@ -99,14 +99,17 @@ struct	monitors
 	int		monY;
 };
 
-enum {TOPLEFTACTIVE=0,TOPLEFTINACTIVE,TOPRIGHTACTIVE,TOPRIGHTINACTIVE,TITLE1ACTIVE,TITLE1INACTIVE,TITLE2ACTIVE,TITLE2INACTIVE,TITLE3ACTIVE,TITLE3INACTIVE,TITLE4ACTIVE,TITLE4INACTIVE,TITLE5ACTIVE,TITLE5INACTIVE,NUMBEROFPARTS};
+enum {TOPLEFTACTIVE=0,TOPLEFTINACTIVE,TOPRIGHTACTIVE,TOPRIGHTINACTIVE,TITLE1ACTIVE,TITLE1INACTIVE,TITLE2ACTIVE,TITLE2INACTIVE,TITLE3ACTIVE,TITLE3INACTIVE,TITLE4ACTIVE,TITLE4INACTIVE,TITLE5ACTIVE,TITLE5INACTIVE,LEFTACTIVE,LEFTINACTIVE,RIGHTACTIVE,RIGHTINACTIVE,BOTTOMLEFTACTIVE,BOTTOMLEFTINACTIVE,BOTTOMACTIVE,BOTTOMINACTIVE,BOTTOMRIGHTACTIVE,BOTTOMRIGHTINACTIVE,NUMBEROFPARTS};
 
 struct	themeStruct
 {
 	bool			useTheme;
 	char			*pathToTheme;
 	int				titleBarHeight;
-	cairo_surface_t	*parts[NUMBEROFPARTS];
+	int				leftWidth;
+	int				rightWidth;
+	int				bottomHeight;
+	//cairo_surface_t	*parts[NUMBEROFPARTS];
 	int				partsWidth[NUMBEROFPARTS];
 	int				partsHeight[NUMBEROFPARTS];
 	Pixmap			pixmaps[NUMBEROFPARTS];
@@ -145,8 +148,8 @@ extern GC				background;
 extern GC				hlforeground;
 extern GC				hlbackground;
 
-extern int				lineheight;
-extern int				halfleading;
+//extern int				lineheight;
+//extern int				halfleading;
 
 extern struct font		*font;
 extern struct fontcolor	*fhighlight;
@@ -172,11 +175,15 @@ extern int				liveUpdate;
 extern themeStruct		theme;
 //extern cairo_t				*cr;
 extern char				*fontName;
-extern cairo_font_weight_t weight;
-extern cairo_font_slant_t	slant;
-extern int					fontSize;
+//extern cairo_font_weight_t weight;
+//extern cairo_font_slant_t	slant;
+extern int				fontSize;
 //extern cairoColor			backColour;
 //extern cairoColor			foreColour;
+extern int				frameTop;
+extern int				frameBottom;
+extern int				frameLeft;
+extern int				frameRight;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);

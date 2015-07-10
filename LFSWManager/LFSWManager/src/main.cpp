@@ -106,8 +106,8 @@ GC				background;
 GC				hlforeground;
 GC				hlbackground;
 
-int				lineheight;
-int				halfleading;
+//int				lineheight;
+//int				halfleading;
 sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
@@ -213,6 +213,16 @@ const char	*themePartNames[]=
 	"title-4-inactive",
 	"title-5-active",
 	"title-5-inactive",
+	"left-active",
+	"left-inactive",
+	"right-active",
+	"right-inactive",
+	"bottom-left-active",
+	"bottom-left-inactive",
+	"bottom-active",
+	"bottom-inactive",
+	"bottom-right-active",
+	"bottom-right-inactive",
 	NULL
 };
 
@@ -222,12 +232,10 @@ void loadTheme(void)
 	int			partcnt=0;
 	int			hite=0;
 	Imlib_Image	image;
-	Drawable	draw;
 	GC			inversegc;
 	int			blackColor=BlackPixel(dpy,DefaultScreen(dpy));
 	int			whiteColor=WhitePixel(dpy,DefaultScreen(dpy));
 
-	theme.titleBarHeight=0;
 	imlib_context_set_dither(0);
 	imlib_context_set_display(dpy);
 	imlib_context_set_visual(visual);
@@ -236,29 +244,16 @@ void loadTheme(void)
 		{
 //cairo
 			theme.gotPart[partcnt]=false;
-//			sprintf(buffer,"%s/xfwm4/%s",theme.pathToTheme,themePartNamesXPM[partcnt]);
-//			theme.parts[partcnt]=cairo_image_surface_create_from_png(buffer);
-//			
-//			if(cairo_surface_status(theme.parts[partcnt])==CAIRO_STATUS_SUCCESS)
-//				{
-//					theme.gotPart[partcnt]=true;
-//					hite=cairo_image_surface_get_height(theme.parts[partcnt]);
-//					if(hite>theme.titleBarHeight)
-//						theme.titleBarHeight=hite;
-//					theme.partsWidth[partcnt]=cairo_image_surface_get_width(theme.parts[partcnt]);
-//					theme.partsHeight[partcnt]=hite;
-//					draw=cairo_xlib_surface_get_drawable(theme.parts[partcnt]);
-//imlib
-	//				printf(">>%s - %p<<\n",buffer,theme.parts[partcnt]);
-					sprintf(buffer,"%s/xfwm4/%s.png",theme.pathToTheme,themePartNames[partcnt]);
+			sprintf(buffer,"%s/xfwm4/%s.png",theme.pathToTheme,themePartNames[partcnt]);
+			image=imlib_load_image(buffer);
+			if(image==NULL)
+				{
+					sprintf(buffer,"%s/xfwm4/%s.xpm",theme.pathToTheme,themePartNames[partcnt]);
 					image=imlib_load_image(buffer);
-					if(image==NULL)
-						{
-							sprintf(buffer,"%s/xfwm4/%s.xpm",theme.pathToTheme,themePartNames[partcnt]);
-							image=imlib_load_image(buffer);
-						}
-					if(image!=NULL)
-					{
+				}
+
+			if(image!=NULL)
+				{
 					theme.gotPart[partcnt]=true;
 					imlib_context_set_image(image);
 
@@ -273,9 +268,6 @@ void loadTheme(void)
 					imlib_render_pixmaps_for_whole_image(&theme.pixmaps[partcnt],&theme.masks[partcnt]);
 					imlib_free_image();
 
-//					theme.partsWidth[partcnt]=cairo_image_surface_get_width(theme.parts[partcnt]);
-//					theme.partsHeight[partcnt]=hite;
-
 					theme.inverseMasks[partcnt]=XCreatePixmap(dpy,root,theme.partsWidth[partcnt],theme.partsHeight[partcnt],1);
 					inversegc=XCreateGC(dpy,theme.inverseMasks[partcnt],0,NULL);
 					XSetForeground(dpy,inversegc,whiteColor);
@@ -288,6 +280,11 @@ void loadTheme(void)
 				}
 			partcnt++;
 		}
+
+	theme.leftWidth=theme.partsWidth[LEFTACTIVE];
+	theme.rightWidth=theme.partsWidth[RIGHTACTIVE];
+	theme.titleBarHeight=theme.partsHeight[TITLE3ACTIVE];
+	theme.bottomHeight=theme.partsHeight[BOTTOMACTIVE];
 }
 
 int main(int argc,char *argv[])
@@ -447,40 +444,80 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-	halfleading=(3 * font->size / 10) / 2;
-	lineheight=font->size + 2 * halfleading;
 
+	//halfleading=(3 * font->size / 10) / 2;
+	//halfleading=(3 * font->size / 10) / 2;
+	//halfleading=2;
+	//lineheight=font->size + 2 * halfleading;
+	//theme.titleBarHeight=64;
+	//theme.titleBarHeight=font->size + 2 * halfleading;
+	theme.titleBarHeight=24;
+	//halfleading=theme.titleBarHeight*10;
 
+#if 0
+/*
+#define EXT_TOP (lineheight + 2)
+#define EXT_BOTTOM (halfleading + 1)
+#define EXT_LEFT (halfleading + 1)
+#define EXT_RIGHT (halfleading + 1)
+
+*/
+#endif
+
+//printf("hl=%i lh=%i fs=%i\n",leading,frameTop,font->size);
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
-	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
-//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
+//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
+	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 
 	loadTheme();
 	theme.useTheme=true;
 
-//lineheight=24;
-	if(theme.useTheme==true)
-		lineheight=theme.titleBarHeight;
+	if(theme.useTheme==false)
+		{
+			frameTop=20;
+			frameBottom=8;
+			frameLeft=2+1;
+			frameRight=2+1;
+		}
+	else
+		{
+			frameTop=theme.titleBarHeight;
+			frameBottom=theme.bottomHeight;
+			frameLeft=theme.leftWidth;
+			frameRight=theme.rightWidth;
+		}
 
-	if (lineheight % 2==0)
+
+//	if(theme.useTheme==true)
+//		lineheight=theme.titleBarHeight;
+
+//printf("tb h=%i\n",theme.titleBarHeight);
+
+//	if (lineheight % 2==0)
+	if (frameTop % 2==0)
 		deletebitmap=&deleven;
 	else
 		deletebitmap=&delodd;
 
-	if (lineheight % 2==0)
+//	if (lineheight % 2==0)
+	if (frameTop % 2==0)
 		maximizeBitmap=&maxeven;
 	else
 		maximizeBitmap=&maxodd;
 
-	if (lineheight % 2==0)
+//	if (lineheight % 2==0)
+	if (frameTop % 2==0)
 		minimizeBitmap=&mineven;
 	else
 		minimizeBitmap=&minodd;
 
-	if (lineheight % 2==0)
+//	if (lineheight % 2==0)
+	//if (theme.titleBarHeight % 2==0)
+	if (frameTop % 2==0)
 		shadeBitmap=&shadeeven;
 	else
 		shadeBitmap=&shadeodd;
