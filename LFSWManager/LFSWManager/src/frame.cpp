@@ -393,10 +393,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 				{
 					values.tile=theme.pixmaps[TITLE1ACTIVE+partoffset];
 					XSetTile(dpy,gc,values.tile);
-					//gc=XCreateGC(dpy,f->window,GCTile|GCFillStyle,&values);
-					//XSetClipMask(dpy,gc,None);
 					XFillRectangle(dpy,f->window,gc,leftoffset,0,theme.partsWidth[TITLE1ACTIVE+partoffset],theme.partsHeight[TITLE1ACTIVE+partoffset]);
-					//XFreeGC(dpy,gc);
 	
 					values.tile=theme.masks[TITLE1ACTIVE+partoffset];
 					gcmask=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
@@ -421,11 +418,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 				{
 					values.tile=theme.pixmaps[TITLE5ACTIVE+partoffset];
 					XSetTile(dpy,gc,values.tile);
-
-				//	gc=XCreateGC(dpy,f->window,GCTile|GCFillStyle,&values);
-				//	XSetClipMask(dpy,gc,None);
 					XFillRectangle(dpy,f->window,gc,riteoffset-theme.partsWidth[TITLE5ACTIVE+partoffset],0,theme.partsWidth[TITLE5ACTIVE+partoffset],theme.partsHeight[TITLE5ACTIVE+partoffset]);
-					//XFreeGC(dpy,gc);
 
 					values.tile=theme.masks[TITLE5ACTIVE+partoffset];
 					gcmask=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
@@ -450,10 +443,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 				{
 					values.tile=theme.pixmaps[TITLE3ACTIVE+partoffset];
 					XSetTile(dpy,gc,values.tile);
-					//gc=XCreateGC(dpy,f->window,GCTile|GCFillStyle,&values);
-					//XSetClipMask(dpy,gc,None);
 					XFillRectangle(dpy,f->window,gc,leftoffset,0,riteoffset-leftoffset,theme.partsHeight[TITLE3ACTIVE+partoffset]);
-					//XFreeGC(dpy,gc);
 
 					values.tile=theme.masks[TITLE3ACTIVE+partoffset];
 					gcmask=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
@@ -467,10 +457,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 				{
 					values.tile=theme.pixmaps[LEFTACTIVE+partoffset];
 					XSetTile(dpy,gc,values.tile);
-					//gc=XCreateGC(dpy,f->window,GCTile|GCFillStyle,&values);
-					//XSetClipMask(dpy,gc,None);
 					XFillRectangle(dpy,f->window,gc,0,theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[LEFTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]-theme.partsHeight[TOPLEFTACTIVE+partoffset]);
-					//XFreeGC(dpy,gc);
 
 					values.tile=theme.masks[LEFTACTIVE+partoffset];
 					gcmask=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
@@ -485,10 +472,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 					values.ts_x_origin=f->width-theme.partsWidth[RIGHTACTIVE+partoffset];
 					XSetTSOrigin(dpy,gc,values.ts_x_origin,0);
 					XSetTile(dpy,gc,values.tile);
-					//gc=XCreateGC(dpy,f->window,GCTile|GCFillStyle|GCTileStipXOrigin,&values);
-					//XSetClipMask(dpy,gc,None);
 					XFillRectangle(dpy,f->window,gc,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
-					//XFreeGC(dpy,gc);
 
 					values.tile=theme.masks[RIGHTACTIVE+partoffset];
 					values.ts_x_origin=f->width-theme.partsWidth[RIGHTACTIVE+partoffset];
@@ -522,11 +506,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 					values.ts_y_origin=f->height-theme.partsHeight[BOTTOMACTIVE+partoffset];
 					XSetTSOrigin(dpy,gc,0,values.ts_y_origin);
 					XSetTile(dpy,gc,values.tile);
-
-					//gc=XCreateGC(dpy,f->window,GCTile|GCFillStyle|GCTileStipYOrigin,&values);
-					//XSetClipMask(dpy,gc,None);
 					XFillRectangle(dpy,f->window,gc,leftoffset,f->height-theme.partsHeight[BOTTOMACTIVE+partoffset],riteoffset-leftoffset,theme.partsHeight[BOTTOMACTIVE+partoffset]);
-					//XFreeGC(dpy,gc);
 
 					values.tile=theme.masks[BOTTOMACTIVE+partoffset];
 					values.ts_y_origin=f->height-theme.partsHeight[BOTTOMACTIVE+partoffset];
