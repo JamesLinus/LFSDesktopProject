@@ -234,7 +234,7 @@ void loadTheme(void)
 					theme.partsHeight[partcnt]=hite;
 
 					imlib_context_set_drawable(root);
-					imlib_image_set_has_alpha(1);
+					//imlib_image_set_has_alpha(1);
 					imlib_render_pixmaps_for_whole_image(&theme.pixmaps[partcnt],&theme.masks[partcnt]);
 					imlib_free_image();
 
@@ -422,10 +422,10 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
-//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
+	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
-	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 
 	loadTheme();
 	theme.useTheme=true;

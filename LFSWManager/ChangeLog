@@ -1,4 +1,5 @@
 0.0.10
+Added xfwm4 themes ( still needs tweaking but mostly works ).
 Added '-w' option to write out prefsfile.
 Removed old debug code ( assert's ).
 Maximize now maximizes to monitor of window.
