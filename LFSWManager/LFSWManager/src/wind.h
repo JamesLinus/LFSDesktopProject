@@ -15,7 +15,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <cairo.h>
 
 #include "config.h"
 
@@ -162,6 +161,8 @@ extern monitors			*monitorData;
 extern unsigned int		numberOfMonitors;
 extern XContext			listeners;
 extern const char		*progname;
+extern int				blackColor;
+extern int				whiteColor;
 
 //wm prefs
 extern int				placement;
@@ -172,13 +173,9 @@ extern int				liveUpdate;
 
 //theme
 extern themeStruct		theme;
-//extern cairo_t				*cr;
 extern char				*fontName;
-//extern cairo_font_weight_t weight;
-//extern cairo_font_slant_t	slant;
 extern int				fontSize;
-//extern cairoColor			backColour;
-//extern cairoColor			foreColour;
+
 extern int				frameTop;
 extern int				frameBottom;
 extern int				frameLeft;

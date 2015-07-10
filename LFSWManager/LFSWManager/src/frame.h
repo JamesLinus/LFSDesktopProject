@@ -24,6 +24,8 @@ struct frame
 	struct dragger *topleftresizer;
 	struct dragger *toprightresizer;
 	Pixmap pixmap;
+	Pixmap mask;
+	GC		maskGC;
 	GC *background;
 	int namewidth;
 	int x;
@@ -40,7 +42,6 @@ struct frame
 	Bool grabbed;
 	bool isMaximized;
 	bool isShaded;
-	cairo_t	*crf;
 };
 
 extern Window	windowToUpdate;

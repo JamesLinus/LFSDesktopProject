@@ -28,6 +28,8 @@ monitors			*monitorData;
 unsigned int		numberOfMonitors;
 XContext			listeners;
 const char			*progname;
+int					blackColor;
+int					whiteColor;
 
 //wm prefs
 int					placement=MOUSEMONITOR;
@@ -39,13 +41,8 @@ int					liveUpdate=1;
 
 //theme
 themeStruct			theme;
-//cairo_t				*cr;
 char				*fontName;
-//cairo_font_weight_t weight;
-//cairo_font_slant_t	slant;
 int					fontSize;
-//cairoColor			backColour;
-//cairoColor			foreColour;
 
 int					frameTop;
 int					frameBottom;

@@ -47,8 +47,6 @@
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xinerama.h>
 
-#include <cairo.h>
-#include <cairo-xlib.h>
 #include <Imlib2.h>
 
 #include "wind.h"
@@ -172,31 +170,6 @@ void usage(FILE *f)
 	        ,PACKAGE_STRING,progname);
 }
 
-/*
-void makeImage(char *imagepath,diskIconStruct *hashdata)
-{
-	hashdata->cairoImage=cairo_image_surface_create_from_png(imagepath);
-	if(cairo_surface_status(hashdata->cairoImage)!=CAIRO_STATUS_SUCCESS)
-		{
-			fprintf(stderr,"Can't use file:%s\n",imagepath);
-			hashdata->cairoImage=cairo_image_surface_create_from_png("/usr/share/icons/gnome/256x256/mimetypes/empty.png");
-		}
-	hashdata->scale=(double)iconSize/cairo_image_surface_get_width(hashdata->cairoImage);
-}
-
-	cairo_surface_t	*;
-	cairo_surface_t	*topLeftInActive;
-	cairo_surface_t	*topRightActive;
-	cairo_surface_t	*topRightInActive;
-	cairo_surface_t	*title1Active;
-	cairo_surface_t	*title2Active;
-	cairo_surface_t	*title3Active;
-	cairo_surface_t	*title1InActive;
-	cairo_surface_t	*title2InActive;
-	cairo_surface_t	*title3InActive;
-
-*/
-
 const char	*themePartNames[]=
 {
 	"top-left-active",
@@ -233,8 +206,6 @@ void loadTheme(void)
 	int			hite=0;
 	Imlib_Image	image;
 	GC			inversegc;
-	int			blackColor=BlackPixel(dpy,DefaultScreen(dpy));
-	int			whiteColor=WhitePixel(dpy,DefaultScreen(dpy));
 
 	imlib_context_set_dither(0);
 	imlib_context_set_display(dpy);
@@ -242,7 +213,6 @@ void loadTheme(void)
 
 	while(themePartNames[partcnt]!=NULL)
 		{
-//cairo
 			theme.gotPart[partcnt]=false;
 			sprintf(buffer,"%s/xfwm4/%s.png",theme.pathToTheme,themePartNames[partcnt]);
 			image=imlib_load_image(buffer);
@@ -409,6 +379,8 @@ int main(int argc,char *argv[])
 
 	root=DefaultRootWindow(dpy);
 	visual=DefaultVisual(dpy,screen);
+	blackColor=BlackPixel(dpy,screen);
+	whiteColor=WhitePixel(dpy,screen);
 
 	cnt=ScreenCount(dpy);
 	p=XineramaQueryScreens(dpy,&cnt);
@@ -444,34 +416,16 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-
-	//halfleading=(3 * font->size / 10) / 2;
-	//halfleading=(3 * font->size / 10) / 2;
-	//halfleading=2;
-	//lineheight=font->size + 2 * halfleading;
-	//theme.titleBarHeight=64;
-	//theme.titleBarHeight=font->size + 2 * halfleading;
-	theme.titleBarHeight=24;
-	//halfleading=theme.titleBarHeight*10;
-
-#if 0
-/*
-#define EXT_TOP (lineheight + 2)
-#define EXT_BOTTOM (halfleading + 1)
-#define EXT_LEFT (halfleading + 1)
-#define EXT_RIGHT (halfleading + 1)
-
-*/
-#endif
-
 //printf("hl=%i lh=%i fs=%i\n",leading,frameTop,font->size);
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
+	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 
 	loadTheme();
 	theme.useTheme=true;
@@ -492,31 +446,21 @@ int main(int argc,char *argv[])
 		}
 
 
-//	if(theme.useTheme==true)
-//		lineheight=theme.titleBarHeight;
-
-//printf("tb h=%i\n",theme.titleBarHeight);
-
-//	if (lineheight % 2==0)
 	if (frameTop % 2==0)
 		deletebitmap=&deleven;
 	else
 		deletebitmap=&delodd;
 
-//	if (lineheight % 2==0)
 	if (frameTop % 2==0)
 		maximizeBitmap=&maxeven;
 	else
 		maximizeBitmap=&maxodd;
 
-//	if (lineheight % 2==0)
 	if (frameTop % 2==0)
 		minimizeBitmap=&mineven;
 	else
 		minimizeBitmap=&minodd;
 
-//	if (lineheight % 2==0)
-	//if (theme.titleBarHeight % 2==0)
 	if (frameTop % 2==0)
 		shadeBitmap=&shadeeven;
 	else
