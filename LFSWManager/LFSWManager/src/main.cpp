@@ -466,9 +466,9 @@ int main(int argc,char *argv[])
 
 //printf("hl=%i lh=%i fs=%i\n",leading,frameTop,font->size);
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
-	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
+//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");

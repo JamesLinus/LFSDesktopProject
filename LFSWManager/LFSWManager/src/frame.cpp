@@ -105,8 +105,8 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	mynew.height=h-frameTop-frameBottom;
 	mynew.borderwidth=old.borderwidth;
 
-	if(theme.useTheme==true)
-		mynew.width=w-theme.leftWidth-theme.rightWidth;
+//	if(theme.useTheme==true)
+//		mynew.width=w-theme.leftWidth-theme.rightWidth;
 
 	if(mynew.height<0)
 		mynew.height=0;
@@ -808,12 +808,12 @@ struct frame *fcreate(struct client *c)
 	f->x=g.x + dx;
 	f->y=g.y + dy;
 
-	if(theme.useTheme==true)
-		{
-			f->width=g.width+theme.leftWidth+theme.rightWidth;
-			f->x=g.x-theme.leftWidth;
-		}
-	else
+//	if(theme.useTheme==true)
+//		{
+//			f->width=g.width+theme.leftWidth+theme.rightWidth;
+//			f->x=g.x-theme.leftWidth;
+//		}
+//	else
 		f->width=g.width + frameLeft + frameRight;
 
 	f->height=g.height + frameTop + frameBottom;
@@ -894,9 +894,9 @@ else
 	if (f->client->ismapped)
 		cignoreunmap(f->client);
 
-	if(theme.useTheme==true)
-		XReparentWindow(dpy,clientwin,f->window,theme.leftWidth,frameTop);
-	else
+//	if(theme.useTheme==true)
+//		XReparentWindow(dpy,clientwin,f->window,theme.leftWidth,frameTop);
+//	else
 		XReparentWindow(dpy,clientwin,f->window,frameLeft,frameTop);
 
 	g.x += frameLeft;
@@ -906,20 +906,20 @@ else
 
 	extents	ext;
 
-	if(theme.useTheme==true)
-		{
-			ext.top=frameTop;
-			ext.bottom=frameBottom;
-			ext.right=theme.rightWidth;
-			ext.left=theme.leftWidth;
-		}
-	else
-		{
+//	if(theme.useTheme==true)
+//		{
+//			ext.top=frameTop;
+//			ext.bottom=frameBottom;
+//			ext.right=theme.rightWidth;
+//			ext.left=theme.leftWidth;
+//		}
+//	else
+//		{
 			ext.top=frameTop;
 			ext.bottom=frameBottom;
 			ext.right=frameRight;
 			ext.left=frameLeft;
-		}
+//		}
 	ewmh_notifyframeextents(clientwin,ext);
 
 	fupdate(f);

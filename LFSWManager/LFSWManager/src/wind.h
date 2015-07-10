@@ -105,17 +105,16 @@ struct	themeStruct
 {
 	bool			useTheme;
 	char			*pathToTheme;
+	bool			gotPart[NUMBEROFPARTS];
 	int				titleBarHeight;
 	int				leftWidth;
 	int				rightWidth;
 	int				bottomHeight;
-	//cairo_surface_t	*parts[NUMBEROFPARTS];
 	int				partsWidth[NUMBEROFPARTS];
 	int				partsHeight[NUMBEROFPARTS];
 	Pixmap			pixmaps[NUMBEROFPARTS];
 	Pixmap			masks[NUMBEROFPARTS];
 	Pixmap			inverseMasks[NUMBEROFPARTS];
-	bool			gotPart[NUMBEROFPARTS];
 };
 
 extern enum runlevel
