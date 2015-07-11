@@ -350,7 +350,7 @@ void repaint(struct frame *f)
 	int			riteoffset=f->width;
 	GC			gc;
 	GC			gcmask;
-//	GC			maskgc;
+	GC			maskgc;
 
 //TODO//
 int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
@@ -377,7 +377,10 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 			XSetForeground(dpy,f->maskGC,blackColor);
 			XSetClipMask(dpy,f->maskGC,None);
 			XSetFillStyle(dpy,f->maskGC,FillSolid);
-			XFillRectangle(dpy,f->mask,f->maskGC,0,0,f->width,f->height);
+			XFillRectangle(dpy,f->mask,f->maskGC,0,0,f->width+100,f->height+100);
+			XSetFillStyle(dpy,f->maskGC,FillTiled);
+	
+//			maskgc=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
 			XSetFillStyle(dpy,f->maskGC,FillTiled);
 	
 //			maskgc=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
@@ -391,10 +394,6 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 			leftoffset=theme.partsWidth[TOPLEFTACTIVE+partoffset];
 
 //rite
-/*
-//int sh=theme.titleBarHeight;
-sh=sh-theme.partsHeight[TOPRIGHTACTIVE+partoffset];
-
 			XSetClipMask(dpy,*f->background,theme.masks[TOPRIGHTACTIVE+partoffset]);
 			XSetClipMask(dpy,*f->background,None);
 			//XSetClipOrigin(dpy,*f->background,f->width-theme.partsWidth[TOPRIGHTACTIVE+partoffset],sh);
@@ -502,11 +501,20 @@ sh=sh-theme.partsHeight[TOPRIGHTACTIVE+partoffset];
 					XSetTile(dpy,gc,values.tile);
 					XFillRectangle(dpy,f->window,gc,0,theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[LEFTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]-theme.partsHeight[TOPLEFTACTIVE+partoffset]);
 
+/*
 					values.tile=theme.masks[LEFTACTIVE+partoffset];
 					gcmask=XCreateGC(dpy,f->mask,GCTile|GCFillStyle,&values);
 					XSetClipMask(dpy,gcmask,None);
 					XFillRectangle(dpy,f->mask,gcmask,0,theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[LEFTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]-theme.partsHeight[TOPLEFTACTIVE+partoffset]);
 					XFreeGC(dpy,gcmask);
+*/
+			//	XSetFillStyle(dpy,f->maskGC,FillTiled);
+			//	XSetClipMask(dpy,f->maskGC,None);
+				XSetTile(dpy,f->maskGC,theme.masks[LEFTACTIVE+partoffset]);
+				XSetTSOrigin(dpy,f->maskGC,0,0);
+				
+				XFillRectangle(dpy,f->mask,f->maskGC,0,theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[LEFTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]-theme.partsHeight[TOPLEFTACTIVE+partoffset]);
+
 				}
 //right
 			if(theme.gotPart[RIGHTACTIVE+partoffset]==true)
@@ -515,15 +523,42 @@ sh=sh-theme.partsHeight[TOPRIGHTACTIVE+partoffset];
 					values.ts_x_origin=f->width-theme.partsWidth[RIGHTACTIVE+partoffset];
 					XSetTSOrigin(dpy,gc,values.ts_x_origin,0);
 					XSetTile(dpy,gc,values.tile);
-					XFillRectangle(dpy,f->window,gc,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
 
+/*
 					values.tile=theme.masks[RIGHTACTIVE+partoffset];
 					values.ts_x_origin=f->width-theme.partsWidth[RIGHTACTIVE+partoffset];
-					gcmask=XCreateGC(dpy,f->mask,GCTile|GCFillStyle|GCTileStipXOrigin,&values);
-					XSetClipMask(dpy,gcmask,None);
+					values.fill_style=FillSolid;
+					gcmask=XCreateGC(dpy,theme.masks[RIGHTACTIVE+partoffset],GCTile|GCFillStyle|GCTileStipXOrigin,&values);
+					XSetClipMask(dpy,gcmask,theme.masks[RIGHTACTIVE+partoffset]);
+
+				XSetForeground(dpy,gcmask,blackColor);
+				XSetBackground(dpy,gcmask,blackColor);
+
+				XSetForeground(dpy,f->maskGC,blackColor);
+				XSetBackground(dpy,f->maskGC,blackColor);
+
+
+
 					XFillRectangle(dpy,f->mask,gcmask,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
 					XFreeGC(dpy,gcmask);
-				}
+*/
+/*
+					values.ts_x_origin=f->width-theme.partsWidth[RIGHTACTIVE+partoffset];
+					XSetTSOrigin(dpy,gc,values.ts_x_origin,0);
+					XSetTile(dpy,f->maskGC,theme.masks[RIGHTACTIVE+partoffset]);
+					//XSetTSOrigin(dpy,f->maskGC,values.ts_x_origin,0);
+					XFillRectangle(dpy,f->mask,f->maskGC,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
+*/
+				
+				//XSetForeground(dpy,f->maskGC,blackColor);
+				//XSetFillStyle(dpy,f->maskGC,FillSolid);
+				//XSetForeground(dpy,f->maskGC,blackColor);
+				XSetTSOrigin(dpy,f->maskGC,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],0);
+				XSetTile(dpy,f->maskGC,theme.masks[RIGHTACTIVE+partoffset]);
+				XFillRectangle(dpy,f->mask,f->maskGC,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
+				//XFillRectangle(dpy,f->mask,f->maskGC,f->width-100,0,1000,1000);
+			}
 //left bottom
 			if(theme.gotPart[BOTTOMLEFTACTIVE+partoffset]==true)
 				{
@@ -561,7 +596,7 @@ sh=sh-theme.partsHeight[TOPRIGHTACTIVE+partoffset];
 
 			XSetFillStyle(dpy,f->maskGC,FillSolid);
 			XSetForeground(dpy,f->maskGC,whiteColor);
-			XFillRectangle(dpy,f->mask,f->maskGC,theme.leftWidth,theme.titleBarHeight,f->width-theme.rightWidth,f->height-theme.titleBarHeight-theme.bottomHeight);
+			XFillRectangle(dpy,f->mask,f->maskGC,theme.leftWidth,theme.titleBarHeight,f->width-theme.rightWidth-theme.leftWidth,f->height-theme.titleBarHeight-theme.bottomHeight);
 			XShapeCombineMask(dpy,f->window,ShapeBounding,0,0,f->mask,ShapeSet);
 		}
 	else
