@@ -238,15 +238,15 @@ void loadTheme(void)
 					imlib_render_pixmaps_for_whole_image(&theme.pixmaps[partcnt],&theme.masks[partcnt]);
 					imlib_free_image();
 
-					theme.inverseMasks[partcnt]=XCreatePixmap(dpy,root,theme.partsWidth[partcnt],theme.partsHeight[partcnt],1);
-					inversegc=XCreateGC(dpy,theme.inverseMasks[partcnt],0,NULL);
-					XSetForeground(dpy,inversegc,whiteColor);
-					XFillRectangle(dpy,theme.inverseMasks[partcnt],inversegc,0,0,theme.partsWidth[partcnt],theme.partsHeight[partcnt]);
-					XSetForeground(dpy,inversegc,blackColor);
-					XSetClipOrigin(dpy,inversegc,0,0);
-					XSetClipMask(dpy,inversegc,theme.masks[partcnt]);
-					XFillRectangle(dpy,theme.inverseMasks[partcnt],inversegc,0,0,theme.partsWidth[partcnt],theme.partsHeight[partcnt]);
-					XFreeGC(dpy,inversegc);
+					//theme.inverseMasks[partcnt]=XCreatePixmap(dpy,root,theme.partsWidth[partcnt],theme.partsHeight[partcnt],1);
+					//inversegc=XCreateGC(dpy,theme.inverseMasks[partcnt],0,NULL);
+					//XSetForeground(dpy,inversegc,whiteColor);
+					//XFillRectangle(dpy,theme.inverseMasks[partcnt],inversegc,0,0,theme.partsWidth[partcnt],theme.partsHeight[partcnt]);
+					//XSetForeground(dpy,inversegc,blackColor);
+					//XSetClipOrigin(dpy,inversegc,0,0);
+					//XSetClipMask(dpy,inversegc,theme.masks[partcnt]);
+					//XFillRectangle(dpy,theme.inverseMasks[partcnt],inversegc,0,0,theme.partsWidth[partcnt],theme.partsHeight[partcnt]);
+					//XFreeGC(dpy,inversegc);
 				}
 			partcnt++;
 		}
@@ -408,6 +408,7 @@ int main(int argc,char *argv[])
 			errorf("cannot load font");
 			exit(1);
 		}
+
 	fnormal=ftloadcolor(fontColours[FORE]);
 	fhighlight=ftloadcolor(fontColours[FOCUSEDFORE]);
 	if (fnormal==NULL || fhighlight==NULL)
@@ -420,11 +421,12 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+//	asprintf(&theme.pathToTheme,"%s","/tmp/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/tmp/B6");
-	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
+//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 
