@@ -15,33 +15,34 @@
 
 struct frame
 {
-	struct listener listener;
-	struct client *client;
-	struct button *deletebutton;
-	struct button *maximize;
-	struct button *minimize;
-	struct button *shade;
-	struct dragger *topleftresizer;
-	struct dragger *toprightresizer;
-	Pixmap pixmap;
-	Pixmap mask;
-	GC		maskGC;
-	GC *background;
-	int namewidth;
-	int x;
-	int y;
-	int width;
-	int height;
-	int oldX;
-	int oldY;
-	int oldWidth;
-	int oldHeight;
-	Window window;
-	int downx;	// window relative pointer x at button press
-	int downy;	// window relative pointer y at button press
-	Bool grabbed;
-	bool isMaximized;
-	bool isShaded;
+	struct listener	listener;
+	struct client	*client;
+	struct button	*deletebutton;
+	struct button	*maximize;
+	struct button	*minimize;
+	struct button	*shade;
+	struct dragger	*topleftresizer;
+	struct dragger	*toprightresizer;
+	Pixmap			pixmap;
+	Pixmap			mask;
+	GC				maskGC;
+	GC				*background;
+	int				namewidth;
+	int				x;
+	int				y;
+	int				width;
+	int				height;
+	int				oldX;
+	int				oldY;
+	int				oldWidth;
+	int				oldHeight;
+	Window			window;
+	int				downx;	// window relative pointer x at button press
+	int				downy;	// window relative pointer y at button press
+	Bool			grabbed;
+	bool			isMaximized;
+	bool			isShaded;
+	int				buttonBarWith;
 };
 
 extern Window	windowToUpdate;

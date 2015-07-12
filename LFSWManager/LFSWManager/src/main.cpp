@@ -196,6 +196,23 @@ const char	*themePartNames[]=
 	"bottom-inactive",
 	"bottom-right-active",
 	"bottom-right-inactive",
+	"close-active",
+	"close-inactive",
+	"close-prelight",
+	"close-pressed",
+	"maximize-active",
+	"maximize-inactive",
+	"maximize-prelight",
+	"maximize-pressed",
+	"hide-active",
+	"hide-inactive",
+	"hide-prelight",
+	"hide-pressed",
+	"shade-active",
+	"shade-inactive",
+	"shade-prelight",
+	"shade-pressed",
+	
 	NULL
 };
 
@@ -205,7 +222,6 @@ void loadTheme(void)
 	int			partcnt=0;
 	int			hite=0;
 	Imlib_Image	image;
-	GC			inversegc;
 
 	imlib_context_set_dither(0);
 	imlib_context_set_display(dpy);
@@ -237,16 +253,6 @@ void loadTheme(void)
 					imlib_image_set_has_alpha(1);
 					imlib_render_pixmaps_for_whole_image(&theme.pixmaps[partcnt],&theme.masks[partcnt]);
 					imlib_free_image();
-
-					//theme.inverseMasks[partcnt]=XCreatePixmap(dpy,root,theme.partsWidth[partcnt],theme.partsHeight[partcnt],1);
-					//inversegc=XCreateGC(dpy,theme.inverseMasks[partcnt],0,NULL);
-					//XSetForeground(dpy,inversegc,whiteColor);
-					//XFillRectangle(dpy,theme.inverseMasks[partcnt],inversegc,0,0,theme.partsWidth[partcnt],theme.partsHeight[partcnt]);
-					//XSetForeground(dpy,inversegc,blackColor);
-					//XSetClipOrigin(dpy,inversegc,0,0);
-					//XSetClipMask(dpy,inversegc,theme.masks[partcnt]);
-					//XFillRectangle(dpy,theme.inverseMasks[partcnt],inversegc,0,0,theme.partsWidth[partcnt],theme.partsHeight[partcnt]);
-					//XFreeGC(dpy,inversegc);
 				}
 			partcnt++;
 		}
@@ -263,6 +269,12 @@ int main(int argc,char *argv[])
 	XineramaScreenInfo	*p=NULL;
 	char				*prefsfile;
 
+//printf(">>>BOTTOMRIGHTINACTIVE=%i CLOSEACTIVE=%i CLOSEPRESSED=%i NUMBEROFPARTS=%i tot=%i<<<<\n",BOTTOMRIGHTINACTIVE,CLOSEACTIVE,CLOSEPRESSED,NUMTHEMEPARTS,NUMBEROFPARTS);
+//printf(">>MAXACTIVE=%i MAXPRESSED=%i<<\n",MAXACTIVE,MAXPRESSED);
+//printf(">>MINACTIVE=%i MINPRESSED=%i<<\n",MINACTIVE,MINPRESSED);
+//printf(">>SHADEACTIVE=%i SHADEPRESSED=%i<<\n",SHADEACTIVE,SHADEPRESSED);
+//
+//exit(0);
 	progname=argv[0];
 	// The Xmb* functions use LC_CTYPE
 	setlocale(LC_CTYPE,"");
@@ -421,17 +433,19 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/tmp/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/tmp/B6");
-//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
+	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 
 	loadTheme();
 	theme.useTheme=true;
+	theme.buttonOffset=8;
+	theme.titleWidth=800;
 
 	if(theme.useTheme==false)
 		{

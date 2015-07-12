@@ -16,18 +16,19 @@
 
 #include "wind.h"
 
-struct			button
+struct button
 {
-					listener listen;
-					void (*function)(void *,Time);
-					void *arg;
-					struct bitmap *bitmap;
-					Pixmap pixmap;
-					int width;
-					int height;
-					Window window;
-					Bool pressed;
-					Bool entered;
+			listener		listen;
+			void			(*function)(void *,Time);
+			void			*arg;
+			struct bitmap	*bitmap;
+			Pixmap			pixmap;
+			int				width;
+			int				height;
+			Window			window;
+			Bool			pressed;
+			Bool			entered;
+			int				buttonNumber;	
 };
 
 extern bitmap	*deletebitmap;
@@ -44,7 +45,7 @@ void expose(struct button *,XExposeEvent *);
 void unmapnotify(struct button *,XUnmapEvent *);
 void buttonevent(void *,XEvent *);
 
-struct button *bcreate(void (*)(void *,Time),void *,struct bitmap *,Window,int,int,int,int,int);
+struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum);
 void bdestroy(struct button *);
 
 #endif

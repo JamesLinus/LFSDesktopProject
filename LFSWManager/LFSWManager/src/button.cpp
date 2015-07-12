@@ -46,6 +46,68 @@ bitmap			*shadeBitmap;
 
 void update(struct button *b)
 {
+	bool	invert;
+	int		usepixnum=0;
+	int		partoffset=0;
+
+	usepixnum=0;
+
+	if(b->entered)
+		usepixnum=2;
+
+	if(b->pressed && b->entered)
+		usepixnum=3;
+
+	GC gc=XCreateGC(dpy,b->window,0,NULL);
+//XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
+
+	XSetForeground(dpy,gc,whiteColor);
+	XSetClipMask(dpy,gc,None);
+	XSetFillStyle(dpy,gc,FillTiled);
+	XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
+	XFillRectangle(dpy,b->window,gc,0,0,b->width,b->height);
+
+	usepixnum=b->buttonNumber+usepixnum;
+	XSetClipMask(dpy,gc,theme.masks[usepixnum]);
+	XSetClipOrigin(dpy,gc,0,0);
+	XCopyArea(dpy,theme.pixmaps[usepixnum],b->window,gc,0,0,theme.partsWidth[usepixnum],theme.partsHeight[usepixnum],0,0);
+	//XCopyArea(dpy,theme.pixmaps[CLOSEACTIVE],b->window,gc,0,0,16,16,0,0);
+	//printf("CLOSEACTIVE=%i b->buttonNumber+usepixnum=%i<<\n",CLOSEACTIVE,b->buttonNumber+usepixnum);
+	
+
+//	invert=b->pressed && b->entered;
+//	if(invert)
+//		{
+//		}
+//	else
+//		{
+//			XCopyArea(dpy,theme.parts[,b->window,fg,0,0,b->width,b->height,0,0);
+//		}
+#if 0
+	invert=b->pressed && b->entered;
+	GC fg=invert ? background : foreground;
+	GC bg=invert ? foreground : background;
+
+	XFillRectangle(dpy,b->pixmap,bg,0,0,b->width,b->height);
+
+	drawbitmap(b->pixmap,fg,b->bitmap,
+	           (b->width-b->bitmap->width) / 2,
+	           (b->height-b->bitmap->height) / 2);
+
+	if (!invert)
+		{
+			//XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * halfleading : 0,LineSolid,CapButt,JoinMiter);
+			XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * 2 : 0,LineSolid,CapButt,JoinMiter);
+			XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
+			XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
+		}
+
+	XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
+#endif
+}
+#if 0
+void update(struct button *b)
+{
 	Bool invert=b->pressed && b->entered;
 	GC fg=invert ? background : foreground;
 	GC bg=invert ? foreground : background;
@@ -66,6 +128,7 @@ void update(struct button *b)
 
 	XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
 }
+#endif
 
 void buttonpress(struct button *b,XButtonEvent *e)
 {
@@ -110,7 +173,10 @@ void unmapnotify(struct button *b,XUnmapEvent *e)
 
 void expose(struct button *b,XExposeEvent *e)
 {
-	XCopyArea(dpy,b->pixmap,b->window,foreground,e->x,e->y,e->width,e->height,e->x,e->y);
+	if(theme.useTheme==true)
+		update(b);
+	else
+		XCopyArea(dpy,b->pixmap,b->window,foreground,e->x,e->y,e->width,e->height,e->x,e->y);
 }
 
 void buttonevent(void *self,XEvent *e)
@@ -138,7 +204,7 @@ void buttonevent(void *self,XEvent *e)
 		}
 }
 
-struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity)
+struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum)
 {
 	XSetWindowAttributes	sa;
 	sa.win_gravity=gravity;
@@ -155,12 +221,14 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 	b->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&sa);
 	b->listen.function=buttonevent;
 	b->listen.pointer=b;
+	b->buttonNumber=buttonnum;
+
 	setlistener(b->window,&b->listen);
 	XGrabButton(dpy,Button1,AnyModifier,b->window,False,EnterWindowMask | LeaveWindowMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);
-	XSelectInput(dpy,b->window,EnterWindowMask | LeaveWindowMask |
-	             StructureNotifyMask | ExposureMask);
+	XSelectInput(dpy,b->window,EnterWindowMask | LeaveWindowMask | StructureNotifyMask | ExposureMask);
 	update(b);
 	XMapWindow(dpy,b->window);
+	
 	return b;
 }
 
