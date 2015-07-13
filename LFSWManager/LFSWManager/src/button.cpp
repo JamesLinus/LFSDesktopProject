@@ -38,6 +38,8 @@
 #include "wind.h"
 #include "button.h"
 #include "lib.h"
+#include "frame.h"
+#include "client.h"
 
 bitmap			*deletebitmap;
 bitmap			*maximizeBitmap;
@@ -50,14 +52,30 @@ void update(struct button *b)
 	int		usepixnum=0;
 	int		partoffset=0;
 
-	usepixnum=0;
 
-	if(b->entered)
-		usepixnum=2;
+	if(theme.useTheme==true)
+		{
+			//if(chasfocus(b->f->client)==true)
+			if((b->f!=NULL) && (b->f->client!=NULL) && (chasfocus(b->f->client)==true))
+				{
+					//if(chasfocus(b->f->client)==true)
+						partoffset=0;
+				}
+			else
+				partoffset=1;
 
-	if(b->pressed && b->entered)
-		usepixnum=3;
+	if(partoffset==1)
+		usepixnum=1;
+	else
+		{
+			usepixnum=0;
 
+			if(b->entered)
+				usepixnum=2;
+
+			if(b->pressed && b->entered)
+				usepixnum=3;
+		}
 	GC gc=XCreateGC(dpy,b->window,0,NULL);
 //XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
 
@@ -83,7 +101,10 @@ void update(struct button *b)
 //		{
 //			XCopyArea(dpy,theme.parts[,b->window,fg,0,0,b->width,b->height,0,0);
 //		}
-#if 0
+		}
+	else
+		{
+#if 1
 	invert=b->pressed && b->entered;
 	GC fg=invert ? background : foreground;
 	GC bg=invert ? foreground : background;
@@ -104,6 +125,7 @@ void update(struct button *b)
 
 	XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
 #endif
+	}
 }
 #if 0
 void update(struct button *b)
@@ -204,7 +226,7 @@ void buttonevent(void *self,XEvent *e)
 		}
 }
 
-struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum)
+struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum,struct frame *f)
 {
 	XSetWindowAttributes	sa;
 	sa.win_gravity=gravity;
@@ -222,6 +244,7 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 	b->listen.function=buttonevent;
 	b->listen.pointer=b;
 	b->buttonNumber=buttonnum;
+	b->f=f;
 
 	setlistener(b->window,&b->listen);
 	XGrabButton(dpy,Button1,AnyModifier,b->window,False,EnterWindowMask | LeaveWindowMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);

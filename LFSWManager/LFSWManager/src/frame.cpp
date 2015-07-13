@@ -376,6 +376,348 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 			XFillRectangle(dpy,f->mask,f->maskGC,0,0,f->width,f->height);
 			XSetFillStyle(dpy,f->maskGC,FillTiled);
 
+#if 1
+	int	ends;
+	int titlewidth;
+	int titlex;
+	int framecenter;
+	int	maxtitlewidthllowed;
+	int	title1width;
+	int	title5width;
+	int	titlehalfwidth;
+	int title1x;
+	int title2x;
+	int	title3x;
+	int	title4x;
+	int	title5x;
+//	int	titlewidthnocaps;
+
+	framecenter=(f->width)/2;
+	ends=theme.partsWidth[TOPLEFTACTIVE+partoffset]+theme.partsWidth[TOPRIGHTACTIVE+partoffset];
+	titlewidth=(theme.titleWidth);
+
+	if(theme.gotPart[TITLE2ACTIVE]==true && theme.gotPart[TITLE4ACTIVE]==true)
+		maxtitlewidthllowed=f->width-(ends+theme.partsWidth[TITLE2ACTIVE]+theme.partsWidth[TITLE4ACTIVE]+f->buttonBarWith);
+	else
+		maxtitlewidthllowed=f->width-ends;
+
+	if(titlewidth>maxtitlewidthllowed)
+		titlewidth=maxtitlewidthllowed;
+
+	if(theme.gotPart[TITLE2ACTIVE]==true && theme.gotPart[TITLE4ACTIVE]==true)
+		{
+			titlewidth=titlewidth-(theme.partsWidth[TITLE2ACTIVE]+theme.partsWidth[TITLE4ACTIVE]+f->buttonBarWith);
+			titlehalfwidth=titlewidth/2;
+			title1width=f->width-framecenter-titlehalfwidth-theme.partsWidth[TOPLEFTACTIVE+partoffset]-theme.partsWidth[TITLE2ACTIVE+partoffset];
+			title5width=f->width-framecenter-titlehalfwidth-theme.partsWidth[TOPRIGHTACTIVE+partoffset]-theme.partsWidth[TITLE4ACTIVE+partoffset];
+			title2x=framecenter-titlehalfwidth-theme.partsWidth[TITLE2ACTIVE+partoffset];
+			title3x=framecenter-titlehalfwidth;
+			title4x=framecenter+titlehalfwidth;
+			title5x=f->width-(theme.partsWidth[TOPRIGHTACTIVE+partoffset]+title5width);
+		}
+	else
+		{
+			titlewidth=titlewidth-(theme.partsWidth[TITLE2ACTIVE]+theme.partsWidth[TITLE4ACTIVE]+f->buttonBarWith);
+			titlehalfwidth=titlewidth/2;
+			title1width=f->width-framecenter-titlehalfwidth-theme.partsWidth[TOPLEFTACTIVE+partoffset]-theme.partsWidth[TITLE2ACTIVE+partoffset];
+			title5width=f->width-framecenter-titlehalfwidth-theme.partsWidth[TOPRIGHTACTIVE+partoffset]-theme.partsWidth[TITLE4ACTIVE+partoffset];
+			//title2x=framecenter-titlehalfwidth-theme.partsWidth[TITLE2ACTIVE+partoffset];
+			title3x=framecenter-titlehalfwidth;
+			//title4x=framecenter+titlehalfwidth;
+			title5x=f->width-(theme.partsWidth[TOPRIGHTACTIVE+partoffset]+title5width);
+		}
+
+
+	title1x=theme.partsWidth[TOPLEFTACTIVE+partoffset];
+	
+//	title3x=framecenter-(titlewidthnocaps/2)+theme.partsWidth[TITLE2ACTIVE+partoffset];
+
+/*
+	L|	1	|	|	2	|	|	3	|	|	4	|	|	5	|R
+	<--------------------------------------------------------> 	= f->width
+	<>															=left top width
+	 <------>													= title1 width
+				<------->										= left title endcap width
+							<------->							= theme.titleWidth
+										<------->				=rite title endcap width
+													<------->	=title5 width
+															 <>	=rite top width
+
+for calculate widths
+	L|	1	|	|	2	|	|	3	|	|	4	|	|	5	|R
+	<--------------------------------------------------------> 	= f->width
+	<>															=left top width
+															 <>	=rite top width
+							<------->							= theme.titleWidth = (f->width/2)
+	 <------>													= title1 width
+				<------->										= left title endcap width
+										<------->				=rite title endcap width
+													<------->	=title5 width
+
+*/
+#endif
+
+//top corners
+//left top
+
+			XSetClipMask(dpy,*f->background,theme.masks[TOPLEFTACTIVE+partoffset]);
+			XSetClipOrigin(dpy,*f->background,0,0);
+			XCopyArea(dpy,theme.pixmaps[TOPLEFTACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[TOPLEFTACTIVE+partoffset],theme.partsHeight[TOPLEFTACTIVE+partoffset],0,0);
+			XCopyArea(dpy,theme.masks[TOPLEFTACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[TOPLEFTACTIVE+partoffset],theme.partsHeight[TOPLEFTACTIVE+partoffset],0,0);
+//			leftoffset=theme.partsWidth[TOPLEFTACTIVE+partoffset];
+
+//rite top
+			XSetClipMask(dpy,*f->background,theme.masks[TOPRIGHTACTIVE+partoffset]);
+			XSetClipMask(dpy,*f->background,None);
+			XCopyArea(dpy,theme.pixmaps[TOPRIGHTACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[TOPRIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],f->width-theme.partsWidth[TOPRIGHTACTIVE+partoffset],0);
+			XCopyArea(dpy,theme.masks[TOPRIGHTACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[TOPRIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],f->width-theme.partsWidth[TOPRIGHTACTIVE+partoffset],0);
+
+			//riteoffset-=theme.partsWidth[TOPRIGHTACTIVE+partoffset];
+		//	riteoffset=f->width-f->buttonBarWith;
+
+			XSetTSOrigin(dpy,f->maskGC,0,0);
+
+//title1
+			if(theme.gotPart[TITLE1ACTIVE+partoffset]==true)
+				{
+					//width=(f->width/2)-(theme.titleWidth/2);
+					//if(width<0)
+					//	width=1;
+					XSetTile(dpy,gc,theme.pixmaps[TITLE1ACTIVE+partoffset]);
+					//XFillRectangle(dpy,f->window,gc,leftoffset,0,theme.partsWidth[TITLE1ACTIVE+partoffset],theme.partsHeight[TITLE1ACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,title1x,0,title1width,theme.partsHeight[TITLE1ACTIVE+partoffset]);
+	
+					XSetTile(dpy,f->maskGC,theme.masks[TITLE1ACTIVE+partoffset]);
+					//XFillRectangle(dpy,f->mask,f->maskGC,leftoffset,0,theme.partsWidth[TITLE1ACTIVE+partoffset],theme.partsHeight[TITLE1ACTIVE+partoffset]);
+					XFillRectangle(dpy,f->mask,f->maskGC,title1x,0,title1width,theme.partsHeight[TITLE1ACTIVE+partoffset]);
+
+					//leftoffset+=theme.partsWidth[TITLE1ACTIVE+partoffset];
+					leftoffset+=width;
+				}
+//title2 end cap
+			if(theme.gotPart[TITLE2ACTIVE+partoffset]==true)
+				{
+					XSetClipMask(dpy,*f->background,None);
+					XCopyArea(dpy,theme.pixmaps[TITLE2ACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[TITLE2ACTIVE+partoffset],theme.partsHeight[TITLE2ACTIVE+partoffset],title2x,0);
+					XCopyArea(dpy,theme.masks[TITLE2ACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[TITLE2ACTIVE+partoffset],theme.partsHeight[TITLE2ACTIVE+partoffset],title2x,0);
+				//	leftoffset+=theme.partsWidth[TITLE2ACTIVE+partoffset];
+				}
+
+//title5 button back
+			if(theme.gotPart[TITLE5ACTIVE+partoffset]==true)
+				{
+					XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,title5x,0,title5width,theme.partsHeight[TITLE5ACTIVE+partoffset]);
+
+					XSetTile(dpy,f->maskGC,theme.masks[TITLE5ACTIVE+partoffset]);
+					XFillRectangle(dpy,f->mask,f->maskGC,title5x,0,title5width,theme.partsHeight[TITLE5ACTIVE+partoffset]);
+				}
+
+//title4 rite endcap
+			if(theme.gotPart[TITLE4ACTIVE+partoffset]==true)
+				{
+					XSetClipMask(dpy,*f->background,None);
+					XCopyArea(dpy,theme.pixmaps[TITLE4ACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[TITLE4ACTIVE+partoffset],theme.partsHeight[TITLE4ACTIVE+partoffset],title4x,0);
+					XCopyArea(dpy,theme.masks[TITLE4ACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[TITLE4ACTIVE+partoffset],theme.partsHeight[TITLE4ACTIVE+partoffset],title4x,0);
+				}
+#if 1
+#if 1
+
+//title3 main centre bit
+			if(theme.gotPart[TITLE3ACTIVE+partoffset]==true)
+				{
+					XSetTile(dpy,gc,theme.pixmaps[TITLE3ACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,title3x,0,titlewidth,theme.partsHeight[TITLE3ACTIVE+partoffset]);
+
+					XSetTile(dpy,f->maskGC,theme.masks[TITLE3ACTIVE]);
+					XFillRectangle(dpy,f->mask,f->maskGC,title3x,0,titlewidth,theme.partsHeight[TITLE3ACTIVE+partoffset]);
+				}
+#endif
+#endif
+//left
+			if(theme.gotPart[LEFTACTIVE+partoffset]==true)
+				{
+					XSetTile(dpy,gc,theme.pixmaps[LEFTACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,0,theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[LEFTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]-theme.partsHeight[TOPLEFTACTIVE+partoffset]);
+
+					XSetTile(dpy,f->maskGC,theme.masks[LEFTACTIVE+partoffset]);
+					XSetTSOrigin(dpy,f->maskGC,0,0);				
+					XFillRectangle(dpy,f->mask,f->maskGC,0,theme.partsHeight[TOPLEFTACTIVE+partoffset],theme.partsWidth[LEFTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]-theme.partsHeight[TOPLEFTACTIVE+partoffset]);
+				}
+//right
+			if(theme.gotPart[RIGHTACTIVE+partoffset]==true)
+				{
+					XSetTSOrigin(dpy,gc,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],0);
+					XSetTile(dpy,gc,theme.pixmaps[RIGHTACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
+
+					XSetTSOrigin(dpy,f->maskGC,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],0);
+					XSetTile(dpy,f->maskGC,theme.masks[RIGHTACTIVE+partoffset]);
+					XFillRectangle(dpy,f->mask,f->maskGC,f->width-theme.partsWidth[RIGHTACTIVE+partoffset],theme.partsHeight[TOPRIGHTACTIVE+partoffset],theme.partsWidth[RIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]-theme.partsHeight[TOPRIGHTACTIVE+partoffset]);
+			}
+//left bottom
+			if(theme.gotPart[BOTTOMLEFTACTIVE+partoffset]==true)
+				{
+					XSetClipMask(dpy,*f->background,None);
+					XCopyArea(dpy,theme.pixmaps[BOTTOMLEFTACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[BOTTOMLEFTACTIVE+partoffset],theme.partsHeight[BOTTOMLEFTACTIVE+partoffset],0,f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]);
+					XCopyArea(dpy,theme.masks[BOTTOMLEFTACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[BOTTOMLEFTACTIVE+partoffset],theme.partsHeight[BOTTOMLEFTACTIVE+partoffset],0,f->height-theme.partsHeight[BOTTOMLEFTACTIVE+partoffset]);
+					leftoffset=theme.partsWidth[BOTTOMLEFTACTIVE+partoffset];
+				}
+//right bottom
+			if(theme.gotPart[BOTTOMRIGHTACTIVE+partoffset]==true)
+				{
+					XSetClipMask(dpy,*f->background,None);
+					XCopyArea(dpy,theme.pixmaps[BOTTOMRIGHTACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[BOTTOMRIGHTACTIVE+partoffset],theme.partsHeight[BOTTOMLEFTACTIVE+partoffset],f->width-theme.partsWidth[BOTTOMRIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]);
+					XCopyArea(dpy,theme.masks[BOTTOMRIGHTACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[BOTTOMRIGHTACTIVE+partoffset],theme.partsHeight[BOTTOMLEFTACTIVE+partoffset],f->width-theme.partsWidth[BOTTOMRIGHTACTIVE+partoffset],f->height-theme.partsHeight[BOTTOMRIGHTACTIVE+partoffset]);
+
+					riteoffset=f->width-theme.partsWidth[BOTTOMRIGHTACTIVE+partoffset];
+				}
+
+//bottom
+			if(theme.gotPart[BOTTOMACTIVE+partoffset]==true)
+				{
+					XSetTSOrigin(dpy,gc,0,f->height-theme.partsHeight[BOTTOMACTIVE+partoffset]);
+					XSetTile(dpy,gc,theme.pixmaps[BOTTOMACTIVE+partoffset]);
+					XFillRectangle(dpy,f->window,gc,leftoffset,f->height-theme.partsHeight[BOTTOMACTIVE+partoffset],riteoffset-leftoffset,theme.partsHeight[BOTTOMACTIVE+partoffset]);
+
+					XSetTile(dpy,f->maskGC,theme.masks[BOTTOMACTIVE+partoffset]);
+					XSetTSOrigin(dpy,f->maskGC,0,f->height-theme.partsHeight[BOTTOMACTIVE+partoffset]);
+					XFillRectangle(dpy,f->mask,f->maskGC,leftoffset,f->height-theme.partsHeight[BOTTOMACTIVE+partoffset],riteoffset-leftoffset,theme.partsHeight[BOTTOMACTIVE+partoffset]);
+				}
+
+			XSetFillStyle(dpy,f->maskGC,FillSolid);
+			XSetForeground(dpy,f->maskGC,whiteColor);
+			XFillRectangle(dpy,f->mask,f->maskGC,theme.leftWidth,theme.titleBarHeight,f->width-theme.rightWidth-theme.leftWidth,f->height-theme.titleBarHeight-theme.bottomHeight);
+			XShapeCombineMask(dpy,f->window,ShapeBounding,0,0,f->mask,ShapeSet);
+
+/*
+			if(f->deletebutton!=NULL)
+				{
+				printf("got delete for %s\n",f->client->wmname);
+				update(f->deletebutton);
+				}
+			else
+					printf("no delete for %s\n",f->client->wmname);
+			
+			if(f->maximize!=NULL)
+				update(f->maximize);
+			if(f->minimize!=NULL)
+				update(f->minimize);
+			if(f->shade!=NULL)
+				update(f->shade);
+*/
+		}
+	else
+		{
+	// Title area
+			int x=1;
+			XFillRectangle(dpy,f->window,*f->background,x,1,font->size,frameTop);
+			x += font->size;
+			if (f->pixmap != None)
+				XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,frameTop,x,1);
+			x += namewidth;
+			XFillRectangle(dpy,f->window,*f->background,x,1,f->width-1-x,frameTop);
+
+	// Border
+			XDrawRectangle(dpy,f->window,foreground,0,0,f->width-1,f->height-1);
+
+	// Title bottom border
+			XDrawLine(dpy,f->window,foreground,frameLeft,frameTop-1,f->width-frameRight-1,frameTop-1);
+
+	// Window area
+			XFillRectangle(dpy,f->window,*f->background,1,frameTop,f->width-2,f->height-1-frameTop);
+
+			XFillRectangle(dpy,f->window,*f->background,1,frameTop-1,frameLeft-1,1);
+			XFillRectangle(dpy,f->window,*f->background,f->width-frameRight,frameTop-1,frameRight-1,1);
+		}
+}
+
+#if 0
+void repaint(struct frame *f)
+{
+	int			namewidth=f->namewidth;
+	int			partoffset;
+	int			leftoffset=0;
+	int			riteoffset=f->width;
+	GC			gc;
+	int			width;
+
+//TODO//
+int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
+	namewidth=MIN(namewidth,f->width-2 * (1 + font->size));
+	namewidth=MAX(namewidth,0);
+
+	if(theme.useTheme==true)
+		{
+			if(chasfocus(f->client)==true)
+				partoffset=0;
+			else
+				partoffset=1;
+
+			if(f->mask!=None)
+				XFreePixmap(dpy,f->mask);
+
+			gc=XCreateGC(dpy,f->window,0,NULL);
+			XSetClipMask(dpy,gc,None);
+			XSetFillStyle(dpy,gc,FillTiled);
+			
+			f->mask=XCreatePixmap(dpy,f->window,f->width,f->height,1);
+			XSetForeground(dpy,f->maskGC,blackColor);
+			XSetClipMask(dpy,f->maskGC,None);
+			XSetFillStyle(dpy,f->maskGC,FillSolid);
+			XFillRectangle(dpy,f->mask,f->maskGC,0,0,f->width,f->height);
+			XSetFillStyle(dpy,f->maskGC,FillTiled);
+
+#if 1
+	int	ends;
+	int titlewidth
+	int titlex;
+	int framecenter;
+	int	maxtitlewidthllowed;
+	int	maxtitle1width;
+	int	maxtitle5width;
+	int	titlehalfwidth;
+
+	framecenter=(f->width)/2;
+	ends=theme.partsWidth[TOPLEFTACTIVE+partoffset]+theme.partsWidth[TOPRIGHTACTIVE+partoffset];
+	titlewidth=(theme.titleWidth/2);
+	if(theme.gotPart[TITLE2ACTIVE]==true && theme.gotPart[TITLE4ACTIVE]==true)
+		maxtitlewidthllowed=f->width-(ends+theme.partsWidth[TITLE2ACTIVE]+theme.partsWidth[TITLE4ACTIVE]);
+	else
+		maxtitlewidthllowed=f->width-ends;
+
+	if(titlewidth>maxtitlewidthllowed)
+		titlewidth=maxtitlewidthllowed;
+
+	titlehalfwidth=titlewidth/2;
+	maxtitle1width=f->width-framecenter-titlehalfwidth-theme.partsWidth[TOPLEFTACTIVE+partoffset];
+	maxtitle5width=f->width-framecenter-titlehalfwidth-theme.partsWidth[TOPRIGHTACTIVE+partoffset];
+
+/*
+	L|	1	|	|	2	|	|	3	|	|	4	|	|	5	|R
+	<--------------------------------------------------------> 	= f->width
+	<>															=left top width
+	 <------>													= title1 width
+				<------->										= left title endcap width
+							<------->							= theme.titleWidth
+										<------->				=rite title endcap width
+													<------->	=title5 width
+															 <>	=rite top width
+
+for calculate widths
+	L|	1	|	|	2	|	|	3	|	|	4	|	|	5	|R
+	<--------------------------------------------------------> 	= f->width
+	<>															=left top width
+															 <>	=rite top width
+							<------->							= theme.titleWidth = (f->width/2)
+	 <------>													= title1 width
+				<------->										= left title endcap width
+										<------->				=rite title endcap width
+													<------->	=title5 width
+
+*/
+#endif
+
 //top corners
 //left top
 
@@ -400,6 +742,8 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 			if(theme.gotPart[TITLE1ACTIVE+partoffset]==true)
 				{
 					width=(f->width/2)-(theme.titleWidth/2);
+					if(width<0)
+						width=1;
 					XSetTile(dpy,gc,theme.pixmaps[TITLE1ACTIVE+partoffset]);
 					//XFillRectangle(dpy,f->window,gc,leftoffset,0,theme.partsWidth[TITLE1ACTIVE+partoffset],theme.partsHeight[TITLE1ACTIVE+partoffset]);
 					XFillRectangle(dpy,f->window,gc,leftoffset,0,width,theme.partsHeight[TITLE1ACTIVE+partoffset]);
@@ -425,6 +769,8 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 			if(theme.gotPart[TITLE5ACTIVE+partoffset]==true)
 				{
 					width=(f->width/2)-(theme.titleWidth/2)-theme.partsWidth[TOPRIGHTACTIVE]-theme.partsWidth[TITLE3ACTIVE]+1;
+					if(width<0)
+						width=1;
 					riteoffset=(f->width/2)+(theme.titleWidth/2)+theme.partsWidth[TITLE3ACTIVE];
 					XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
 					XFillRectangle(dpy,f->window,gc,riteoffset,0,width,theme.partsHeight[TITLE5ACTIVE+partoffset]);
@@ -452,7 +798,6 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 */
 				}
 
-
 //title4 rite endcap
 			if(theme.gotPart[TITLE4ACTIVE+partoffset]==true)
 				{
@@ -461,6 +806,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 					XCopyArea(dpy,theme.pixmaps[TITLE4ACTIVE+partoffset],f->window,*f->background,0,0,theme.partsWidth[TITLE4ACTIVE+partoffset],theme.partsHeight[TITLE4ACTIVE+partoffset],riteoffset,0);
 					XCopyArea(dpy,theme.masks[TITLE4ACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[TITLE4ACTIVE+partoffset],theme.partsHeight[TITLE4ACTIVE+partoffset],riteoffset,0);
 				}
+#if 0
 
 //title3 main centre bit
 			if(theme.gotPart[TITLE3ACTIVE+partoffset]==true)
@@ -471,6 +817,7 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 					XSetTile(dpy,f->maskGC,theme.masks[TITLE3ACTIVE]);
 					XFillRectangle(dpy,f->mask,f->maskGC,leftoffset,0,riteoffset-leftoffset,theme.partsHeight[TITLE3ACTIVE+partoffset]);
 				}
+#endif
 
 //left
 			if(theme.gotPart[LEFTACTIVE+partoffset]==true)
@@ -570,6 +917,8 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 		}
 }
 
+#endif
+
 void fupdate(struct frame *f)
 {
 	int sz;
@@ -578,7 +927,6 @@ void fupdate(struct frame *f)
 	if(theme.useTheme==true)
 		{
 			sz=frameTop;
-			//buttonspacing=theme.partsWidth[TITLE5ACTIVE]+theme.partsWidth[TOPRIGHTACTIVE];
 			buttonspacing=theme.buttonOffset;
 		}
 	else
@@ -586,7 +934,7 @@ void fupdate(struct frame *f)
 			sz=frameTop;
 			buttonspacing=sz;
 		}
-//struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum)
+
 	if(theme.useTheme==true)
 		{
 //close button
@@ -594,12 +942,8 @@ void fupdate(struct frame *f)
 				{
 					if (f->deletebutton==NULL)
 						{
-							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-theme.partsWidth[CLOSEACTIVE]-buttonspacing,0,theme.partsWidth[CLOSEACTIVE],theme.partsHeight[CLOSEACTIVE],NorthEastGravity,CLOSEACTIVE);
+							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-theme.partsWidth[CLOSEACTIVE]-buttonspacing,0,theme.partsWidth[CLOSEACTIVE],theme.partsHeight[CLOSEACTIVE],NorthEastGravity,CLOSEACTIVE,f);
 						}
-				//	else
-				//		{
-				//			update(f->deletebutton);
-				//		}
 					buttonspacing+=theme.partsWidth[CLOSEACTIVE];						
 				}
 			else if (f->deletebutton != NULL)
@@ -613,7 +957,7 @@ void fupdate(struct frame *f)
 				{
 					if (f->maximize==NULL)
 						{
-							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MAXACTIVE]-buttonspacing,0,theme.partsWidth[MAXACTIVE],theme.partsHeight[MAXACTIVE],NorthEastGravity,MAXACTIVE);
+							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MAXACTIVE]-buttonspacing,0,theme.partsWidth[MAXACTIVE],theme.partsHeight[MAXACTIVE],NorthEastGravity,MAXACTIVE,f);
 						}
 					buttonspacing+=theme.partsWidth[MAXACTIVE];
 				}
@@ -622,21 +966,21 @@ void fupdate(struct frame *f)
 				{
 					if (f->minimize==NULL)
 						{
-							f->minimize=bcreate(minimizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MINACTIVE]-buttonspacing,0,theme.partsWidth[MINACTIVE],theme.partsHeight[MINACTIVE],NorthEastGravity,MINACTIVE);
+							f->minimize=bcreate(minimizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MINACTIVE]-buttonspacing,0,theme.partsWidth[MINACTIVE],theme.partsHeight[MINACTIVE],NorthEastGravity,MINACTIVE,f);
 						}
 					buttonspacing+=theme.partsWidth[MINACTIVE];
 				}
 //shade button
 			if (f->shade==NULL)
 				{
-					f->shade=bcreate(shadeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[SHADEACTIVE]-buttonspacing,0,theme.partsWidth[SHADEACTIVE],theme.partsHeight[SHADEACTIVE],NorthEastGravity,SHADEACTIVE);
+					f->shade=bcreate(shadeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[SHADEACTIVE]-buttonspacing,0,theme.partsWidth[SHADEACTIVE],theme.partsHeight[SHADEACTIVE],NorthEastGravity,SHADEACTIVE,f);
 				}
-			//buttonspacing+=theme.partsWidth[SHADEACTIVE];
+
 			buttonspacing+=theme.partsWidth[SHADEACTIVE];
 
 			f->buttonBarWith=buttonspacing;
-/*
-//			printf("-f->deletebutton---%i-----\n",f->buttonBarWith);
+
+//NEEDS CLEANING//
 			if(f->deletebutton!=NULL)
 				update(f->deletebutton);
 			if(f->maximize!=NULL)
@@ -645,7 +989,6 @@ void fupdate(struct frame *f)
 				update(f->minimize);
 			if(f->shade!=NULL)
 				update(f->shade);
-*/
 		}
 	else
 		{
@@ -653,7 +996,7 @@ void fupdate(struct frame *f)
 				{
 					if (f->deletebutton==NULL)
 						{
-							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-buttonspacing,0,sz,sz,NorthEastGravity,CLOSEACTIVE);
+							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-buttonspacing,0,sz,sz,NorthEastGravity,CLOSEACTIVE,f);
 							buttonspacing+=sz;
 						}
 				}
@@ -667,7 +1010,7 @@ void fupdate(struct frame *f)
 				{
 					if (f->maximize==NULL)
 						{
-							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size-buttonspacing,0,sz,sz,NorthEastGravity,MAXACTIVE);
+							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size-buttonspacing,0,sz,sz,NorthEastGravity,MAXACTIVE,f);
 							buttonspacing+=sz;
 						}
 				}
@@ -676,14 +1019,14 @@ void fupdate(struct frame *f)
 				{
 					if (f->minimize==NULL)
 						{
-							f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity,MINACTIVE);
+							f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity,MINACTIVE,f);
 							buttonspacing+=sz;
 						}
 				}
 
 			if (f->shade==NULL)
 				{
-					f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity,SHADEACTIVE);
+					f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity,SHADEACTIVE,f);
 				}
 		}
 
@@ -925,10 +1268,7 @@ struct frame *fcreate(struct client *c)
 	f->listener.pointer=f;
 	setlistener(f->window,&f->listener);
 
-	XSelectInput(dpy,f->window,SubstructureRedirectMask |
-	             ButtonPressMask |
-	             ButtonReleaseMask |
-	             ExposureMask);
+	XSelectInput(dpy,f->window,SubstructureRedirectMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
 
 	grabbutton(Button1,Mod1Mask,f->window,False,ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);
 

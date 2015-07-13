@@ -433,12 +433,12 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/tmp/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
 //	asprintf(&theme.pathToTheme,"%s","/tmp/B6");
-	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
+//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 

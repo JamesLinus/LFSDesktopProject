@@ -1119,6 +1119,7 @@ void clientevent(void *self,XEvent *e)
 			keypress((client*)self,&e->xkey);
 			break;
 		case FocusIn:
+//printf(">> clientevent(void *self,XEvent *e) FocusIn<<\n");
 			focusin((client*)self,&e->xfocus);
 			break;
 		case FocusOut:
