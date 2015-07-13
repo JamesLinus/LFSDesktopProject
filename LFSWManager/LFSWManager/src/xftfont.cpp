@@ -118,16 +118,14 @@ void ftdrawstring(Drawable d,struct font *f,struct fontcolor *c,int x,int y,cons
 {
 	XftFont *font=(XftFont*)f->data;
 	XftDrawChange(c->draw,d);
-	XftDrawString8(c->draw,&c->color,font,x,y,
-	               (XftChar8 *)s,strlen(s));
+	XftDrawString8(c->draw,&c->color,font,x,y,(XftChar8 *)s,strlen(s));
 }
 
 void ftdrawstring_utf8(Drawable d,struct font *f,struct fontcolor *c,int x,int y,const char *s)
 {
 	XftFont *font=(XftFont*)f->data;
 	XftDrawChange(c->draw,d);
-	XftDrawStringUtf8(c->draw,&c->color,font,x,y,
-	                  (XftChar8 *)s,strlen(s));
+	XftDrawStringUtf8(c->draw,&c->color,font,x,y,(XftChar8 *)s,strlen(s));
 }
 
 int fttextwidth(struct font *f,const char *s)

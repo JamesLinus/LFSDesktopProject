@@ -1739,8 +1739,47 @@ int namewidth(struct font *font,struct client *c)
 		return 0;
 }
 
-void drawname(Drawable d,struct font *font,struct fontcolor *color,
-              int x,int y,struct client *c)
+char* getMaxString(struct font *font,struct client *c,int width)
+{
+	char	*buffer;
+	int		maxwid;
+
+	if (c->netwmname != NULL)
+		{
+			buffer=strdup(c->netwmname);
+			maxwid=fttextwidth_utf8(font,buffer);
+			while(maxwid>width)
+				{
+					if(strlen(buffer)>1)
+						{
+							buffer[strlen(buffer)-1]=0;
+							maxwid=fttextwidth_utf8(font,buffer);
+						}
+					else
+						return(buffer);
+				}
+			return(buffer);
+		}
+
+	if (c->wmname != NULL)
+		{
+			buffer=strdup(c->wmname);
+			maxwid=fttextwidth(font,buffer);
+			while(maxwid>width)
+				{
+					if(strlen(buffer)>1)
+						{
+							buffer[strlen(buffer)-1]=0;
+							maxwid=fttextwidth(font,buffer);
+						}
+					else
+						return(buffer);
+				}
+			return(buffer);
+		}
+}
+
+void drawname(Drawable d,struct font *font,struct fontcolor *color,int x,int y,struct client *c)
 {
 	if (c->netwmname != NULL)
 		ftdrawstring_utf8(d,font,color,x,y,c->netwmname);

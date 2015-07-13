@@ -117,4 +117,6 @@ void clientevent(void *self,XEvent *e);
 void getclientstack(struct client ***vp,int *np);
 int getMouseMonitor(client *c);
 
+char* getMaxString(struct font *font,struct client *c,int width);
+
 #endif

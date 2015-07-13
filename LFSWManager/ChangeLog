@@ -1,5 +1,7 @@
 0.0.10
-Started themed buttons.
+Fixed incomplete button definitions on some themes.
+Adjusted window theme parts.
+Added themed buttons.
 Added xfwm4 themes ( still needs tweaking but mostly works ).
 Added '-w' option to write out prefsfile.
 Removed old debug code ( assert's ).

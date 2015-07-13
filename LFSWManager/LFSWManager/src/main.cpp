@@ -261,6 +261,20 @@ void loadTheme(void)
 	theme.rightWidth=theme.partsWidth[RIGHTACTIVE];
 	theme.titleBarHeight=theme.partsHeight[TITLE3ACTIVE];
 	theme.bottomHeight=theme.partsHeight[BOTTOMACTIVE];
+
+//button correction for incomplete themes
+	for(int j=0;j<4;j++)
+		{
+			int off=j*4;
+			if((theme.gotPart[CLOSEPRELIGHT+off]==false) && (theme.gotPart[CLOSEACTIVE+off]==true))
+				{
+					theme.pixmaps[CLOSEPRELIGHT+off]=theme.pixmaps[CLOSEACTIVE+off];
+					theme.masks[CLOSEPRELIGHT+off]=theme.masks[CLOSEACTIVE+off];
+					theme.partsWidth[CLOSEPRELIGHT+off]=theme.partsWidth[CLOSEACTIVE+off];
+					theme.partsHeight[CLOSEPRELIGHT+off]=theme.partsHeight[CLOSEACTIVE+off];
+					theme.gotPart[CLOSEPRELIGHT+off]=true;
+				}
+		}
 }
 
 int main(int argc,char *argv[])
@@ -441,10 +455,11 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/AllHallowsEve");
 
 	loadTheme();
 	theme.useTheme=true;
-	theme.buttonOffset=8;
+	theme.buttonOffset=20;
 	theme.titleWidth=800;
 
 	if(theme.useTheme==false)
@@ -461,7 +476,6 @@ int main(int argc,char *argv[])
 			frameLeft=theme.leftWidth;
 			frameRight=theme.rightWidth;
 		}
-
 
 	if (frameTop % 2==0)
 		deletebitmap=&deleven;

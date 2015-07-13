@@ -41,10 +41,10 @@
 #include "frame.h"
 #include "client.h"
 
-bitmap			*deletebitmap;
-bitmap			*maximizeBitmap;
-bitmap			*minimizeBitmap;
-bitmap			*shadeBitmap;
+bitmap	*deletebitmap;
+bitmap	*maximizeBitmap;
+bitmap	*minimizeBitmap;
+bitmap	*shadeBitmap;
 
 void update(struct button *b)
 {
@@ -52,105 +52,59 @@ void update(struct button *b)
 	int		usepixnum=0;
 	int		partoffset=0;
 
-
 	if(theme.useTheme==true)
 		{
-			//if(chasfocus(b->f->client)==true)
 			if((b->f!=NULL) && (b->f->client!=NULL) && (chasfocus(b->f->client)==true))
-				{
-					//if(chasfocus(b->f->client)==true)
-						partoffset=0;
-				}
+				partoffset=0;
 			else
 				partoffset=1;
 
-	if(partoffset==1)
-		usepixnum=1;
-	else
-		{
-			usepixnum=0;
+			if(partoffset==1)
+				usepixnum=1;
+			else
+				{
+					usepixnum=0;
 
-			if(b->entered)
-				usepixnum=2;
+					if(b->entered)
+						usepixnum=2;
 
-			if(b->pressed && b->entered)
-				usepixnum=3;
-		}
-	GC gc=XCreateGC(dpy,b->window,0,NULL);
-//XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
+					if(b->pressed && b->entered)
+						usepixnum=3;
+				}
 
-	XSetForeground(dpy,gc,whiteColor);
-	XSetClipMask(dpy,gc,None);
-	XSetFillStyle(dpy,gc,FillTiled);
-	XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
-	XFillRectangle(dpy,b->window,gc,0,0,b->width,b->height);
+			GC gc=XCreateGC(dpy,b->window,0,NULL);
 
-	usepixnum=b->buttonNumber+usepixnum;
-	XSetClipMask(dpy,gc,theme.masks[usepixnum]);
-	XSetClipOrigin(dpy,gc,0,0);
-	XCopyArea(dpy,theme.pixmaps[usepixnum],b->window,gc,0,0,theme.partsWidth[usepixnum],theme.partsHeight[usepixnum],0,0);
-	//XCopyArea(dpy,theme.pixmaps[CLOSEACTIVE],b->window,gc,0,0,16,16,0,0);
-	//printf("CLOSEACTIVE=%i b->buttonNumber+usepixnum=%i<<\n",CLOSEACTIVE,b->buttonNumber+usepixnum);
-	
+			XSetForeground(dpy,gc,whiteColor);
+			XSetClipMask(dpy,gc,None);
+			XSetFillStyle(dpy,gc,FillTiled);
+			XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
+			XFillRectangle(dpy,b->window,gc,0,0,b->width,b->height);
 
-//	invert=b->pressed && b->entered;
-//	if(invert)
-//		{
-//		}
-//	else
-//		{
-//			XCopyArea(dpy,theme.parts[,b->window,fg,0,0,b->width,b->height,0,0);
-//		}
+			usepixnum=b->buttonNumber+usepixnum;
+			XSetClipMask(dpy,gc,theme.masks[usepixnum]);
+			XSetClipOrigin(dpy,gc,0,0);
+			XCopyArea(dpy,theme.pixmaps[usepixnum],b->window,gc,0,0,theme.partsWidth[usepixnum],theme.partsHeight[usepixnum],0,0);
 		}
 	else
 		{
-#if 1
-	invert=b->pressed && b->entered;
-	GC fg=invert ? background : foreground;
-	GC bg=invert ? foreground : background;
+			invert=b->pressed && b->entered;
+			GC fg=invert ? background : foreground;
+			GC bg=invert ? foreground : background;
 
-	XFillRectangle(dpy,b->pixmap,bg,0,0,b->width,b->height);
+			XFillRectangle(dpy,b->pixmap,bg,0,0,b->width,b->height);
 
-	drawbitmap(b->pixmap,fg,b->bitmap,
-	           (b->width-b->bitmap->width) / 2,
-	           (b->height-b->bitmap->height) / 2);
+			drawbitmap(b->pixmap,fg,b->bitmap,(b->width-b->bitmap->width) / 2,(b->height-b->bitmap->height) / 2);
 
-	if (!invert)
-		{
-			//XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * halfleading : 0,LineSolid,CapButt,JoinMiter);
-			XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * 2 : 0,LineSolid,CapButt,JoinMiter);
-			XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
-			XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
+			if(!invert)
+				{
+					XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * 2 : 0,LineSolid,CapButt,JoinMiter);
+					XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
+					XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
+				}
+
+			XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
 		}
-
-	XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
-#endif
-	}
 }
-#if 0
-void update(struct button *b)
-{
-	Bool invert=b->pressed && b->entered;
-	GC fg=invert ? background : foreground;
-	GC bg=invert ? foreground : background;
-
-	XFillRectangle(dpy,b->pixmap,bg,0,0,b->width,b->height);
-
-	drawbitmap(b->pixmap,fg,b->bitmap,
-	           (b->width-b->bitmap->width) / 2,
-	           (b->height-b->bitmap->height) / 2);
-
-	if (!invert)
-		{
-			//XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * halfleading : 0,LineSolid,CapButt,JoinMiter);
-			XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * 2 : 0,LineSolid,CapButt,JoinMiter);
-			XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
-			XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
-		}
-
-	XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
-}
-#endif
 
 void buttonpress(struct button *b,XButtonEvent *e)
 {

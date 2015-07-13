@@ -43,6 +43,7 @@ struct frame
 	bool			isMaximized;
 	bool			isShaded;
 	int				buttonBarWith;
+	int				maxNameWidth;
 };
 
 extern Window	windowToUpdate;
