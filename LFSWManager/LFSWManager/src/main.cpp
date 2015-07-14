@@ -308,7 +308,7 @@ int main(int argc,char *argv[])
 	theme.pathToTheme=NULL;
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
-	loadVarsFromFile(prefsfile,wmPrefs);
+	loadVarsFromFile(prefsfile,wmPrefs," ");
 	free(prefsfile);
 
 	ndesk=numberOfDesktops;
@@ -363,7 +363,7 @@ int main(int argc,char *argv[])
 				theme.pathToTheme=strdup(optarg);
 				break;
 			case 'w':
-				saveVarsToFile(optarg,wmPrefs);
+				saveVarsToFile(optarg,wmPrefs," ");
 				exit(0);
 				break;
 			case 'v':
@@ -438,14 +438,6 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-	fnormal=ftloadcolor(fontColours[FORE]);
-	fhighlight=ftloadcolor(fontColours[FOCUSEDFORE]);
-	if (fnormal==NULL || fhighlight==NULL)
-		{
-			errorf("cannot load font colors");
-			exit(1);
-		}
-
 //printf("hl=%i lh=%i fs=%i\n",leading,frameTop,font->size);
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
@@ -461,11 +453,16 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/AllHallowsEve");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/Crux");
 
-	if(theme.pathToTheme!=NULL)
+
+	if((fileExists(theme.pathToTheme)==0) && (theme.pathToTheme!=NULL))
 		{
-			loadTheme();
+			char	*themercpath;
+			theme.buttonOffset=40;
 			theme.useTheme=true;
-			theme.buttonOffset=8;
+			loadTheme();
+			asprintf(&themercpath,"%s/xfwm4/themerc",theme.pathToTheme);
+			loadVarsFromFile(themercpath,themeRC,"=");
+			free(themercpath);
 		}
 	else
 		theme.useTheme=false;
@@ -483,6 +480,14 @@ int main(int argc,char *argv[])
 			frameBottom=theme.bottomHeight;
 			frameLeft=theme.leftWidth;
 			frameRight=theme.rightWidth;
+		}
+
+	fnormal=ftloadcolor(fontColours[FORE]);
+	fhighlight=ftloadcolor(fontColours[FOCUSEDFORE]);
+	if (fnormal==NULL || fhighlight==NULL)
+		{
+			errorf("cannot load font colors");
+			exit(1);
 		}
 
 	if (frameTop % 2==0)

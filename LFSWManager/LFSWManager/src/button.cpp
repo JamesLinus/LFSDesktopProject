@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
+#include <X11/extensions/shape.h>
 
 #include "wind.h"
 #include "button.h"
@@ -77,6 +78,7 @@ void update(struct button *b)
 			XSetForeground(dpy,gc,whiteColor);
 			XSetClipMask(dpy,gc,None);
 			XSetFillStyle(dpy,gc,FillTiled);
+			//XSetTSOrigin(dpy,gc,b->x,0);
 			XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
 			XFillRectangle(dpy,b->window,gc,0,0,b->width,b->height);
 
@@ -84,6 +86,7 @@ void update(struct button *b)
 			XSetClipMask(dpy,gc,theme.masks[usepixnum]);
 			XSetClipOrigin(dpy,gc,0,0);
 			XCopyArea(dpy,theme.pixmaps[usepixnum],b->window,gc,0,0,theme.partsWidth[usepixnum],theme.partsHeight[usepixnum],0,0);
+			XShapeCombineMask(dpy,b->window,ShapeBounding,0,0,theme.masks[usepixnum],ShapeSet);
 		}
 	else
 		{
@@ -199,6 +202,7 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 	b->listen.pointer=b;
 	b->buttonNumber=buttonnum;
 	b->f=f;
+	b->x=x;
 
 	setlistener(b->window,&b->listen);
 	XGrabButton(dpy,Button1,AnyModifier,b->window,False,EnterWindowMask | LeaveWindowMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);

@@ -29,7 +29,16 @@ args	wmPrefs[]=
 	{NULL,0,NULL}
 };
 
-void saveVarsToFile(const char* filepath,args* dataptr)
+args	themeRC[]=
+{
+	{"button_offset",TYPEINT,&theme.buttonOffset},
+	{"button_spacing",TYPEINT,&theme.buttonSpacing},
+	{"active_text_color",TYPESTRING,&fontColours[FOCUSEDFORE]},
+	{"inactive_text_color",TYPESTRING,&fontColours[FORE]},
+	{NULL,0,NULL}
+};
+
+void saveVarsToFile(const char* filepath,args* dataptr,const char *fs)
 {
 	FILE*	fd=NULL;
 	int		cnt=0;
@@ -46,14 +55,14 @@ void saveVarsToFile(const char* filepath,args* dataptr)
 					switch(dataptr[cnt].type)
 						{
 						case TYPEINT:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
+							fprintf(fd,"%s%s%i\n",dataptr[cnt].name,fs,*(int*)dataptr[cnt].data);
 							break;
 						case TYPESTRING:
 							if(*(char**)(dataptr[cnt].data)!=NULL)
-								fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
+								fprintf(fd,"%s%s%s\n",dataptr[cnt].name,fs,*(char**)(dataptr[cnt].data));
 							break;
 						case TYPEBOOL:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
+							fprintf(fd,"%s%s%i\n",dataptr[cnt].name,fs,(int)*(bool*)dataptr[cnt].data);
 							break;
 						}
 					cnt++;
@@ -62,12 +71,11 @@ void saveVarsToFile(const char* filepath,args* dataptr)
 		}
 }
 
-bool loadVarsFromFile(char* filepath,args* dataptr)
+bool loadVarsFromFile(char* filepath,args* dataptr,const char *fs)
 {
 	FILE*	fd=NULL;
 	char	buffer[2048];
 	int		cnt;
-	char*	argname=NULL;
 	char*	strarg=NULL;
 
 	fd=fopen(filepath,"r");
@@ -77,35 +85,36 @@ bool loadVarsFromFile(char* filepath,args* dataptr)
 				{
 					buffer[0]=0;
 					fgets(buffer,2048,fd);
-					sscanf(buffer,"%as %as",&argname,&strarg);
-					cnt=0;
-					while(dataptr[cnt].name!=NULL)
-						{
-							if((strarg!=NULL) && (argname!=NULL) && (strcmp(argname,dataptr[cnt].name)==0))
-								{
-									switch(dataptr[cnt].type)
-										{
-										case TYPEINT:
-											*(int*)dataptr[cnt].data=atoi(strarg);
-											break;
-										case TYPESTRING:
-											if(*(char**)(dataptr[cnt].data)!=NULL)
-												free(*(char**)(dataptr[cnt].data));
-											sscanf(buffer,"%*s %a[^\n]s",(char**)dataptr[cnt].data);
-											break;
-										case TYPEBOOL:
-											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
-											break;
-										}
-								}
-							cnt++;
-						}
-					if(argname!=NULL)
-						free(argname);
+					if(strlen(buffer)>1)
+						buffer[strlen(buffer)-1]=0;
+					strarg=strstr(buffer,fs);
 					if(strarg!=NULL)
-						free(strarg);
-					argname=NULL;
-					strarg=NULL;
+						{
+							*strarg=0;
+							strarg++;
+							cnt=0;
+							while(dataptr[cnt].name!=NULL)
+								{
+									if(strcmp(buffer,dataptr[cnt].name)==0)
+										{
+											switch(dataptr[cnt].type)
+												{
+													case TYPEINT:
+														*(int*)dataptr[cnt].data=atoi(strarg);
+														break;
+													case TYPESTRING:
+														if(*(char**)(dataptr[cnt].data)!=NULL)
+															free(*(char**)(dataptr[cnt].data));
+														sscanf(strarg," %m[^\n]s",(char**)dataptr[cnt].data);
+														break;
+													case TYPEBOOL:
+														*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
+														break;
+												}
+										}
+									cnt++;
+								}
+						}
 				}
 			fclose(fd);
 			return(true);

@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
+
 #include <X11/Xlib.h>
 
 #include "wind.h"
@@ -231,3 +233,10 @@ unsigned long getpixel(const char *name)
 	XAllocNamedColor(dpy,DefaultColormap(dpy,screen),name,&sc,&tc);
 	return sc.pixel;
 }
+
+int fileExists(char *name)
+{
+	struct stat buffer;
+	return (stat(name,&buffer));
+}
+

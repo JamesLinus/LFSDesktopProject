@@ -29,7 +29,8 @@ struct button
 			Bool			pressed;
 			Bool			entered;
 			int				buttonNumber;
-			struct frame	*f;	
+			struct frame	*f;
+			int				x;
 };
 
 extern bitmap	*deletebitmap;

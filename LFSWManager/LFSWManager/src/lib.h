@@ -28,5 +28,6 @@ void setprop(Window,Atom,Atom,int,void *,int);
 void *getprop(Window,Atom,Atom,int,unsigned long *);
 void drawbitmap(Drawable,GC,struct bitmap *,int,int);
 unsigned long getpixel(const char *);
+int fileExists(char *name);
 
 #endif

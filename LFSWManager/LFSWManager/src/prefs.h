@@ -22,9 +22,9 @@ struct args
 };
 
 extern args				wmPrefs[];
+extern args				themeRC[];
 
-
-void saveVarsToFile(const char* filepath,args* dataptr);
-bool loadVarsFromFile(char* filepath,args* dataptr);
+void saveVarsToFile(const char* filepath,args* dataptr,const char *fs);
+bool loadVarsFromFile(char* filepath,args* dataptr,const char *fs);
 
 #endif

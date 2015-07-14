@@ -32,14 +32,13 @@
 */
 
 //#define NDEBUG
-//#include <assert.h>
+#include <assert.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
-#include <X11/extensions/shape.h>
 #include <X11/extensions/shape.h>
 
 #include "wind.h"
@@ -344,21 +343,32 @@ void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
 
 void repaint(struct frame *f)
 {
-	int	namewidth=f->namewidth;
-	int	partoffset;
-	GC	gc;
-	int	ends;
-	int titlewidth;
-	int framecenter;
-	int	maxtitlewidthllowed;
-	int	title1width;
-	int	title5width;
-	int	titlehalfwidth;
-	int title1x;
-	int title2x;
-	int	title3x;
-	int	title4x;
-	int	title5x;
+	int					namewidth=f->namewidth;
+	int					partoffset;
+	GC					gc;
+	int					ends;
+	int					titlewidth;
+	int					framecenter;
+	int					maxtitlewidthllowed;
+	int					title1width;
+	int					title5width;
+	int					titlehalfwidth;
+	int					title1x;
+	int					title2x;
+	int					title3x;
+	int					title4x;
+	int					title5x;
+	char				*wintitle;
+	struct fontcolor	*usecolour;
+
+		if(f==NULL)
+			return;
+		if (f->client==NULL)
+			return;
+		if(f->client->ismapped==false)
+			return;
+		if(f->client->isfull==true)
+			return;
 
 //TODO//
 int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
@@ -516,14 +526,20 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 					XSetTile(dpy,gc,theme.pixmaps[TITLE3ACTIVE+partoffset]);
 					XFillRectangle(dpy,f->window,gc,title3x,0,titlewidth,theme.partsHeight[TITLE3ACTIVE+partoffset]);
 
-					char	*wintitle=getMaxString(font,f->client,titlewidth);
-
+					wintitle=getMaxString(font,f->client,titlewidth);
+					if(wintitle!=NULL)
+					{
+					if(partoffset==0)
+						usecolour=fhighlight;
+					else
+						usecolour=fnormal;
 					if (f->client->netwmname != NULL)
-						ftdrawstring_utf8(f->window,font,fhighlight,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2),wintitle);
+						ftdrawstring_utf8(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2),wintitle);
 					else if (f->client->wmname != NULL)
-						ftdrawstring(f->window,font,fhighlight,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2),wintitle);
+						ftdrawstring(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2),wintitle);
 
 					free(wintitle);
+					}
 
 					XSetTile(dpy,f->maskGC,theme.masks[TITLE3ACTIVE]);
 					XFillRectangle(dpy,f->mask,f->maskGC,title3x,0,titlewidth,theme.partsHeight[TITLE3ACTIVE+partoffset]);
@@ -609,17 +625,20 @@ int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 void fupdate(struct frame *f)
 {
 	int sz;
-	int	buttonspacing;
+	int	buttonx;
+	int	buttonspace;
 
 	if(theme.useTheme==true)
 		{
 			sz=frameTop;
-			buttonspacing=theme.buttonOffset;
+			buttonx=theme.buttonOffset;
+			buttonspace=theme.buttonSpacing;
 		}
 	else
 		{
 			sz=frameTop;
-			buttonspacing=sz;
+			buttonx=sz;
+			buttonspace=0;
 		}
 
 	if(theme.useTheme==true)
@@ -629,9 +648,9 @@ void fupdate(struct frame *f)
 				{
 					if (f->deletebutton==NULL)
 						{
-							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-theme.partsWidth[CLOSEACTIVE]-buttonspacing,(theme.titleBarHeight/2)-(theme.partsHeight[CLOSEACTIVE]/2),theme.partsWidth[CLOSEACTIVE],theme.partsHeight[CLOSEACTIVE],NorthEastGravity,CLOSEACTIVE,f);
+							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-theme.partsWidth[CLOSEACTIVE]- buttonx,(theme.titleBarHeight/2)-(theme.partsHeight[CLOSEACTIVE]/2),theme.partsWidth[CLOSEACTIVE],theme.partsHeight[CLOSEACTIVE],NorthEastGravity,CLOSEACTIVE,f);
 						}
-					buttonspacing+=theme.partsWidth[CLOSEACTIVE];						
+					 buttonx+=theme.partsWidth[CLOSEACTIVE]+buttonspace;						
 				}
 			else if (f->deletebutton != NULL)
 				{
@@ -644,28 +663,28 @@ void fupdate(struct frame *f)
 				{
 					if (f->maximize==NULL)
 						{
-							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MAXACTIVE]-buttonspacing,(theme.titleBarHeight/2)-(theme.partsHeight[MAXACTIVE]/2),theme.partsWidth[MAXACTIVE],theme.partsHeight[MAXACTIVE],NorthEastGravity,MAXACTIVE,f);
+							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MAXACTIVE]- buttonx,(theme.titleBarHeight/2)-(theme.partsHeight[MAXACTIVE]/2),theme.partsWidth[MAXACTIVE],theme.partsHeight[MAXACTIVE],NorthEastGravity,MAXACTIVE,f);
 						}
-					buttonspacing+=theme.partsWidth[MAXACTIVE];
+					 buttonx+=theme.partsWidth[MAXACTIVE]+buttonspace;
 				}
 //min button
 			if(f->client->canMinimize==true)
 				{
 					if (f->minimize==NULL)
 						{
-							f->minimize=bcreate(minimizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MINACTIVE]-buttonspacing,(theme.titleBarHeight/2)-(theme.partsHeight[MINACTIVE]/2),theme.partsWidth[MINACTIVE],theme.partsHeight[MINACTIVE],NorthEastGravity,MINACTIVE,f);
+							f->minimize=bcreate(minimizeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[MINACTIVE]- buttonx,(theme.titleBarHeight/2)-(theme.partsHeight[MINACTIVE]/2),theme.partsWidth[MINACTIVE],theme.partsHeight[MINACTIVE],NorthEastGravity,MINACTIVE,f);
 						}
-					buttonspacing+=theme.partsWidth[MINACTIVE];
+					 buttonx+=theme.partsWidth[MINACTIVE]+buttonspace;
 				}
 //shade button
 			if (f->shade==NULL)
 				{
-					f->shade=bcreate(shadeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[SHADEACTIVE]-buttonspacing,(theme.titleBarHeight/2)-(theme.partsHeight[SHADEACTIVE]/2),theme.partsWidth[SHADEACTIVE],theme.partsHeight[SHADEACTIVE],NorthEastGravity,SHADEACTIVE,f);
+					f->shade=bcreate(shadeWindow,f->client,maximizeBitmap,f->window,f->width-theme.partsWidth[SHADEACTIVE]- buttonx,(theme.titleBarHeight/2)-(theme.partsHeight[SHADEACTIVE]/2),theme.partsWidth[SHADEACTIVE],theme.partsHeight[SHADEACTIVE],NorthEastGravity,SHADEACTIVE,f);
 				}
 
-			buttonspacing+=theme.partsWidth[SHADEACTIVE];
+			 buttonx+=theme.partsWidth[SHADEACTIVE]+buttonspace;
 
-			f->buttonBarWith=buttonspacing;
+			f->buttonBarWith= buttonx;
 
 //NEEDS CLEANING//
 			if(f->deletebutton!=NULL)
@@ -683,8 +702,8 @@ void fupdate(struct frame *f)
 				{
 					if (f->deletebutton==NULL)
 						{
-							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-buttonspacing,0,sz,sz,NorthEastGravity,CLOSEACTIVE,f);
-							buttonspacing+=sz;
+							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size- buttonx,0,sz,sz,NorthEastGravity,CLOSEACTIVE,f);
+							 buttonx+=sz;
 						}
 				}
 			else if (f->deletebutton != NULL)
@@ -697,8 +716,8 @@ void fupdate(struct frame *f)
 				{
 					if (f->maximize==NULL)
 						{
-							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size-buttonspacing,0,sz,sz,NorthEastGravity,MAXACTIVE,f);
-							buttonspacing+=sz;
+							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size- buttonx,0,sz,sz,NorthEastGravity,MAXACTIVE,f);
+							 buttonx+=sz;
 						}
 				}
 
@@ -706,14 +725,14 @@ void fupdate(struct frame *f)
 				{
 					if (f->minimize==NULL)
 						{
-							f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity,MINACTIVE,f);
-							buttonspacing+=sz;
+							f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width- buttonx-font->size,0,sz,sz,NorthEastGravity,MINACTIVE,f);
+							 buttonx+=sz;
 						}
 				}
 
 			if (f->shade==NULL)
 				{
-					f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-buttonspacing-font->size,0,sz,sz,NorthEastGravity,SHADEACTIVE,f);
+					f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width- buttonx-font->size,0,sz,sz,NorthEastGravity,SHADEACTIVE,f);
 				}
 		}
 
@@ -1064,7 +1083,7 @@ void fdestroy(struct frame *f)
 	XDestroyWindow(dpy,f->window);
 	free(f);
 
-	//assert(fcount>0);
+	assert(fcount>0);
 	fcount--;
 	if (fcount==0)
 		{
