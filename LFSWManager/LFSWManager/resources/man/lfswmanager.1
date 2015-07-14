@@ -2,10 +2,10 @@
 .SH "NAME"
 lfswmanager - window manager
 .br
-.SH "SYNOPSIS"
-\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ \fB-w\fR outfile ] [ display ]
-.br
 
+.SH "SYNOPSIS"
+\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ \fB-\fRT theme ] [ \fB-w\fR outfile ] [ display ]
+.br
 .SH "DESCRIPTION"
 \fBLFSWManager\fR is a window manager for the X Window System.  It supports virtual desktops, Xft font rendering, and is pretty standards compliant, the code base is from the 'wind' window manager available here:
 .br
@@ -31,24 +31,24 @@ The following options are recognized:
 	Use \fIfont\fR for window titles.
 .br
 
-\fB-f \fRcolor
+\fB-f \fRcolour
 .br
-	Use \fIcolor\fR as foreground.
-.br
-
-\fB-b \fRcolor
-.br
-	Use \fIcolor\fR as background.
+	Use \fIcolour\fR as foreground.
 .br
 
-\fB-F \fRcolor
+\fB-b \fRcolour
 .br
-	Use \fIcolor\fR as focused foreground.
+	Use \fIcolour\fR as background.
 .br
 
-\fB-B \fRcolor
+\fB-F \fRcolour
 .br
-	Use \fIcolor\fR as focused background.
+	Use \fIcolour\fR as focused foreground.
+.br
+
+\fB-B \fRcolour
+.br
+	Use \fIcolour\fR as focused background.
 .br
 
 \fB-v\fR
@@ -66,6 +66,13 @@ The following options are recognized:
 \fB-l\fR liveupdate
 .br
 	Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest.
+.br
+
+\fB-T\fR theme
+.br
+	Path to theme eg "/usr/share/themes/Crux", "/home/keithhedger/.themes/OldBrownWood".
+.br
+	If no theme is specified either on the command line or in the prefs file then a basic window border is drawn using the colours above ( default ).
 .br
 
 \fB-w\fR outfile
@@ -156,19 +163,23 @@ Preference file is at ~/.config/LFS/lfswmanager.rc.
 Sample prefs file:
 .br
 
-focusedfore	white
+focusedfore white
 .br
-focusedback	#5E3300
+focusedback #5E3300
 .br
-fore	    grey60
+fore grey60
 .br
-back		#62503A
+back #62503A
 .br
-placement	2
+placement 2
 .br
-titlefont	sans:size=10
+titlefont sans:size=10
 .br
-desktops	6
+desktops 6
+.br
+liveupdate 2
+.br
+theme /usr/share/themes/Crux
 .br
 .SH "AUTHOR"
 K. D. Hedger, \fIkdhedger68713@gmail.com\fR

@@ -1,4 +1,6 @@
 0.0.10
+Added 'theme' option to prefs.
+Added '-T' option to command line to set path to theme.
 Fixed incomplete button definitions on some themes.
 Adjusted window theme parts.
 Added themed buttons.

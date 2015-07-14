@@ -43,6 +43,7 @@ int					liveUpdate=1;
 themeStruct			theme;
 char				*fontName;
 int					fontSize;
+char				*pathToTheme;
 
 int					frameTop;
 int					frameBottom;

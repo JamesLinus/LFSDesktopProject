@@ -122,7 +122,6 @@ struct	themeStruct
 	Pixmap			pixmaps[NUMBEROFPARTS];
 	Pixmap			masks[NUMBEROFPARTS];
 	int				buttonOffset;
-	int				titleWidth;
 };
 
 extern enum runlevel
@@ -184,6 +183,7 @@ extern int				liveUpdate;
 extern themeStruct		theme;
 extern char				*fontName;
 extern int				fontSize;
+extern char				*pathToTheme;
 
 extern int				frameTop;
 extern int				frameBottom;

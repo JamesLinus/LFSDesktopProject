@@ -25,6 +25,7 @@ args	wmPrefs[]=
 	{"titlefont",TYPESTRING,&titleFont},
 	{"desktops",TYPEINT,&numberOfDesktops},
 	{"liveupdate",TYPEINT,&liveUpdate},
+	{"theme",TYPESTRING,&theme.pathToTheme},
 	{NULL,0,NULL}
 };
 

@@ -104,8 +104,6 @@ GC				background;
 GC				hlforeground;
 GC				hlbackground;
 
-//int				lineheight;
-//int				halfleading;
 sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
@@ -166,6 +164,7 @@ void usage(FILE *f)
 	        "-B	colour		Focusud backcolour\n"
 	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
+			"-T	theme		Path to theme\n"
 			"-w	outfile		After setting prefs from default, prefsfile and command line write out a prefsfile and quit ( MUST be last option ).\n"
 	        ,PACKAGE_STRING,progname);
 }
@@ -306,6 +305,7 @@ int main(int argc,char *argv[])
 	placement=CENTREMMONITOR;
 	titleFont=strdup(DEFAULTFONT);
 	liveUpdate=5;
+	theme.pathToTheme=NULL;
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	loadVarsFromFile(prefsfile,wmPrefs);
@@ -314,7 +314,7 @@ int main(int argc,char *argv[])
 	ndesk=numberOfDesktops;
 
 	int opt;
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:w:v")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:T:w:v")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -357,12 +357,15 @@ int main(int argc,char *argv[])
 			case 'l':
 				liveUpdate=atoi(optarg);
 				break;
-
+			case 'T':
+				if(theme.pathToTheme!=NULL)
+					free(theme.pathToTheme);
+				theme.pathToTheme=strdup(optarg);
+				break;
 			case 'w':
 				saveVarsToFile(optarg,wmPrefs);
 				exit(0);
 				break;
-
 			case 'v':
 				debug=True;
 				break;
@@ -447,7 +450,7 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/tmp/HiberNation");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
 //	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
@@ -456,11 +459,16 @@ int main(int argc,char *argv[])
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
 //	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/AllHallowsEve");
+//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/Crux");
 
-	loadTheme();
-	theme.useTheme=true;
-	theme.buttonOffset=20;
-	theme.titleWidth=800;
+	if(theme.pathToTheme!=NULL)
+		{
+			loadTheme();
+			theme.useTheme=true;
+			theme.buttonOffset=8;
+		}
+	else
+		theme.useTheme=false;
 
 	if(theme.useTheme==false)
 		{
