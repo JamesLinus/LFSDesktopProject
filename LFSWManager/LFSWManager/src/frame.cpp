@@ -102,6 +102,9 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	mynew.height=h-frameTop-frameBottom;
 	mynew.borderwidth=old.borderwidth;
 
+//if(f->isShaded==true)
+//	mynew.height=0;
+
 	if(mynew.height<0)
 		mynew.height=0;
 
@@ -441,8 +444,8 @@ void repaint(struct frame *f)
 
 					if(titlewidth>=f->width-(f->buttonBarWith+ends+theme.buttonOffset+64))
 						{
-							titlewidth=f->width-(f->buttonBarWith);
-							titlewidth=200;
+							//titlewidth=f->width-(f->buttonBarWith);
+							//titlewidth=200;
 							titlewidth=f->width-(f->buttonBarWith+ends+theme.buttonOffset+64);
 							f->maxNameWidth=titlewidth;
 						}
@@ -881,10 +884,11 @@ void frameevent(void *self,XEvent *e)
 
 void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
-	struct frame *f=(frame*)self;
+	struct frame	*f=(frame*)self;
+	int				x,y,w,h;
 
-	int w=f->width-(xdrag-f->x);
-	int h=f->height-(ydrag-f->y);
+	w=f->width-(xdrag-f->x);
+	h=f->height-(ydrag-f->y);
 
 	w -= frameLeft + frameRight;
 	h -= frameTop + frameBottom;
@@ -892,8 +896,11 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	w += frameLeft + frameRight;
 	h += frameTop + frameBottom;
 
-	int x=f->x + f->width-w;
-	int y=f->y + f->height-h;
+	x=f->x + f->width-w;
+	if(f->isShaded==true)
+		y=ydrag;
+	else
+		y=f->y + f->height-h;
 	if (counter==0)
 		{
 			cpopapp(f->client);
@@ -904,10 +911,11 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 
 void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
-	struct frame *f=(frame*)self;
+	struct frame	*f=(frame*)self;
+	int				x,y,w,h;
 
-	int w=xdrag + 1-f->x;
-	int h=f->height-(ydrag-f->y);
+	w=xdrag + 1-f->x;
+	h=f->height-(ydrag-f->y);
 
 	w -= frameLeft + frameRight;
 	h -= frameTop + frameBottom;
@@ -915,8 +923,12 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	w += frameLeft + frameRight;
 	h += frameTop + frameBottom;
 
-	int x=f->x;
-	int y=f->y + f->height-h;
+	x=f->x;
+	if(f->isShaded==true)
+		y=ydrag;
+	else
+		y=f->y + f->height-h;
+
 	if (counter==0)
 		{
 			cpopapp(f->client);
@@ -1030,23 +1042,7 @@ struct frame *fcreate(struct client *c)
 
 	if (f->client->ismapped)
 		XMapWindow(dpy,f->window);
-	/*
-		fupdate(f);
-				if(f->deletebutton!=NULL)
-					{
-					printf("got delete for %s\n",f->client->wmname);
-					update(f->deletebutton);
-					}
-				else
-						printf("no delete for %s\n",f->client->wmname);
 
-				if(f->maximize!=NULL)
-					update(f->maximize);
-				if(f->minimize!=NULL)
-					update(f->minimize);
-				if(f->shade!=NULL)
-					update(f->shade);
-	*/
 	return f;
 }
 

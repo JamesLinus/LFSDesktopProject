@@ -1702,7 +1702,6 @@ void manageall(void)
 				XFree(stack);
 		}
 	restack();
-	debugfunc("%s","out of manageall");
 }
 
 void cunmanage(struct client *c)
