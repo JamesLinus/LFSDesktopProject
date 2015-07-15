@@ -16,16 +16,13 @@
 #define MAXBUFFER 512
 #define DEBUGFUNC(x,...) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc((const char*)x,__VA_ARGS__)
 #define debugfunc  DEBUGFUNC
+//#define message(x) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc("%s",x)
+#define message(s) DEBUGFUNC("%s",s);
 
 static int			errLine;
 static const char	*errFile;
 static const char	*errFunc;
-
 static void debugFunc(const char *fmt, ...);
-//
-//int			errLine;
-//const char	*errFile;
-//const char	*errFunc;
 
 void debugFunc(const char *fmt, ...)
 {
