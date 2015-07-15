@@ -2,16 +2,30 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <search.h>
+#include <magic.h>
+#include <stdarg.h>
+#include <alloca.h>
 
 #define MAXBUFFER 512
 #define DEBUGFUNC(x,...) errLine=__LINE__,errFile=__FILE__,errFunc=__func__;debugFunc((const char*)x,__VA_ARGS__)
 #define debugfunc  DEBUGFUNC
 
-int			errLine;
-const char	*errFile;
-const char	*errFunc;
+static int			errLine;
+static const char	*errFile;
+static const char	*errFunc;
+
+static void debugFunc(const char *fmt, ...);
+//
+//int			errLine;
+//const char	*errFile;
+//const char	*errFunc;
 
 void debugFunc(const char *fmt, ...)
 {
@@ -49,8 +63,8 @@ void debugFunc(const char *fmt, ...)
 			fmt++;
 		}
 	va_end(ap);
-	printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
-	printf(">>%s<<\n",buffer);
+	fprintf(stderr,"File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
+	fprintf(stderr,">>%s<<\n",buffer);
 }
 
 
