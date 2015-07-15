@@ -125,7 +125,7 @@ void restack(void)
 	n++;
 	Window *v=(Window*)xmalloc(n * sizeof *v);
 	int i=0;
-	assert(stacktop != None);
+	//assert(stacktop != None);
 	v[i++]=stacktop;
 
 	LIST_FOREACH_REV(lp,&winstack)
@@ -133,7 +133,7 @@ void restack(void)
 		struct client *c=LIST_ITEM(lp,struct client,winstack);
 		v[i++]=c->frame==NULL ? c->window : fgetwin(c->frame);
 	}
-	assert(i==n);
+	//assert(i==n);
 	XRestackWindows(dpy,v,n);
 	free(v);
 	needrestack=False;
@@ -143,7 +143,7 @@ void restack(void)
 
 void cmap(struct client *c)
 {
-	assert(c->desk==curdesk || c->desk==DESK_ALL);
+	//assert(c->desk==curdesk || c->desk==DESK_ALL);
 
 	// Prevent premature mapping
 	if (!c->initialized)
@@ -404,7 +404,7 @@ void csetfull(struct client *c,Bool enabled)
 		}
 	else if (!enabled && c->isfull)
 		{
-			assert(c->frame==NULL);
+			//assert(c->frame==NULL);
 			Bool f=c->hasfocus;
 			cunmap(c);
 			c->isfull=False;
@@ -767,7 +767,7 @@ void cfocusapp(struct client *c,Time time)
 	if (focus==NULL)
 		focus=topmost;
 
-	assert(focus != NULL);
+	//assert(focus != NULL);
 
 	cfocus(focus,time);
 }
@@ -1016,8 +1016,8 @@ struct client *getfocus(void)
 		struct client *c=LIST_ITEM(lp,struct client,winstack);
 		if (c->hasfocus)
 			{
-				assert(c->desk==curdesk || c->desk==DESK_ALL);
-				assert(c->ismapped);
+				//assert(c->desk==curdesk || c->desk==DESK_ALL);
+				//assert(c->ismapped);
 				return c;
 			}
 	}
@@ -1688,7 +1688,7 @@ struct client *manage(Window window)
 
 void manageall(void)
 {
-	assert(stacktop==None);
+	//assert(stacktop==None);
 	stacktop=XCreateWindow(dpy,root,0,0,100,100,0,CopyFromParent,
 	                       InputOnly,CopyFromParent,0,NULL);
 	Window r,p,*stack;
@@ -1703,7 +1703,9 @@ void manageall(void)
 			if (stack != NULL)
 				XFree(stack);
 		}
+				printf("333333333333\n");
 	restack();
+				printf("4444444444444444\n");
 }
 
 void cunmanage(struct client *c)
@@ -1893,7 +1895,7 @@ void csetnetwmname(struct client *c,const char *name)
 
 void cignoreunmap(struct client *c)
 {
-	assert(c->ismapped);
+	//assert(c->ismapped);
 	c->ignoreunmapcount++;
 }
 

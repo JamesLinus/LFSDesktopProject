@@ -1,3 +1,7 @@
+0.0.12
+Tweaked shade function, to not unnecessarily draw sides/bottom when shaded.
+Redone button updates, now uses shaped windows.
+
 0.0.11.1
 Critical bug fix.
 

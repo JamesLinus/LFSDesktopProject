@@ -75,13 +75,6 @@ void update(struct button *b)
 
 			GC gc=XCreateGC(dpy,b->window,0,NULL);
 
-			XSetForeground(dpy,gc,whiteColor);
-			XSetClipMask(dpy,gc,None);
-			XSetFillStyle(dpy,gc,FillTiled);
-			//XSetTSOrigin(dpy,gc,b->x,0);
-			XSetTile(dpy,gc,theme.pixmaps[TITLE5ACTIVE+partoffset]);
-			XFillRectangle(dpy,b->window,gc,0,0,b->width,b->height);
-
 			usepixnum=b->buttonNumber+usepixnum;
 			XSetClipMask(dpy,gc,theme.masks[usepixnum]);
 			XSetClipOrigin(dpy,gc,0,0);

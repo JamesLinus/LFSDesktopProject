@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+#©keithhedger Mon 18 May 11:32:59 BST 2015 kdhedger68713@gmail.com
+
+wallpaperversion="0.0.4"
+desktopversion=$(sed -n '/#define VERSION/p' LFSDesktop/config.h|awk '{print $3}'|sed 's/"//g')
+wmversion=$(sed -n '/#define VERSION/p' LFSWManager/config.h|awk '{print $3}'|sed 's/"//g')
+
+rm -r /tmp/tmp||true
+mkdir /tmp/tmp
+pushd /tmp/tmp
+	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSDesktop
+	rm -r LFSDesktop/.svn
+	tar -cvzf LFSDesktop-$desktopversion.tar.gz LFSDesktop
+
+	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/SetWallpaper
+	rm -r SetWallpaper/.svn
+	tar -cvzf SetWallpaper-$wallpaperversion.tar.gz SetWallpaper
+
+	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSWManager
+	rm -r LFSWManager/.svn
+	tar -cvzf LFSWManager-$wmversion.tar.gz LFSWManager
+popd
+
