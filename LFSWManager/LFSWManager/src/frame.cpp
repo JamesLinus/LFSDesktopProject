@@ -212,6 +212,7 @@ void shadeWindow(void *myclient,Time t)
 		{
 			((client*)myclient)->frame->isShaded=false;
 			moveresize(((client*)myclient)->frame,((client*)myclient)->frame->x,((client*)myclient)->frame->y,((client*)myclient)->frame->width,((client*)myclient)->frame->oldHeight);
+			repaint(((client*)myclient)->frame);
 		}
 }
 
