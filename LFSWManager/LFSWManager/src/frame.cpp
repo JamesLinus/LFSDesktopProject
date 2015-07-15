@@ -649,6 +649,7 @@ void fupdate(struct frame *f)
 	if(theme.useTheme==true)
 		{
 //close button
+
 			if(chaswmproto(f->client,WM_DELETE_WINDOW))
 				{
 					if (f->deletebutton==NULL)
@@ -748,25 +749,28 @@ void fupdate(struct frame *f)
 	else
 		f->background=&background;
 
-	if (f->pixmap != None)
-		{
-			XFreePixmap(dpy,f->pixmap);
-			f->pixmap=None;
-		}
 	f->namewidth=namewidth(font,f->client);
-	if (f->namewidth>0)
+	if(theme.useTheme==false)
 		{
-			f->pixmap=XCreatePixmap(dpy,root,f->namewidth,frameTop,DefaultDepth(dpy,screen));
-			XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,frameTop);
-			drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,2 + font->ascent,f->client);
-
-			if (f->client->desk==DESK_ALL)
+			if (f->pixmap != None)
 				{
-					int y=2 + font->ascent + font->descent / 2;
-					XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
+					XFreePixmap(dpy,f->pixmap);
+					f->pixmap=None;
+				}
+
+			if (f->namewidth>0)
+				{
+					f->pixmap=XCreatePixmap(dpy,root,f->namewidth,frameTop,DefaultDepth(dpy,screen));
+					XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,frameTop);
+					drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,2 + font->ascent,f->client);
+
+					if (f->client->desk==DESK_ALL)
+						{
+							int y=2 + font->ascent + font->descent / 2;
+							XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
+						}
 				}
 		}
-
 	repaint(f);
 }
 
@@ -924,7 +928,7 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 struct frame *fcreate(struct client *c)
 {
 	XSetWindowAttributes	wa;
-//	GC						gc;
+
 	if (fcount==0)
 		{
 			cursortopleft=XCreateFontCursor(dpy,XC_top_left_corner);

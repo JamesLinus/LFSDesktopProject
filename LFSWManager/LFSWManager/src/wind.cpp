@@ -84,6 +84,7 @@ int redirect(XEvent *e,Window w)
 	struct listener *l=getlistener(w);
 	if (l==NULL)
 		return -1;
+
 	l->function(l->pointer,e);
 	return 0;
 }

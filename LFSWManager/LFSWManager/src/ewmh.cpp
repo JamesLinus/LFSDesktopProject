@@ -333,7 +333,6 @@ void reloadwindowtype(struct client *c)
 					isdock=True;
 			XFree(types);
 		}
-
 	csetdock(c,isdock);
 }
 
@@ -371,8 +370,8 @@ void ewmh_manage(struct client *c)
 	addclient(w);
 
 	// Remove properties that other window managers may have set.
-	XDeleteProperty(dpy,w,NET_WM_VISIBLE_NAME);
-	XDeleteProperty(dpy,w,NET_WM_VISIBLE_ICON_NAME);
+	//XDeleteProperty(dpy,w,NET_WM_VISIBLE_NAME);
+	//XDeleteProperty(dpy,w,NET_WM_VISIBLE_ICON_NAME);
 
 	Atom	v[7];
 

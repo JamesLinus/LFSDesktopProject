@@ -347,6 +347,7 @@ Bool cisframed(struct client *c)
 
 void creframe(struct client *c)
 {
+
 	if (cisframed(c))
 		{
 			if (c->frame==NULL)
@@ -1602,6 +1603,7 @@ struct client *manage(Window window)
 				}
 			XFree(hints);
 		}
+
 	ewmh_manage(c);
 	mwm_manage(c);
 
@@ -1636,11 +1638,7 @@ struct client *manage(Window window)
 	 * the first call to cmap/cunmap.
 	 */
 	setwmstate(c->window,cisvisible(c) ? NormalState : IconicState);
-
 	c->initialized=True;
-
-
-
 
 	if (wmstate==IconicState && runlevel==RL_NORMAL)
 		{
@@ -1689,10 +1687,10 @@ struct client *manage(Window window)
 void manageall(void)
 {
 	//assert(stacktop==None);
-	stacktop=XCreateWindow(dpy,root,0,0,100,100,0,CopyFromParent,
-	                       InputOnly,CopyFromParent,0,NULL);
+	stacktop=XCreateWindow(dpy,root,0,0,100,100,0,CopyFromParent,InputOnly,CopyFromParent,0,NULL);
 	Window r,p,*stack;
 	unsigned n;
+
 	if (XQueryTree(dpy,root,&r,&p,&stack,&n) != 0)
 		{
 			for (unsigned int i=0; i<n; i++)
@@ -1703,9 +1701,8 @@ void manageall(void)
 			if (stack != NULL)
 				XFree(stack);
 		}
-				printf("333333333333\n");
 	restack();
-				printf("4444444444444444\n");
+	debugfunc("%s","out of manageall");
 }
 
 void cunmanage(struct client *c)

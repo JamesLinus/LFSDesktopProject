@@ -61,8 +61,6 @@
 #include "button.h"
 #include "atoms.h"
 
-#include "/media/LinuxData/Development/Projects/LFSDesktopProject/debug.h"
-
 #include "deleven.xbm"
 #include "delodd.xbm"
 #include "maxeven.xbm"
@@ -586,15 +584,12 @@ int main(int argc,char *argv[])
 	XDefineCursor(dpy,root,curs);
 
 	XSetInputFocus(dpy,PointerRoot,RevertToPointerRoot,CurrentTime);
-	debugfunc("%s","test for debug");
-printf("111111\n");
 	manageall();
-
-printf("2222222222222\n");
 
 	refocus(CurrentTime);
 
 	runlevel=RL_NORMAL;
+
 	while (waitevent() != -1)
 		{
 			XEvent e;
@@ -606,6 +601,7 @@ printf("2222222222222\n");
 					 * messages with a non-root event window,
 					 * so we need to redirect those manually.
 					 */
+
 					if (e.type==ClientMessage)
 						redirect(&e,root);
 				}
