@@ -102,9 +102,6 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 	mynew.height=h-frameTop-frameBottom;
 	mynew.borderwidth=old.borderwidth;
 
-//if(f->isShaded==true)
-//	mynew.height=0;
-
 	if(mynew.height<0)
 		mynew.height=0;
 
