@@ -49,6 +49,7 @@ bitmap	*shadeBitmap;
 
 void update(struct button *b)
 {
+	CHECKPOINT
 	bool	invert;
 	int		usepixnum=0;
 	int		partoffset=0;
@@ -121,12 +122,14 @@ void buttonrelease(struct button *b,XButtonEvent *e)
 
 void enternotify(struct button *b,XCrossingEvent *e)
 {
+	CHECKPOINT
 	b->entered=True;
 	update(b);
 }
 
 void leavenotify(struct button *b,XCrossingEvent *e)
 {
+	CHECKPOINT
 	if (b->entered)
 		{
 			b->entered=False;
@@ -136,6 +139,7 @@ void leavenotify(struct button *b,XCrossingEvent *e)
 
 void unmapnotify(struct button *b,XUnmapEvent *e)
 {
+	CHECKPOINT
 	if (b->pressed)
 		{
 			b->pressed=False;
@@ -145,6 +149,7 @@ void unmapnotify(struct button *b,XUnmapEvent *e)
 
 void expose(struct button *b,XExposeEvent *e)
 {
+	CHECKPOINT
 	if(theme.useTheme==true)
 		update(b);
 	else
@@ -153,6 +158,7 @@ void expose(struct button *b,XExposeEvent *e)
 
 void buttonevent(void *self,XEvent *e)
 {
+	CHECKPOINT
 	switch (e->type)
 		{
 		case Expose:
@@ -178,6 +184,7 @@ void buttonevent(void *self,XEvent *e)
 
 struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum,struct frame *f)
 {
+	CHECKPOINT
 	XSetWindowAttributes	sa;
 	sa.win_gravity=gravity;
 
@@ -208,6 +215,7 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 
 void bdestroy(struct button *b)
 {
+	CHECKPOINT
 	setlistener(b->window,NULL);
 	XFreePixmap(dpy,b->pixmap);
 	XDestroyWindow(dpy,b->window);

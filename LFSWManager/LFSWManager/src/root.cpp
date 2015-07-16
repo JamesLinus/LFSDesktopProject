@@ -46,6 +46,7 @@
 
 void fnkey(KeySym keysym,unsigned state,Time time,int arg)
 {
+	CHECKPOINT
 	if (state & ShiftMask)
 		setndesk(arg);
 	gotodesk(arg-1);
@@ -88,6 +89,7 @@ int		scrollcntmax=2;
 
 void maprequest(XMapRequestEvent *e)
 {
+	CHECKPOINT
 	// Already managed?
 	if (redirect((XEvent *)e,e->window)==0)
 		return;
@@ -104,6 +106,7 @@ void maprequest(XMapRequestEvent *e)
  */
 void unmapnotify(XUnmapEvent *e)
 {
+	CHECKPOINT
 	if (e->send_event)
 		redirect((XEvent *)e,e->window);
 }
@@ -114,6 +117,7 @@ void unmapnotify(XUnmapEvent *e)
  */
 void enternotify(XCrossingEvent *e)
 {
+	CHECKPOINT
 	if (e->detail==NotifyNonlinear ||
 	        e->detail==NotifyNonlinearVirtual)
 		{
@@ -127,6 +131,7 @@ void enternotify(XCrossingEvent *e)
  */
 void leavenotify(XCrossingEvent *e)
 {
+	CHECKPOINT
 	if (e->detail==NotifyNonlinear ||
 	        e->detail==NotifyNonlinearVirtual)
 		{
@@ -136,6 +141,7 @@ void leavenotify(XCrossingEvent *e)
 }
 void configurerequest(XConfigureRequestEvent *e)
 {
+	CHECKPOINT
 	// First try to redirect the event.
 	if (redirect((XEvent *)e,e->window)==0)
 		return;
@@ -170,11 +176,13 @@ void keypress(XKeyEvent *e)
 
 void clientmessage(XClientMessageEvent *e)
 {
+	CHECKPOINT
 	ewmh_rootclientmessage(e);
 }
 
 void event(void *self,XEvent *e)
 {
+	CHECKPOINT
 	switch (e->type)
 		{
 		case ButtonRelease:
@@ -242,6 +250,7 @@ listener listener=
 
 void initroot(void)
 {
+	CHECKPOINT
 	listener.function=event;
 	listener.pointer=NULL;
 

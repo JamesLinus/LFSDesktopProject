@@ -47,6 +47,7 @@
  */
 void reloadmwmhints(struct client *c)
 {
+	CHECKPOINT
 	Bool undecorated=False;
 
 	mwmhints *h=getmwmhints(c);
@@ -72,6 +73,7 @@ void reloadmwmhints(struct client *c)
 
 mwmhints *getmwmhints(struct client *c)
 {
+	CHECKPOINT
 	unsigned long n=0;
 	mwmhints *h=(mwmhints*)getprop(c->window,MOTIF_WM_HINTS,MOTIF_WM_HINTS,32,&n);
 	if (h != NULL && n != 5)
@@ -84,16 +86,19 @@ mwmhints *getmwmhints(struct client *c)
 
 void mwm_startwm(void)
 {
+	CHECKPOINT
 	MOTIF_WM_HINTS=XInternAtom(dpy,"_MOTIF_WM_HINTS",False);
 }
 
 void mwm_manage(struct client *c)
 {
+	CHECKPOINT
 	reloadmwmhints(c);
 }
 
 void mwm_propertynotify(struct client *c,XPropertyEvent *e)
 {
+	CHECKPOINT
 	if (e->atom==MOTIF_WM_HINTS)
 		reloadmwmhints(c);
 }

@@ -57,6 +57,7 @@ void motionnotify(struct dragger *,XMotionEvent *);
 
 void draggerevent(void *self,XEvent *e)
 {
+	CHECKPOINT
 	switch (e->type)
 		{
 		case ButtonRelease:
@@ -80,6 +81,7 @@ void draggerevent(void *self,XEvent *e)
 
 struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)
 {
+	CHECKPOINT
 	XSetWindowAttributes sa;
 
 	sa.win_gravity=gravity;
@@ -148,6 +150,7 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 
 void ddestroy(struct dragger *d)
 {
+	CHECKPOINT
 	setlistener(d->window,NULL);
 	XDestroyWindow(dpy,d->window);
 	free(d);

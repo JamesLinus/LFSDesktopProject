@@ -1,4 +1,5 @@
 0.0.12
+Added debug checkpoints to most functions.
 Added beter debug code.
 Removed some unwanted traps.
 Added '--with-debug-level' to configure 0 - No debug, 1 - write to stderr and logfile ( default 0 ).

@@ -108,6 +108,8 @@ sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
+	CHECKPOINT
+
 	char buf[128];
 	buf[0]='\0';
 	XGetErrorText(dpy,e->error_code,buf,sizeof buf);
@@ -145,6 +147,8 @@ void onsignal(int signal)
 
 int waitevent(void)
 {
+	CHECKPOINT
+
 	if (XPending(dpy)>0)
 		return 0;
 	fd_set rfds;
@@ -239,6 +243,8 @@ const char	*themePartNames[]=
 
 void loadTheme(void)
 {
+	CHECKPOINT
+
 	char		buffer[2048];
 	int			partcnt=0;
 	int			hite=0;
@@ -300,6 +306,8 @@ void loadTheme(void)
 
 int main(int argc,char *argv[])
 {
+	CHECKPOINT
+
 	int					cnt=-1;
 	XineramaScreenInfo	*p=NULL;
 	char				*prefsfile;

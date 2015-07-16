@@ -64,6 +64,7 @@ void errorf(const char *fmt,...)
 
 void setlistener(Window w,const struct listener *l)
 {
+	CHECKPOINT
 	if (l==NULL)
 		XDeleteContext(dpy,w,listeners);
 	else
@@ -72,6 +73,7 @@ void setlistener(Window w,const struct listener *l)
 
 struct listener *getlistener(Window w)
 {
+	CHECKPOINT
 	struct listener *l;
 	if (XFindContext(dpy,w,listeners,(XPointer *)&l)==0)
 		return l;
@@ -81,6 +83,7 @@ struct listener *getlistener(Window w)
 
 int redirect(XEvent *e,Window w)
 {
+	CHECKPOINT
 	struct listener *l=getlistener(w);
 	if (l==NULL)
 		return -1;

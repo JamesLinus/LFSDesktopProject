@@ -70,6 +70,7 @@ bool	fromDragger=false;
 
 void moveresize(struct frame *f,int x,int y,int w,int h)
 {
+	CHECKPOINT
 	int		offset;
 	bool	left;
 	int		newd=-1;
@@ -193,16 +194,19 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 
 void mydelete(void *myclient,Time t)
 {
+	CHECKPOINT
 	cdelete((client*)myclient,t);
 }
 
 void minimizeWindow(void *myclient,Time t)
 {
+	CHECKPOINT
 	XIconifyWindow(dpy,((client*)myclient)->window,screen);
 }
 
 void shadeWindow(void *myclient,Time t)
 {
+	CHECKPOINT
 	if(((client*)myclient)->frame->isShaded==false)
 		{
 			((client*)myclient)->frame->oldHeight=((client*)myclient)->frame->height;
@@ -219,6 +223,7 @@ void shadeWindow(void *myclient,Time t)
 
 int getFrameMonitor(frame *f)
 {
+	CHECKPOINT
 	for(unsigned int j=0; j<numberOfMonitors; j++)
 		{
 			if((f->x>monitorData[j].monX) && (f->x<monitorData[j].monW+monitorData[j].monX) && (f->y>monitorData[j].monY) && (f->y<monitorData[j].monH+monitorData[j].monY))
@@ -230,6 +235,7 @@ int getFrameMonitor(frame *f)
 
 void maximizeWindow(void *myclient,Time t)
 {
+	CHECKPOINT
 	int		monnum=getFrameMonitor(((client*)myclient)->frame);
 
 	if(((client*)myclient)->frame->isMaximized==false)
@@ -265,6 +271,7 @@ void maximizeWindow(void *myclient,Time t)
  */
 struct extents estimateframeextents(Window w)
 {
+	CHECKPOINT
 	return (struct extents)
 	{
 		.top=frameTop,
@@ -276,12 +283,14 @@ struct extents estimateframeextents(Window w)
 
 void reorder(Window ref,Window below)
 {
+	CHECKPOINT
 	Window	w[2]= {ref,below};
 	XRestackWindows(dpy,w,2);
 }
 
 void setgrav(Window win,int grav)
 {
+	CHECKPOINT
 	XSetWindowAttributes	wa;
 	wa.win_gravity=grav;
 
@@ -290,6 +299,7 @@ void setgrav(Window win,int grav)
 
 void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
 {
+	CHECKPOINT
 	switch (wingrav)
 		{
 		case NorthWestGravity:
@@ -345,6 +355,7 @@ void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
 
 void repaint(struct frame *f)
 {
+	CHECKPOINT
 	int					namewidth=f->namewidth;
 	int					partoffset;
 	GC					gc;
@@ -631,6 +642,7 @@ void repaint(struct frame *f)
 
 void fupdate(struct frame *f)
 {
+	CHECKPOINT
 	int sz;
 	int	buttonx;
 	int	buttonspace;
@@ -778,6 +790,7 @@ void fupdate(struct frame *f)
 
 void confrequest(struct frame *f,XConfigureRequestEvent *e)
 {
+	CHECKPOINT
 	struct geometry g=cgetgeom(f->client);
 
 	if (e->value_mask & CWBorderWidth)
@@ -810,6 +823,7 @@ void confrequest(struct frame *f,XConfigureRequestEvent *e)
 
 void buttonpress(struct frame *f,XButtonEvent *e)
 {
+	CHECKPOINT
 	if (e->button==Button1)
 		{
 			cpopapp(f->client);
@@ -827,6 +841,7 @@ void buttonpress(struct frame *f,XButtonEvent *e)
 
 void buttonrelease(struct frame *f,XButtonEvent *e)
 {
+	CHECKPOINT
 	if (e->button==Button1 && f->grabbed)
 		{
 			XUngrabPointer(dpy,e->time);
@@ -836,11 +851,13 @@ void buttonrelease(struct frame *f,XButtonEvent *e)
 
 void motionnotify(struct frame *f,XMotionEvent *e)
 {
+	CHECKPOINT
 	moveresize(f,e->x_root-f->downx,e->y_root-f->downy,f->width,f->height);
 }
 
 void maprequest(struct frame *f,XMapRequestEvent *e)
 {
+	CHECKPOINT
 	Window win=f->client->window;
 	if (e->window==win)
 		redirect((XEvent *)e,win);
@@ -848,12 +865,14 @@ void maprequest(struct frame *f,XMapRequestEvent *e)
 
 void expose(struct frame *f,XExposeEvent *e)
 {
+	CHECKPOINT
 	if (e->count==0)
 		repaint(f);
 }
 
 void frameevent(void *self,XEvent *e)
 {
+	CHECKPOINT
 //printf("frame event\n");
 	switch (e->type)
 		{
@@ -883,6 +902,7 @@ void frameevent(void *self,XEvent *e)
 
 void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
+	CHECKPOINT
 	struct frame	*f=(frame*)self;
 	int				x,y,w,h;
 
@@ -910,6 +930,7 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 
 void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
+	CHECKPOINT
 	struct frame	*f=(frame*)self;
 	int				x,y,w,h;
 
@@ -938,6 +959,7 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 
 struct frame *fcreate(struct client *c)
 {
+	CHECKPOINT
 	XSetWindowAttributes	wa;
 
 	if (fcount==0)
@@ -1044,6 +1066,7 @@ struct frame *fcreate(struct client *c)
 
 void fdestroy(struct frame *f)
 {
+	CHECKPOINT
 	Bool hadfocus=chasfocus(f->client);
 
 	XUnmapWindow(dpy,f->window);
@@ -1095,11 +1118,13 @@ void fdestroy(struct frame *f)
 
 Window fgetwin(struct frame *f)
 {
+	CHECKPOINT
 	return f->window;
 }
 
 struct geometry fgetgeom(struct frame *f)
 {
+	CHECKPOINT
 	return (struct geometry)
 	{
 		.x=f->x,
