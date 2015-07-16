@@ -13,11 +13,35 @@
 #ifndef _WIND_H_
 #define _WIND_H_
 
+#define DBG0 0 //no debug
+#define DBG1 1 //debug to stderr and /tmp/lfswmanager.error.log
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
 #include "config.h"
-#include "/media/LinuxData/Development/Projects/LFSDesktopProject/debug.h"
+/*
+#if _DEBUGLEVEL_ == DBG0
+#define ERRDATA
+#else
+#if _DEBUGLEVEL_ == DBG5
+#define ERRDATA errLine=__LINE__,errFile=__FILE__,errFunc=__func__;printf("File: %s,Func: %s,Line: %i\n",errFile,errFunc,errLine);
+#else
+#define ERRDATA errLine=__LINE__,errFile=__FILE__,errFunc=__func__;
+#endif
+#endif
+*/
+#if _DEBUGLEVEL_ == DBG1
+#include "debug.h"
+#else
+#define DEBUGFUNC(x,...) 
+#define debugfunc  DEBUGFUNC
+#define MESSAGE(s)
+#define message MESSAGE
+#define CHECKPOINT
+#define checkpoint CHECKPOINT
+#endif
+
 
 #define MIN(a,b) ((a)<(b) ? (a) : (b))
 #define MAX(a,b) ((a)>(b) ? (a) : (b))

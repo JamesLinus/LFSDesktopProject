@@ -93,7 +93,7 @@ void update(struct button *b)
 
 			if(!invert)
 				{
-					XSetLineAttributes(dpy,fg,b->entered ? 1 + 2 * 2 : 0,LineSolid,CapButt,JoinMiter);
+					XSetLineAttributes(dpy,fg,b->entered ? 1+2 * 2 : 0,LineSolid,CapButt,JoinMiter);
 					XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
 					XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
 				}

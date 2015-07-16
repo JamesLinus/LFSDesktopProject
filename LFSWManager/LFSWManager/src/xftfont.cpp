@@ -59,7 +59,7 @@ struct font *ftload(const char *name)
 		return NULL;
 
 	struct font *f=(struct font*)xmalloc(sizeof *f);
-	f->size=font->ascent + font->descent;
+	f->size=font->ascent+font->descent;
 	f->ascent=font->ascent;
 	f->descent=font->descent;
 	f->data=font;

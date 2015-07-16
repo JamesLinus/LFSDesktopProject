@@ -117,8 +117,30 @@ int errhandler(Display *dpy,XErrorEvent *e)
 	return 0;
 }
 
-void onsignal(int signo)
+void onsignal(int signal)
 {
+#if _DEBUGLEVEL_ == DBG1
+	FILE*	fp=NULL;
+
+	fp=fopen("/tmp/lfswmanager.error.log","a");
+
+	fprintf(stderr,"Traped signal %s\n",strsignal(signal));
+	fprintf(stderr,"File: %s, Function: %s, Line: %i\n",errFile,errFunc,errLine);
+
+	if(fp!=NULL)
+		{
+			fprintf(fp,"Traped signal %s\n",strsignal(signal));
+			fprintf(fp,"File: %s, Function: %s, Line: %i\n",errFile,errFunc,errLine);
+		}
+
+	if(fp!=NULL)
+		fclose(fp);
+#endif
+
+	if(signal==SIGSEGV)
+		exit(EXIT_FAILURE);
+	if(signal==SIGTERM)
+		exit(EXIT_SUCCESS);
 }
 
 int waitevent(void)
@@ -131,7 +153,7 @@ int waitevent(void)
 
 	int conn=ConnectionNumber(dpy);
 	FD_SET(conn,&rfds);
-	nfds=MAX(conn + 1,nfds);
+	nfds=MAX(conn+1,nfds);
 
 	if (pselect(nfds,&rfds,NULL,NULL,NULL,&sigmask)==-1)
 		{
@@ -282,12 +304,6 @@ int main(int argc,char *argv[])
 	XineramaScreenInfo	*p=NULL;
 	char				*prefsfile;
 
-//printf(">>>BOTTOMRIGHTINACTIVE=%i CLOSEACTIVE=%i CLOSEPRESSED=%i NUMBEROFPARTS=%i tot=%i<<<<\n",BOTTOMRIGHTINACTIVE,CLOSEACTIVE,CLOSEPRESSED,NUMTHEMEPARTS,NUMBEROFPARTS);
-//printf(">>MAXACTIVE=%i MAXPRESSED=%i<<\n",MAXACTIVE,MAXPRESSED);
-//printf(">>MINACTIVE=%i MINPRESSED=%i<<\n",MINACTIVE,MINPRESSED);
-//printf(">>SHADEACTIVE=%i SHADEPRESSED=%i<<\n",SHADEACTIVE,SHADEPRESSED);
-//
-//exit(0);
 	progname=argv[0];
 	// The Xmb* functions use LC_CTYPE
 	setlocale(LC_CTYPE,"");
@@ -438,22 +454,6 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-//printf("hl=%i lh=%i fs=%i\n",leading,frameTop,font->size);
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldWoodAndBrass");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/CaptainAmerica");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldBrownWood");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/HiberNation");
-//	asprintf(&theme.pathToTheme,"%s","/tmp/HiberNation");
-//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/Crux");
-//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/G2");
-//	asprintf(&theme.pathToTheme,"%s","/tmp/B6");
-//	asprintf(&theme.pathToTheme,"%s","/usr/share/themes/B6");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/OldyXmasTheme");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/WoodThemeRustic");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/AllHallowsEve");
-//	asprintf(&theme.pathToTheme,"%s","/home/keithhedger/.themes/Crux");
-
-
 	if((fileExists(theme.pathToTheme)==0) && (theme.pathToTheme!=NULL))
 		{
 			char	*themercpath;
@@ -535,38 +535,15 @@ int main(int argc,char *argv[])
 
 	listeners=XUniqueContext();
 
-	sigset_t sigsafemask;
-	sigprocmask(SIG_SETMASK,NULL,&sigmask);
-	sigprocmask(SIG_SETMASK,NULL,&sigsafemask);
-
 	struct sigaction sa;
 	sigfillset(&sa.sa_mask);
 	sa.sa_flags=SA_RESTART;
 	sa.sa_handler=onsignal;
-	struct sigaction osa;
 
-	sigaction(SIGHUP,NULL,&osa);
-	if (osa.sa_handler != SIG_IGN)
-		{
-			sigaction(SIGHUP,&sa,NULL);
-			sigaddset(&sigsafemask,SIGHUP);
-		}
-
-	sigaction(SIGINT,NULL,&osa);
-	if (osa.sa_handler != SIG_IGN)
-		{
-			sigaction(SIGINT,&sa,NULL);
-			sigaddset(&sigsafemask,SIGINT);
-		}
-
-	sigaction(SIGTERM,NULL,&osa);
-	if (osa.sa_handler != SIG_IGN)
-		{
-			sigaction(SIGTERM,&sa,NULL);
-			sigaddset(&sigsafemask,SIGTERM);
-		}
-
-	sigprocmask(SIG_SETMASK,&sigsafemask,NULL);
+	sigaction(SIGHUP,&sa,NULL);
+	sigaction(SIGINT,&sa,NULL);
+	sigaction(SIGTERM,&sa,NULL);
+	sigaction(SIGSEGV,&sa,NULL);
 
 	WM_CHANGE_STATE=XInternAtom(dpy,"WM_CHANGE_STATE",False);
 	WM_DELETE_WINDOW=XInternAtom(dpy,"WM_DELETE_WINDOW",False);
@@ -589,6 +566,8 @@ int main(int argc,char *argv[])
 	refocus(CurrentTime);
 
 	runlevel=RL_NORMAL;
+
+	CHECKPOINT
 
 	while (waitevent() != -1)
 		{

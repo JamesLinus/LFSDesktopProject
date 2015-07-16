@@ -77,7 +77,7 @@ char *xstrdup(const char *s)
 {
 //MAYBEBAD//
 	return(strdup(s));
-//	size_t n=strlen(s) + 1;
+//	size_t n=strlen(s)+1;
 //	return ((char*)memcpy(xmalloc(n),s,n));
 }
 

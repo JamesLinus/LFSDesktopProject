@@ -55,6 +55,7 @@ int		depth=0;
 size_t	fcount;
 Cursor	cursortopleft=None;
 Cursor	cursortopright=None;
+Cursor	cursorBottomLeft=None;
 bool	swapdesk=false;
 int		nx;
 Window	windowToUpdate=None;
@@ -96,8 +97,8 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 
 	struct geometry old=cgetgeom(f->client);
 	geometry mynew;
-	mynew.x=x + frameLeft;
-	mynew.y=y + frameTop;
+	mynew.x=x+frameLeft;
+	mynew.y=y+frameTop;
 	mynew.width=w-frameLeft-frameRight;
 	mynew.height=h-frameTop-frameBottom;
 	mynew.borderwidth=old.borderwidth;
@@ -296,37 +297,37 @@ void gravitate(int wingrav,int borderwidth,int *dx,int *dy)
 			*dy=0;
 			break;
 		case NorthGravity:
-			*dx=borderwidth-(frameLeft + frameRight) / 2;
+			*dx=borderwidth-(frameLeft+frameRight) / 2;
 			*dy=0;
 			break;
 		case NorthEastGravity:
-			*dx=(2 * borderwidth)-(frameLeft + frameRight);
+			*dx=(2 * borderwidth)-(frameLeft+frameRight);
 			*dy=0;
 			break;
 		case WestGravity:
 			*dx=0;
-			*dy=borderwidth-(frameTop + frameBottom) / 2;
+			*dy=borderwidth-(frameTop+frameBottom) / 2;
 			break;
 		case CenterGravity:
-			*dx=borderwidth-(frameLeft + frameRight) / 2;
-			*dy=borderwidth-(frameTop + frameBottom) / 2;
+			*dx=borderwidth-(frameLeft+frameRight) / 2;
+			*dy=borderwidth-(frameTop+frameBottom) / 2;
 			break;
 		case EastGravity:
-			*dx=(2 * borderwidth)-(frameLeft + frameRight);
-			*dy=borderwidth-(frameTop + frameBottom) / 2;
+			*dx=(2 * borderwidth)-(frameLeft+frameRight);
+			*dy=borderwidth-(frameTop+frameBottom) / 2;
 			break;
 
 		case SouthWestGravity:
 			*dx=0;
-			*dy=(2 * borderwidth)-(frameTop + frameBottom);
+			*dy=(2 * borderwidth)-(frameTop+frameBottom);
 			break;
 		case SouthGravity:
-			*dx=borderwidth-(frameLeft + frameRight) / 2;
-			*dy=(2 * borderwidth)-(frameTop + frameBottom);
+			*dx=borderwidth-(frameLeft+frameRight) / 2;
+			*dy=(2 * borderwidth)-(frameTop+frameBottom);
 			break;
 		case SouthEastGravity:
-			*dx=(2 * borderwidth)-(frameLeft + frameRight);
-			*dy=(2 * borderwidth)-(frameTop + frameBottom);
+			*dx=(2 * borderwidth)-(frameLeft+frameRight);
+			*dy=(2 * borderwidth)-(frameTop+frameBottom);
 			break;
 
 		case StaticGravity:
@@ -373,7 +374,7 @@ void repaint(struct frame *f)
 
 //TODO//
 	int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
-	namewidth=MIN(namewidth,f->width-2 * (1 + font->size));
+	namewidth=MIN(namewidth,f->width-2 * (1+font->size));
 	namewidth=MAX(namewidth,0);
 
 	if(theme.useTheme==true)
@@ -763,11 +764,11 @@ void fupdate(struct frame *f)
 				{
 					f->pixmap=XCreatePixmap(dpy,root,f->namewidth,frameTop,DefaultDepth(dpy,screen));
 					XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,frameTop);
-					drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,2 + font->ascent,f->client);
+					drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,2+font->ascent,f->client);
 
 					if (f->client->desk==DESK_ALL)
 						{
-							int y=2 + font->ascent + font->descent / 2;
+							int y=2+font->ascent+font->descent / 2;
 							XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
 						}
 				}
@@ -793,16 +794,16 @@ void confrequest(struct frame *f,XConfigureRequestEvent *e)
 
 	// Fetch requested geometry
 	if (e->value_mask & CWX)
-		x=e->x + dx;
+		x=e->x+dx;
 	if (e->value_mask & CWY)
-		y=e->y + dy;
+		y=e->y+dy;
 	if (e->value_mask & CWWidth)
 		g.width=e->width;
 	if (e->value_mask & CWHeight)
 		g.height=e->height;
 
-	int width=g.width + frameLeft + frameRight;
-	int height=g.height + frameTop + frameBottom;
+	int width=g.width+frameLeft+frameRight;
+	int height=g.height+frameTop+frameBottom;
 
 	moveresize(f,x,y,width,height);
 }
@@ -888,17 +889,17 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	w=f->width-(xdrag-f->x);
 	h=f->height-(ydrag-f->y);
 
-	w -= frameLeft + frameRight;
-	h -= frameTop + frameBottom;
+	w -= frameLeft+frameRight;
+	h -= frameTop+frameBottom;
 	chintsize(f->client,w,h,&w,&h);
-	w += frameLeft + frameRight;
-	h += frameTop + frameBottom;
+	w += frameLeft+frameRight;
+	h += frameTop+frameBottom;
 
-	x=f->x + f->width-w;
+	x=f->x+f->width-w;
 	if(f->isShaded==true)
 		y=ydrag;
 	else
-		y=f->y + f->height-h;
+		y=f->y+f->height-h;
 	if (counter==0)
 		{
 			cpopapp(f->client);
@@ -912,20 +913,20 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	struct frame	*f=(frame*)self;
 	int				x,y,w,h;
 
-	w=xdrag + 1-f->x;
+	w=xdrag+1-f->x;
 	h=f->height-(ydrag-f->y);
 
-	w -= frameLeft + frameRight;
-	h -= frameTop + frameBottom;
+	w -= frameLeft+frameRight;
+	h -= frameTop+frameBottom;
 	chintsize(f->client,w,h,&w,&h);
-	w += frameLeft + frameRight;
-	h += frameTop + frameBottom;
+	w += frameLeft+frameRight;
+	h += frameTop+frameBottom;
 
 	x=f->x;
 	if(f->isShaded==true)
 		y=ydrag;
 	else
-		y=f->y + f->height-h;
+		y=f->y+f->height-h;
 
 	if (counter==0)
 		{
@@ -943,6 +944,7 @@ struct frame *fcreate(struct client *c)
 		{
 			cursortopleft=XCreateFontCursor(dpy,XC_top_left_corner);
 			cursortopright=XCreateFontCursor(dpy,XC_top_right_corner);
+			cursorBottomLeft=XCreateFontCursor(dpy,XC_bottom_left_corner);
 		}
 	fcount++;
 
@@ -956,12 +958,12 @@ struct frame *fcreate(struct client *c)
 	int dx,dy;
 	gravitate(cgetgrav(c),g.borderwidth,&dx,&dy);
 
-	f->x=g.x + dx;
-	f->y=g.y + dy;
+	f->x=g.x+dx;
+	f->y=g.y+dy;
 
-	f->width=g.width + frameLeft + frameRight;
+	f->width=g.width+frameLeft+frameRight;
 
-	f->height=g.height + frameTop + frameBottom;
+	f->height=g.height+frameTop+frameBottom;
 
 	f->grabbed=False;
 	f->oldX=f->x;
@@ -971,10 +973,6 @@ struct frame *fcreate(struct client *c)
 	f->isMaximized=false;
 	f->isShaded=false;
 
-//	if(theme.useTheme==true)
-//		f->buttonBarWith=theme.partsWidth[TITLE5ACTIVE];
-//	else
-//		f->buttonBarWith=frameTop;
 	f->buttonBarWith=0;
 	wa.bit_gravity=NorthWestGravity;
 
@@ -1005,8 +1003,8 @@ struct frame *fcreate(struct client *c)
 	 * the left resizer.
 	 */
 
-	int dw=font->size + 1;
-	int dh=frameTop + 2;
+	int dw=font->size+1;
+	int dh=frameTop+2;
 	f->topleftresizer=dcreate(f->window,0,0,dw,dh,NorthWestGravity,cursortopleft,resizetopleft,f);
 	f->toprightresizer=dcreate(f->window,f->width-dw,0,dw,dh,NorthEastGravity,cursortopright,resizetopright,f);
 

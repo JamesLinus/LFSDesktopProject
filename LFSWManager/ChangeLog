@@ -1,4 +1,7 @@
 0.0.12
+Added beter debug code.
+Removed some unwanted traps.
+Added '--with-debug-level' to configure 0 - No debug, 1 - write to stderr and logfile ( default 0 ).
 Shaded windows can now only be stretched horizontally.
 Tweaked shade function, to not unnecessarily draw sides/bottom when shaded.
 Redone button updates, now uses shaped windows.

@@ -1193,8 +1193,8 @@ void randomPosition(struct geometry *g,int monnum)
 			yoff=monitorData[monnum].monY;
 		}
 
-	maxx=wid-(g->width + 2 * g->borderwidth);
-	maxy=hite-(g->height + 2 * g->borderwidth);
+	maxx=wid-(g->width+2 * g->borderwidth);
+	maxy=hite-(g->height+2 * g->borderwidth);
 	
 	if(maxx>0)
 		g->x=(rand() % maxx)+xoff;
@@ -1212,12 +1212,12 @@ unsigned long overlaparea(struct geometry g1,struct geometry g2)
 {
 	int x1=g1.x;
 	int x2=g2.x;
-	int x3=g1.x + g1.width + 2 * g1.borderwidth;
-	int x4=g2.x + g2.width + 2 * g2.borderwidth;
+	int x3=g1.x+g1.width+2 * g1.borderwidth;
+	int x4=g2.x+g2.width+2 * g2.borderwidth;
 	int y1=g1.y;
 	int y2=g2.y;
-	int y3=g1.y + g1.height + 2 * g1.borderwidth;
-	int y4=g2.y + g2.height + 2 * g2.borderwidth;
+	int y3=g1.y+g1.height+2 * g1.borderwidth;
+	int y4=g2.y+g2.height+2 * g2.borderwidth;
 
 	if (x1<x4 && x2<x3 && y1<y4 && y2<y3)
 		{
@@ -1381,9 +1381,9 @@ void smartpos(struct client *c)
 			badness *= overlaps * overlaps;
 
 			// Prefer to position a window near the edges of the display.
-			unsigned x2=DisplayWidth(dpy,screen)-(g.x + g.width);
+			unsigned x2=DisplayWidth(dpy,screen)-(g.x+g.width);
 			badness += MIN((int)g.x,(int)x2);
-			unsigned y2=DisplayHeight(dpy,screen)-(g.y + g.height);
+			unsigned y2=DisplayHeight(dpy,screen)-(g.y+g.height);
 			badness += MIN((int)g.y,(int)y2);
 
 			if (badness<min)

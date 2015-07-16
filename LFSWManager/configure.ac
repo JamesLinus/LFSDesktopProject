@@ -71,5 +71,11 @@ PKG_CHECK_MODULES(IMLIB, $IMLIB_MODULES)
 AC_SUBST(IMLIB_LIBS)
 AC_SUBST(IMLIB_CFLAGS)
 
+AC_ARG_WITH(debug_level,AS_HELP_STRING([ --with-debug-level],[Debug level ( 0,1 )]),
+    [with_debug_level=$withval],
+    [with_debug_level=0])
+AC_SUBST(with_debug_level)
+AC_MSG_RESULT([Setting debug level to $with_debug_level])
+
 AC_OUTPUT(Makefile LFSWManager/app/Makefile)
 

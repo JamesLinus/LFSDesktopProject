@@ -17,7 +17,8 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 				-DGETTEXT_PACKAGE=\"lfswmanager\" \
 				-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
 				-DPACKAGE_DATADIR=\"$(pkgdatadir)\" \
-				-DHELPERDIR=\""${libdir}"\"
+				-DHELPERDIR=\""${libdir}"\" \
+				-D_DEBUGLEVEL_=${with_debug_level}
 
 
 LIBS =			$(XEXT_LIBS) \
