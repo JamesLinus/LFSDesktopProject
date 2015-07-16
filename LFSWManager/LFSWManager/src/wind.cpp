@@ -49,6 +49,14 @@ int					frameTop;
 int					frameBottom;
 int					frameLeft;
 int					frameRight;
+
+#ifdef _DEBUGLEVEL_
+//debug
+int			errLine;
+const char	*errFile;
+const char	*errFunc;
+#endif
+
 /*
  * Print formatted error message
  */

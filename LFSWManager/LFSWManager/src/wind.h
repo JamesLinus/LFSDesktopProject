@@ -31,7 +31,7 @@
 #endif
 #endif
 */
-#if _DEBUGLEVEL_ == DBG1
+#ifdef _DEBUGLEVEL_ == DBG1
 #include "debug.h"
 #else
 #define DEBUGFUNC(x,...) 
@@ -40,6 +40,9 @@
 #define message MESSAGE
 #define CHECKPOINT
 #define checkpoint CHECKPOINT
+#define LASTCHECKPOINT
+#define lastcheckpoint LASTCHECKPOINT
+
 #endif
 
 
