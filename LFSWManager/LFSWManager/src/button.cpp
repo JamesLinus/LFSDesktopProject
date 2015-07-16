@@ -74,8 +74,7 @@ void update(struct button *b)
 						usepixnum=3;
 				}
 
-			GC gc=XCreateGC(dpy,b->window,0,NULL);
-
+			GC gc=XCreateGC(dpy,b->f->window,0,NULL);
 			usepixnum=b->buttonNumber+usepixnum;
 			XSetClipMask(dpy,gc,theme.masks[usepixnum]);
 			XSetClipOrigin(dpy,gc,0,0);
@@ -207,7 +206,7 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 	setlistener(b->window,&b->listen);
 	XGrabButton(dpy,Button1,AnyModifier,b->window,False,EnterWindowMask | LeaveWindowMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);
 	XSelectInput(dpy,b->window,EnterWindowMask | LeaveWindowMask | StructureNotifyMask | ExposureMask);
-	update(b);
+//	update(b);
 	XMapWindow(dpy,b->window);
 	
 	return b;

@@ -650,7 +650,7 @@ void fupdate(struct frame *f)
 	if(theme.useTheme==true)
 		{
 			sz=frameTop;
-			buttonx=theme.buttonOffset;
+			buttonx=theme.buttonOffset+theme.partsWidth[RIGHTACTIVE];
 			buttonspace=theme.buttonSpacing;
 		}
 	else
