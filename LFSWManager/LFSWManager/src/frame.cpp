@@ -195,6 +195,8 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 void mydelete(void *myclient,Time t)
 {
 	CHECKPOINT
+((client*)myclient)->isundecorated=true;
+((client*)myclient)->frame->isClosing=true;
 	cdelete((client*)myclient,t);
 }
 
@@ -383,6 +385,8 @@ void repaint(struct frame *f)
 	if(f->client->isfull==true)
 		return;
 	if(f->client->isundecorated==true)
+		return;
+	if(f->isClosing==true)
 		return;
 
 //TODO//
@@ -647,6 +651,10 @@ void fupdate(struct frame *f)
 	int	buttonx;
 	int	buttonspace;
 
+	if(f==NULL)
+		return;
+	if(f->client->isundecorated==true)
+		return;
 	if(theme.useTheme==true)
 		{
 			sz=frameTop;
@@ -997,6 +1005,7 @@ struct frame *fcreate(struct client *c)
 	f->oldHeight=f->height;
 	f->isMaximized=false;
 	f->isShaded=false;
+	f->isClosing=false;
 
 	f->buttonBarWith=0;
 	wa.bit_gravity=NorthWestGravity;
@@ -1067,17 +1076,45 @@ struct frame *fcreate(struct client *c)
 	return f;
 }
 
+#if 0
 void fdestroy(struct frame *f)
 {
+	setlistener(f->window,NULL);
+	ddestroy(f->topleftresizer);
+	ddestroy(f->toprightresizer);
+	if (f->deletebutton != NULL)
+		bdestroy(f->deletebutton);
+	if (f->maximize != NULL)
+		bdestroy(f->maximize);
+	if (f->minimize != NULL)
+		bdestroy(f->minimize);
+	if (f->shade != NULL)
+		bdestroy(f->shade);
+
+	if (f->pixmap != None)
+		XFreePixmap(dpy,f->pixmap);
+	XDestroyWindow(dpy,f->window);
+	free(f);
+
+	//assert(fcount>0);
+	fcount--;
+	if (fcount==0)
+		{
+			XFreeCursor(dpy,cursortopleft);
+			XFreeCursor(dpy,cursortopright);
+		}
+return;
 	CHECKPOINT
 	Bool hadfocus=chasfocus(f->client);
+	struct geometry g=cgetgeom(f->client);
 
 	XUnmapWindow(dpy,f->window);
 
-	struct geometry g=cgetgeom(f->client);
 	Window clientwin=f->client->window;
 
+printf("000000000000\n");
 	XSetWindowBorderWidth(dpy,clientwin,g.borderwidth);
+printf("11111111111\n");
 	int grav=cgetgrav(f->client);
 	setgrav(clientwin,grav);
 	int dx,dy;
@@ -1087,6 +1124,7 @@ void fdestroy(struct frame *f)
 	g.x=f->x-dx;
 	g.y=f->y-dy;
 	csetgeom(f->client,g);
+printf("22222222222222\n");
 	XReparentWindow(dpy,clientwin,root,g.x,g.y);
 
 	ewmh_notifyframeextents(clientwin,(struct extents)
@@ -1105,6 +1143,13 @@ void fdestroy(struct frame *f)
 	ddestroy(f->toprightresizer);
 	if (f->deletebutton != NULL)
 		bdestroy(f->deletebutton);
+	if (f->maximize != NULL)
+		bdestroy(f->maximize);
+	if (f->minimize != NULL)
+		bdestroy(f->minimize);
+	if (f->shade != NULL)
+		bdestroy(f->shade);
+
 	if (f->pixmap != None)
 		XFreePixmap(dpy,f->pixmap);
 	XDestroyWindow(dpy,f->window);
@@ -1118,6 +1163,70 @@ void fdestroy(struct frame *f)
 			XFreeCursor(dpy,cursortopright);
 		}
 }
+#else
+
+void fdestroy(struct frame *f)
+{
+	CHECKPOINT
+	Bool hadfocus=chasfocus(f->client);
+	struct geometry g=cgetgeom(f->client);
+
+	XUnmapWindow(dpy,f->window);
+
+	Window clientwin=f->client->window;
+
+printf("000000000000\n");
+	XSetWindowBorderWidth(dpy,clientwin,g.borderwidth);
+printf("11111111111\n");
+	int grav=cgetgrav(f->client);
+	setgrav(clientwin,grav);
+	int dx,dy;
+	gravitate(grav,g.borderwidth,&dx,&dy);
+	if (f->client->ismapped)
+		cignoreunmap(f->client);
+	g.x=f->x-dx;
+	g.y=f->y-dy;
+	csetgeom(f->client,g);
+printf("22222222222222\n");
+	XReparentWindow(dpy,clientwin,root,g.x,g.y);
+
+	ewmh_notifyframeextents(clientwin,(struct extents)
+	{
+		.top=0,
+		 .bottom=0,
+		  .left=0,
+		   .right=0
+	});
+
+	reorder(f->window,clientwin);
+	if (hadfocus)
+		cfocus(f->client,CurrentTime);
+	setlistener(f->window,NULL);
+	ddestroy(f->topleftresizer);
+	ddestroy(f->toprightresizer);
+	if (f->deletebutton != NULL)
+		bdestroy(f->deletebutton);
+	if (f->maximize != NULL)
+		bdestroy(f->maximize);
+	if (f->minimize != NULL)
+		bdestroy(f->minimize);
+	if (f->shade != NULL)
+		bdestroy(f->shade);
+
+	if (f->pixmap != None)
+		XFreePixmap(dpy,f->pixmap);
+	XDestroyWindow(dpy,f->window);
+	free(f);
+
+	//assert(fcount>0);
+	fcount--;
+	if (fcount==0)
+		{
+			XFreeCursor(dpy,cursortopleft);
+			XFreeCursor(dpy,cursortopright);
+		}
+}
+#endif
 
 Window fgetwin(struct frame *f)
 {

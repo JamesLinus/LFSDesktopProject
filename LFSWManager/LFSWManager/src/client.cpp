@@ -1084,17 +1084,21 @@ void crelease(struct client *c,Bool clientrequested)
 	CHECKPOINT
 	// Unset this or fdestroy() will refocus the window.
 	c->hasfocus=False;
+//	c->isundecorated=true;
+//	c->frame->isClosing=true;
+
 
 	if (c->frame != NULL)
 		{
 			fdestroy(c->frame);
 			c->frame=NULL;
 		}
-
 	LIST_REMOVE(&c->winstack);
 	needrestack=True;
 
+printf("........................\n");
 	ungrabkey(AnyKey,AnyModifier,c->window);
+printf("######################\n");
 
 	XSelectInput(dpy,c->window,0);
 	setlistener(c->window,NULL);
@@ -1119,9 +1123,13 @@ void crelease(struct client *c,Bool clientrequested)
 void cwithdraw(struct client *c)
 {
 	CHECKPOINT
+	message("withdraw 1");
 	ewmh_withdraw(c);
+	message("withdraw 2");
 	setwmstate(c->window,WithdrawnState);
+	message("withdraw 3");
 	crelease(c,True);
+	message("withdraw 4 ================================");
 }
 
 
@@ -1202,13 +1210,15 @@ void clientevent(void *self,XEvent *e)
 			maprequest((client*)self,&e->xmaprequest);
 			break;
 		case UnmapNotify:
+printf("UnmapNotify client event\n");
 			unmapnotify((client*)self,&e->xunmap);
 			break;
 		case DestroyNotify:
+printf("DestroyNotify client event\n");
 			destroynotify((client*)self,&e->xdestroywindow);
 			break;
 		case ClientMessage:
-//printf("ClientMessage client event\n");
+printf("ClientMessage client event\n");
 			clientmessage((client*)self,&e->xclient);
 			break;
 		case ColormapNotify:

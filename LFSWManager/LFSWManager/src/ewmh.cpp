@@ -88,8 +88,8 @@ void delclient(Window w)
 {
 	CHECKPOINT
 	unsigned int i;
-	for (i=0; i<clientlist.n && clientlist.v[i] != w; i++)
-		;
+
+	for (i=0; i<clientlist.n && clientlist.v[i] != w; i++);
 	if (i<clientlist.n)
 		{
 			for (; i<clientlist.n-1; i++)
@@ -462,12 +462,14 @@ void ewmh_unmanage(struct client *c)
 void ewmh_withdraw(struct client *c)
 {
 	CHECKPOINT
+
+	c->isundecorated=true;
 	Window w=c->window;
+//	XDeleteProperty(dpy,w,NET_WM_ALLOWED_ACTIONS);
+//	XDeleteProperty(dpy,w,NET_WM_DESKTOP);
+//	XDeleteProperty(dpy,w,NET_WM_STATE);
 	ewmh_notifyfocus(w,None);
 	delclient(w);
-	XDeleteProperty(dpy,w,NET_WM_ALLOWED_ACTIONS);
-	XDeleteProperty(dpy,w,NET_WM_DESKTOP);
-	XDeleteProperty(dpy,w,NET_WM_STATE);
 }
 
 void ewmh_notifyrestack(void)
@@ -567,6 +569,7 @@ void ewmh_notifyfull(Window w,Bool full)
 void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 {
 	CHECKPOINT
+
 	if (e->message_type==NET_ACTIVE_WINDOW && e->format==32)
 		{
 			c->isIcon=false;
@@ -590,27 +593,6 @@ void ewmh_clientmessage(struct client *c,XClientMessageEvent *e)
 			csetappdesk(c,e->data.l[0] & 0xffffffff);
 			return;
 		}
-
-#if 0
-	if(((e->message_type==NET_WM_STATE) || (e->message_type==WM_CHANGE_STATE)) && e->format==32)
-		{
-		char *name=NULL;
-		
-		for (int i=1; i <= 2; i++)
-			{
-				if (e->data.l[i] != 0)
-					{
-						name=XGetAtomName(dpy,e->data.l[i]);
-						if(name!=NULL)
-							{
-								printf("how=%i atom %i name=%s\n",e->data.l[0],e->data.l[1],name);
-								XFree(name);
-								name=NULL;
-							}
-					}
-			}
-		}
-#endif
 
 	if ((e->message_type==WM_CHANGE_STATE) && (e->format==32))
 		{
