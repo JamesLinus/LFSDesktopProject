@@ -1,10 +1,10 @@
-.TH "LFSWMANAGER" "1" "0.0.11" "K. D. Hedger" ""
+.TH "LFSWMANAGER" "1" "0.0.12" "K. D. Hedger" ""
 .SH "NAME"
 lfswmanager - window manager
 .br
 
 .SH "SYNOPSIS"
-\fBlfswmanager\fR\fB \fR[ \fB-v \fR] [ \fB-n \fRnumber ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ \fB-\fRT theme ] [ \fB-w\fR outfile ] [ display ]
+\fBlfswmanager\fR [ \fB-n\fR number ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ \fB-\fRT theme ] [ \fB-w\fR outfile ] [ display ]
 .br
 .SH "DESCRIPTION"
 \fBLFSWManager\fR is a window manager for the X Window System.  It supports virtual desktops, Xft font rendering, and is pretty standards compliant, the code base is from the 'wind' window manager available here:
@@ -49,11 +49,6 @@ The following options are recognized:
 \fB-B \fRcolour
 .br
 	Use \fIcolour\fR as focused background.
-.br
-
-\fB-v\fR
-.br
-	Enable debug mode. This puts X11 transactions in synchronous mode, and prints Xlib errors to the standard error file descriptor. This option will slow things down, and is only useful for debugging.
 .br
 
 \fB-p\fR placement

@@ -117,7 +117,7 @@ int errhandler(Display *dpy,XErrorEvent *e)
 			XGetErrorText(dpy,e->error_code,buf,sizeof buf);
 			errorf("Xlib: %s",buf);
 			xerror=buf;
-			printf("<<<<<<<<<<<<<<<<<<<<<\n");
+			printf("<<<<<<<<<<<<<<<<<<<<<<<\n");
 		}
 	return 0;
 }
@@ -341,7 +341,7 @@ int main(int argc,char *argv[])
 	ndesk=numberOfDesktops;
 
 	int opt;
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:T:w:v")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:T:w:")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -393,9 +393,6 @@ int main(int argc,char *argv[])
 				saveVarsToFile(optarg,wmPrefs," ");
 				exit(0);
 				break;
-	//		case 'v':
-	//			debug=True;
-				break;
 			default:
 				usage(stderr);
 				exit(1);
@@ -419,14 +416,6 @@ int main(int argc,char *argv[])
 #else
 	xLibWarnings=false;
 #endif
-
-//	if (debug)
-//		{
-//			fprintf(stderr,"%s\n",PACKAGE_STRING);
-//			fprintf(stderr,"Synchronous DEBUG mode enabled. "
-//			        "Printing Xlib errors on standard error.\n");
-//			fprintf(stderr,"Report bugs to <kdhedger68713@gmail.com>.\n");
-//		}
 
 	XSetErrorHandler(errhandler);
 

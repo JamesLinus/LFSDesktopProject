@@ -1,7 +1,8 @@
 0.0.12
+Removed useless non-fatal xlib warnings when not in debug mode.
 Fixed trying to draw border/buttons on undecorated windows.
 Fixed minor visual bug placing buttons when themerc button_offset=0.
-Added debug checkpoints to most functions.
+Added debug checkpoints to most functions ( not used unless --with-debug-level=1 ).
 Added beter debug code.
 Removed some unwanted traps.
 Added '--with-debug-level' to configure 0 - No debug, 1 - write to stderr and logfile ( default 0 ).
