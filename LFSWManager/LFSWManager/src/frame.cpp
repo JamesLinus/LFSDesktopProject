@@ -55,12 +55,12 @@ int		depth=0;
 size_t	fcount;
 Cursor	cursortopleft=None;
 Cursor	cursortopright=None;
+Cursor	cursorRight=None;
 Cursor	cursorBottomRight=None;
 Cursor	cursorBottom=None;
-Cursor	cursorRight=None;
-Cursor	cursorLeft=None;
 Cursor	cursorBottomLeft=None;
-Cursor	cursorTop=None;
+Cursor	cursorLeft=None;
+
 bool	swapdesk=false;
 int		nx;
 Window	windowToUpdate=None;
@@ -717,16 +717,6 @@ void fupdate(struct frame *f)
 			buttonx+=theme.partsWidth[SHADEACTIVE]+buttonspace;
 
 			f->buttonBarWith= buttonx;
-
-//NEEDS CLEANING//
-			if(f->deletebutton!=NULL)
-				update(f->deletebutton);
-			if(f->maximize!=NULL)
-				update(f->maximize);
-			if(f->minimize!=NULL)
-				update(f->minimize);
-			if(f->shade!=NULL)
-				update(f->shade);
 			}
 		}
 	else
@@ -798,6 +788,14 @@ void fupdate(struct frame *f)
 						}
 				}
 		}
+	if(f->deletebutton!=NULL)
+		update(f->deletebutton);
+	if(f->maximize!=NULL)
+		update(f->maximize);
+	if(f->minimize!=NULL)
+		update(f->minimize);
+	if(f->shade!=NULL)
+		update(f->shade);
 	repaint(f);
 }
 
@@ -1041,6 +1039,36 @@ void resizeBottomRight(void *self,int xdrag,int ydrag,unsigned long counter,Time
 			cfocus(f->client,t);
 		}
 	moveresize(f,f->x,f->y,w,h);
+	//f->bottomResizer->window;
+}
+
+void resizeBottomLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
+{
+	CHECKPOINT
+	struct frame	*f=(frame*)self;
+	int				x,w,h;
+
+	if(f->isShaded==true)
+		return;
+
+	w=f->width-(xdrag-f->x);
+	h=ydrag+1-f->y;
+	h -= frameTop+frameBottom;
+	w -= frameLeft+frameRight;
+
+	chintsize(f->client,w,h,&w,&h);
+	w += frameLeft+frameRight;
+	x=f->x+f->width-w;
+
+	h += frameTop+frameBottom;
+
+	if (counter==0)
+		{
+			cpopapp(f->client);
+			cfocus(f->client,t);
+		}
+	moveresize(f,x,f->y,w,h);
+	repaint(f);
 }
 
 void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
@@ -1081,9 +1109,10 @@ struct frame *fcreate(struct client *c)
 		{
 			cursortopleft=XCreateFontCursor(dpy,XC_top_left_corner);
 			cursortopright=XCreateFontCursor(dpy,XC_top_right_corner);
-			cursorBottomRight=XCreateFontCursor(dpy,XC_bottom_right_corner);
 			cursorRight=XCreateFontCursor(dpy,XC_right_side);
+			cursorBottomRight=XCreateFontCursor(dpy,XC_bottom_right_corner);
 			cursorBottom=XCreateFontCursor(dpy,XC_bottom_side);
+			cursorBottomLeft=XCreateFontCursor(dpy,XC_bottom_left_corner);
 			cursorLeft=XCreateFontCursor(dpy,XC_left_side);
 		}
 	fcount++;
@@ -1134,7 +1163,6 @@ struct frame *fcreate(struct client *c)
 	XSelectInput(dpy,f->window,SubstructureRedirectMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
 
 	grabbutton(Button1,Mod1Mask,f->window,False,ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);
-
 	/*
 	 * The order in which the resizers and the delete button
 	 * are created is important since it determines their
@@ -1147,10 +1175,13 @@ struct frame *fcreate(struct client *c)
 	int dh=frameTop+2;
 	f->topleftresizer=dcreate(f->window,0,0,dw,dh,NorthWestGravity,cursortopleft,resizetopleft,f);
 	f->toprightresizer=dcreate(f->window,f->width-dw,0,dw,dh,NorthEastGravity,cursortopright,resizetopright,f);
-	f->bottomRightResizer=dcreate(f->window,f->width-dw,f->height-dw,dw,dh,SouthEastGravity,cursorBottomRight,resizeBottomRight,f);
+
+	f->bottomRightResizer=dcreate(f->window,f->width-frameRight,f->height-frameBottom,frameLeft,frameBottom,SouthEastGravity,cursorBottomRight,resizeBottomRight,f);
+
 	f->bottomResizer=dcreate(f->window,frameLeft,f->height-frameBottom,f->width-frameLeft-frameRight,frameBottom,SouthGravity,cursorBottom,resizeBottom,f);
 	f->rightResizer=dcreate(f->window,f->width-frameRight,frameTop,frameRight,f->height-frameBottom-frameTop,EastGravity,cursorRight,resizeRight,f);
 	f->leftResizer=dcreate(f->window,0,frameTop,frameLeft,f->height-frameBottom-frameTop,WestGravity,cursorLeft,resizeLeft,f);
+	f->bottomLeftResizer=dcreate(f->window,0,f->height-frameBottom,frameLeft,frameBottom,SouthWestGravity,cursorBottomLeft,resizeBottomLeft,f);
 
 	f->deletebutton=NULL;
 	f->maximize=NULL;

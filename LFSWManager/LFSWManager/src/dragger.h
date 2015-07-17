@@ -13,6 +13,19 @@
 #ifndef _DRAGGER_
 #define _DRAGGER_
 
+struct dragger
+{
+	struct listener listener;
+	void (*dragnotify)(void *,int,int,unsigned long,Time);
+	void *arg;
+	unsigned long counter;
+	Window window;
+	int x0;
+	int y0;
+	int x;
+	int y;
+};
+
 struct dragger *dcreate(Window,int,int,int,int,int,Cursor,void (*)(void *,int,int,unsigned long,Time),void *);
 void ddestroy(struct dragger *);
 

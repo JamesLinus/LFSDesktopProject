@@ -28,7 +28,6 @@ struct frame
 	struct dragger	*bottomResizer;
 	struct dragger	*rightResizer;
 	struct dragger	*leftResizer;
-	struct dragger	*topResizer;
 
 	Pixmap			pixmap;
 	Pixmap			mask;

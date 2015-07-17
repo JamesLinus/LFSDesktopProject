@@ -38,19 +38,7 @@
 #include "wind.h"
 #include "lib.h"
 #include "frame.h"
-
-struct dragger
-{
-	struct listener listener;
-	void (*dragnotify)(void *,int,int,unsigned long,Time);
-	void *arg;
-	unsigned long counter;
-	Window window;
-	int x0;
-	int y0;
-	int x;
-	int y;
-};
+#include "dragger.h"
 
 void buttonpress(struct dragger *,XButtonEvent *);
 void motionnotify(struct dragger *,XMotionEvent *);
@@ -142,7 +130,6 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 	d->y=0;
 	d->dragnotify=dragnotify;
 	d->arg=arg;
-//	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask,GrabModeAsync,GrabModeAsync,None,cursor);
 	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,cursor);
 	XMapWindow(dpy,d->window);
 	return d;
