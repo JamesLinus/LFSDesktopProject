@@ -52,10 +52,11 @@ int					frameRight;
 
 #ifdef _DEBUGLEVEL_
 //debug
-int			errLine;
-const char	*errFile;
-const char	*errFunc;
+int					errLine;
+const char			*errFile;
+const char			*errFunc;
 #endif
+bool				xLibWarnings=false;
 
 /*
  * Print formatted error message

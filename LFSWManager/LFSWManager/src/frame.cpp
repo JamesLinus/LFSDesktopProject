@@ -195,8 +195,7 @@ void moveresize(struct frame *f,int x,int y,int w,int h)
 void mydelete(void *myclient,Time t)
 {
 	CHECKPOINT
-((client*)myclient)->isundecorated=true;
-((client*)myclient)->frame->isClosing=true;
+	((client*)myclient)->isundecorated=true;
 	cdelete((client*)myclient,t);
 }
 
@@ -385,8 +384,6 @@ void repaint(struct frame *f)
 	if(f->client->isfull==true)
 		return;
 	if(f->client->isundecorated==true)
-		return;
-	if(f->isClosing==true)
 		return;
 
 //TODO//
@@ -1005,7 +1002,6 @@ struct frame *fcreate(struct client *c)
 	f->oldHeight=f->height;
 	f->isMaximized=false;
 	f->isShaded=false;
-	f->isClosing=false;
 
 	f->buttonBarWith=0;
 	wa.bit_gravity=NorthWestGravity;
@@ -1168,6 +1164,7 @@ printf("22222222222222\n");
 void fdestroy(struct frame *f)
 {
 	CHECKPOINT
+
 	Bool hadfocus=chasfocus(f->client);
 	struct geometry g=cgetgeom(f->client);
 
@@ -1175,9 +1172,8 @@ void fdestroy(struct frame *f)
 
 	Window clientwin=f->client->window;
 
-printf("000000000000\n");
 	XSetWindowBorderWidth(dpy,clientwin,g.borderwidth);
-printf("11111111111\n");
+
 	int grav=cgetgrav(f->client);
 	setgrav(clientwin,grav);
 	int dx,dy;
@@ -1187,7 +1183,6 @@ printf("11111111111\n");
 	g.x=f->x-dx;
 	g.y=f->y-dy;
 	csetgeom(f->client,g);
-printf("22222222222222\n");
 	XReparentWindow(dpy,clientwin,root,g.x,g.y);
 
 	ewmh_notifyframeextents(clientwin,(struct extents)

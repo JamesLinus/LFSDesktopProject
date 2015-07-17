@@ -86,7 +86,7 @@ int				exitstatus;
  * If true,enable debug mode. This will enable synchronous
  * X11 transactions,and print Xlib errors to standard error.
  */
-Bool			debug=False;
+//Bool			debug=False;
 
 // The display name used in call to XOpenDisplay
 const char		*displayname=NULL;
@@ -108,15 +108,17 @@ sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
-
-lastcheckpoint(">>>>>>>>>>>>>>>>>>>>>>>");
 	char buf[128];
-	buf[0]='\0';
-	XGetErrorText(dpy,e->error_code,buf,sizeof buf);
-	if (debug)
-		errorf("Xlib: %s",buf);
-	xerror=buf;
-printf("<<<<<<<<<<<<<<<<<<<<<\n");
+
+	if(xLibWarnings==true)
+		{
+			lastcheckpoint(">>>>>>>>>>>>>>>>>>>>>>>");
+			buf[0]='\0';
+			XGetErrorText(dpy,e->error_code,buf,sizeof buf);
+			errorf("Xlib: %s",buf);
+			xerror=buf;
+			printf("<<<<<<<<<<<<<<<<<<<<<\n");
+		}
 	return 0;
 }
 
@@ -391,8 +393,8 @@ int main(int argc,char *argv[])
 				saveVarsToFile(optarg,wmPrefs," ");
 				exit(0);
 				break;
-			case 'v':
-				debug=True;
+	//		case 'v':
+	//			debug=True;
 				break;
 			default:
 				usage(stderr);
@@ -409,13 +411,22 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-	if (debug)
-		{
-			fprintf(stderr,"%s\n",PACKAGE_STRING);
-			fprintf(stderr,"Synchronous DEBUG mode enabled. "
-			        "Printing Xlib errors on standard error.\n");
-			fprintf(stderr,"Report bugs to <kdhedger68713@gmail.com>.\n");
-		}
+#if _DEBUGLEVEL_ == DBG1
+	xLibWarnings=true;
+	fprintf(stderr,"%s\n",PACKAGE_STRING);
+	fprintf(stderr,"Synchronous DEBUG mode enabled. Printing Xlib errors on standard error.\n");
+	fprintf(stderr,"Report bugs to <kdhedger68713@gmail.com>.\n");
+#else
+	xLibWarnings=false;
+#endif
+
+//	if (debug)
+//		{
+//			fprintf(stderr,"%s\n",PACKAGE_STRING);
+//			fprintf(stderr,"Synchronous DEBUG mode enabled. "
+//			        "Printing Xlib errors on standard error.\n");
+//			fprintf(stderr,"Report bugs to <kdhedger68713@gmail.com>.\n");
+//		}
 
 	XSetErrorHandler(errhandler);
 
@@ -425,7 +436,7 @@ int main(int argc,char *argv[])
 			exit(1);
 		}
 
-	XSynchronize(dpy,debug);
+	XSynchronize(dpy,xLibWarnings);
 
 	screen=DefaultScreen(dpy);
 	displayWidth=DisplayWidth(dpy,screen);

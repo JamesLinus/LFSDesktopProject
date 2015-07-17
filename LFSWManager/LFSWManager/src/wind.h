@@ -31,7 +31,7 @@
 #endif
 #endif
 */
-#ifdef _DEBUGLEVEL_ == DBG1
+#if _DEBUGLEVEL_ == DBG1
 #include "debug.h"
 #else
 #define DEBUGFUNC(x,...) 
@@ -218,6 +218,9 @@ extern int				frameTop;
 extern int				frameBottom;
 extern int				frameLeft;
 extern int				frameRight;
+
+//debug
+extern bool				xLibWarnings;
 
 void errorf(const char *,...);
 void setlistener(Window,const struct listener *);
