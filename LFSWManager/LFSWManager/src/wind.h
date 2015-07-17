@@ -42,7 +42,6 @@
 #define checkpoint CHECKPOINT
 #define LASTCHECKPOINT
 #define lastcheckpoint LASTCHECKPOINT
-
 #endif
 
 

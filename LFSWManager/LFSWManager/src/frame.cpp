@@ -55,7 +55,12 @@ int		depth=0;
 size_t	fcount;
 Cursor	cursortopleft=None;
 Cursor	cursortopright=None;
+Cursor	cursorBottomRight=None;
+Cursor	cursorBottom=None;
+Cursor	cursorRight=None;
+Cursor	cursorLeft=None;
 Cursor	cursorBottomLeft=None;
+Cursor	cursorTop=None;
 bool	swapdesk=false;
 int		nx;
 Window	windowToUpdate=None;
@@ -908,6 +913,31 @@ void frameevent(void *self,XEvent *e)
 		}
 }
 
+void resizeLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
+{
+	CHECKPOINT
+	struct frame	*f=(frame*)self;
+	int				x,y,w,h;
+
+	if(f->isShaded==true)
+		return;
+
+	w=f->width-(xdrag-f->x);
+	h=f->height;
+
+	w -= frameLeft+frameRight;
+	chintsize(f->client,w,h,&w,&h);
+	w += frameLeft+frameRight;
+	x=f->x+f->width-w;
+
+	if (counter==0)
+		{
+			cpopapp(f->client);
+			cfocus(f->client,t);
+		}
+	moveresize(f,x,f->y,w,f->height);
+}
+
 void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
 	CHECKPOINT
@@ -934,6 +964,83 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 			cfocus(f->client,t);
 		}
 	moveresize(f,x,y,w,h);
+}
+
+void resizeBottom(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
+{
+	CHECKPOINT
+	struct frame	*f=(frame*)self;
+	int				w,h;
+
+	if(f->isShaded==true)
+		return;
+
+	w=f->width;
+	h=ydrag+1-f->y;
+	h -= frameTop+frameBottom;
+
+	chintsize(f->client,w,h,&w,&h);
+
+	h += frameTop+frameBottom;
+
+	if (counter==0)
+		{
+			cpopapp(f->client);
+			cfocus(f->client,t);
+		}
+	moveresize(f,f->x,f->y,f->width,h);
+	repaint(f);
+}
+
+void resizeRight(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
+{
+	CHECKPOINT
+	struct frame	*f=(frame*)self;
+	int				w,h;
+
+	if(f->isShaded==true)
+		return;
+
+	w=xdrag+1-f->x;
+	w -= frameLeft+frameRight;
+	h=f->height;
+
+	chintsize(f->client,w,h,&w,&h);
+	w += frameLeft+frameRight;
+
+	if (counter==0)
+		{
+			cpopapp(f->client);
+			cfocus(f->client,t);
+		}
+	moveresize(f,f->x,f->y,w,f->height);
+}
+
+void resizeBottomRight(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
+{
+	CHECKPOINT
+	struct frame	*f=(frame*)self;
+	int				w,h;
+
+	if(f->isShaded==true)
+		return;
+
+	w=xdrag+1-f->x;
+	h=ydrag+1-f->y;
+
+	w -= frameLeft+frameRight;
+	h -= frameTop+frameBottom;
+
+	chintsize(f->client,w,h,&w,&h);
+	w += frameLeft+frameRight;
+	h += frameTop+frameBottom;
+
+	if (counter==0)
+		{
+			cpopapp(f->client);
+			cfocus(f->client,t);
+		}
+	moveresize(f,f->x,f->y,w,h);
 }
 
 void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
@@ -974,7 +1081,10 @@ struct frame *fcreate(struct client *c)
 		{
 			cursortopleft=XCreateFontCursor(dpy,XC_top_left_corner);
 			cursortopright=XCreateFontCursor(dpy,XC_top_right_corner);
-			cursorBottomLeft=XCreateFontCursor(dpy,XC_bottom_left_corner);
+			cursorBottomRight=XCreateFontCursor(dpy,XC_bottom_right_corner);
+			cursorRight=XCreateFontCursor(dpy,XC_right_side);
+			cursorBottom=XCreateFontCursor(dpy,XC_bottom_side);
+			cursorLeft=XCreateFontCursor(dpy,XC_left_side);
 		}
 	fcount++;
 
@@ -1032,11 +1142,15 @@ struct frame *fcreate(struct client *c)
 	 * that the right resizer and the delete button are above
 	 * the left resizer.
 	 */
-
+//dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)
 	int dw=font->size+1;
 	int dh=frameTop+2;
 	f->topleftresizer=dcreate(f->window,0,0,dw,dh,NorthWestGravity,cursortopleft,resizetopleft,f);
 	f->toprightresizer=dcreate(f->window,f->width-dw,0,dw,dh,NorthEastGravity,cursortopright,resizetopright,f);
+	f->bottomRightResizer=dcreate(f->window,f->width-dw,f->height-dw,dw,dh,SouthEastGravity,cursorBottomRight,resizeBottomRight,f);
+	f->bottomResizer=dcreate(f->window,frameLeft,f->height-frameBottom,f->width-frameLeft-frameRight,frameBottom,SouthGravity,cursorBottom,resizeBottom,f);
+	f->rightResizer=dcreate(f->window,f->width-frameRight,frameTop,frameRight,f->height-frameBottom-frameTop,EastGravity,cursorRight,resizeRight,f);
+	f->leftResizer=dcreate(f->window,0,frameTop,frameLeft,f->height-frameBottom-frameTop,WestGravity,cursorLeft,resizeLeft,f);
 
 	f->deletebutton=NULL;
 	f->maximize=NULL;
@@ -1072,95 +1186,6 @@ struct frame *fcreate(struct client *c)
 	return f;
 }
 
-#if 0
-void fdestroy(struct frame *f)
-{
-	setlistener(f->window,NULL);
-	ddestroy(f->topleftresizer);
-	ddestroy(f->toprightresizer);
-	if (f->deletebutton != NULL)
-		bdestroy(f->deletebutton);
-	if (f->maximize != NULL)
-		bdestroy(f->maximize);
-	if (f->minimize != NULL)
-		bdestroy(f->minimize);
-	if (f->shade != NULL)
-		bdestroy(f->shade);
-
-	if (f->pixmap != None)
-		XFreePixmap(dpy,f->pixmap);
-	XDestroyWindow(dpy,f->window);
-	free(f);
-
-	//assert(fcount>0);
-	fcount--;
-	if (fcount==0)
-		{
-			XFreeCursor(dpy,cursortopleft);
-			XFreeCursor(dpy,cursortopright);
-		}
-return;
-	CHECKPOINT
-	Bool hadfocus=chasfocus(f->client);
-	struct geometry g=cgetgeom(f->client);
-
-	XUnmapWindow(dpy,f->window);
-
-	Window clientwin=f->client->window;
-
-printf("000000000000\n");
-	XSetWindowBorderWidth(dpy,clientwin,g.borderwidth);
-printf("11111111111\n");
-	int grav=cgetgrav(f->client);
-	setgrav(clientwin,grav);
-	int dx,dy;
-	gravitate(grav,g.borderwidth,&dx,&dy);
-	if (f->client->ismapped)
-		cignoreunmap(f->client);
-	g.x=f->x-dx;
-	g.y=f->y-dy;
-	csetgeom(f->client,g);
-printf("22222222222222\n");
-	XReparentWindow(dpy,clientwin,root,g.x,g.y);
-
-	ewmh_notifyframeextents(clientwin,(struct extents)
-	{
-		.top=0,
-		 .bottom=0,
-		  .left=0,
-		   .right=0
-	});
-
-	reorder(f->window,clientwin);
-	if (hadfocus)
-		cfocus(f->client,CurrentTime);
-	setlistener(f->window,NULL);
-	ddestroy(f->topleftresizer);
-	ddestroy(f->toprightresizer);
-	if (f->deletebutton != NULL)
-		bdestroy(f->deletebutton);
-	if (f->maximize != NULL)
-		bdestroy(f->maximize);
-	if (f->minimize != NULL)
-		bdestroy(f->minimize);
-	if (f->shade != NULL)
-		bdestroy(f->shade);
-
-	if (f->pixmap != None)
-		XFreePixmap(dpy,f->pixmap);
-	XDestroyWindow(dpy,f->window);
-	free(f);
-
-	//assert(fcount>0);
-	fcount--;
-	if (fcount==0)
-		{
-			XFreeCursor(dpy,cursortopleft);
-			XFreeCursor(dpy,cursortopright);
-		}
-}
-#else
-
 void fdestroy(struct frame *f)
 {
 	CHECKPOINT
@@ -1221,7 +1246,6 @@ void fdestroy(struct frame *f)
 			XFreeCursor(dpy,cursortopright);
 		}
 }
-#endif
 
 Window fgetwin(struct frame *f)
 {

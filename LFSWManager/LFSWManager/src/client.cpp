@@ -1876,8 +1876,7 @@ int cgetgrav(struct client *c)
 		return NorthWestGravity;
 }
 
-void chintsize(struct client *c,int width,int height,
-               int *rwidth,int *rheight)
+void chintsize(struct client *c,int width,int height,int *rwidth,int *rheight)
 {
 	CHECKPOINT
 	width=MAX(1,width);

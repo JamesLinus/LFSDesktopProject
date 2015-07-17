@@ -108,6 +108,7 @@ sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
+#if _DEBUGLEVEL_ == DBG1
 	char buf[128];
 
 	if(xLibWarnings==true)
@@ -119,6 +120,7 @@ int errhandler(Display *dpy,XErrorEvent *e)
 			xerror=buf;
 			printf("<<<<<<<<<<<<<<<<<<<<<<<\n");
 		}
+#endif
 	return 0;
 }
 

@@ -1,4 +1,8 @@
 0.0.12
+added right edge resize.
+Added bottom edge resize.
+Added right edge resize.
+Added bottom right corner resize.
 Removed useless non-fatal xlib warnings when not in debug mode.
 Fixed trying to draw border/buttons on undecorated windows.
 Fixed minor visual bug placing buttons when themerc button_offset=0.

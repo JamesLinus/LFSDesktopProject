@@ -23,6 +23,13 @@ struct frame
 	struct button	*shade;
 	struct dragger	*topleftresizer;
 	struct dragger	*toprightresizer;
+	struct dragger	*bottomLeftResizer;
+	struct dragger	*bottomRightResizer;
+	struct dragger	*bottomResizer;
+	struct dragger	*rightResizer;
+	struct dragger	*leftResizer;
+	struct dragger	*topResizer;
+
 	Pixmap			pixmap;
 	Pixmap			mask;
 	GC				maskGC;
