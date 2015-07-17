@@ -108,14 +108,15 @@ sigset_t		sigmask;
 
 int errhandler(Display *dpy,XErrorEvent *e)
 {
-	CHECKPOINT
 
+lastcheckpoint(">>>>>>>>>>>>>>>>>>>>>>>");
 	char buf[128];
 	buf[0]='\0';
 	XGetErrorText(dpy,e->error_code,buf,sizeof buf);
 	if (debug)
 		errorf("Xlib: %s",buf);
 	xerror=buf;
+printf("<<<<<<<<<<<<<<<<<<<<<\n");
 	return 0;
 }
 

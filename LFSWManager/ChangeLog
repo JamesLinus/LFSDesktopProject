@@ -1,4 +1,5 @@
 0.0.12
+Fixed trying to draw border/buttons on undecorated windows.
 Fixed minor visual bug placing buttons when themerc button_offset=0.
 Added debug checkpoints to most functions.
 Added beter debug code.

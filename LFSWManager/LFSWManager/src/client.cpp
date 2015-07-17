@@ -1562,11 +1562,7 @@ struct client *manage(Window window)
 	c->listener.function=clientevent;
 	c->listener.pointer=c;
 	setlistener(c->window,&c->listener);
-	XSelectInput(dpy,c->window,
-	             StructureNotifyMask |
-	             PropertyChangeMask |
-	             ColormapChangeMask |
-	             FocusChangeMask);
+	XSelectInput(dpy,c->window,StructureNotifyMask | PropertyChangeMask | ColormapChangeMask | FocusChangeMask);
 
 	XSync(dpy,False);
 	/*
@@ -1638,12 +1634,14 @@ struct client *manage(Window window)
 					{
 						c->followdesk=true;
 						c->isDesktop=True;
+						c->isundecorated=true;
 						down=true;
 					}
 				if (types[i]==NET_WM_WINDOW_TYPE_DOCK)
 					{
 						c->followdesk=true;
 						c->isDock=true;
+						c->isundecorated=true;
 						up=true;
 					}
 				}
@@ -1670,6 +1668,10 @@ struct client *manage(Window window)
 						c->canMaximize=false;
 					if ((hints->decorations & MWM_DECOR_MINIMIZE) == 0)
 						c->canMinimize=false;
+
+					if (hints->decorations==0)
+						c->isundecorated=true;
+
 				}
 			XFree(hints);
 		}

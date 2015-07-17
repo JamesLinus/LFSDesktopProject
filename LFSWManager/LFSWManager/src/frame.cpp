@@ -382,6 +382,8 @@ void repaint(struct frame *f)
 		return;
 	if(f->client->isfull==true)
 		return;
+	if(f->client->isundecorated==true)
+		return;
 
 //TODO//
 	int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
@@ -454,8 +456,6 @@ void repaint(struct frame *f)
 
 					if(titlewidth>=f->width-(f->buttonBarWith+ends+theme.buttonOffset+64))
 						{
-							//titlewidth=f->width-(f->buttonBarWith);
-							//titlewidth=200;
 							titlewidth=f->width-(f->buttonBarWith+ends+theme.buttonOffset+64);
 							f->maxNameWidth=titlewidth;
 						}
@@ -662,6 +662,8 @@ void fupdate(struct frame *f)
 
 	if(theme.useTheme==true)
 		{
+			if(cisframed(f->client)==true)
+			{
 //close button
 
 			if(chaswmproto(f->client,WM_DELETE_WINDOW))
@@ -715,6 +717,7 @@ void fupdate(struct frame *f)
 				update(f->minimize);
 			if(f->shade!=NULL)
 				update(f->shade);
+			}
 		}
 	else
 		{
