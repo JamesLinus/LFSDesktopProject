@@ -391,8 +391,6 @@ void repaint(struct frame *f)
 	if(f->client->isundecorated==true)
 		return;
 
-//TODO//
-	int buttonwidth=theme.partsHeight[TOPLEFTACTIVE];
 	namewidth=MIN(namewidth,f->width-2 * (1+font->size));
 	namewidth=MAX(namewidth,0);
 
@@ -1164,7 +1162,22 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 struct frame *fcreate(struct client *c)
 {
 	CHECKPOINT
+
 	XSetWindowAttributes	wa;
+	int						topleftdw;
+	int						topleftdh;
+	int						bottomleftdw;
+	int						bottomleftdh;
+	int						toprightdw;
+	int						toprightdh;
+	int						bottomrightdw;
+	int						bottomrightdh;
+	int						bottomdw;
+	int						bottomdh;
+	int						leftdw;
+	int						leftdh;
+	int						rightdw;
+	int						rightdh;
 
 	if (fcount==0)
 		{
@@ -1192,7 +1205,6 @@ struct frame *fcreate(struct client *c)
 	f->y=g.y+dy;
 
 	f->width=g.width+frameLeft+frameRight;
-
 	f->height=g.height+frameTop+frameBottom;
 
 	f->grabbed=False;
@@ -1231,21 +1243,6 @@ struct frame *fcreate(struct client *c)
 	 * that the right resizer and the delete button are above
 	 * the left resizer.
 	 */
-//dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)
-	int topleftdw;
-	int topleftdh;
-	int bottomleftdw;
-	int bottomleftdh;
-	int toprightdw;
-	int toprightdh;
-	int bottomrightdw;
-	int bottomrightdh;
-	int	bottomdw;
-	int bottomdh;
-	int leftdw;
-	int leftdh;
-	int rightdw;
-	int rightdh;
 
 	if(theme.useTheme==true)
 		{

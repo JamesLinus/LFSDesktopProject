@@ -41,8 +41,20 @@
 #include "dragger.h"
 #include "client.h"
 
-void buttonpress(struct dragger *,XButtonEvent *);
-void motionnotify(struct dragger *,XMotionEvent *);
+void buttonpress(struct dragger *d,XButtonEvent *e)
+{
+	d->counter=0;
+	d->x=e->x-d->x0;
+	d->y=e->y-d->y0;
+	if (d->dragnotify != NULL)
+		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
+}
+
+void motionnotify(struct dragger *d,XMotionEvent *e)
+{
+	if (d->dragnotify != NULL)
+		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
+}
 
 void draggerevent(void *self,XEvent *e)
 {
@@ -149,19 +161,4 @@ void ddestroy(struct dragger *d)
 	setlistener(d->window,NULL);
 	XDestroyWindow(dpy,d->window);
 	free(d);
-}
-
-void buttonpress(struct dragger *d,XButtonEvent *e)
-{
-	d->counter=0;
-	d->x=e->x-d->x0;
-	d->y=e->y-d->y0;
-	if (d->dragnotify != NULL)
-		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
-}
-
-void motionnotify(struct dragger *d,XMotionEvent *e)
-{
-	if (d->dragnotify != NULL)
-		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
 }
