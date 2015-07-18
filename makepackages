@@ -19,6 +19,9 @@ pushd /tmp/tmp
 
 	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSWManager
 	rm -r LFSWManager/.svn
+	debugfile=$(readlink LFSWManager/LFSWManager/src/debug.h)
+	rm LFSWManager/LFSWManager/src/debug.h
+	cp -fv "${debugfile}" LFSWManager/LFSWManager/src
 	tar -cvzf LFSWManager-$wmversion.tar.gz LFSWManager
 popd
 
