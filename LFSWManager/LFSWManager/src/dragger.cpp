@@ -39,6 +39,7 @@
 #include "lib.h"
 #include "frame.h"
 #include "dragger.h"
+#include "client.h"
 
 void buttonpress(struct dragger *,XButtonEvent *);
 void motionnotify(struct dragger *,XMotionEvent *);
@@ -55,6 +56,7 @@ void draggerevent(void *self,XEvent *e)
 					windowToUpdate=None;
 				}
 			fromDragger=false;
+			csendconf(((frame*)((dragger*)self)->arg)->client);
 			break;
 
 		case MotionNotify:
@@ -76,8 +78,8 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 	sa.cursor=cursor;
 
 	struct dragger *d=(dragger*)xmalloc(sizeof *d);
-//	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,&sa);
-	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity | CWCursor,&sa);
+	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,&sa);
+//	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity | CWCursor,&sa);
 	d->listener.function=draggerevent;
 	d->listener.pointer=d;
 	setlistener(d->window,&d->listener);
@@ -133,6 +135,8 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 	d->height=height;
 	d->dragnotify=dragnotify;
 	d->arg=arg;
+	d->wadjust=((frame*)arg)->width-width;
+	d->hadjust=((frame*)arg)->height-height;
 	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,cursor);
 	XMapWindow(dpy,d->window);
 

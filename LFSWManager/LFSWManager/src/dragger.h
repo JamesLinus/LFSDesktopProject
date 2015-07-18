@@ -26,6 +26,8 @@ struct dragger
 	int y;
 	int width;
 	int height;
+	int wadjust;
+	int hadjust;
 };
 
 struct dragger *dcreate(Window,int,int,int,int,int,Cursor,void (*)(void *,int,int,unsigned long,Time),void *);

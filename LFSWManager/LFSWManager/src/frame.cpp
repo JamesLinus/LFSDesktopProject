@@ -622,8 +622,9 @@ void repaint(struct frame *f)
 			XShapeCombineMask(dpy,f->window,ShapeBounding,0,0,f->mask,ShapeSet);
 
 
-//if(partoffset==0)
-//{
+#if 0
+if(partoffset==0)
+{
 //printf(">>x=%i y=%i\n",f->bottomRightResizer->x,f->bottomRightResizer->y);
 			gc=XCreateGC(dpy,f->bottomRightResizer->window,0,NULL);
 			XSetClipMask(dpy,gc,None);
@@ -634,11 +635,13 @@ void repaint(struct frame *f)
 			XFillRectangle(dpy,f->topleftresizer->window,background,0,0,100,100);
 			XFillRectangle(dpy,f->toprightresizer->window,background,0,0,100,100);
 			XFillRectangle(dpy,f->bottomLeftResizer->window,background,0,0,100,100);
-//}
+			XFillRectangle(dpy,f->leftResizer->window,background,0,0,5000,5000);
+			XFillRectangle(dpy,f->rightResizer->window,background,0,0,5000,5000);
 
-
-
-
+			XFillRectangle(dpy,f->bottomResizer->window,background,0,0,5000,5000);
+printf("h=%i\n",f->rightResizer->height);
+}
+#endif
 		}
 	else
 		{
@@ -930,11 +933,32 @@ void frameevent(void *self,XEvent *e)
 		}
 }
 
+void adjustDraggers(struct frame *f)
+{
+	struct dragger	*d;
+
+//bottom
+	d=f->bottomResizer;
+	d->width=f->width-d->wadjust;
+	XResizeWindow(dpy,d->window,d->width,d->height);
+
+//left
+	d=f->leftResizer;
+	d->height=f->height-d->hadjust;
+	XResizeWindow(dpy,d->window,d->width,d->height);
+//right
+	d=f->rightResizer;
+	d->height=f->height-d->hadjust;
+	XResizeWindow(dpy,d->window,d->width,d->height);
+}
+
 void resizeLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
 	CHECKPOINT
 	struct frame	*f=(frame*)self;
-	int				x,y,w,h;
+	struct dragger	*d=f->leftResizer;
+	int				x,w,h;
+	int				woffset=d->width;
 
 	if(f->isShaded==true)
 		return;
@@ -942,9 +966,9 @@ void resizeLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 	w=f->width-(xdrag-f->x);
 	h=f->height;
 
-	w -= frameLeft+frameRight;
+	w -= woffset;
 	chintsize(f->client,w,h,&w,&h);
-	w += frameLeft+frameRight;
+	w += woffset;
 	x=f->x+f->width-w;
 
 	if (counter==0)
@@ -953,6 +977,7 @@ void resizeLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 			cfocus(f->client,t);
 		}
 	moveresize(f,x,f->y,w,f->height);
+	adjustDraggers(f);
 }
 
 void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
@@ -981,24 +1006,28 @@ void resizetopleft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 			cfocus(f->client,t);
 		}
 	moveresize(f,x,y,w,h);
+	adjustDraggers(f);
 }
 
 void resizeBottom(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
 	CHECKPOINT
+
 	struct frame	*f=(frame*)self;
+	struct dragger	*d=f->bottomResizer;
 	int				w,h;
+	int				hoffset=d->height;
 
 	if(f->isShaded==true)
 		return;
 
 	w=f->width;
 	h=ydrag+1-f->y;
-	h -= frameTop+frameBottom;
+	h -= hoffset;
 
 	chintsize(f->client,w,h,&w,&h);
 
-	h += frameTop+frameBottom;
+	h += hoffset;
 
 	if (counter==0)
 		{
@@ -1007,23 +1036,26 @@ void resizeBottom(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 		}
 	moveresize(f,f->x,f->y,f->width,h);
 	repaint(f);
+	adjustDraggers(f);
 }
 
 void resizeRight(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 {
 	CHECKPOINT
 	struct frame	*f=(frame*)self;
+	struct dragger	*d=f->rightResizer;
 	int				w,h;
+	int				woffset=d->width;
 
 	if(f->isShaded==true)
 		return;
 
 	w=xdrag+1-f->x;
-	w -= frameLeft+frameRight;
+	w -= woffset;
 	h=f->height;
 
 	chintsize(f->client,w,h,&w,&h);
-	w += frameLeft+frameRight;
+	w += woffset;
 
 	if (counter==0)
 		{
@@ -1031,6 +1063,7 @@ void resizeRight(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 			cfocus(f->client,t);
 		}
 	moveresize(f,f->x,f->y,w,f->height);
+	adjustDraggers(f);
 }
 
 void resizeBottomRight(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
@@ -1062,6 +1095,7 @@ void resizeBottomRight(void *self,int xdrag,int ydrag,unsigned long counter,Time
 			cfocus(f->client,t);
 		}
 	moveresize(f,f->x,f->y,w,h);
+	adjustDraggers(f);
 }
 
 void resizeBottomLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
@@ -1094,7 +1128,7 @@ void resizeBottomLeft(void *self,int xdrag,int ydrag,unsigned long counter,Time 
 		}
 
 	moveresize(f,x,f->y,w,h);
-	repaint(f);
+	adjustDraggers(f);
 }
 
 void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
@@ -1124,6 +1158,7 @@ void resizetopright(void *self,int xdrag,int ydrag,unsigned long counter,Time t)
 			cfocus(f->client,t);
 		}
 	moveresize(f,x,y,w,h);
+	adjustDraggers(f);
 }
 
 struct frame *fcreate(struct client *c)
@@ -1205,7 +1240,13 @@ struct frame *fcreate(struct client *c)
 	int toprightdh;
 	int bottomrightdw;
 	int bottomrightdh;
-	
+	int	bottomdw;
+	int bottomdh;
+	int leftdw;
+	int leftdh;
+	int rightdw;
+	int rightdh;
+
 	if(theme.useTheme==true)
 		{
 			topleftdw=theme.partsWidth[TOPLEFTACTIVE];
@@ -1219,6 +1260,15 @@ struct frame *fcreate(struct client *c)
 
 			bottomrightdw=theme.partsWidth[BOTTOMRIGHTACTIVE];
 			bottomrightdh=theme.partsHeight[BOTTOMRIGHTACTIVE];
+
+			bottomdw=f->width-bottomleftdw-bottomrightdw;
+			bottomdh=theme.partsHeight[BOTTOMACTIVE];
+
+			leftdw=theme.partsWidth[LEFTACTIVE];
+			leftdh=f->height-topleftdh-bottomleftdh;
+
+			rightdw=theme.partsWidth[RIGHTACTIVE];
+			rightdh=f->height-toprightdh-bottomrightdh;
 		}
 	else
 		{
@@ -1233,17 +1283,23 @@ struct frame *fcreate(struct client *c)
 
 			bottomrightdw=topleftdw;
 			bottomrightdh=topleftdh;
-		}
 
-	f->topleftresizer=dcreate(f->window,0,0,topleftdw,topleftdh,NorthWestGravity,cursortopleft,resizetopleft,f);
+			bottomdw=f->width-bottomleftdw-bottomrightdw;
+			bottomdh=topleftdh;
+
+			leftdw=frameLeft;
+			leftdh=f->height-topleftdh-bottomleftdh;
+
+			rightdw=toprightdw;
+			rightdh=f->height-toprightdh-bottomrightdh;
+	}
+
+	f->topleftresizer=dcreate(f->window,0,0,bottomleftdw,topleftdh,NorthWestGravity,cursortopleft,resizetopleft,f);
 	f->toprightresizer=dcreate(f->window,f->width-toprightdw,0,toprightdw,toprightdh,NorthEastGravity,cursortopright,resizetopright,f);
-
-
-	//f->bottomResizer=dcreate(f->window,0,f->height-bottomleftdh,f->width-frameLeft-frameRight,frameBottom,SouthGravity,cursorBottom,resizeBottom,f);
-	//f->leftResizer=dcreate(f->window,0,frameTop,frameLeft,f->height-frameBottom-frameTop,WestGravity,cursorLeft,resizeLeft,f);
+	f->bottomResizer=dcreate(f->window,bottomleftdw,f->height-bottomdh,bottomdw,bottomdh,SouthWestGravity,cursorBottom,resizeBottom,f);
+	f->leftResizer=dcreate(f->window,0,topleftdh,leftdw,leftdh,NorthWestGravity,cursorLeft,resizeLeft,f);
 	f->bottomLeftResizer=dcreate(f->window,0,f->height-bottomleftdh,bottomleftdw,bottomleftdh,SouthWestGravity,cursorBottomLeft,resizeBottomLeft,f);
-	//f->rightResizer=dcreate(f->window,f->width-frameRight,frameTop,frameRight,f->height-frameBottom-frameTop,EastGravity,cursorRight,resizeRight,f);
-
+	f->rightResizer=dcreate(f->window,f->width-rightdw,toprightdh,rightdw,rightdh,NorthEastGravity,cursorRight,resizeRight,f);
 	f->bottomRightResizer=dcreate(f->window,f->width-bottomrightdw,f->height-bottomrightdh,bottomrightdw,bottomrightdh,SouthEastGravity,cursorBottomRight,resizeBottomRight,f);
 
 	f->deletebutton=NULL;

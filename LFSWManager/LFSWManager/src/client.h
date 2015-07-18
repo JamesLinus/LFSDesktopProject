@@ -119,5 +119,6 @@ int getMouseMonitor(client *c);
 
 char* getMaxString(struct font *font,struct client *c,int width);
 Bool cisframed(struct client *c);
+void csendconf(struct client *c);
 
 #endif
