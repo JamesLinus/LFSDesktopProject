@@ -76,7 +76,8 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 	sa.cursor=cursor;
 
 	struct dragger *d=(dragger*)xmalloc(sizeof *d);
-	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,&sa);
+//	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOnly,CopyFromParent,CWWinGravity | CWCursor,&sa);
+	d->window=XCreateWindow(dpy,parent,x,y,width,height,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity | CWCursor,&sa);
 	d->listener.function=draggerevent;
 	d->listener.pointer=d;
 	setlistener(d->window,&d->listener);
@@ -128,10 +129,13 @@ struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravi
 
 	d->x=0;
 	d->y=0;
+	d->width=width;
+	d->height=height;
 	d->dragnotify=dragnotify;
 	d->arg=arg;
 	XGrabButton(dpy,Button1,AnyModifier,d->window,False,Button1MotionMask|ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,cursor);
 	XMapWindow(dpy,d->window);
+
 	return d;
 }
 
