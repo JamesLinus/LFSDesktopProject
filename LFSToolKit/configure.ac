@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSToolKit],[0.0],[PROJ],[LFSToolKit])
+AC_INIT([LFSToolKit],[0.0.1],[PROJ],[LFSToolKit])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
