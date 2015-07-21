@@ -1,5 +1,5 @@
 
-INCLUDES =	-I$(top_srcdir) \
+AM_CPPFLAGS =	-I$(top_srcdir) \
 				$(XEXT_CFLAGS) \
 				$(X11_CFLAGS) \
 				$(XCOMPOSITE_CFLAGS) \
