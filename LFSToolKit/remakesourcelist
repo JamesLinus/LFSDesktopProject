@@ -1,0 +1,5 @@
+#!/bin/bash
+
+shopt -s nullglob
+csrclst=$(echo "src/*.c" "src/*.cpp")
+echo COMMONSRC = $csrclst > ./sources
