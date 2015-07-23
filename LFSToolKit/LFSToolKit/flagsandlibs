@@ -13,9 +13,8 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
-				-DHELPERDIR=\""${libdir}"\" \
-				-D_DEBUGLEVEL=${with_debug_level} \
-				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
+				-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
+				-D_DEBUGLEVEL=${with_debug_level}
 
 LIBS =			$(XEXT_LIBS) \
 				$(X11_LIBS) \

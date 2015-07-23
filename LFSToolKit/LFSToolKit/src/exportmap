@@ -1,5 +1,5 @@
 {
-global: *foo_*;
+global: *LFSTK_*;
 
 local: *;
 

@@ -2,8 +2,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 include ../flagsandlibs
 include ../sources
+include ../headers
 
 man1_MANS = ../resources/man/lfstoolkit.1
+include_HEADERS = $(APIHEADERS)
 
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
