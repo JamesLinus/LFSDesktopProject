@@ -2,7 +2,7 @@
  *
  * ©K. D. Hedger. Thu 23 Jul 16:15:33 BST 2015 kdhedger68713@gmail.com
 
- * This file (window.h) is part of LFSToolKit.
+ * This file (LFSTKwindow.h) is part of LFSToolKit.
 
  * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +18,33 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _WINDOW_
-#define _WINDOW_
+#ifndef _LFSTKWINDOW_
+#define _LFSTKWINDOW_
 
 #include <X11/Xlib.h>
 
 class LFSTK_windowClass
 {
 	public:
-		LFSTK_windowClass(int x,int y,int w,int h);
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
+		LFSTK_windowClass(int x,int y,int w,int h);
+		void LFSTK_ClearWindow(void);
 
+		Display		*display;
+		Window		window;
+		GC			gc;
+		int			screen;
+		Visual		*visual;
+		Window		rootWindow;		
+		Colormap	cm;
 	private:
-		Display	*display;
-		int		screen;
-		Visual	*visual;
-		Window	rootWindow;
-		Window	window;
-		GC		gc;
-		
-		int		x;
-		int		y;
-		int		w;
-		int		h;
+		int			x;
+		int			y;
+		int			w;
+		int			h;
+		int			blackColour;
+		int			whiteColour;
 };
-
-//LFSTK_windowClass::~LFSTK_windowClass();
-//LFSTK_windowClass::LFSTK_windowClass();
 
 #endif

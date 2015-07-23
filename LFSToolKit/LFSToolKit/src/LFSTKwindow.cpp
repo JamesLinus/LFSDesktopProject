@@ -2,7 +2,7 @@
  *
  * ©K. D. Hedger. Thu 23 Jul 16:14:48 BST 2015 kdhedger68713@gmail.com
 
- * This file (window.cpp) is part of LFSToolKit.
+ * This file (LFSTKwindow.cpp) is part of LFSToolKit.
 
  * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,32 +27,55 @@
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
+	XFreeGC(this->display,this->gc);
+	XDestroyWindow(this->display,this->window);
+	XCloseDisplay(this->display);
 }
 
 LFSTK_windowClass::LFSTK_windowClass()
 {
 }
 
+void LFSTK_windowClass::LFSTK_ClearWindow()
+{
+	XSetFillStyle(this->display,this->gc,FillSolid);
+	XSetClipMask(this->display,this->gc,None);
+	XSetForeground(this->display,this->gc,this->whiteColour);
+	XFillRectangle(this->display,this->window,this->gc,0,0,1000,1000);
+}
+
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h)
 {
 	XSetWindowAttributes	wa;
+	Atom					wm_delete_window;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
 		exit(1);
 
-	this->screen=DefaultScreen(this->display);
-	this->visual=DefaultVisual(this->display,this->screen);
-	this->rootWindow=DefaultRootWindow(this->display);
-
-	wa.bit_gravity=NorthWestGravity;
-	this->window=XCreateWindow(this->display,this->rootWindow,this->x,this->y,this->w,this->h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	this->gc=XCreateGC(this->display,this->window,0,0);
-
 	this->x=x;
 	this->y=y;
 	this->w=w;
 	this->h=h;
+
+	this->screen=DefaultScreen(this->display);
+	this->visual=DefaultVisual(this->display,this->screen);
+	this->rootWindow=DefaultRootWindow(this->display);
+	this->cm=DefaultColormap(this->display,this->screen);
+
+
+	wa.bit_gravity=NorthWestGravity;
+	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
+
+	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
+	XSelectInput(this->display,this->window,SubstructureRedirectMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
+	this->gc=XCreateGC(this->display,this->window,0,0);
+
+	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
+ 	this->blackColour=BlackPixel(this->display,this->screen);
+	this->whiteColour=WhitePixel(this->display,this->screen);
+	this->LFSTK_ClearWindow();
+
 }
 
 
