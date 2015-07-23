@@ -1,1 +1,1 @@
-APIHEADERS = ../src/lfstoolkit.h
+APIHEADERS = ../src/LFSTKwindow.h

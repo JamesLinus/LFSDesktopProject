@@ -18,6 +18,7 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#if 0
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,3 +57,4 @@ LFSTK_testclass::LFSTK_testclass()
 {
 	y=12345;
 }
+#endif
