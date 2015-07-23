@@ -1,9 +1,14 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
-lib_LTLIBRARIES = liblfstoolkit.la
+include ../flagsandlibs
+include ../sources
 
-liblfstoolkit_la_SOURCES = ../src/lfstoolkit.cpp
-liblfstoolkit_la_CXXFLAGS =  -Wl,--version-script=../src/exportmap
+man1_MANS = ../resources/man/lfstoolkit.1
+
+lib_LTLIBRARIES = liblfstoolkit.la
+liblfstoolkit_la_SOURCES = $(COMMONSRC)
+
+liblfstoolkit_la_CXXFLAGS = -Wl,--version-script=../src/exportmap
 liblfstoolkit_la_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 
 
