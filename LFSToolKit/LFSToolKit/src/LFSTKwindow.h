@@ -21,6 +21,8 @@
 #ifndef _WINDOW_
 #define _WINDOW_
 
+#include <X11/Xlib.h>
+
 class LFSTK_windowClass
 {
 	public:

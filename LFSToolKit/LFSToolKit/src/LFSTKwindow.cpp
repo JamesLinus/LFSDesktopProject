@@ -23,7 +23,7 @@
 
 #include <X11/Xlib.h>
 
-#include "window.h"
+#include "LFSTKwindow.h"
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
