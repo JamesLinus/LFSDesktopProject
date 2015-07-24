@@ -38,8 +38,16 @@ void LFSTK_buttonClass::LFSTK_ClearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
+
+	XSetForeground(this->display,this->gc,this->backColour);
+	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+
 	XSetForeground(this->display,this->gc,this->whiteColour);
-	XFillRectangle(this->display,this->window,this->gc,0,0,1000,1000);
+	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
+	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+	XSetForeground(this->display,this->gc,this->blackColour);
+	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
+	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 }
 
 //void LFSTK_buttonClass::LFSTK_setlistener(Window w,const struct listener *l)
@@ -50,14 +58,20 @@ void LFSTK_buttonClass::LFSTK_ClearWindow()
 //		XSaveContext(this->display,w,this->listeners,(XPointer)l);
 //}
 
+unsigned long LFSTK_buttonClass::LFSTK_setColour(const char *name)
+{
+	XColor tc,sc;
+	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
+	return sc.pixel;
+}
+
 LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int w,int h,int gravity,char* foreground,char* background)
 {
 	XSetWindowAttributes	wa;
-	Atom					wm_delete_window;
+	XGCValues	gcv;
 
-	this->display=XOpenDisplay(NULL);
-	if(this->display==NULL)
-		exit(1);
+	this->display=dsp;
+	this->parent=parent;
 
 	this->x=x;
 	this->y=y;
@@ -69,17 +83,19 @@ LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int 
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->cm=DefaultColormap(this->display,this->screen);
 
-
 	wa.bit_gravity=NorthWestGravity;
-	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
-	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,SubstructureRedirectMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
-	this->gc=XCreateGC(this->display,this->window,0,0);
 
-	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->LFSTK_ClearWindow();
+	this->foreColour=this->LFSTK_setColour(foreground);
+	this->backColour=this->LFSTK_setColour(background);
+
+	gcv.foreground=this->foreColour;
+	gcv.background=this->backColour;
+	this->gc=XCreateGC(this->display,this->parent,GCForeground | GCBackground,&gcv);
+
 }
 

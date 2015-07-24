@@ -36,12 +36,19 @@ LFSTK_windowClass::LFSTK_windowClass()
 {
 }
 
+unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
+{
+	XColor tc,sc;
+	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
+	return sc.pixel;
+}
+
 void LFSTK_windowClass::LFSTK_ClearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
-	XSetForeground(this->display,this->gc,this->whiteColour);
-	XFillRectangle(this->display,this->window,this->gc,0,0,1000,1000);
+	XSetForeground(this->display,this->gc,this->backColour);
+	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
 void LFSTK_windowClass::LFSTK_setlistener(Window w,const struct listener *l)
@@ -52,10 +59,11 @@ void LFSTK_windowClass::LFSTK_setlistener(Window w,const struct listener *l)
 		XSaveContext(this->display,w,this->listeners,(XPointer)l);
 }
 
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h)
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
+	XGCValues				gcv;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -77,12 +85,17 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h)
 
 	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,SubstructureRedirectMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
-	this->gc=XCreateGC(this->display,this->window,0,0);
+	//this->gc=XCreateGC(this->display,this->window,0,0);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->LFSTK_ClearWindow();
+	this->foreColour=this->LFSTK_setColour(foreground);
+	this->backColour=this->LFSTK_setColour(background);
+	//this->LFSTK_ClearWindow();
+	gcv.foreground=this->foreColour;
+	gcv.background=this->backColour;
+	this->gc=XCreateGC(this->display,this->rootWindow,GCForeground | GCBackground,&gcv);
 }
 
 

@@ -35,9 +35,10 @@ class LFSTK_windowClass
 	public:
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
-		LFSTK_windowClass(int x,int y,int w,int h);
+		LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background);
 		void LFSTK_ClearWindow(void);
 		void LFSTK_setlistener(Window w,const struct listener *l);
+		unsigned long LFSTK_setColour(const char *name);
 
 		Display		*display;
 		Window		window;
@@ -51,6 +52,8 @@ class LFSTK_windowClass
 		int			y;
 		int			w;
 		int			h;
+		int			foreColour;
+		int			backColour;
 		int			blackColour;
 		int			whiteColour;
 		XContext	listeners;

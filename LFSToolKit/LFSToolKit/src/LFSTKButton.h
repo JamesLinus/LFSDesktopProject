@@ -32,9 +32,11 @@ class LFSTK_buttonClass
 		~LFSTK_buttonClass();
 		LFSTK_buttonClass(Display* dsp,Window parent,int x,int y,int w,int h,int gravity,char* foreground,char* background);
 		void LFSTK_ClearWindow(void);
-		//void LFSTK_setlistener(Window w,const struct listener *l);
+		unsigned long LFSTK_setColour(const char *name);
+			//void LFSTK_setlistener(Window w,const struct listener *l);
 
 		Display		*display;
+		Window		parent;
 		Window		window;
 		GC			gc;
 		int			screen;
@@ -46,6 +48,8 @@ class LFSTK_buttonClass
 		int			y;
 		int			w;
 		int			h;
+		int			foreColour;
+		int			backColour;
 		int			blackColour;
 		int			whiteColour;
 		XContext	listeners;
