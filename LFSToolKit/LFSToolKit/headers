@@ -1,1 +1,1 @@
-APIHEADERS = ../src/LFSTKWindow.h ../src/LFSTKButton.h
+APIHEADERS = ../src/LFSTKButton.h ../src/LFSTKWindow.h
