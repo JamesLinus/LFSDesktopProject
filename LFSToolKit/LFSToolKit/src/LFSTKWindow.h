@@ -39,6 +39,7 @@ class LFSTK_windowClass
 		void LFSTK_ClearWindow(void);
 		void LFSTK_setlistener(Window w,const struct listener *l);
 		unsigned long LFSTK_setColour(const char *name);
+		void LFSTK_resizeWindow(int w,int h);
 
 		Display		*display;
 		Window		window;
