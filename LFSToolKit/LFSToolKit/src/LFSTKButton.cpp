@@ -34,7 +34,7 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 {
 }
 
-void LFSTK_buttonClass::LFSTK_ClearWindow()
+void LFSTK_buttonClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -63,6 +63,17 @@ unsigned long LFSTK_buttonClass::LFSTK_setColour(const char *name)
 	XColor tc,sc;
 	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
 	return sc.pixel;
+}
+
+struct listener* LFSTK_buttonClass::LFSTK_getListen(void)
+{
+	return(&(this->listen));
+}
+
+void LFSTK_buttonClass::LFSTK_setListenData(listener *l)
+{
+		this->listen.function=l->function;
+		//this->listen.pointer=l->pointer;
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int w,int h,int gravity,char* foreground,char* background)
@@ -97,5 +108,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int 
 	gcv.background=this->backColour;
 	this->gc=XCreateGC(this->display,this->parent,GCForeground | GCBackground,&gcv);
 
+	this->listen.function=NULL;
+	this->listen.pointer=this;
 }
 

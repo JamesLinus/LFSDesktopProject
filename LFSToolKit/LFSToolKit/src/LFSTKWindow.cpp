@@ -44,7 +44,7 @@ unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 	return sc.pixel;
 }
 
-void LFSTK_windowClass::LFSTK_ClearWindow()
+void LFSTK_windowClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -64,7 +64,26 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
 {
 	this->w=w;
 	this->h=h;
-	this->LFSTK_ClearWindow();
+	this->LFSTK_clearWindow();
+}
+
+void LFSTK_windowClass::LFSTK_gadgetEvent(void *self,XEvent *e)
+{
+	switch (e->type)
+		{
+		case ButtonRelease:
+			break;
+		case MotionNotify:
+			break;
+		case ButtonPress:
+		fprintf(stderr,"XXXXXXXXXXXXXXX\n");
+			break;
+		}
+}
+
+void* LFSTK_windowClass::LFSTK_returnGE(void)
+{
+	return((void*)(&this->LFSTK_gadgetEvent));
 }
 
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
@@ -88,11 +107,10 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->cm=DefaultColormap(this->display,this->screen);
 
 
-//	wa.bit_gravity=NorthWestGravity;
+	wa.bit_gravity=NorthWestGravity;
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
 	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	//XSelectInput(this->display,this->window, ButtonPressMask | ButtonReleaseMask | ExposureMask|ResizeRedirectMask);
 	XSelectInput(this->display,this->window, ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
