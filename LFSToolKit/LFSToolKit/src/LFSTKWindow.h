@@ -22,6 +22,13 @@
 #define _LFSTKWINDOW_
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+struct listener
+{
+	void (*function)(void *,XEvent *);
+	void *pointer;
+};
 
 class LFSTK_windowClass
 {
@@ -30,6 +37,7 @@ class LFSTK_windowClass
 		~LFSTK_windowClass();
 		LFSTK_windowClass(int x,int y,int w,int h);
 		void LFSTK_ClearWindow(void);
+		void LFSTK_setlistener(Window w,const struct listener *l);
 
 		Display		*display;
 		Window		window;
@@ -45,6 +53,7 @@ class LFSTK_windowClass
 		int			h;
 		int			blackColour;
 		int			whiteColour;
+		XContext	listeners;
 };
 
 #endif

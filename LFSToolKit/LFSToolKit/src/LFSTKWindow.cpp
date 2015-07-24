@@ -44,6 +44,14 @@ void LFSTK_windowClass::LFSTK_ClearWindow()
 	XFillRectangle(this->display,this->window,this->gc,0,0,1000,1000);
 }
 
+void LFSTK_windowClass::LFSTK_setlistener(Window w,const struct listener *l)
+{
+	if (l==NULL)
+		XDeleteContext(this->display,w,this->listeners);
+	else
+		XSaveContext(this->display,w,this->listeners,(XPointer)l);
+}
+
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h)
 {
 	XSetWindowAttributes	wa;
@@ -75,7 +83,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h)
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
 	this->LFSTK_ClearWindow();
-
 }
 
 
