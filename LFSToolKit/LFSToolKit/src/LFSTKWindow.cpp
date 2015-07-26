@@ -31,6 +31,7 @@
 LFSTK_windowClass::~LFSTK_windowClass()
 {
 	XFreeGC(this->display,this->gc);
+	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);
 	XCloseDisplay(this->display);
 }
@@ -69,24 +70,6 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
 	this->LFSTK_clearWindow();
 }
 
-//struct listener *getlistener(LFSTK_windowClass* wc,Display* dpy,Window w)
-
-//void LFSTK_windowClass::LFSTK_addButton(LFSTK_buttonClass* button)
-//{
-//	XFindContext(this->display,w,wc->listeners,(XPointer *)&l)==0
-//}
-//	struct listener *l=getlistener(wc,wc->display,event.xany.window);
-/*
-struct listener *getlistener(LFSTK_windowClass* wc,Display* dpy,Window w)
-{
-	struct listener *l;
-	if (XFindContext(dpy,w,wc->listeners,(XPointer *)&l)==0)
-		return l;
-	else
-		return NULL;
-}
-
-*/
 struct listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 {
 	struct listener *l;
@@ -95,7 +78,6 @@ struct listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 	else
 		return NULL;
 }
-
 
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
 {
@@ -139,24 +121,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->listen.pointer=this;
 	this->listen.userData=0;
 
-	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));
-/*
-	f->listener.function=frameevent;
-	f->listener.pointer=f;
-	setlistener(f->window,&f->listener);
-
-void setlistener(Window w,const struct listener *l)
-{
-	CHECKPOINT
-	if (l==NULL)
-		XDeleteContext(dpy,w,listeners);
-	else
-		XSaveContext(dpy,w,listeners,(XPointer)l);
-}
-
-
-*/
-	
+	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));	
 }
 
 
