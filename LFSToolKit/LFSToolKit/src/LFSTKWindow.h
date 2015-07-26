@@ -34,9 +34,11 @@ class LFSTK_windowClass
 		~LFSTK_windowClass();
 		LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background);
 		void LFSTK_clearWindow(void);
-		void LFSTK_setlistener(Window w,const struct listener *l);
+		void LFSTK_setListener(Window w,const struct listener *l);
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h);
+		//void LFSTK_addButton(LFSTK_buttonClass* button);
+		struct listener	*LFSTK_getListener(Window w);
 //		void LFSTK_gadgetEvent(void *self,XEvent *e);
 //		void* LFSTK_returnGE(void);
 
