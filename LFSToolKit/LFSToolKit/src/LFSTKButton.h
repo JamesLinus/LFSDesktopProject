@@ -46,6 +46,7 @@ class LFSTK_buttonClass
 		Visual		*visual;
 		Window		rootWindow;		
 		Colormap	cm;
+		struct listener listen;
 	private:
 		int			x;
 		int			y;
@@ -55,7 +56,6 @@ class LFSTK_buttonClass
 		int			backColour;
 		int			blackColour;
 		int			whiteColour;
-		struct listener listen;
 };
 
 #endif

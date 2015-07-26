@@ -23,7 +23,7 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKButton.h"
-#include "lib.h"
+#include "LFSTKlib.h"
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {

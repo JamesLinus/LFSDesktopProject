@@ -25,7 +25,7 @@
 #include <X11/Xutil.h>
 
 #include "LFSTKGlobals.h"
-#include "lib.h"
+#include "LFSTKlib.h"
 
 class LFSTK_windowClass
 {

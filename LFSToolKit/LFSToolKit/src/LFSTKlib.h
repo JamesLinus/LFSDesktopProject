@@ -18,8 +18,8 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LIB_
-#define _LIB_
+#ifndef _LFSTKLIB_
+#define _LFSTKLIB_
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

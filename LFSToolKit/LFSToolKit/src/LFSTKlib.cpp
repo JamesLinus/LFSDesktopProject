@@ -21,10 +21,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "lib.h"
+#include "LFSTKlib.h"
+#include "LFSTKButton.h"
 
 void gadgetEvent(void *self,XEvent *e)
 {
+int ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+printf("00000000000000000000 -- %i\n",ud);
 	switch (e->type)
 		{
 		case ButtonRelease:

@@ -23,6 +23,8 @@
 #include <stdio.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
 
 #include "LFSTKWindow.h"
 
@@ -109,8 +111,10 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	gcv.background=this->backColour;
 	this->gc=XCreateGC(this->display,this->rootWindow,GCForeground | GCBackground,&gcv);
 
+	this->listeners=XUniqueContext();
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
+	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));
 /*
 	f->listener.function=frameevent;
 	f->listener.pointer=f;
