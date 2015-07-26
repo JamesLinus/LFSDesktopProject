@@ -27,28 +27,37 @@
 void gadgetEvent(void *self,XEvent *e)
 {
 int ud=-1;
-
+//printf("---%p---\n",self);
 	switch (e->type)
 		{
 		case EnterNotify:
-		ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
-			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
+			printf("enter - ");
+			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+			if(ud!=-1)
+				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
 			break;
 		case LeaveNotify:
-			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
-		ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+			printf("leave - ");
+			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+			if(ud!=-1)
+				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
 			break;
 		case ButtonRelease:
-			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
-		fprintf(stderr,"1111111111111111\n");
+			printf("release - ");
+			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+			if(ud!=-1)
+				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
 			break;
 		case MotionNotify:
-		fprintf(stderr,"2222222222222222222\n");
+			printf("move - ");
+			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
 			break;
 		case ButtonPress:
-			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
-		fprintf(stderr,"XXXXXXXXXXXXXXX\n");
+			printf("press - ");
+			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+			if(ud!=-1)
+				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
 			break;
 		}
-printf("00000000000000000000 -- %i\n",ud);
+	printf("%i\n",ud);
 }

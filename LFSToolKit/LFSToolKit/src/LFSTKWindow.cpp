@@ -119,7 +119,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->listeners=XUniqueContext();
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
-	this->listen.userData=0;
+	this->listen.userData=-1;
 
 	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));	
 }
