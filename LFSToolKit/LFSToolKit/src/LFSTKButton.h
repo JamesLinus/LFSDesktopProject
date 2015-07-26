@@ -26,13 +26,16 @@
 #include <X11/Xutil.h>
 
 #include "LFSTKGlobals.h"
+#include "LFSTKWindow.h"
 
 class LFSTK_buttonClass
 {
 	public:
 		LFSTK_buttonClass();
 		~LFSTK_buttonClass();
-		LFSTK_buttonClass(Display* dsp,Window parent,int x,int y,int w,int h,int gravity,char* foreground,char* background);
+		LFSTK_buttonClass(Display* dsp,Window parent,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi);
+		LFSTK_buttonClass(LFSTK_windowClass* wc,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi);
+
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
 		struct listener	*LFSTK_getListen(void);
@@ -57,10 +60,10 @@ class LFSTK_buttonClass
 		int			y;
 		int			w;
 		int			h;
-		int			foreColour;
-		int			backColour;
 		int			blackColour;
 		int			whiteColour;
+		int			normalColour;
+		int			highlightColour;
 		bool		inWindow;
 };
 

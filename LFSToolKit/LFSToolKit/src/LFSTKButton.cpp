@@ -40,7 +40,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->backColour);
+	XSetForeground(this->display,this->gc,this->normalColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	XSetForeground(this->display,this->gc,this->whiteColour);
@@ -56,7 +56,7 @@ void LFSTK_buttonClass::mouseDown()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->backColour);
+	XSetForeground(this->display,this->gc,this->normalColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	XSetForeground(this->display,this->gc,this->blackColour);
@@ -86,7 +86,7 @@ void LFSTK_buttonClass::mouseEnter()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->foreColour);
+	XSetForeground(this->display,this->gc,this->highlightColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	XSetForeground(this->display,this->gc,this->whiteColour);
@@ -110,7 +110,7 @@ struct listener* LFSTK_buttonClass::LFSTK_getListen(void)
 	return(&(this->listen));
 }
 
-LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int w,int h,int gravity,char* foreground,char* background)
+LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
 {
 	XSetWindowAttributes	wa;
 	XGCValues	gcv;
@@ -135,14 +135,45 @@ LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int 
 
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->foreColour=this->LFSTK_setColour(foreground);
-	this->backColour=this->LFSTK_setColour(background);
+	this->normalColour=this->LFSTK_setColour(colnorm);
+	this->highlightColour=this->LFSTK_setColour(colhi);
 
-	gcv.foreground=this->foreColour;
-	gcv.background=this->backColour;
-	this->gc=XCreateGC(this->display,this->parent,GCForeground | GCBackground,&gcv);
+	this->gc=XCreateGC(this->display,this->parent,0,NULL);
 
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 }
 
+LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
+{
+	XSetWindowAttributes	wa;
+	XGCValues	gcv;
+
+	this->display=wc->display;
+	this->parent=wc->window;
+
+	this->x=x;
+	this->y=y;
+	this->w=w;
+	this->h=h;
+
+	this->screen=wc->screen;
+	this->visual=wc->visual;
+	this->rootWindow=wc->rootWindow;
+	this->cm=wc->cm;
+
+	wa.bit_gravity=NorthWestGravity;
+
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
+	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+
+ 	this->blackColour=BlackPixel(this->display,this->screen);
+	this->whiteColour=WhitePixel(this->display,this->screen);
+	this->normalColour=this->LFSTK_setColour(colnorm);
+	this->highlightColour=this->LFSTK_setColour(colhi);
+
+	this->gc=XCreateGC(this->display,this->parent,0,NULL);
+
+	this->listen.function=gadgetEvent;
+	this->listen.pointer=this;
+}
