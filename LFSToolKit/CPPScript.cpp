@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	while (keep_running)
 		{
 			XNextEvent(wc->display,&event);
-			struct listener *l=wc->LFSTK_getListener(event.xany.window);
+			listener *l=wc->LFSTK_getListener(event.xany.window);
 			if((l!=NULL) && (l->userData!=-1))
 				l->function(l->pointer,&event);
 

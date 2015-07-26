@@ -105,7 +105,7 @@ unsigned long LFSTK_buttonClass::LFSTK_setColour(const char *name)
 	return sc.pixel;
 }
 
-struct listener* LFSTK_buttonClass::LFSTK_getListen(void)
+listener* LFSTK_buttonClass::LFSTK_getListen(void)
 {
 	return(&(this->listen));
 }

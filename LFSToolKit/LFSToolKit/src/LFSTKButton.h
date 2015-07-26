@@ -38,7 +38,7 @@ class LFSTK_buttonClass
 
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
-		struct listener	*LFSTK_getListen(void);
+		listener	*LFSTK_getListen(void);
 
 		void mouseEnter();
 		void mouseExit();
@@ -54,7 +54,7 @@ class LFSTK_buttonClass
 		Visual		*visual;
 		Window		rootWindow;		
 		Colormap	cm;
-		struct listener listen;
+		listener listen;
 	private:
 		int			x;
 		int			y;

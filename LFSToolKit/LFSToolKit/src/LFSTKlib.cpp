@@ -80,7 +80,7 @@ fontStruct *ftload(LFSTK_windowClass* wc,const char *name)
 	if (font==NULL)
 		return NULL;
 
-	struct fontStruct *f=(struct fontStruct*)malloc(sizeof(fontStruct));
+	fontStruct *f=(fontStruct*)malloc(sizeof(fontStruct));
 	f->size=font->ascent+font->descent;
 	f->ascent=font->ascent;
 	f->descent=font->descent;

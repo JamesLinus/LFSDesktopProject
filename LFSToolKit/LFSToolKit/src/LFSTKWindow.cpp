@@ -55,7 +55,7 @@ void LFSTK_windowClass::LFSTK_clearWindow()
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
-void LFSTK_windowClass::LFSTK_setListener(Window w,const struct listener *l)
+void LFSTK_windowClass::LFSTK_setListener(Window w,const listener *l)
 {
 	if (l==NULL)
 		XDeleteContext(this->display,w,this->listeners);
@@ -70,9 +70,9 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
 	this->LFSTK_clearWindow();
 }
 
-struct listener* LFSTK_windowClass::LFSTK_getListener(Window w)
+listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 {
-	struct listener *l;
+	listener *l;
 	if (XFindContext(this->display,w,this->listeners,(XPointer *)&l)==0)
 		return l;
 	else

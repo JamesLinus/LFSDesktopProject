@@ -27,16 +27,6 @@
 #include "LFSTKWindow.h"
 #include "LFSTKGlobals.h"
 
-#define DEFAULTFONT "sans-serif:size=10"
-
-struct fontStruct
-{
-	int ascent;
-	int descent;
-	int size;
-	void *data;
-};
-
 void gadgetEvent(void *self,XEvent *e);
 fontStruct *ftload(LFSTK_windowClass* wc,const char *name);
 
