@@ -67,24 +67,10 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
 	this->LFSTK_clearWindow();
 }
 
-void LFSTK_windowClass::LFSTK_gadgetEvent(void *self,XEvent *e)
-{
-	switch (e->type)
-		{
-		case ButtonRelease:
-			break;
-		case MotionNotify:
-			break;
-		case ButtonPress:
-		fprintf(stderr,"XXXXXXXXXXXXXXX\n");
-			break;
-		}
-}
-
-void* LFSTK_windowClass::LFSTK_returnGE(void)
-{
-	return((void*)(&this->LFSTK_gadgetEvent));
-}
+//void* LFSTK_windowClass::LFSTK_returnGE(void)
+//{
+//	return((void*)(&LFSTK_windowClass::LFSTK_gadgetEvent));
+//}
 
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
 {
@@ -122,6 +108,26 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	gcv.foreground=this->foreColour;
 	gcv.background=this->backColour;
 	this->gc=XCreateGC(this->display,this->rootWindow,GCForeground | GCBackground,&gcv);
+
+	this->listen.function=gadgetEvent;
+	this->listen.pointer=this;
+/*
+	f->listener.function=frameevent;
+	f->listener.pointer=f;
+	setlistener(f->window,&f->listener);
+
+void setlistener(Window w,const struct listener *l)
+{
+	CHECKPOINT
+	if (l==NULL)
+		XDeleteContext(dpy,w,listeners);
+	else
+		XSaveContext(dpy,w,listeners,(XPointer)l);
+}
+
+
+*/
+	
 }
 
 

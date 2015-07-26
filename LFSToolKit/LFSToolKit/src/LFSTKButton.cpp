@@ -23,6 +23,7 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKButton.h"
+#include "lib.h"
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
@@ -97,7 +98,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int 
 	wa.bit_gravity=NorthWestGravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,SubstructureRedirectMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
+	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask);
 
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
@@ -108,7 +109,19 @@ LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int 
 	gcv.background=this->backColour;
 	this->gc=XCreateGC(this->display,this->parent,GCForeground | GCBackground,&gcv);
 
-	this->listen.function=NULL;
+	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
+/*
+
+oid setlistener(Window w,const struct listener *l)
+{
+	CHECKPOINT
+	if (l==NULL)
+		XDeleteContext(dpy,w,listeners);
+	else
+		XSaveContext(dpy,w,listeners,(XPointer)l);
+}
+
+*/
 }
 
