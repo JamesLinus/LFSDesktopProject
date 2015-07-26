@@ -117,11 +117,11 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->gc=XCreateGC(this->display,this->rootWindow,GCForeground | GCBackground,&gcv);
 
 	this->listeners=XUniqueContext();
-	this->listen.function=gadgetEvent;
-	this->listen.pointer=this;
-	this->listen.userData=-1;
+//	this->listen.function=gadgetEvent;
+//	this->listen.pointer=this;
+//	this->listen.userData=-1;
 
-	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));	
+//	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));	
 }
 
 

@@ -59,6 +59,7 @@ class LFSTK_windowClass
 		int			backColour;
 		int			blackColour;
 		int			whiteColour;
+		struct font	font;
 };
 
 #endif

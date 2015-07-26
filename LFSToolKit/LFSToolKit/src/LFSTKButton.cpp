@@ -144,7 +144,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int 
 	this->listen.pointer=this;
 }
 
-LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
+LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
 {
 	XSetWindowAttributes	wa;
 	XGCValues	gcv;

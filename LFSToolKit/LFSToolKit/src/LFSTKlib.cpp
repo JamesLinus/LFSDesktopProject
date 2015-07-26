@@ -17,47 +17,75 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <X11/Xft/Xft.h>
 
+#include "LFSTKWindow.h"
 #include "LFSTKlib.h"
 #include "LFSTKButton.h"
 
 void gadgetEvent(void *self,XEvent *e)
 {
-int ud=-1;
-//printf("---%p---\n",self);
+	int ud=-1;
+	ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+
 	switch (e->type)
 		{
 		case EnterNotify:
 			printf("enter - ");
-			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
 			if(ud!=-1)
 				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
 			break;
 		case LeaveNotify:
 			printf("leave - ");
-			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
 			if(ud!=-1)
 				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
 			break;
 		case ButtonRelease:
 			printf("release - ");
-			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
 			if(ud!=-1)
 				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
 			break;
 		case MotionNotify:
 			printf("move - ");
-			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
 			break;
 		case ButtonPress:
 			printf("press - ");
-			ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
 			if(ud!=-1)
 				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
 			break;
 		}
 	printf("%i\n",ud);
 }
+
+fontStruct *ftload(LFSTK_windowClass* wc,const char *name)
+{
+	XftFont  *font=NULL;
+
+	if (name != NULL)
+		{
+			font=XftFontOpenXlfd(wc->display,wc->screen,name);
+			if (font==NULL)
+				font=XftFontOpenName(wc->display,wc->screen,name);
+			if (font==NULL)
+				fprintf(stderr,"cannot not load font %s",name);
+		}
+
+	if (font==NULL)
+		font=XftFontOpenName(wc->display,wc->screen,DEFAULTFONT);
+
+	if (font==NULL)
+		return NULL;
+
+	struct fontStruct *f=(struct fontStruct*)malloc(sizeof(fontStruct));
+	f->size=font->ascent+font->descent;
+	f->ascent=font->ascent;
+	f->descent=font->descent;
+	f->data=font;
+
+	return f;
+}
+

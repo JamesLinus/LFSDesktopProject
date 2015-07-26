@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	XEvent event;
 
 	LFSTK_buttonClass *bc=new LFSTK_buttonClass(wc->display,wc->window,50,50,100,100,0,"rgb:a0/a0/a0","rgb:d0/d0/d0");
-	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,250,250,100,50,0,"rgb:f0/a0/a0","rgb:e0/d0/d0");
+	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"button 2",250,250,100,50,0,"rgb:f0/a0/a0","rgb:e0/d0/d0");
 
 	bc->listen.userData=87654321;
 	XMapWindow(wc->display,bc->window);
