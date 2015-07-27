@@ -40,6 +40,7 @@ class LFSTK_windowClass
 		listener	*LFSTK_getListener(Window w);
 
 		void		LFSTK_setFontString(char *s);
+		void LFSTK_setDecorated(bool isDecorated);
 
 		Display		*display;
 		Window		window;

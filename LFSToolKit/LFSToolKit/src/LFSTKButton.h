@@ -33,19 +33,19 @@ class LFSTK_buttonClass
 	public:
 		LFSTK_buttonClass();
 		~LFSTK_buttonClass();
-		LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi);
+		LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
 
 		void LFSTK_clearWindow(void);
 		listener *LFSTK_getListen(void);
-
 		
 		void mouseEnter();
 		void mouseExit();
 		void mouseDown();
 		void mouseUp();
+		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
 
-		void LFSTK_setCallBack(void (*bcb)(void *,int),int ud);
-	
+		void LFSTK_setStyle(int s);
+
 		Display				*display;
 		Window				parent;
 		Window				window;
@@ -72,7 +72,9 @@ class LFSTK_buttonClass
 		int					whiteColour;
 		int					normalColour;
 		int					highlightColour;
+		int					activeColour;
 		bool				inWindow;
+		int					style;
 		LFSTK_windowClass	*wc;
 };
 

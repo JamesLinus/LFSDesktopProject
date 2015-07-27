@@ -55,6 +55,10 @@ void gadgetEvent(void *self,XEvent *e)
 			if(ud!=-1)
 				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
 			break;
+		case Expose:
+			if(ud!=-1)
+				reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_clearWindow();
+			break;
 		}
 	printf("%i\n",ud);
 }

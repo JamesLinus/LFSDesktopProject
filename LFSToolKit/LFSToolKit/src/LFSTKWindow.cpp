@@ -32,7 +32,8 @@
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
-	free(this->fontString);
+	if(this->fontString!=NULL)
+		free(this->fontString);
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);
@@ -89,6 +90,33 @@ void LFSTK_windowClass::LFSTK_setFontString(char *s)
 	this->fontString=strdup(s);
 }
 
+struct Hints
+{
+	unsigned long   flags;
+	unsigned long   functions;
+	unsigned long   decorations;
+	long            inputMode;
+	unsigned long   status;
+};
+
+void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
+{
+	Atom	xa;
+	Atom	xa_prop[10];
+	Hints	hints;
+
+	if(isDecorated==false)
+		{
+			hints.flags=2;
+			hints.decorations=0;
+			hints.functions=0;
+			hints.inputMode=0;
+			hints.status=0;
+			xa_prop[9]=XInternAtom(display,"_MOTIF_WM_HINTS",True);
+			XChangeProperty(this->display,this->window,xa_prop[9],xa_prop[9],32,PropModeReplace,(unsigned char *)&hints,5);
+		}
+}
+
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
 {
 	XSetWindowAttributes	wa;
@@ -103,6 +131,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->y=y;
 	this->w=w;
 	this->h=h;
+	this->fontString=NULL;
 
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 	this->screen=DefaultScreen(this->display);
@@ -130,11 +159,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 
 	this->font=ftload(this,this->fontString);
 	this->fnormal=ftLoadColour(this,foreground);
-//	this->listen.function=gadgetEvent;
-//	this->listen.pointer=this;
-//	this->listen.userData=-1;
-
-//	XSaveContext(this->display,this->window,this->listeners,(XPointer)&(this->listen));	
+	this->LFSTK_setDecorated(true);
 }
 
 

@@ -49,13 +49,15 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	XSetForeground(this->display,this->gc,this->normalColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	XSetForeground(this->display,this->gc,this->whiteColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-	XSetForeground(this->display,this->gc,this->blackColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-
+	if(this->style==EMBOSSEDBUTTON)
+		{
+			XSetForeground(this->display,this->gc,this->whiteColour);
+			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
+			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+			XSetForeground(this->display,this->gc,this->blackColour);
+			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
+			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+		}
 	this->drawLabel();
 }
 
@@ -64,15 +66,18 @@ void LFSTK_buttonClass::mouseDown()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->normalColour);
+	XSetForeground(this->display,this->gc,this->activeColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	XSetForeground(this->display,this->gc,this->blackColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-	XSetForeground(this->display,this->gc,this->whiteColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+	if(this->style==EMBOSSEDBUTTON)
+		{
+			XSetForeground(this->display,this->gc,this->blackColour);
+			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
+			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+			XSetForeground(this->display,this->gc,this->whiteColour);
+			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
+			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+		}
 
 	this->drawLabel();
 }
@@ -84,8 +89,7 @@ void LFSTK_buttonClass::mouseUp()
 	else
 		{
 			this->mouseEnter();
-			//this->cb(this,this->cbUserData);
-			this->callback.callback(this,this->callback.userData);
+			this->callback.releaseCallback(this,this->callback.userData);
 		}
 }
 
@@ -103,12 +107,16 @@ void LFSTK_buttonClass::mouseEnter()
 	XSetForeground(this->display,this->gc,this->highlightColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	XSetForeground(this->display,this->gc,this->whiteColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-	XSetForeground(this->display,this->gc,this->blackColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+	if(this->style==EMBOSSEDBUTTON)
+		{
+			XSetForeground(this->display,this->gc,this->whiteColour);
+			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
+			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+			XSetForeground(this->display,this->gc,this->blackColour);
+			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
+			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+		}
+
 	this->inWindow=true;
 	this->drawLabel();
 }
@@ -125,13 +133,19 @@ listener* LFSTK_buttonClass::LFSTK_getListen(void)
 	return(&(this->listen));
 }
 
-void LFSTK_buttonClass::LFSTK_setCallBack(void (*bcb)(void *,int),int ud)
+void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud)
 {
-	this->callback.callback=bcb;
+	this->callback.pressCallback=downcb;
+	this->callback.releaseCallback=releasecb;
 	this->callback.userData=ud;
 }
 
-LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
+void LFSTK_buttonClass::LFSTK_setStyle(int s)
+{
+	this->style=s;
+}
+
+LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)
 {
 	XSetWindowAttributes	wa;
 	XGCValues	gcv;
@@ -160,6 +174,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int
 	this->whiteColour=WhitePixel(this->display,this->screen);
 	this->normalColour=this->setColour(colnorm);
 	this->highlightColour=this->setColour(colhi);
+	this->activeColour=this->setColour(colact);
 
 	this->gc=XCreateGC(this->display,this->parent,0,NULL);
 
@@ -167,4 +182,6 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int
 	this->listen.pointer=this;
 
 	this->wc=wc;
+	this->style=EMBOSSEDBUTTON;
+
 }
