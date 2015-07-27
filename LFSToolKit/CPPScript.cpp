@@ -2,7 +2,7 @@
 
 #©keithhedger Mon 20 Jul 14:09:10 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -I/tmp/AAA/usr/local/include -L/tmp/AAA/usr/local/lib -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
+g++ "$0" -I/tmp/AAA/usr/local/include -L/tmp/AAA/usr/local/lib -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
 ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -12,10 +12,16 @@ exit $retval
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+//#include <X11/Xft/Xft.h>
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
 #include <LFSTKGlobals.h>
+
+void bcb(void *p,int ud)
+{
+	printf(">>>%i<<<<\n",ud);
+}
 
 int main(int argc, char **argv)
 {
@@ -23,15 +29,18 @@ int main(int argc, char **argv)
 
 	printf("Hello World!\n");
 
-	LFSTK_windowClass *wc=new LFSTK_windowClass(100,100,800,400,"rgb:ff/00/ff","rgb:80/80/80");
+	LFSTK_windowClass *wc=new LFSTK_windowClass(100,100,800,400,"rgb:00/00/00","rgb:80/80/80");
 
 	XMapWindow(wc->display,wc->window);
 	XEvent event;
 
-	LFSTK_buttonClass *bc=new LFSTK_buttonClass(wc->display,wc->window,50,50,100,100,0,"rgb:a0/a0/a0","rgb:d0/d0/d0");
+	LFSTK_buttonClass *bc=new LFSTK_buttonClass(wc,"button 1",50,50,100,100,0,"rgb:a0/a0/a0","rgb:d0/d0/d0");
 	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"button 2",250,250,100,50,0,"rgb:f0/a0/a0","rgb:e0/d0/d0");
 
+	bc->LFSTK_setCallBack(bcb,0xdeadbeef);
+	bc1->LFSTK_setCallBack(bcb,-666);
 	bc->listen.userData=87654321;
+
 	XMapWindow(wc->display,bc->window);
 	wc->LFSTK_setListener(bc->window,bc->LFSTK_getListen());
 

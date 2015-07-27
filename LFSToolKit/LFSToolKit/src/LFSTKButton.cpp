@@ -27,12 +27,18 @@
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
+	free(this->label);
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass()
 {
+}
+
+void LFSTK_buttonClass::drawLabel()
+{
+	ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
 }
 
 void LFSTK_buttonClass::LFSTK_clearWindow()
@@ -49,6 +55,8 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	XSetForeground(this->display,this->gc,this->blackColour);
 	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+
+	this->drawLabel();
 }
 
 void LFSTK_buttonClass::mouseDown()
@@ -65,6 +73,8 @@ void LFSTK_buttonClass::mouseDown()
 	XSetForeground(this->display,this->gc,this->whiteColour);
 	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+
+	this->drawLabel();
 }
 
 void LFSTK_buttonClass::mouseUp()
@@ -72,7 +82,11 @@ void LFSTK_buttonClass::mouseUp()
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
-		this->mouseEnter();
+		{
+			this->mouseEnter();
+			//this->cb(this,this->cbUserData);
+			this->callback.callback(this,this->callback.userData);
+		}
 }
 
 void LFSTK_buttonClass::mouseExit()
@@ -96,9 +110,10 @@ void LFSTK_buttonClass::mouseEnter()
 	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 	this->inWindow=true;
+	this->drawLabel();
 }
 
-unsigned long LFSTK_buttonClass::LFSTK_setColour(const char *name)
+unsigned long LFSTK_buttonClass::setColour(const char *name)
 {
 	XColor tc,sc;
 	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
@@ -110,38 +125,10 @@ listener* LFSTK_buttonClass::LFSTK_getListen(void)
 	return(&(this->listen));
 }
 
-LFSTK_buttonClass::LFSTK_buttonClass(Display *dsp,Window parent,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
+void LFSTK_buttonClass::LFSTK_setCallBack(void (*bcb)(void *,int),int ud)
 {
-	XSetWindowAttributes	wa;
-	XGCValues	gcv;
-
-	this->display=dsp;
-	this->parent=parent;
-
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-
-	this->screen=DefaultScreen(this->display);
-	this->visual=DefaultVisual(this->display,this->screen);
-	this->rootWindow=DefaultRootWindow(this->display);
-	this->cm=DefaultColormap(this->display,this->screen);
-
-	wa.bit_gravity=NorthWestGravity;
-
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
-
- 	this->blackColour=BlackPixel(this->display,this->screen);
-	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->normalColour=this->LFSTK_setColour(colnorm);
-	this->highlightColour=this->LFSTK_setColour(colhi);
-
-	this->gc=XCreateGC(this->display,this->parent,0,NULL);
-
-	this->listen.function=gadgetEvent;
-	this->listen.pointer=this;
+	this->callback.callback=bcb;
+	this->callback.userData=ud;
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi)
@@ -162,6 +149,8 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int
 	this->rootWindow=wc->rootWindow;
 	this->cm=wc->cm;
 
+	this->label=strdup(label);
+
 	wa.bit_gravity=NorthWestGravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
@@ -169,11 +158,13 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int
 
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->normalColour=this->LFSTK_setColour(colnorm);
-	this->highlightColour=this->LFSTK_setColour(colhi);
+	this->normalColour=this->setColour(colnorm);
+	this->highlightColour=this->setColour(colhi);
 
 	this->gc=XCreateGC(this->display,this->parent,0,NULL);
 
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
+
+	this->wc=wc;
 }

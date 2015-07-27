@@ -24,10 +24,14 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "LFSTKWindow.h"
 #include "LFSTKGlobals.h"
+#include "LFSTKButton.h"
+#include "LFSTKWindow.h"
 
-void gadgetEvent(void *self,XEvent *e);
-fontStruct *ftload(LFSTK_windowClass* wc,const char *name);
+void		gadgetEvent(void *self,XEvent *e);
+fontStruct	*ftload(LFSTK_windowClass* wc,const char *name);
+fontColour	*ftLoadColour(LFSTK_windowClass *wc,const char *name);
+void		ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s);
+int			ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 
 #endif

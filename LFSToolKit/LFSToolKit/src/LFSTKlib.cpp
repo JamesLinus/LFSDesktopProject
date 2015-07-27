@@ -23,9 +23,7 @@
 #include <stdio.h>
 #include <X11/Xft/Xft.h>
 
-#include "LFSTKWindow.h"
 #include "LFSTKlib.h"
-#include "LFSTKButton.h"
 
 void gadgetEvent(void *self,XEvent *e)
 {
@@ -61,7 +59,7 @@ void gadgetEvent(void *self,XEvent *e)
 	printf("%i\n",ud);
 }
 
-fontStruct *ftload(LFSTK_windowClass* wc,const char *name)
+fontStruct* ftload(LFSTK_windowClass* wc,const char *name)
 {
 	XftFont  *font=NULL;
 
@@ -89,3 +87,40 @@ fontStruct *ftload(LFSTK_windowClass* wc,const char *name)
 	return f;
 }
 
+fontColour *ftLoadColour(LFSTK_windowClass *wc,const char *name)
+{
+	XftDraw *draw;
+	XftColor colour;
+
+	if ((draw=XftDrawCreate(wc->display,wc->rootWindow,wc->visual,wc->cm))==NULL)
+		return NULL;
+
+	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,name,&colour))
+		{
+			XftDrawDestroy(draw);
+			return NULL;
+		}
+
+	fontColour *c=(fontColour*)malloc(sizeof(fontColour));
+	c->draw=draw;
+	c->color=colour;
+	c->visual=wc->visual;
+	c->colormap=wc->cm;
+
+	return c;
+}
+
+void ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s)
+{
+	XftFont *font=(XftFont*)wc->font->data;
+	XftDrawChange(wc->fnormal->draw,d);
+	XftDrawStringUtf8(wc->fnormal->draw,&wc->fnormal->color,font,x,y,(XftChar8 *)s,strlen(s));
+}
+
+int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
+{
+	XftFont *font=(XftFont*)wc->font->data;
+	XGlyphInfo info;
+	XftTextExtentsUtf8(wc->display,font,(XftChar8 *)s,strlen(s),&info);
+	return info.width-info.x;
+}

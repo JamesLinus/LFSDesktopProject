@@ -33,38 +33,47 @@ class LFSTK_buttonClass
 	public:
 		LFSTK_buttonClass();
 		~LFSTK_buttonClass();
-		LFSTK_buttonClass(Display* dsp,Window parent,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi);
 		LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi);
 
 		void LFSTK_clearWindow(void);
-		unsigned long LFSTK_setColour(const char *name);
-		listener	*LFSTK_getListen(void);
+		listener *LFSTK_getListen(void);
 
+		
 		void mouseEnter();
 		void mouseExit();
 		void mouseDown();
 		void mouseUp();
 
-		Display		*display;
-		Window		parent;
-		Window		window;
-		GC			gc;
+		void LFSTK_setCallBack(void (*bcb)(void *,int),int ud);
+	
+		Display				*display;
+		Window				parent;
+		Window				window;
+		GC					gc;
 
-		int			screen;
-		Visual		*visual;
-		Window		rootWindow;		
-		Colormap	cm;
-		listener listen;
+		int					screen;
+		Visual				*visual;
+		Window				rootWindow;		
+		Colormap			cm;
+		listener			 listen;
+
+		char				*label;
+
 	private:
-		int			x;
-		int			y;
-		int			w;
-		int			h;
-		int			blackColour;
-		int			whiteColour;
-		int			normalColour;
-		int			highlightColour;
-		bool		inWindow;
+		unsigned long setColour(const char *name);
+		void drawLabel();
+
+		buttonCB			callback;
+		int					x;
+		int					y;
+		int					w;
+		int					h;
+		int					blackColour;
+		int					whiteColour;
+		int					normalColour;
+		int					highlightColour;
+		bool				inWindow;
+		LFSTK_windowClass	*wc;
 };
 
 #endif

@@ -25,11 +25,14 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
+#include <string.h>
 
 #include "LFSTKWindow.h"
+#include "LFSTKlib.h"
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
+	free(this->fontString);
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);
@@ -79,6 +82,13 @@ listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 		return NULL;
 }
 
+void LFSTK_windowClass::LFSTK_setFontString(char *s)
+{
+	if(this->fontString!=NULL)
+		free(this->fontString);
+	this->fontString=strdup(s);
+}
+
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
 {
 	XSetWindowAttributes	wa;
@@ -94,11 +104,11 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->w=w;
 	this->h=h;
 
+	this->LFSTK_setFontString((char*)DEFAULTFONT);
 	this->screen=DefaultScreen(this->display);
 	this->visual=DefaultVisual(this->display,this->screen);
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->cm=DefaultColormap(this->display,this->screen);
-
 
 	wa.bit_gravity=NorthWestGravity;
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
@@ -117,6 +127,9 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->gc=XCreateGC(this->display,this->rootWindow,GCForeground | GCBackground,&gcv);
 
 	this->listeners=XUniqueContext();
+
+	this->font=ftload(this,this->fontString);
+	this->fnormal=ftLoadColour(this,foreground);
 //	this->listen.function=gadgetEvent;
 //	this->listen.pointer=this;
 //	this->listen.userData=-1;

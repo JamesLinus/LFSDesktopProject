@@ -25,7 +25,6 @@
 #include <X11/Xutil.h>
 
 #include "LFSTKGlobals.h"
-//#include "LFSTKlib.h"
 
 class LFSTK_windowClass
 {
@@ -40,6 +39,8 @@ class LFSTK_windowClass
 		void LFSTK_setListener(Window w,const listener *l);
 		listener	*LFSTK_getListener(Window w);
 
+		void		LFSTK_setFontString(char *s);
+
 		Display		*display;
 		Window		window;
 		GC			gc;
@@ -48,7 +49,10 @@ class LFSTK_windowClass
 		Window		rootWindow;		
 		Colormap	cm;
 		XContext	listeners;
-		listener listen;
+		listener	listen;
+
+		fontStruct	*font;
+		fontColour	*fnormal;
 
 	private:
 		int			x;
@@ -59,7 +63,7 @@ class LFSTK_windowClass
 		int			backColour;
 		int			blackColour;
 		int			whiteColour;
-		fontStruct	font;
+		char		*fontString;
 };
 
 #endif
