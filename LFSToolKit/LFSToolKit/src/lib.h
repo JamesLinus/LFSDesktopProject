@@ -24,7 +24,7 @@
 #include <X11/Xlib.h>
 #include "LFSTKWindow.h"
 
-void		gadgetEvent(void *self,XEvent *e);
+void		gadgetEvent(void *self,XEvent *e,int type);
 fontStruct	*ftload(LFSTK_windowClass* wc,const char *name);
 fontColour	*ftLoadColour(LFSTK_windowClass *wc,const char *name);
 void		ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s);

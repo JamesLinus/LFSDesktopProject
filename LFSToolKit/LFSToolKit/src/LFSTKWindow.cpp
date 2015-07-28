@@ -86,7 +86,7 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
 
 listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 {
-	listener *l;
+	listener *l=NULL;
 	if (XFindContext(this->display,w,this->listeners,(XPointer *)&l)==0)
 		return l;
 	else

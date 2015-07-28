@@ -1,6 +1,6 @@
 /*
  *
- * ©K. D. Hedger. Tue 28 Jul 15:15:13 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 24 Jul 10:54:59 BST 2015 kdhedger68713@gmail.com
 
  * This file (LFSTKMenuButton.h) is part of LFSToolKit.
 
@@ -22,5 +22,63 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+#include "LFSTKGlobals.h"
+#include "LFSTKWindow.h"
+
+class LFSTK_menuButtonClass
+{
+	public:
+		LFSTK_menuButtonClass();
+		~LFSTK_menuButtonClass();
+		LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
+
+		void LFSTK_clearWindow(void);
+		listener *LFSTK_getListen(void);
+		
+		void mouseEnter();
+		void mouseExit();
+		void mouseDown();
+		void mouseUp();
+		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
+		int	LFSTK_getCallbackUD(void);
+
+		void LFSTK_setStyle(int s);
+
+
+		Display				*display;
+		Window				parent;
+		Window				window;
+		GC					gc;
+
+		int					screen;
+		Visual				*visual;
+		Window				rootWindow;		
+		Colormap			cm;
+
+		char				*label;
+
+	private:
+		unsigned long setColour(const char *name);
+		void drawLabel();
+
+		buttonCB			callback;
+		listener			 listen;
+
+		int					x;
+		int					y;
+		int					w;
+		int					h;
+		int					blackColour;
+		int					whiteColour;
+		int					normalColour;
+		int					highlightColour;
+		int					activeColour;
+		bool				inWindow;
+		int					style;
+		LFSTK_windowClass	*wc;
+};
 
 #endif

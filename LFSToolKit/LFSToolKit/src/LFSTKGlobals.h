@@ -52,8 +52,9 @@ struct fontStruct
 
 struct listener
 {
-	void	(*function)(void *,XEvent *);
+	void	(*function)(void *,XEvent *,int);
 	void	*pointer;
+	int		type;
 };
 
 #endif

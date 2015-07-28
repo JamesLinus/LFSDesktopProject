@@ -16,6 +16,7 @@ exit $retval
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
+#include "LFSTKMenuButton.h"
 //#include <LFSTKGlobals.h>
 
 void bcb(void *p,int ud)
@@ -156,14 +157,17 @@ int main(int argc, char **argv)
 	XEvent event;
 	setCatagories();
 	LFSTK_buttonClass *bc;
+	LFSTK_menuButtonClass *bc1;
 
 	printf("Hello World!\n");
 
 	LFSTK_windowClass *wc=new LFSTK_windowClass(100,100,800,400,"rgb:00/00/00","rgb:80/80/80");
-	wc->LFSTK_setDecorated(false);
+	wc->LFSTK_setDecorated(true);
 
 	int sx=0;
 	int sy=0;
+					//bc1=new LFSTK_menuButtonClass(wc,(char*)"david",sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+					//XMapWindow(wc->display,bc1->window);
 
 	for(int j=0; j<MAXCATS; j++)
 		{
@@ -173,8 +177,17 @@ int main(int argc, char **argv)
 					bc->LFSTK_setCallBack(NULL,bcb,j);
 					bc->LFSTK_setStyle(EMBOSSEDBUTTON);
 					XMapWindow(wc->display,bc->window);
-					bc->LFSTK_clearWindow();
+					
 					sy+=28;
+					//bc1=NULL;
+					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:ff/00/00","rgb:ff/ff/d0","rgb:ff/80/ff");
+					bc1->LFSTK_setCallBack(NULL,bcb,j);
+					bc1->LFSTK_setStyle(FLATBUTTON);
+					XMapWindow(wc->display,bc1->window);
+					sy+=28;
+				//wc->LFSTK_setListener(bc1->window,bc1->LFSTK_getListen());
+					bc->LFSTK_clearWindow();
+					bc1->LFSTK_clearWindow();
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
 						{
 							//entry=XtVaCreateManagedWidget(mainMenus[j].entry[k].name,smeBSBObjectClass,menu,NULL);
@@ -207,8 +220,21 @@ int main(int argc, char **argv)
 		{
 			XNextEvent(wc->display,&event);
 			listener *l=wc->LFSTK_getListener(event.xany.window);
-			if((l!=NULL) && (l->pointer!=NULL))
-				l->function(l->pointer,&event);
+//		if(l==NULL)
+//			{
+//			continue;
+//			}
+//		else
+	//	{
+//			fprintf(stderr,"listner=%p type=%i\n",l,l->type);
+//		}
+			
+//if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) && (l->type<2 && l->type>0))
+//printf("0000000000000 %p %p\n",l->function,l);
+			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL))
+				l->function(l->pointer,&event,l->type);
+//				l=NULL;
+//printf("1111111111111111\n");
 
 			switch(event.type)
 				{
@@ -219,7 +245,7 @@ int main(int argc, char **argv)
 
 				case Expose:
 					wc->LFSTK_clearWindow();
-					bc->LFSTK_clearWindow();
+				//	bc->LFSTK_clearWindow();
 					//bc1->LFSTK_clearWindow();
 					break;
 				case ConfigureNotify:

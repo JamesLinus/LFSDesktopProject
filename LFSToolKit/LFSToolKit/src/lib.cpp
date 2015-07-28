@@ -25,35 +25,61 @@
 
 #include "LFSTKButton.h"
 #include "LFSTKWindow.h"
+#include "LFSTKMenuButton.h"
 #include "lib.h"
 
-void gadgetEvent(void *self,XEvent *e)
+void gadgetEvent(void *self,XEvent *e,int type)
 {
-	int ud=reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_getCallbackUD();
+	int ud;//=reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_getCallbackUD();
+	switch(type)
+		{
+			case 1:
+				ud=reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_getCallbackUD();
+				break;
+			case 2:
+				ud=reinterpret_cast<LFSTK_menuButtonClass*>(self)->LFSTK_getCallbackUD();
+				break;
+		}
 
+//printf("XXXXXXXXXXX type=%i\n",type);
 	switch (e->type)
 		{
 		case EnterNotify:
 			printf("enter - ");
+		if(type==1)
 			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
+		if(type==2)
+			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseEnter();
 			break;
 		case LeaveNotify:
 			printf("leave - ");
+		if(type==1)
 			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
-			break;
+			if(type==2)
+			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseExit();
+		break;
 		case ButtonRelease:
 			printf("release - ");
+		if(type==1)
 			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
+		if(type==2)
+			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseUp();
 			break;
 		case MotionNotify:
 			printf("move - ");
 			break;
 		case ButtonPress:
 			printf("press - ");
+		if(type==1)
 			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
+		if(type==2)
+			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseDown();
 			break;
 		case Expose:
-			reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_clearWindow();
+			if(type==1)
+				reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_clearWindow();
+			if(type==2)
+				reinterpret_cast<LFSTK_menuButtonClass*>(self)->LFSTK_clearWindow();
 			break;
 		}
 	printf("%i\n",ud);
