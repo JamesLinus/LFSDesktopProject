@@ -36,7 +36,7 @@ class LFSTK_windowClass
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h);
 
-		void LFSTK_setListener(Window w,const listener *l);
+		void LFSTK_setListener(Window w,listener *l);
 		listener *LFSTK_getListener(Window w);
 
 		void LFSTK_setFontString(char *s);
