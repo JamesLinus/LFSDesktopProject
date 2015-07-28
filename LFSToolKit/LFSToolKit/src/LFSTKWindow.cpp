@@ -30,6 +30,16 @@
 #include "LFSTKWindow.h"
 #include "lib.h"
 
+struct Hints
+{
+	unsigned long   flags;
+	unsigned long   functions;
+	unsigned long   decorations;
+	long            inputMode;
+	unsigned long   status;
+};
+
+
 LFSTK_windowClass::~LFSTK_windowClass()
 {
 	if(this->fontString!=NULL)
@@ -89,15 +99,6 @@ void LFSTK_windowClass::LFSTK_setFontString(char *s)
 		free(this->fontString);
 	this->fontString=strdup(s);
 }
-
-struct Hints
-{
-	unsigned long   flags;
-	unsigned long   functions;
-	unsigned long   decorations;
-	long            inputMode;
-	unsigned long   status;
-};
 
 void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 {

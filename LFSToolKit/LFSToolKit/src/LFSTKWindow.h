@@ -37,9 +37,9 @@ class LFSTK_windowClass
 		void LFSTK_resizeWindow(int w,int h);
 
 		void LFSTK_setListener(Window w,const listener *l);
-		listener	*LFSTK_getListener(Window w);
+		listener *LFSTK_getListener(Window w);
 
-		void		LFSTK_setFontString(char *s);
+		void LFSTK_setFontString(char *s);
 		void LFSTK_setDecorated(bool isDecorated);
 
 		Display		*display;
@@ -50,7 +50,6 @@ class LFSTK_windowClass
 		Window		rootWindow;		
 		Colormap	cm;
 		XContext	listeners;
-		listener	listen;
 
 		fontStruct	*font;
 		fontColour	*fnormal;
