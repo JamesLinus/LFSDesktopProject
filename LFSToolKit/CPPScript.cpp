@@ -170,10 +170,8 @@ int main(int argc, char **argv)
 			if(mainMenus[j].name!=NULL)
 				{
 					bc=new LFSTK_buttonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc->LFSTK_setCallBack(bcb,NULL,j);
-					bc->listen.userData=j;
-					bc->LFSTK_setStyle(FLATBUTTON);
-					wc->LFSTK_setListener(bc->window,bc->LFSTK_getListen());
+					bc->LFSTK_setCallBack(NULL,bcb,j);
+					bc->LFSTK_setStyle(EMBOSSEDBUTTON);
 					XMapWindow(wc->display,bc->window);
 					bc->LFSTK_clearWindow();
 					sy+=28;
@@ -209,7 +207,7 @@ int main(int argc, char **argv)
 		{
 			XNextEvent(wc->display,&event);
 			listener *l=wc->LFSTK_getListener(event.xany.window);
-			if((l!=NULL) && (l->userData!=-1))
+			if((l!=NULL) && (l->pointer!=NULL))
 				l->function(l->pointer,&event);
 
 			switch(event.type)

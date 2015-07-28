@@ -97,6 +97,11 @@ void LFSTK_buttonClass::mouseUp()
 		}
 }
 
+int LFSTK_buttonClass::LFSTK_getCallbackUD()
+{
+	return(this->callback.userData);
+}
+
 void LFSTK_buttonClass::mouseExit()
 {
 	this->LFSTK_clearWindow();
@@ -187,5 +192,6 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int
 
 	this->wc=wc;
 	this->style=EMBOSSEDBUTTON;
-
+	this->LFSTK_setCallBack(NULL,NULL,-1);
+	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }

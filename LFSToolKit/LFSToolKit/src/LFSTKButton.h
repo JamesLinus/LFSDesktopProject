@@ -43,8 +43,10 @@ class LFSTK_buttonClass
 		void mouseDown();
 		void mouseUp();
 		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
+		int	LFSTK_getCallbackUD(void);
 
 		void LFSTK_setStyle(int s);
+
 
 		Display				*display;
 		Window				parent;
@@ -55,7 +57,6 @@ class LFSTK_buttonClass
 		Visual				*visual;
 		Window				rootWindow;		
 		Colormap			cm;
-		listener			 listen;
 
 		char				*label;
 
@@ -64,6 +65,8 @@ class LFSTK_buttonClass
 		void drawLabel();
 
 		buttonCB			callback;
+		listener			 listen;
+
 		int					x;
 		int					y;
 		int					w;

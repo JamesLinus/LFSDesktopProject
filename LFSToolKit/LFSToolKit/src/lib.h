@@ -22,11 +22,6 @@
 #define _LFSTKLIB_
 
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#include "LFSTKGlobals.h"
-#include "LFSTKButton.h"
-#include "LFSTKWindow.h"
 
 void		gadgetEvent(void *self,XEvent *e);
 fontStruct	*ftload(LFSTK_windowClass* wc,const char *name);

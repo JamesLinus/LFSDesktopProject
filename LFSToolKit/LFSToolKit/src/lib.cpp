@@ -23,41 +23,37 @@
 #include <stdio.h>
 #include <X11/Xft/Xft.h>
 
+#include "LFSTKButton.h"
+#include "LFSTKWindow.h"
 #include "lib.h"
 
 void gadgetEvent(void *self,XEvent *e)
 {
-	int ud=-1;
-	ud=reinterpret_cast<LFSTK_buttonClass*>(self)->listen.userData;
+	int ud=reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_getCallbackUD();
 
 	switch (e->type)
 		{
 		case EnterNotify:
 			printf("enter - ");
-			if(ud!=-1)
-				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
+			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
 			break;
 		case LeaveNotify:
 			printf("leave - ");
-			if(ud!=-1)
-				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
+			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
 			break;
 		case ButtonRelease:
 			printf("release - ");
-			if(ud!=-1)
-				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
+			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
 			break;
 		case MotionNotify:
 			printf("move - ");
 			break;
 		case ButtonPress:
 			printf("press - ");
-			if(ud!=-1)
-				reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
+			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
 			break;
 		case Expose:
-			if(ud!=-1)
-				reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_clearWindow();
+			reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_clearWindow();
 			break;
 		}
 	printf("%i\n",ud);
