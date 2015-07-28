@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <X11/Xft/Xft.h>
 
-#include "LFSTKlib.h"
+#include "lib.h"
 
 void gadgetEvent(void *self,XEvent *e)
 {

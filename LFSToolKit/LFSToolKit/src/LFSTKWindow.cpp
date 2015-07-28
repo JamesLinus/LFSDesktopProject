@@ -28,7 +28,7 @@
 #include <string.h>
 
 #include "LFSTKWindow.h"
-#include "LFSTKlib.h"
+#include "lib.h"
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {

@@ -16,11 +16,13 @@ exit $retval
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
-#include <LFSTKGlobals.h>
+//#include <LFSTKGlobals.h>
 
 void bcb(void *p,int ud)
 {
-	printf(">>>%i<<<<\n",ud);
+	printf(">>>from cb %i<<<<\n",ud);
+	if(ud==0)
+		exit(0);
 }
 
 #define streq(a,b)	( strcmp((a),(b))==0 )
@@ -168,7 +170,7 @@ int main(int argc, char **argv)
 			if(mainMenus[j].name!=NULL)
 				{
 					bc=new LFSTK_buttonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc->LFSTK_setCallBack(bcb,bcb,j);
+					bc->LFSTK_setCallBack(bcb,NULL,j);
 					bc->listen.userData=j;
 					bc->LFSTK_setStyle(FLATBUTTON);
 					wc->LFSTK_setListener(bc->window,bc->LFSTK_getListen());

@@ -23,7 +23,7 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKButton.h"
-#include "LFSTKlib.h"
+#include "lib.h"
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
@@ -80,6 +80,9 @@ void LFSTK_buttonClass::mouseDown()
 		}
 
 	this->drawLabel();
+
+	if(this->callback.pressCallback!=NULL)
+		this->callback.pressCallback(this,this->callback.userData);
 }
 
 void LFSTK_buttonClass::mouseUp()
@@ -89,7 +92,8 @@ void LFSTK_buttonClass::mouseUp()
 	else
 		{
 			this->mouseEnter();
-			this->callback.releaseCallback(this,this->callback.userData);
+			if(this->callback.releaseCallback!=NULL)
+				this->callback.releaseCallback(this,this->callback.userData);
 		}
 }
 
