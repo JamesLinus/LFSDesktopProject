@@ -33,67 +33,37 @@ void gadgetEvent(void *self,XEvent *e,int type)
 
 LFSTK_buttonClass *bc;
 
-	int ud;//=reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_getCallbackUD();
-	switch(type)
-		{
-			case 1:
-				bc=reinterpret_cast<LFSTK_buttonClass*>(self);
-			//	ud=reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_getCallbackUD();
-				break;
-			case 2:
-				bc=reinterpret_cast<LFSTK_menuButtonClass*>(self);
-			//	ud=reinterpret_cast<LFSTK_menuButtonClass*>(self)->LFSTK_getCallbackUD();
-				break;
-		}
+	int ud;
 
+	bc=static_cast<LFSTK_buttonClass*>(self);
 	ud=bc->LFSTK_getCallbackUD();
-//printf("XXXXXXXXXXX type=%i\n",type);
+
 	switch (e->type)
 		{
 		case EnterNotify:
-			printf("enter - ");
+//			printf("enter - ");
 			bc->mouseEnter();
-//		if(type==1)
-//			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseEnter();
-//		if(type==2)
-//			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseEnter();
 			break;
 		case LeaveNotify:
-			printf("leave - ");
+//			printf("leave - ");
 			bc->mouseExit();
-//		if(type==1)
-//			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseExit();
-//			if(type==2)
-//			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseExit();
 		break;
 		case ButtonRelease:
-			printf("release - ");
+//			printf("release - ");
 			bc->mouseUp();
-//		if(type==1)
-//			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseUp();
-//		if(type==2)
-//			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseUp();
 			break;
 		case MotionNotify:
-			printf("move - ");
+//			printf("move - ");
 			break;
 		case ButtonPress:
-			printf("press - ");
+//			printf("press - ");
 			bc->mouseDown();
-//		if(type==1)
-//			reinterpret_cast<LFSTK_buttonClass*>(self)->mouseDown();
-//		if(type==2)
-//			reinterpret_cast<LFSTK_menuButtonClass*>(self)->mouseDown();
 			break;
 		case Expose:
-//			if(type==1)
-//				reinterpret_cast<LFSTK_buttonClass*>(self)->LFSTK_clearWindow();
-//			if(type==2)
-//				reinterpret_cast<LFSTK_menuButtonClass*>(self)->LFSTK_clearWindow();
 			bc->LFSTK_clearWindow();
 			break;
 		}
-	printf("%i\n",ud);
+//	printf("%i\n",ud);
 }
 
 fontStruct* ftload(LFSTK_windowClass* wc,const char *name)

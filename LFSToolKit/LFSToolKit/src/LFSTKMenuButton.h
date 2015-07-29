@@ -36,22 +36,14 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		~LFSTK_menuButtonClass();
 		LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
 
-		void LFSTK_clearWindow(void);
-		//listener *LFSTK_getListen(void);
-		
+		void LFSTK_clearWindow(void);		
 		void mouseEnter();
 		void mouseExit();
 		void mouseDown();
 		void mouseUp();
-//		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
-//		int	LFSTK_getCallbackUD(void);
 
 	private:
-//		unsigned long setColour(const char *name);
 		void drawLabel();
-
-//		listener			 listen;
-//		buttonCB			callback;
 
 		int					x;
 		int					y;
