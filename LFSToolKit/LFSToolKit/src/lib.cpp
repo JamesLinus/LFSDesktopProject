@@ -41,7 +41,7 @@ LFSTK_buttonClass *bc;
 	switch (e->type)
 		{
 		case EnterNotify:
-//			printf("enter - ");
+			printf("enter - ");
 			bc->mouseEnter();
 			break;
 		case LeaveNotify:

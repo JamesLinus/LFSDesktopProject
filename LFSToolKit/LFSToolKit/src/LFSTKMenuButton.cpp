@@ -83,6 +83,55 @@ void LFSTK_menuButtonClass::mouseDown()
 
 	if(this->callback.pressCallback!=NULL)
 		this->callback.pressCallback(this,this->callback.userData);
+
+	LFSTK_buttonClass	*bc;
+	LFSTK_windowClass *wc=new LFSTK_windowClass(100,this->y+h+1,500,this->menuCount*this->h,"rgb:00/00/00","rgb:80/80/80");
+	wc->LFSTK_setDecorated(true);
+	wc->LFSTK_clearWindow();
+	XMapWindow(wc->display,wc->window);
+	int sy=0;
+	int sx=0;
+	for(int j=0;j<this->menuCount;j++)
+		{
+			printf("##%s##\n",this->menus[j].label);
+			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,100,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,j+1000);
+			bc->LFSTK_setStyle(EMBOSSEDBUTTON);
+			XMapWindow(wc->display,bc->window);
+			bc->LFSTK_clearWindow();
+			sy+=this->h;
+		}
+
+	XEvent event;
+	while (true)
+		{
+			XNextEvent(wc->display,&event);
+			listener *l=wc->LFSTK_getListener(event.xany.window);
+			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+				l->function(l->pointer,&event,l->type);
+			switch(event.type)
+				{
+				case ClientMessage:
+					//if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
+					//	keep_running = 0;
+					break;
+
+				case Expose:
+					wc->LFSTK_clearWindow();
+				//	bc->LFSTK_clearWindow();
+					//bc1->LFSTK_clearWindow();
+					break;
+				case ConfigureNotify:
+					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+					wc->LFSTK_clearWindow();
+
+				default:
+					break;
+				}
+
+
+		}
+
 }
 
 void LFSTK_menuButtonClass::mouseUp()
@@ -123,6 +172,12 @@ void LFSTK_menuButtonClass::mouseEnter()
 
 	this->inWindow=true;
 	this->drawLabel();
+}
+
+void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
+{
+	this->menus=menus;
+	this->menuCount=cnt;
 }
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)

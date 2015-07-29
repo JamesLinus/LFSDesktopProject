@@ -41,10 +41,12 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void mouseExit();
 		void mouseDown();
 		void mouseUp();
+		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
 
 	private:
 		void drawLabel();
-
+		menuItemStruct		*menus;
+		int					menuCount;
 		int					x;
 		int					y;
 		int					w;

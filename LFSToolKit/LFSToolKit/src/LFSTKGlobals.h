@@ -57,4 +57,10 @@ struct listener
 	int		type;
 };
 
+struct menuItemStruct
+{
+	char	*label;
+	int		userData;
+};
+
 #endif

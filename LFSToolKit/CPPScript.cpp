@@ -150,7 +150,9 @@ void setCatagories(void)
 			pclose(fp);
 		}
 }
-
+#include <typeinfo>
+#include <strings.h>
+#include <string>
 int main(int argc, char **argv)
 {
 	int keep_running=1;
@@ -163,6 +165,11 @@ int main(int argc, char **argv)
 
 	LFSTK_windowClass *wc=new LFSTK_windowClass(100,100,800,400,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_setDecorated(true);
+using std::string;
+string s=typeid(LFSTK_windowClass).name();
+
+printf(">>>%s<<<\n",s.c_str());
+menuItemStruct *ms,*pms;
 
 	int sx=0;
 	int sy=0;
@@ -188,18 +195,35 @@ int main(int argc, char **argv)
 				//wc->LFSTK_setListener(bc1->window,bc1->LFSTK_getListen());
 					//bc->LFSTK_clearWindow();
 					//bc1->LFSTK_clearWindow();
+					//printf("+++%s+++\n",mainMenus[j].name);
+					ms=new menuItemStruct[mainMenus[j].maxentrys];
+					pms=ms;
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
 						{
+							pms->label=strdup(mainMenus[j].entry[k].name);
+							pms->userData=k;
+							pms++;
+						//printf("---%s---\n",mainMenus[j].entry[k].name);
+						
 							//entry=XtVaCreateManagedWidget(mainMenus[j].entry[k].name,smeBSBObjectClass,menu,NULL);
 							//XtVaSetValues(menu,XmNwidth,400,NULL);
 							//XtAddCallback(entry,XtNcallback,entrySelectCB,(XtPointer)(long)(j*256+k));
 						}
+					bc1->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
 				}
 		}
 	XResizeWindow(wc->display,wc->window,100,sy);
 	wc->LFSTK_resizeWindow(100,sy);
 	wc->LFSTK_clearWindow();
 	XMapWindow(wc->display,wc->window);
+
+string sbc=typeid(bc).name();
+string sbc1=typeid(bc1).name();
+
+printf(">>>%s<<<\n",sbc.c_str());
+printf(">>>%s<<<\n",sbc1.c_str());
+
+
 /*
 	LFSTK_buttonClass *bc=new LFSTK_buttonClass(wc,"button 1",50,50,100,100,0,"rgb:a0/a0/a0","rgb:d0/d0/d0");
 	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"button 2",250,250,100,50,0,"rgb:f0/a0/a0","rgb:e0/d0/d0");
