@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 			if(mainMenus[j].name!=NULL)
 				{
 					bc=new LFSTK_buttonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc->LFSTK_setCallBack(NULL,bcb,j);
+					bc->LFSTK_setCallBack(NULL,bcb,j+100);
 					bc->LFSTK_setStyle(EMBOSSEDBUTTON);
 					XMapWindow(wc->display,bc->window);
 					
@@ -186,8 +186,8 @@ int main(int argc, char **argv)
 					XMapWindow(wc->display,bc1->window);
 					sy+=28;
 				//wc->LFSTK_setListener(bc1->window,bc1->LFSTK_getListen());
-					bc->LFSTK_clearWindow();
-					bc1->LFSTK_clearWindow();
+					//bc->LFSTK_clearWindow();
+					//bc1->LFSTK_clearWindow();
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
 						{
 							//entry=XtVaCreateManagedWidget(mainMenus[j].entry[k].name,smeBSBObjectClass,menu,NULL);
@@ -227,11 +227,11 @@ int main(int argc, char **argv)
 //		else
 	//	{
 //			fprintf(stderr,"listner=%p type=%i\n",l,l->type);
-//		}
+//		} && (l->type<2 && l->type>0)
 			
 //if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) && (l->type<2 && l->type>0))
 //printf("0000000000000 %p %p\n",l->function,l);
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL))
+			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
 				l->function(l->pointer,&event,l->type);
 //				l=NULL;
 //printf("1111111111111111\n");
@@ -257,7 +257,7 @@ int main(int argc, char **argv)
 				}
 		}
 
-	delete bc;
-	delete wc;
+	//delete bc;
+	//delete wc;
 	return 0;
 }

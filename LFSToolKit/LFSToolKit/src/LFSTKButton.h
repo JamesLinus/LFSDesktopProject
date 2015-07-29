@@ -35,18 +35,15 @@ class LFSTK_buttonClass
 		~LFSTK_buttonClass();
 		LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
 
-		void LFSTK_clearWindow(void);
-		listener *LFSTK_getListen(void);
-		
-		void mouseEnter();
-		void mouseExit();
-		void mouseDown();
-		void mouseUp();
 		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
 		int	LFSTK_getCallbackUD(void);
-
 		void LFSTK_setStyle(int s);
 
+		virtual void LFSTK_clearWindow(void);		
+		virtual void mouseEnter();
+		virtual void mouseExit();
+		virtual void mouseDown();
+		virtual void mouseUp();
 
 		Display				*display;
 		Window				parent;
@@ -60,12 +57,16 @@ class LFSTK_buttonClass
 
 		char				*label;
 
-	private:
+	protected:
+		listener *LFSTK_getListen(void);
 		unsigned long setColour(const char *name);
-		void drawLabel();
 
+		listener			listen;
 		buttonCB			callback;
-		listener			 listen;
+		int					style;
+
+	private:
+		void drawLabel();
 
 		int					x;
 		int					y;
@@ -77,7 +78,6 @@ class LFSTK_buttonClass
 		int					highlightColour;
 		int					activeColour;
 		bool				inWindow;
-		int					style;
 		LFSTK_windowClass	*wc;
 };
 

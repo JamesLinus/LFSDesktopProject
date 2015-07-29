@@ -27,8 +27,9 @@
 
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
+#include "LFSTKButton.h"
 
-class LFSTK_menuButtonClass
+class LFSTK_menuButtonClass : public LFSTK_buttonClass
 {
 	public:
 		LFSTK_menuButtonClass();
@@ -36,36 +37,21 @@ class LFSTK_menuButtonClass
 		LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
 
 		void LFSTK_clearWindow(void);
-		listener *LFSTK_getListen(void);
+		//listener *LFSTK_getListen(void);
 		
 		void mouseEnter();
 		void mouseExit();
 		void mouseDown();
 		void mouseUp();
-		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
-		int	LFSTK_getCallbackUD(void);
-
-		void LFSTK_setStyle(int s);
-
-
-		Display				*display;
-		Window				parent;
-		Window				window;
-		GC					gc;
-
-		int					screen;
-		Visual				*visual;
-		Window				rootWindow;		
-		Colormap			cm;
-
-		char				*label;
+//		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
+//		int	LFSTK_getCallbackUD(void);
 
 	private:
-		unsigned long setColour(const char *name);
+//		unsigned long setColour(const char *name);
 		void drawLabel();
 
-		buttonCB			callback;
-		listener			 listen;
+//		listener			 listen;
+//		buttonCB			callback;
 
 		int					x;
 		int					y;
@@ -77,7 +63,6 @@ class LFSTK_menuButtonClass
 		int					highlightColour;
 		int					activeColour;
 		bool				inWindow;
-		int					style;
 		LFSTK_windowClass	*wc;
 };
 

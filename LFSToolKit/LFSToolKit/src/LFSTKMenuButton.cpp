@@ -36,6 +36,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+
 void LFSTK_menuButtonClass::drawLabel()
 {
 	ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
@@ -96,12 +97,12 @@ void LFSTK_menuButtonClass::mouseUp()
 				this->callback.releaseCallback(this,this->callback.userData);
 		}
 }
-
+/*
 int LFSTK_menuButtonClass::LFSTK_getCallbackUD()
 {
 	return(this->callback.userData);
 }
-
+*/
 void LFSTK_menuButtonClass::mouseExit()
 {
 	this->LFSTK_clearWindow();
@@ -130,29 +131,28 @@ void LFSTK_menuButtonClass::mouseEnter()
 	this->drawLabel();
 }
 
+/*
 unsigned long LFSTK_menuButtonClass::setColour(const char *name)
 {
 	XColor tc,sc;
 	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
 	return sc.pixel;
 }
-
+*/
+/*
 listener* LFSTK_menuButtonClass::LFSTK_getListen(void)
 {
 	return(&(this->listen));
 }
-
+*/
+/*
 void LFSTK_menuButtonClass::LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud)
 {
 	this->callback.pressCallback=downcb;
 	this->callback.releaseCallback=releasecb;
 	this->callback.userData=ud;
 }
-
-void LFSTK_menuButtonClass::LFSTK_setStyle(int s)
-{
-	this->style=s;
-}
+*/
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)
 {
