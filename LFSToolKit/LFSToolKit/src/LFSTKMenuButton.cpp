@@ -148,11 +148,6 @@ void LFSTK_menuButtonClass::mouseDown()
 	delete wc;
 }
 
-//void LFSTK_menuButtonClass::LFSTK_setLabelOriention(int o)
-//{
-//	this->labelOrientation=o;
-//}
-
 void LFSTK_menuButtonClass::mouseUp()
 {
 	if(this->inWindow==false)

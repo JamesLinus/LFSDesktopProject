@@ -189,7 +189,7 @@ menuItemStruct *ms,*pms;
 					//bc1=NULL;
 					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
 					bc1->LFSTK_setCallBack(NULL,bcb,j);
-					bc1->LFSTK_setStyle(FLATBUTTON);
+					bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc1->LFSTK_setLabelOriention(CENTRE);
 
 					XMapWindow(wc->display,bc1->window);
