@@ -18,12 +18,20 @@ exit $retval
 #include <LFSTKButton.h>
 #include "LFSTKMenuButton.h"
 //#include <LFSTKGlobals.h>
+	int keep_running=1;
 
 void bcb(void *p,int ud)
 {
 	printf(">>>from cb %i<<<<\n",ud);
+	if(ud>0)
+	{
+		printf(">>exec=%s<<\n",(char*)ud);
+	exit(0);
+	}
 	if(ud==-1)
 		exit(0);
+	if(ud>0)
+	keep_running=0;
 }
 
 #define streq(a,b)	( strcmp((a),(b))==0 )
@@ -155,7 +163,6 @@ void setCatagories(void)
 #include <string>
 int main(int argc, char **argv)
 {
-	int keep_running=1;
 	XEvent event;
 	setCatagories();
 	LFSTK_buttonClass *bc;
@@ -188,7 +195,7 @@ menuItemStruct *ms,*pms;
 					//sy+=28;
 					//bc1=NULL;
 					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc1->LFSTK_setCallBack(NULL,bcb,j);
+					bc1->LFSTK_setCallBack(NULL,bcb,0-(j+1));
 					bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc1->LFSTK_setLabelOriention(CENTRE);
 
@@ -203,7 +210,9 @@ menuItemStruct *ms,*pms;
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
 						{
 							pms->label=strdup(mainMenus[j].entry[k].name);
-							pms->userData=k;
+							//pms->intUserData=k;
+							pms->intUserData=(long)strdup(mainMenus[j].entry[k].exec);
+							pms->charUserData=mainMenus[j].entry[k].exec;
 							pms++;
 						//printf("---%s---\n",mainMenus[j].entry[k].name);
 						
@@ -278,6 +287,11 @@ menuItemStruct *ms,*pms;
 					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 					wc->LFSTK_clearWindow();
 
+			//	case LeaveNotify:
+			//	printf("aaaaaaaaaa\n");
+			//		if(event.xany.window==wc->window)
+			//			keep_running=0;
+			//		break;
 				default:
 					break;
 				}

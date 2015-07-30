@@ -114,7 +114,7 @@ void LFSTK_menuButtonClass::mouseDown()
 		{
 			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
 			bc->LFSTK_setLabelOriention(LEFT);
-			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,0-(j+1));
+			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].intUserData);
 			bc->LFSTK_setStyle(FLATBUTTON);
 			XMapWindow(wc->display,bc->window);
 			bc->LFSTK_clearWindow();

@@ -35,7 +35,7 @@ class LFSTK_buttonClass
 		~LFSTK_buttonClass();
 		LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
 
-		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
+		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),long ud);
 		int	LFSTK_getCallbackUD(void);
 		void LFSTK_setStyle(int s);
 		void LFSTK_setIgnoreCB(bool ignore);

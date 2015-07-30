@@ -150,7 +150,7 @@ listener* LFSTK_buttonClass::LFSTK_getListen(void)
 	return(&(this->listen));
 }
 
-void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud)
+void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),long ud)
 {
 	this->callback.pressCallback=downcb;
 	this->callback.releaseCallback=releasecb;

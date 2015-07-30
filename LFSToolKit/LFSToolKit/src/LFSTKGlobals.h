@@ -62,7 +62,8 @@ struct listener
 struct menuItemStruct
 {
 	char		*label;
-	int			userData;
+	long		intUserData;
+	char		*charUserData;
 };
 
 struct geometryStruct
