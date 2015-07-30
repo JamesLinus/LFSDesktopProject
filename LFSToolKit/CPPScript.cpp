@@ -22,7 +22,7 @@ exit $retval
 void bcb(void *p,int ud)
 {
 	printf(">>>from cb %i<<<<\n",ud);
-	if(ud==0)
+	if(ud==-1)
 		exit(0);
 }
 
@@ -163,12 +163,12 @@ int main(int argc, char **argv)
 
 	printf("Hello World!\n");
 
-	LFSTK_windowClass *wc=new LFSTK_windowClass(100,100,800,400,"rgb:00/00/00","rgb:80/80/80");
+	LFSTK_windowClass *wc=new LFSTK_windowClass(500,1100,800,400,true,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_setDecorated(true);
-using std::string;
-string s=typeid(LFSTK_windowClass).name();
-
-printf(">>>%s<<<\n",s.c_str());
+//using std::string;
+//string s=typeid(LFSTK_windowClass).name();
+//
+//printf(">>>%s<<<\n",s.c_str());
 menuItemStruct *ms,*pms;
 
 	int sx=0;
@@ -180,16 +180,18 @@ menuItemStruct *ms,*pms;
 		{
 			if(mainMenus[j].name!=NULL)
 				{
-					bc=new LFSTK_buttonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc->LFSTK_setCallBack(NULL,bcb,j+100);
-					bc->LFSTK_setStyle(EMBOSSEDBUTTON);
-					XMapWindow(wc->display,bc->window);
+					//bc=new LFSTK_buttonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+					//bc->LFSTK_setCallBack(NULL,bcb,j+100);
+					//bc->LFSTK_setStyle(EMBOSSEDBUTTON);
+					//XMapWindow(wc->display,bc->window);
 					
-					sy+=28;
+					//sy+=28;
 					//bc1=NULL;
-					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:ff/00/00","rgb:ff/ff/d0","rgb:ff/80/ff");
+					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
 					bc1->LFSTK_setCallBack(NULL,bcb,j);
 					bc1->LFSTK_setStyle(FLATBUTTON);
+					bc1->LFSTK_setLabelOriention(CENTRE);
+
 					XMapWindow(wc->display,bc1->window);
 					sy+=28;
 				//wc->LFSTK_setListener(bc1->window,bc1->LFSTK_getListen());
@@ -217,11 +219,11 @@ menuItemStruct *ms,*pms;
 	wc->LFSTK_clearWindow();
 	XMapWindow(wc->display,wc->window);
 
-string sbc=typeid(bc).name();
-string sbc1=typeid(bc1).name();
+//string sbc=typeid(bc).name();
+//string sbc1=typeid(bc1).name();
 
-printf(">>>%s<<<\n",sbc.c_str());
-printf(">>>%s<<<\n",sbc1.c_str());
+//printf(">>>%s<<<\n",sbc.c_str());
+//printf(">>>%s<<<\n",sbc1.c_str());
 
 
 /*

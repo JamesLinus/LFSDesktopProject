@@ -38,7 +38,15 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 
 void LFSTK_menuButtonClass::drawLabel()
 {
-	ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+	switch(this->labelOrientation)
+		{
+			case LEFT:
+				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				break;
+			case CENTRE:
+				ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				break;
+		}
 }
 
 void LFSTK_menuButtonClass::LFSTK_clearWindow()
@@ -63,6 +71,11 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 
 void LFSTK_menuButtonClass::mouseDown()
 {
+	LFSTK_buttonClass	*bc;
+	geometryStruct		*g;
+	LFSTK_windowClass	*wc;
+	int					maxwid=0;
+
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
@@ -84,55 +97,61 @@ void LFSTK_menuButtonClass::mouseDown()
 	if(this->callback.pressCallback!=NULL)
 		this->callback.pressCallback(this,this->callback.userData);
 
-	LFSTK_buttonClass	*bc;
-	LFSTK_windowClass *wc=new LFSTK_windowClass(100,this->y+h+1,500,this->menuCount*this->h,"rgb:00/00/00","rgb:80/80/80");
-	wc->LFSTK_setDecorated(true);
-	wc->LFSTK_clearWindow();
-	XMapWindow(wc->display,wc->window);
-	int sy=0;
-	int sx=0;
 	for(int j=0;j<this->menuCount;j++)
 		{
-			printf("##%s##\n",this->menus[j].label);
-			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,100,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,j+1000);
-			bc->LFSTK_setStyle(EMBOSSEDBUTTON);
+			if(ftTextWidth_Utf8(this->wc,this->menus[j].label)>maxwid)
+				maxwid=ftTextWidth_Utf8(this->wc,this->menus[j].label);
+		}
+	maxwid+=4;
+	g=this->wc->LFSTK_getGeom();
+	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h+1,maxwid,this->menuCount*this->h,true,"rgb:00/00/00","rgb:80/80/80");
+	wc->LFSTK_clearWindow();
+	XMapWindow(wc->display,wc->window);
+	delete g;
+
+	int sy=0;
+	for(int j=0;j<this->menuCount;j++)
+		{
+			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+			bc->LFSTK_setLabelOriention(LEFT);
+			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,0-(j+1));
+			bc->LFSTK_setStyle(FLATBUTTON);
 			XMapWindow(wc->display,bc->window);
 			bc->LFSTK_clearWindow();
 			sy+=this->h;
 		}
 
 	XEvent event;
-	while (true)
+	bool	run=true;
+	while (run==true)
 		{
 			XNextEvent(wc->display,&event);
 			listener *l=wc->LFSTK_getListener(event.xany.window);
 			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
 				l->function(l->pointer,&event,l->type);
+
 			switch(event.type)
 				{
-				case ClientMessage:
-					//if (event.xclient.message_type == XInternAtom(wc->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(wc->display, "WM_DELETE_WINDOW", 1))
-					//	keep_running = 0;
+				case LeaveNotify:
+					if(event.xany.window==wc->window)
+						run=false;
 					break;
 
 				case Expose:
 					wc->LFSTK_clearWindow();
-				//	bc->LFSTK_clearWindow();
-					//bc1->LFSTK_clearWindow();
 					break;
-				case ConfigureNotify:
-					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
-					wc->LFSTK_clearWindow();
 
 				default:
 					break;
 				}
-
-
 		}
-
+	delete wc;
 }
+
+//void LFSTK_menuButtonClass::LFSTK_setLabelOriention(int o)
+//{
+//	this->labelOrientation=o;
+//}
 
 void LFSTK_menuButtonClass::mouseUp()
 {
@@ -141,7 +160,7 @@ void LFSTK_menuButtonClass::mouseUp()
 	else
 		{
 			this->mouseEnter();
-			if(this->callback.releaseCallback!=NULL)
+			if((this->callback.releaseCallback!=NULL) && ((this->callback.ignoreCallback==false)))
 				this->callback.releaseCallback(this,this->callback.userData);
 		}
 }
@@ -219,6 +238,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,i
 
 	this->wc=wc;
 	this->style=EMBOSSEDBUTTON;
+	this->LFSTK_setLabelOriention(1000);
 	this->LFSTK_setCallBack(NULL,NULL,-1);
 	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }

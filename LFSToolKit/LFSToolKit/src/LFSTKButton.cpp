@@ -38,7 +38,15 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 
 void LFSTK_buttonClass::drawLabel()
 {
-	ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+	switch(this->labelOrientation)
+		{
+			case LEFT:
+				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				break;
+			case CENTRE:
+				ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				break;
+		}
 }
 
 void LFSTK_buttonClass::LFSTK_clearWindow()
@@ -147,11 +155,27 @@ void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,int),void (*rele
 	this->callback.pressCallback=downcb;
 	this->callback.releaseCallback=releasecb;
 	this->callback.userData=ud;
+	this->callback.ignoreCallback=false;
 }
 
 void LFSTK_buttonClass::LFSTK_setStyle(int s)
 {
 	this->style=s;
+}
+
+void LFSTK_buttonClass::LFSTK_setIgnoreCB(bool ignore)
+{
+	this->callback.ignoreCallback=ignore;
+}
+
+bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
+{
+	return(this->callback.ignoreCallback);
+}
+
+void LFSTK_buttonClass::LFSTK_setLabelOriention(int o)
+{
+	this->labelOrientation=o;
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)

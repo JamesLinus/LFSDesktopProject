@@ -118,7 +118,22 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 		}
 }
 
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background)
+geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
+{
+	geometryStruct		*g=new geometryStruct;
+	XWindowAttributes	xa;
+
+	XGetWindowAttributes(this->display,this->window,&xa);
+
+	g->x=xa.x;
+	g->y=xa.y;
+	g->w=xa.width;
+	g->h=xa.height;
+	return(g);
+}
+
+
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char* foreground,char* background)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
@@ -141,10 +156,11 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,char* foreground,ch
 	this->cm=DefaultColormap(this->display,this->screen);
 
 	wa.bit_gravity=NorthWestGravity;
+	wa.override_redirect=override;
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
-	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window, ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask);
+	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity|CWOverrideRedirect,&wa);
+	XSelectInput(this->display,this->window, ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
  	this->blackColour=BlackPixel(this->display,this->screen);

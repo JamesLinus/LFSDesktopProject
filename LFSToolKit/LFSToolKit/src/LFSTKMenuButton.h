@@ -42,9 +42,9 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void mouseDown();
 		void mouseUp();
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
+		void drawLabel();
 
 	private:
-		void drawLabel();
 		menuItemStruct		*menus;
 		int					menuCount;
 		int					x;

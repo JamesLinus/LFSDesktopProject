@@ -38,12 +38,16 @@ class LFSTK_buttonClass
 		void LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),int ud);
 		int	LFSTK_getCallbackUD(void);
 		void LFSTK_setStyle(int s);
+		void LFSTK_setIgnoreCB(bool ignore);
+		bool LFSTK_getIgnoreCB(void);
+		void LFSTK_setLabelOriention(int o);
 
 		virtual void LFSTK_clearWindow(void);		
 		virtual void mouseEnter();
 		virtual void mouseExit();
 		virtual void mouseDown();
 		virtual void mouseUp();
+		virtual void drawLabel();
 
 		Display				*display;
 		Window				parent;
@@ -55,19 +59,18 @@ class LFSTK_buttonClass
 		Window				rootWindow;		
 		Colormap			cm;
 
-		char				*label;
 
 	protected:
 		listener *LFSTK_getListen(void);
 		unsigned long setColour(const char *name);
 
+		char				*label;
 		listener			listen;
 		buttonCB			callback;
 		int					style;
+		int					labelOrientation;
 
 	private:
-		void drawLabel();
-
 		int					x;
 		int					y;
 		int					w;

@@ -26,41 +26,49 @@
 #define DEFAULTFONT "sans-serif:size=10"
 
 enum {FLATBUTTON=0,EMBOSSEDBUTTON};
+enum {LEFT=0,CENTRE,RIGHT};
 
 struct buttonCB
 {
-	void	(*pressCallback)(void *,int);
-	void	(*releaseCallback)(void *,int);
-	int		userData;
+	void		(*pressCallback)(void *,int);
+	void		(*releaseCallback)(void *,int);
+	int			userData;
+	bool		ignoreCallback;
 };
 
 struct fontColour
 {
-	XftColor color;
-	XftDraw *draw;
-	Visual *visual;
-	Colormap colormap;
+	XftColor	color;
+	XftDraw		*draw;
+	Visual		*visual;
+	Colormap	colormap;
 };
 
 struct fontStruct
 {
-	int ascent;
-	int descent;
-	int size;
-	void *data;
+	int			ascent;
+	int			descent;
+	int			size;
+	void		*data;
 };
 
 struct listener
 {
-	void	(*function)(void *,XEvent *,int);
-	void	*pointer;
-	int		type;
+	void		(*function)(void *,XEvent *,int);
+	void		*pointer;
+	int			type;
 };
 
 struct menuItemStruct
 {
-	char	*label;
-	int		userData;
+	char		*label;
+	int			userData;
+};
+
+struct geometryStruct
+{
+	int			x,y;
+	unsigned	w,h;
 };
 
 #endif

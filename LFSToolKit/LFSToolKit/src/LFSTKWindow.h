@@ -31,7 +31,7 @@ class LFSTK_windowClass
 	public:
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
-		LFSTK_windowClass(int x,int y,int w,int h,char* foreground,char* background);
+		LFSTK_windowClass(int x,int y,int w,int h,bool override,char* foreground,char* background);
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h);
@@ -41,6 +41,8 @@ class LFSTK_windowClass
 
 		void LFSTK_setFontString(char *s);
 		void LFSTK_setDecorated(bool isDecorated);
+
+		geometryStruct *LFSTK_getGeom(void);
 
 		Display		*display;
 		Window		window;
