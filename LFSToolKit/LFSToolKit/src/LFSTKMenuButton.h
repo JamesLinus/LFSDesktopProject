@@ -29,6 +29,14 @@
 #include "LFSTKWindow.h"
 #include "LFSTKButton.h"
 
+struct menuItemStruct
+{
+	char				*label;
+	void				*userData;
+	LFSTK_buttonClass	*bc;
+};
+
+
 class LFSTK_menuButtonClass : public LFSTK_buttonClass
 {
 	public:

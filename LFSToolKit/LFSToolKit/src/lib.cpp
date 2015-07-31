@@ -45,7 +45,7 @@ LFSTK_buttonClass *bc;
 			bc->mouseEnter();
 			break;
 		case LeaveNotify:
-			printf("leave - %i - %i\n",bc->parent,e->xany.window);
+			//printf("leave - %i - %i\n",bc->parent,e->xany.window);
 			bc->mouseExit();
 		break;
 		case ButtonRelease:

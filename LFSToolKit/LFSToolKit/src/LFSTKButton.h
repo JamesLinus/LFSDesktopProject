@@ -41,6 +41,7 @@ class LFSTK_buttonClass
 		void LFSTK_setIgnoreCB(bool ignore);
 		bool LFSTK_getIgnoreCB(void);
 		void LFSTK_setLabelOriention(int o);
+		char* LFSTK_getLabel();
 
 		virtual void LFSTK_clearWindow(void);		
 		virtual void mouseEnter();

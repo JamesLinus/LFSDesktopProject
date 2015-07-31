@@ -59,12 +59,6 @@ struct listener
 	int			type;
 };
 
-struct menuItemStruct
-{
-	char		*label;
-	void		*userData;
-};
-
 struct geometryStruct
 {
 	int			x,y;

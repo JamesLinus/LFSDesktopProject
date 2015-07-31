@@ -178,6 +178,12 @@ void LFSTK_buttonClass::LFSTK_setLabelOriention(int o)
 	this->labelOrientation=o;
 }
 
+char* LFSTK_buttonClass::LFSTK_getLabel(void)
+{
+	return(this->label);
+}
+
+
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)
 {
 	XSetWindowAttributes	wa;

@@ -27,9 +27,10 @@
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
-	free(this->label);
-	XFreeGC(this->display,this->gc);
-	XDestroyWindow(this->display,this->window);
+//	for(int j=0;j<this->menuCount;j++)
+//		delete this->menus[j].bc;
+	delete this->menus;
+//	XDeleteContext(this->display,this->window,wc->listeners);
 }
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass()
@@ -75,6 +76,8 @@ void LFSTK_menuButtonClass::mouseDown()
 	geometryStruct		*g;
 	LFSTK_windowClass	*wc;
 	int					maxwid=0;
+	XEvent				event;
+	bool				run=true;
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -113,6 +116,7 @@ void LFSTK_menuButtonClass::mouseDown()
 	for(int j=0;j<this->menuCount;j++)
 		{
 			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+			this->menus[j].bc=bc;
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
@@ -121,8 +125,6 @@ void LFSTK_menuButtonClass::mouseDown()
 			sy+=this->h;
 		}
 
-	XEvent event;
-	bool	run=true;
 	while (run==true)
 		{
 			XNextEvent(wc->display,&event);
@@ -145,8 +147,10 @@ void LFSTK_menuButtonClass::mouseDown()
 					break;
 				}
 		}
+
+	for(int j=0;j<this->menuCount;j++)
+		delete this->menus[j].bc;
 	delete wc;
-	printf("AAAAAAAAAAAAAAAA\n");
 }
 
 void LFSTK_menuButtonClass::mouseUp()

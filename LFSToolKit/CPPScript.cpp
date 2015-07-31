@@ -12,48 +12,62 @@ exit $retval
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-//#include <X11/Xft/Xft.h>
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
 #include "LFSTKMenuButton.h"
-//#include <LFSTKGlobals.h>
-#define streq(a,b)	( strcmp((a),(b))==0 )
+
 #define BUFFERSIZE 2048
-#define MAXCATS 500
+#define MAXCATS 14
 #define MAXENTRYS 500
 
-struct			menuEntryStruct
+struct menuEntryStruct
 {
 	char			*name;
 	char			*exec;
+	bool			inTerm;
 };
 
-struct			appMenuStruct
+struct appMenuStruct
 {
 	const char		*name;
 	menuEntryStruct	entry[MAXENTRYS];
 	int				maxentrys;
 };
 
-const char		*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
-
-appMenuStruct	mainMenus[MAXCATS];
-bool			mainloop=false;
-bool			makestatic=false;
-LFSTK_windowClass *wc;
+const char			*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
+const char			*terminalCommand="xterm -e ";
+appMenuStruct		mainMenus[MAXCATS];
+bool				mainloop=false;
+bool				makestatic=false;
+LFSTK_windowClass	*wc;
+LFSTK_menuButtonClass	*bc[MAXCATS];
 
 void bcb(void *p,void* ud)
 {
+	char			buffer[BUFFERSIZE];
+	menuEntryStruct	*menuitem;
+
 	if((long)ud<0)
 		return;
-	menuEntryStruct	*menuitem;
+
 	menuitem=(menuEntryStruct*)ud;
 
 	if(ud>0)
 		{
 			printf(">>%s<<\n",menuitem->exec);
+			printf(">>in term=%i<<\n",menuitem->inTerm);
+			if(menuitem->inTerm==false)
+				sprintf(buffer,"%s &",menuitem->exec);
+			else
+				sprintf(buffer,"%s %s &",terminalCommand,menuitem->exec);
+
+			system(buffer);
+
 			delete wc;
+			for(int j=0;j<MAXCATS;j++)
+				if(bc[j]!=NULL)
+					delete bc[j];
 			exit(0);
 		}
 }
@@ -66,20 +80,22 @@ void setCatagories(void)
 	int		mycatcnt;
 	bool	foundmatch;
 	FILE	*filedata;
-	int		foundcatmatch;
+	int		foundcatmatch=-1;
 	char	foundnamebuffer[BUFFERSIZE];
 	char	foundexecbuffer[BUFFERSIZE];
-	bool	overridefound;
+	bool	overridefound=false;
+	bool	interm=false;
 
 	for(int j=0; j<MAXCATS; j++)
 		{
 			mainMenus[j].name=NULL;
 			mainMenus[j].maxentrys=0;
+			bc[j]=NULL;
 			for(int k=0; k<MAXENTRYS; k++)
 				{
 					mainMenus[j].entry[k].name=NULL;
 					mainMenus[j].entry[k].exec=NULL;
-
+					mainMenus[j].entry[k].inTerm=false;
 				}
 		}
 
@@ -95,6 +111,7 @@ void setCatagories(void)
 						{
 							foundmatch=false;
 							overridefound=false;
+							interm=false;
 							while(fgets(buffer,BUFFERSIZE,filedata))
 								{
 									if(buffer[strlen(buffer)-1]=='\n')
@@ -136,6 +153,14 @@ void setCatagories(void)
 													if(strcasecmp(splitstr,"true")==0)
 														overridefound=true;
 												}
+											if(strcmp(splitstr,"Terminal")==0)
+												{
+													splitstr=strtok(NULL,"=");
+													if(strcasecmp(splitstr,"true")==0)
+														interm=true;
+													else
+														interm=false;
+												}
 										}
 								}
 
@@ -150,6 +175,7 @@ void setCatagories(void)
 										}
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].name=strdup(foundnamebuffer);
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].exec=strdup(foundexecbuffer);
+									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].inTerm=interm;
 									mainMenus[foundcatmatch].maxentrys++;
 								}
 							fclose(filedata);
@@ -180,37 +206,38 @@ bool inWindow(void)
 
 int main(int argc, char **argv)
 {
-	XEvent event;
-	setCatagories();
-	LFSTK_buttonClass *bc;
-	LFSTK_menuButtonClass *bc1;
+	XEvent			event;
+	int				menucount=0;
 	menuItemStruct *ms,*pms;
-	int sx=0;
-	int sy=0;
+	int				sx=0;
+	int				sy=0;
 
+	setCatagories();
 	wc=new LFSTK_windowClass(500,1100,800,400,true,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_setDecorated(true);
 
 	for(int j=0; j<MAXCATS; j++)
 		{
+			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
-					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc1->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
-					bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
-					bc1->LFSTK_setLabelOriention(CENTRE);
+					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
+					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
+					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 
-					XMapWindow(wc->display,bc1->window);
+					XMapWindow(wc->display,bc[menucount]->window);
 					sy+=28;
 					ms=new menuItemStruct[mainMenus[j].maxentrys];
 					pms=ms;
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
 						{
-							pms->label=strdup(mainMenus[j].entry[k].name);
+							pms->label=mainMenus[j].entry[k].name;
 							pms->userData=(void*)&mainMenus[j].entry[k];
 							pms++;
 						}
-					bc1->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
+					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
+					menucount++;
 				}
 		}
 	XResizeWindow(wc->display,wc->window,100,sy);
@@ -243,5 +270,8 @@ int main(int argc, char **argv)
 		}
 
 	delete wc;
+	for(int j=0;j<MAXCATS;j++)
+		if(bc[j]!=NULL)
+			delete bc[j];
 	return 0;
 }
