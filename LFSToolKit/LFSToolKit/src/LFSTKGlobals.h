@@ -30,9 +30,9 @@ enum {LEFT=0,CENTRE,RIGHT};
 
 struct buttonCB
 {
-	void		(*pressCallback)(void *,int);
-	void		(*releaseCallback)(void *,int);
-	int			userData;
+	void		(*pressCallback)(void *,void*);
+	void		(*releaseCallback)(void *,void*);
+	void		*userData;
 	bool		ignoreCallback;
 };
 
@@ -62,8 +62,7 @@ struct listener
 struct menuItemStruct
 {
 	char		*label;
-	long		intUserData;
-	char		*charUserData;
+	void		*userData;
 };
 
 struct geometryStruct

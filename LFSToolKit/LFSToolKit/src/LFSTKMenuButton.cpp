@@ -104,7 +104,7 @@ void LFSTK_menuButtonClass::mouseDown()
 		}
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
-	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h+1,maxwid,this->menuCount*this->h,true,"rgb:00/00/00","rgb:80/80/80");
+	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_clearWindow();
 	XMapWindow(wc->display,wc->window);
 	delete g;
@@ -114,7 +114,7 @@ void LFSTK_menuButtonClass::mouseDown()
 		{
 			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
 			bc->LFSTK_setLabelOriention(LEFT);
-			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].intUserData);
+			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
 			XMapWindow(wc->display,bc->window);
 			bc->LFSTK_clearWindow();
@@ -146,6 +146,7 @@ void LFSTK_menuButtonClass::mouseDown()
 				}
 		}
 	delete wc;
+	printf("AAAAAAAAAAAAAAAA\n");
 }
 
 void LFSTK_menuButtonClass::mouseUp()
@@ -234,6 +235,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,i
 	this->wc=wc;
 	this->style=EMBOSSEDBUTTON;
 	this->LFSTK_setLabelOriention(1000);
-	this->LFSTK_setCallBack(NULL,NULL,-1);
+	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }

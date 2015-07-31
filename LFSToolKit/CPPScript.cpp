@@ -18,22 +18,6 @@ exit $retval
 #include <LFSTKButton.h>
 #include "LFSTKMenuButton.h"
 //#include <LFSTKGlobals.h>
-	int keep_running=1;
-
-void bcb(void *p,int ud)
-{
-	printf(">>>from cb %i<<<<\n",ud);
-	if(ud>0)
-	{
-		printf(">>exec=%s<<\n",(char*)ud);
-	exit(0);
-	}
-	if(ud==-1)
-		exit(0);
-	if(ud>0)
-	keep_running=0;
-}
-
 #define streq(a,b)	( strcmp((a),(b))==0 )
 #define BUFFERSIZE 2048
 #define MAXCATS 500
@@ -57,6 +41,28 @@ const char		*myCats[]= {"Settings","Utility","Development","Education","Graphics
 appMenuStruct	mainMenus[MAXCATS];
 bool			mainloop=false;
 bool			makestatic=false;
+int keep_running=1;
+
+void bcb(void *p,void* ud)
+{
+	if((long)ud<0)
+		return;
+	menuEntryStruct	*menuitem;
+	menuitem=(menuEntryStruct*)ud;
+
+//	printf(">>>from cb %i<<<<\n",(long)ud);
+	if(ud>0)
+	{
+		printf(">>exec=%s<<\n",menuitem->exec);
+	exit(0);
+	}
+//	if((long)ud==-1)
+//		exit(0);
+//	if((long)ud>0)
+//	keep_running=0;
+
+}
+
 
 void setCatagories(void)
 {
@@ -161,16 +167,50 @@ void setCatagories(void)
 #include <typeinfo>
 #include <strings.h>
 #include <string>
+
+	LFSTK_windowClass *wc;
+
+bool inWindow(void)
+{
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+
+	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+		{
+			geometryStruct *g=wc->LFSTK_getGeom();
+							printf(">>ppx=%i wx=%i ww=%i<<\n",root_x_return,g->x,g->w);
+							printf(">>ppy=%i wy=%i wh=%i<<\n",root_y_return,g->y,g->h);
+			if((root_x_return>g->x) && (root_x_return<(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(g->y+g->h)))
+				{
+				printf("in window = true\n");
+				return(true);
+				}
+			else
+				{
+				printf("in window = false\n");
+				return(false);
+				}
+		}
+	return(true);
+}
+
+
 int main(int argc, char **argv)
 {
 	XEvent event;
 	setCatagories();
 	LFSTK_buttonClass *bc;
 	LFSTK_menuButtonClass *bc1;
+	int				win=0,wout=0;
 
 	printf("Hello World!\n");
 
-	LFSTK_windowClass *wc=new LFSTK_windowClass(500,1100,800,400,true,"rgb:00/00/00","rgb:80/80/80");
+	wc=new LFSTK_windowClass(500,1100,800,400,true,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_setDecorated(true);
 //using std::string;
 //string s=typeid(LFSTK_windowClass).name();
@@ -195,7 +235,7 @@ menuItemStruct *ms,*pms;
 					//sy+=28;
 					//bc1=NULL;
 					bc1=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
-					bc1->LFSTK_setCallBack(NULL,bcb,0-(j+1));
+					bc1->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
 					bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc1->LFSTK_setLabelOriention(CENTRE);
 
@@ -211,8 +251,8 @@ menuItemStruct *ms,*pms;
 						{
 							pms->label=strdup(mainMenus[j].entry[k].name);
 							//pms->intUserData=k;
-							pms->intUserData=(long)strdup(mainMenus[j].entry[k].exec);
-							pms->charUserData=mainMenus[j].entry[k].exec;
+							pms->userData=(void*)&mainMenus[j].entry[k];
+							//pms->charUserData=mainMenus[j].entry[k].exec;
 							pms++;
 						//printf("---%s---\n",mainMenus[j].entry[k].name);
 						
@@ -251,6 +291,79 @@ menuItemStruct *ms,*pms;
 	XMapWindow(wc->display,bc1->window);
 	wc->LFSTK_setListener(bc1->window,bc1->LFSTK_getListen());
 */
+	bool			mdown=false;
+int ppx=0,ppy=0;
+
+bool mainloop=true;
+			mainloop=true;
+			while(mainloop==true)
+				{
+					listener *l=wc->LFSTK_getListener(event.xany.window);
+
+					if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+						l->function(l->pointer,&event,l->type);
+				//XtAppNextEvent(app_con,&event);
+					XNextEvent(wc->display,&event);
+					ppx=0;
+					ppy=0;
+					switch(event.type)
+						{
+							case ButtonPress:
+								mdown=true;
+								break;
+							case ButtonRelease:
+								mdown=false;
+								break;
+							case LeaveNotify:
+								mainloop=inWindow();
+								wout=event.xcrossing.subwindow;
+								break;
+							case EnterNotify:
+								win=event.xcrossing.subwindow;
+								break;
+							case Expose:
+								wc->LFSTK_clearWindow();
+								break;
+							case ConfigureNotify:
+								wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+								wc->LFSTK_clearWindow();
+								break;
+						}
+
+#if 0
+					if(((win==0) && (wout!=0)) && (mdown==false))
+						{
+							Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+
+							if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+								{
+
+							geometryStruct *g=wc->LFSTK_getGeom();
+							printf(">>ppx=%i px=%i wx=%i ww=%i<<\n",ppx,event.xcrossing.x,g->x,g->w);
+							printf(">>ppy=%i wy=%i wh=%i<<\n",ppy,g->y,g->h);
+						if((root_x_return<g->x) || (root_x_return>=(g->x+g->w)) || (root_y_return<g->y) || (root_y_return>(g->y+g->h)))
+						{
+							mainloop=false;
+							}
+						}
+					//XtDispatchEvent(&event);
+					}
+#endif
+				}
+
+printf("ZZZZZZZZZZZZZZZZZZZ\n");
+exit(0);
+bool one=false,two=false,three=false;
+	win=-1;
+	wout=-1;
+	bool first=true;
+	two=true;
 	while (keep_running)
 		{
 			XNextEvent(wc->display,&event);
@@ -278,6 +391,12 @@ menuItemStruct *ms,*pms;
 						keep_running = 0;
 					break;
 
+							case ButtonPress:
+								mdown=true;
+								break;
+							case ButtonRelease:
+								mdown=false;
+								break;
 				case Expose:
 					wc->LFSTK_clearWindow();
 				//	bc->LFSTK_clearWindow();
@@ -287,14 +406,81 @@ menuItemStruct *ms,*pms;
 					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 					wc->LFSTK_clearWindow();
 
-			//	case LeaveNotify:
-			//	printf("aaaaaaaaaa\n");
+
+							case LeaveNotify:	
+								wout=event.xcrossing.subwindow;
+								if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+							{
+							bc=static_cast<LFSTK_buttonClass*>(l->pointer);
+						
+							printf("leavenotify\n");
+							two=true;
+							first=false;
+							wout=0;
+							win=1;
+							}
+							//	if(wc->window==event.xcrossing.subwindow)
+							//printf("exit root\n");
+							/*
+							if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+							{
+							bc=static_cast<LFSTK_buttonClass*>(l->pointer);
+							if(((win==0) ))
+								{
+								one=true;
+								printf("** %i ** \n",bc->parent);
+								}
+}
+*/
+								break;
+							case EnterNotify:
+							win=event.xcrossing.subwindow;
+								if(wc->rootWindow==event.xcrossing.subwindow)
+							printf("enter root\n");
+/*
+							two=false;
+							printf("###%i###\n",event.xany.window);
+								
+														if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+							{
+							bc=static_cast<LFSTK_buttonClass*>(l->pointer);
+							if(bc->parent==event.xcrossing.subwindow)
+							printf("enter root\n");
+}
+	*/							break;
+
+//				case LeaveNotify:
+//				printf("aaaaaaaaaa\n");
 			//		if(event.xany.window==wc->window)
 			//			keep_running=0;
-			//		break;
+					break;
 				default:
 					break;
 				}
+				//if(((win==0) && (wout!=0)) && (mdown==false))
+				if(((win==0) && (wout!=0)))
+				{
+				if(first==true)
+					first=false;
+				else
+					{
+					printf("true\n");
+					//keep_running=0;
+					two=true;
+					}
+					}
+				else
+					{
+					printf("false\n");
+					two=false;
+					}
+					//	keep_running=0;
+				
+				if(two==true)
+					keep_running=0;
+				//else
+				//	keep_running=0;
+
 		}
 
 	//delete bc;

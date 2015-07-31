@@ -105,7 +105,7 @@ void LFSTK_buttonClass::mouseUp()
 		}
 }
 
-int LFSTK_buttonClass::LFSTK_getCallbackUD()
+void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 {
 	return(this->callback.userData);
 }
@@ -150,7 +150,7 @@ listener* LFSTK_buttonClass::LFSTK_getListen(void)
 	return(&(this->listen));
 }
 
-void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,int),void (*releasecb)(void *,int),long ud)
+void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud)
 {
 	this->callback.pressCallback=downcb;
 	this->callback.releaseCallback=releasecb;
@@ -217,6 +217,6 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int
 
 	this->wc=wc;
 	this->style=EMBOSSEDBUTTON;
-	this->LFSTK_setCallBack(NULL,NULL,-1);
+	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }

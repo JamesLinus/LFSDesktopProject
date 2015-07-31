@@ -33,7 +33,7 @@ void gadgetEvent(void *self,XEvent *e,int type)
 
 LFSTK_buttonClass *bc;
 
-	int ud;
+	void *ud;
 
 	bc=static_cast<LFSTK_buttonClass*>(self);
 	ud=bc->LFSTK_getCallbackUD();
@@ -45,7 +45,7 @@ LFSTK_buttonClass *bc;
 			bc->mouseEnter();
 			break;
 		case LeaveNotify:
-			//printf("leave - ");
+			printf("leave - %i - %i\n",bc->parent,e->xany.window);
 			bc->mouseExit();
 		break;
 		case ButtonRelease:
