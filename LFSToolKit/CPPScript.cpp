@@ -23,24 +23,24 @@ exit $retval
 
 struct menuEntryStruct
 {
-	char			*name;
-	char			*exec;
-	bool			inTerm;
+	char				*name;
+	char				*exec;
+	bool				inTerm;
 };
 
 struct appMenuStruct
 {
-	const char		*name;
-	menuEntryStruct	entry[MAXENTRYS];
-	int				maxentrys;
+	const char			*name;
+	menuEntryStruct		entry[MAXENTRYS];
+	int					maxentrys;
 };
 
-const char			*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
-const char			*terminalCommand="xterm -e ";
-appMenuStruct		mainMenus[MAXCATS];
-bool				mainloop=false;
-bool				makestatic=false;
-LFSTK_windowClass	*wc;
+const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
+const char				*terminalCommand="xterm -e ";
+appMenuStruct			mainMenus[MAXCATS];
+bool					mainloop=false;
+bool					makestatic=false;
+LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS];
 
 void bcb(void *p,void* ud)
@@ -55,8 +55,6 @@ void bcb(void *p,void* ud)
 
 	if(ud>0)
 		{
-			printf(">>%s<<\n",menuitem->exec);
-			printf(">>in term=%i<<\n",menuitem->inTerm);
 			if(menuitem->inTerm==false)
 				sprintf(buffer,"%s &",menuitem->exec);
 			else

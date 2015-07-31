@@ -27,10 +27,7 @@
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
-//	for(int j=0;j<this->menuCount;j++)
-//		delete this->menus[j].bc;
 	delete this->menus;
-//	XDeleteContext(this->display,this->window,wc->listeners);
 }
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass()
