@@ -291,8 +291,6 @@ menuItemStruct *ms,*pms;
 	XMapWindow(wc->display,bc1->window);
 	wc->LFSTK_setListener(bc1->window,bc1->LFSTK_getListen());
 */
-	bool			mdown=false;
-int ppx=0,ppy=0;
 
 bool mainloop=true;
 			mainloop=true;
@@ -302,18 +300,16 @@ bool mainloop=true;
 
 					if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
 						l->function(l->pointer,&event,l->type);
-				//XtAppNextEvent(app_con,&event);
+
 					XNextEvent(wc->display,&event);
-					ppx=0;
-					ppy=0;
 					switch(event.type)
 						{
-							case ButtonPress:
-								mdown=true;
-								break;
-							case ButtonRelease:
-								mdown=false;
-								break;
+							//case ButtonPress:
+							//	mdown=true;
+							//	break;
+							//case ButtonRelease:
+							//	mdown=false;
+							//	break;
 							case LeaveNotify:
 								mainloop=inWindow();
 								wout=event.xcrossing.subwindow;
