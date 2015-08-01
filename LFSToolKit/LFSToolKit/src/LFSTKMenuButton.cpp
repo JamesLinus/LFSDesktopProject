@@ -27,7 +27,6 @@
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
-//printf("LFSTK_menuButtonClass::~LFSTK_menuButtonClass()\n");
 	delete this->menus;
 }
 

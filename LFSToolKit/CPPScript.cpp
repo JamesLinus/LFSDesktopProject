@@ -233,9 +233,13 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(sx,sy,800,400,true,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_setDecorated(true);
-	wc->LFSTK_setFontColourName(FONTNORMALCOL,"black");
+	wc->LFSTK_setFontColourName(FONTNORMALCOL,"white");
 	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
 	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
+
+	wc->LFSTK_setColourName(NORMALCOLOUR,"#5E3300");
+	wc->LFSTK_setColourName(PRELIGHTCOLOUR,"#6B4C26");
+	wc->LFSTK_setColourName(ACTIVECOLOUR,"#412502");
 
 	sx=0;
 	sy=0;
@@ -244,7 +248,7 @@ int main(int argc, char **argv)
 			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
-					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0,wc->colourNames[NORMALCOLOUR],wc->colourNames[PRELIGHTCOLOUR],wc->colourNames[ACTIVECOLOUR]);
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);

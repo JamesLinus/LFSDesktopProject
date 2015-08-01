@@ -39,6 +39,14 @@ struct Hints
 	unsigned long   status;
 };
 
+void LFSTK_windowClass::initWindow(void)
+{
+	for(int j=0;j<MAXFONTCOLS;j++)
+		this->fontColourNames[j]=NULL;
+
+	for(int j=0;j<MAXCOLOURS;j++)
+		this->colourNames[j]=NULL;
+}
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
@@ -49,6 +57,10 @@ LFSTK_windowClass::~LFSTK_windowClass()
 		if(this->fontColourNames[j]!=NULL)
 			free(this->fontColourNames[j]);
 
+	for(int j=0;j<MAXCOLOURS;j++)
+		if(this->colourNames[j]!=NULL)
+			free(this->colourNames[j]);
+
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);
@@ -57,8 +69,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 LFSTK_windowClass::LFSTK_windowClass()
 {
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=NULL;
+	this->initWindow();
 }
 
 unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
@@ -144,6 +155,10 @@ void LFSTK_windowClass::LFSTK_setFontColourName(int p,char* colour)
 	this->fontColourNames[p]=strdup(colour);
 }
 
+void LFSTK_windowClass::LFSTK_setColourName(int p,char* colour)
+{
+	this->colourNames[p]=strdup(colour);
+}
 
 
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char* foreground,char* background)
@@ -190,6 +205,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char*
 	this->font=ftload(this,this->fontString);
 	this->fnormal=ftLoadColour(this,foreground);
 	this->LFSTK_setDecorated(true);
+	this->initWindow();
 }
 
 
