@@ -27,7 +27,7 @@
 void		gadgetEvent(void *self,XEvent *e,int type);
 fontStruct	*ftload(LFSTK_windowClass* wc,const char *name);
 fontColour	*ftLoadColour(LFSTK_windowClass *wc,const char *name);
-void		ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s);
+//void		ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s);
 int			ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 void ftDrawString_Utf8_withColour(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s);
 

@@ -44,8 +44,9 @@ void LFSTK_windowClass::initWindow(void)
 	for(int j=0;j<MAXFONTCOLS;j++)
 		this->fontColourNames[j]=NULL;
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->colourNames[j]=NULL;
+	this->colourNames[NORMALCOLOUR].name=strdup("grey50");
+	this->colourNames[PRELIGHTCOLOUR].name=strdup("grey80");
+	this->colourNames[ACTIVECOLOUR].name=strdup("grey40");
 }
 
 LFSTK_windowClass::~LFSTK_windowClass()
@@ -58,8 +59,8 @@ LFSTK_windowClass::~LFSTK_windowClass()
 			free(this->fontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		if(this->colourNames[j]!=NULL)
-			free(this->colourNames[j]);
+		if(this->colourNames[j].name!=NULL)
+			free(this->colourNames[j].name);
 
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
@@ -83,7 +84,7 @@ void LFSTK_windowClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
-	XSetForeground(this->display,this->gc,this->whiteColour);
+	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
@@ -157,7 +158,11 @@ void LFSTK_windowClass::LFSTK_setFontColourName(int p,char* colour)
 
 void LFSTK_windowClass::LFSTK_setColourName(int p,char* colour)
 {
-	this->colourNames[p]=strdup(colour);
+	XColor tc,sc;
+
+	this->colourNames[p].name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->colourNames[p].pixel=sc.pixel;
 }
 
 
@@ -191,19 +196,13 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char*
 	XSelectInput(this->display,this->window, ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
- 	this->blackColour=BlackPixel(this->display,this->screen);
-	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->foreColour=this->LFSTK_setColour(foreground);
-	this->backColour=this->LFSTK_setColour(background);
 
-	gcv.foreground=this->foreColour;
-	gcv.background=this->backColour;
-	this->gc=XCreateGC(this->display,this->rootWindow,GCForeground | GCBackground,&gcv);
+	this->gc=XCreateGC(this->display,this->rootWindow,0,NULL);
 
 	this->listeners=XUniqueContext();
 
 	this->font=ftload(this,this->fontString);
-	this->fnormal=ftLoadColour(this,foreground);
+	//this->fnormal=ftLoadColour(this,foreground);
 	this->LFSTK_setDecorated(true);
 	this->initWindow();
 }

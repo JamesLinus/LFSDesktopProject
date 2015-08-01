@@ -116,12 +116,12 @@ fontColour *ftLoadColour(LFSTK_windowClass *wc,const char *name)
 	return c;
 }
 
-void ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s)
-{
-	XftFont *font=(XftFont*)wc->font->data;
-	XftDrawChange(wc->fnormal->draw,d);
-	XftDrawStringUtf8(wc->fnormal->draw,&wc->fnormal->color,font,x,y,(XftChar8 *)s,strlen(s));
-}
+//void ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s)
+//{
+//	XftFont *font=(XftFont*)wc->font->data;
+//	XftDrawChange(wc->fnormal->draw,d);
+//	XftDrawStringUtf8(wc->fnormal->draw,&wc->fnormal->color,font,x,y,(XftChar8 *)s,strlen(s));
+//}
 
 int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 {

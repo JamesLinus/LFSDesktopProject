@@ -67,4 +67,10 @@ struct geometryStruct
 	unsigned	w,h;
 };
 
+struct colourStruct
+{
+	char		*name;
+	long		pixel;
+};
+
 #endif

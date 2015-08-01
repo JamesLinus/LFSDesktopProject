@@ -39,7 +39,7 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				ftDrawString_Utf8_withColour(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
 				break;
 			case CENTRE:
 				//ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);

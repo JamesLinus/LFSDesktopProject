@@ -44,21 +44,21 @@ class LFSTK_windowClass
 		void LFSTK_setColourName(int p,char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
 
-		geometryStruct *LFSTK_getGeom(void);
+		geometryStruct	*LFSTK_getGeom(void);
 
-		Display		*display;
-		Window		window;
-		GC			gc;
-		int			screen;
-		Visual		*visual;
-		Window		rootWindow;		
-		Colormap	cm;
-		XContext	listeners;
+		Display			*display;
+		Window			window;
+		GC				gc;
+		int				screen;
+		Visual			*visual;
+		Window			rootWindow;		
+		Colormap		cm;
+		XContext		listeners;
 
-		fontStruct	*font;
-		fontColour	*fnormal;
-		char		*fontColourNames[MAXFONTCOLS];
-		char		*colourNames[MAXCOLOURS];
+		fontStruct		*font;
+		//fontColour		*fnormal;
+		char			*fontColourNames[MAXFONTCOLS];
+		colourStruct	colourNames[MAXCOLOURS];
 
 	private:
 		void initWindow(void);
@@ -66,10 +66,6 @@ class LFSTK_windowClass
 		int			y;
 		int			w;
 		int			h;
-		int			foreColour;
-		int			backColour;
-		int			blackColour;
-		int			whiteColour;
 		char		*fontString;
 };
 

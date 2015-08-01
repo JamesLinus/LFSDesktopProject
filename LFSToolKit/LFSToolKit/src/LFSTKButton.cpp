@@ -42,7 +42,8 @@ void LFSTK_buttonClass::drawLabel(int p)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				ftDrawString_Utf8_withColour(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				//ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
 				break;
 			case CENTRE:
 				//ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
@@ -56,6 +57,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
+//	XSetForeground(this->display,this->gc,this->normalColour);
 	XSetForeground(this->display,this->gc,this->normalColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
