@@ -18,8 +18,8 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 				-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
 				-DPACKAGE_DATADIR=\"$(pkgdatadir)\" \
 				-DHELPERDIR=\""${libdir}"\" \
-				-D_DEBUGLEVEL_=${with_debug_level}
-
+				-D_DEBUGLEVEL_=${with_debug_level} \
+				-DMAINMENUAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
 
 LIBS =			$(XEXT_LIBS) \
 				$(X11_LIBS) \
@@ -31,5 +31,6 @@ LIBS =			$(XEXT_LIBS) \
 				$(XINERAMA_LIBS) \
 				$(CAIRO_LIBS) \
 				$(IMLIB_LIBS) \
+				-llfstoolkit \
 				 -lm
 

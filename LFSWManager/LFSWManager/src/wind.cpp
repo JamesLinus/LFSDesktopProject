@@ -38,6 +38,7 @@ char				*titleFont;
 char				*fontColours[4];
 int					doswapdesk=-1;
 int					liveUpdate=1;
+char				*terminalCommand=NULL;
 
 //theme
 themeStruct			theme;

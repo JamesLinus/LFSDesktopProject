@@ -1,5 +1,5 @@
 
-SUBDIRS = LFSWManager/app
+SUBDIRS = LFSWManager/app LFSWManager/helper
 
 remake:
 	$(shell ./remakesourcelist)

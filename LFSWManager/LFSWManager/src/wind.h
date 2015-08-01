@@ -206,7 +206,7 @@ extern	unsigned int	numberOfDesktops;
 extern char				*titleFont;
 extern char				*fontColours[4];
 extern int				liveUpdate;
-
+extern char				*terminalCommand;
 //theme
 extern themeStruct		theme;
 extern char				*fontName;

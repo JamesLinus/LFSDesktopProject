@@ -26,6 +26,7 @@ args	wmPrefs[]=
 	{"desktops",TYPEINT,&numberOfDesktops},
 	{"liveupdate",TYPEINT,&liveUpdate},
 	{"theme",TYPESTRING,&theme.pathToTheme},
+	{"termcommand",TYPESTRING,&terminalCommand},
 	{NULL,0,NULL}
 };
 

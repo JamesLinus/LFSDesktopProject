@@ -196,6 +196,7 @@ void usage(FILE *f)
 	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
 			"-T	theme		Path to theme\n"
+			"-x command		Set terminal command ( default xterm -e )\n"
 			"-w	outfile		After setting prefs from default, prefsfile and command line write out a prefsfile and quit ( MUST be last option ).\n"
 	        ,PACKAGE_STRING,progname);
 }
@@ -337,13 +338,15 @@ int main(int argc,char *argv[])
 	theme.pathToTheme=NULL;
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
+	asprintf(&terminalCommand,"xterm -e ");
+
 	loadVarsFromFile(prefsfile,wmPrefs," ");
 	free(prefsfile);
 
 	ndesk=numberOfDesktops;
 
 	int opt;
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:T:w:")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:T:w:x:")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -395,6 +398,13 @@ int main(int argc,char *argv[])
 				saveVarsToFile(optarg,wmPrefs," ");
 				exit(0);
 				break;
+			case 'x':
+				if(terminalCommand!=NULL)
+					free(terminalCommand);
+				terminalCommand=strdup(optarg);
+				break;
+
+
 			default:
 				usage(stderr);
 				exit(1);
@@ -579,11 +589,33 @@ int main(int argc,char *argv[])
 	runlevel=RL_NORMAL;
 
 	CHECKPOINT
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+#define MAXBUFFER 512
+	char			buffer[MAXBUFFER];
+
 
 	while (waitevent() != -1)
 		{
 			XEvent e;
 			XNextEvent(dpy,&e);
+			if(XQueryPointer(dpy,DefaultRootWindow(dpy),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+					{
+					
+						if(mask_return & Button3Mask)
+							{
+								if(child_return==0)
+									{
+										sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
+										system(buffer);
+									}
+							}
+					}
 			if (redirect(&e,e.xany.window)==-1)
 				{
 					/*

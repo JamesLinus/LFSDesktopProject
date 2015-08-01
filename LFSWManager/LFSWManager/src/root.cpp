@@ -258,7 +258,7 @@ void initroot(void)
 
 	XSync(dpy,False);
 	xerror=NULL;
-	XSelectInput(dpy,root,ButtonReleaseMask|EnterWindowMask |
+	XSelectInput(dpy,root,ButtonPress|ButtonReleaseMask|EnterWindowMask |
 	             LeaveWindowMask |
 	             SubstructureRedirectMask |
 	             SubstructureNotifyMask);

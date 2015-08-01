@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([LFSWManager],[0.0.12],[PROJ],[LFSWManager])
+AC_INIT([LFSWManager],[0.0.13],[PROJ],[LFSWManager])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -77,5 +77,5 @@ AC_ARG_WITH(debug_level,AS_HELP_STRING([--with-debug-level],[Debug level ( 0,1 )
 AC_SUBST(with_debug_level)
 AC_MSG_RESULT([Setting debug level to $with_debug_level])
 
-AC_OUTPUT(Makefile LFSWManager/app/Makefile)
+AC_OUTPUT(Makefile LFSWManager/app/Makefile LFSWManager/helper/Makefile)
 
