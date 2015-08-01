@@ -27,6 +27,7 @@
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
+//printf("LFSTK_menuButtonClass::~LFSTK_menuButtonClass()\n");
 	delete this->menus;
 }
 
@@ -34,8 +35,20 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
-void LFSTK_menuButtonClass::drawLabel()
+void LFSTK_menuButtonClass::drawLabel(int p)
 {
+	switch(this->labelOrientation)
+		{
+			case LEFT:
+				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				break;
+			case CENTRE:
+				//ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				ftDrawString_Utf8_withColour(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				break;
+		}
+
+/*
 	switch(this->labelOrientation)
 		{
 			case LEFT:
@@ -45,6 +58,7 @@ void LFSTK_menuButtonClass::drawLabel()
 				ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
 				break;
 		}
+*/
 }
 
 void LFSTK_menuButtonClass::LFSTK_clearWindow()
@@ -64,7 +78,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
-	this->drawLabel();
+	this->drawLabel(FONTNORMALCOL);
 }
 
 void LFSTK_menuButtonClass::mouseDown()
@@ -92,7 +106,7 @@ void LFSTK_menuButtonClass::mouseDown()
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
 
-	this->drawLabel();
+	this->drawLabel(FONTACTIVECOL);
 
 	if(this->callback.pressCallback!=NULL)
 		this->callback.pressCallback(this,this->callback.userData);
@@ -106,6 +120,10 @@ void LFSTK_menuButtonClass::mouseDown()
 	g=this->wc->LFSTK_getGeom();
 	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true,"rgb:00/00/00","rgb:80/80/80");
 	wc->LFSTK_clearWindow();
+	wc->LFSTK_setFontColourName(FONTNORMALCOL,this->wc->fontColourNames[FONTNORMALCOL]);
+	wc->LFSTK_setFontColourName(FONTHILITECOL,this->wc->fontColourNames[FONTHILITECOL]);
+	wc->LFSTK_setFontColourName(FONTACTIVECOL,this->wc->fontColourNames[FONTACTIVECOL]);
+
 	XMapWindow(wc->display,wc->window);
 	delete g;
 
@@ -187,7 +205,7 @@ void LFSTK_menuButtonClass::mouseEnter()
 		}
 
 	this->inWindow=true;
-	this->drawLabel();
+	this->drawLabel(FONTHILITECOL);
 }
 
 void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)

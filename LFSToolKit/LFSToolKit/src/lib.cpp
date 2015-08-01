@@ -130,3 +130,14 @@ int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 	XftTextExtentsUtf8(wc->display,font,(XftChar8 *)s,strlen(s),&info);
 	return info.width-info.x;
 }
+
+void ftDrawString_Utf8_withColour(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s)
+{
+	fontColour *fc=ftLoadColour(wc,col);
+
+	XftFont *font=(XftFont*)wc->font->data;
+	XftDrawChange(fc->draw,d);
+	XftDrawStringUtf8(fc->draw,&fc->color,font,x,y,(XftChar8 *)s,strlen(s));
+	free(fc);
+}
+

@@ -40,6 +40,7 @@ class LFSTK_windowClass
 		listener *LFSTK_getListener(Window w);
 
 		void LFSTK_setFontString(char *s);
+		void LFSTK_setFontColourName(int p,char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
 
 		geometryStruct *LFSTK_getGeom(void);
@@ -55,6 +56,7 @@ class LFSTK_windowClass
 
 		fontStruct	*font;
 		fontColour	*fnormal;
+		char		*fontColourNames[MAXFONTCOLS];
 
 	private:
 		int			x;

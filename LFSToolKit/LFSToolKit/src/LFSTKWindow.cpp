@@ -44,6 +44,11 @@ LFSTK_windowClass::~LFSTK_windowClass()
 {
 	if(this->fontString!=NULL)
 		free(this->fontString);
+
+	for(int j=0;j<MAXFONTCOLS;j++)
+		if(this->fontColourNames[j]!=NULL)
+			free(this->fontColourNames[j]);
+
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
 	XDestroyWindow(this->display,this->window);
@@ -52,6 +57,8 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 LFSTK_windowClass::LFSTK_windowClass()
 {
+	for(int j=0;j<MAXFONTCOLS;j++)
+		this->fontColourNames[j]=NULL;
 }
 
 unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
@@ -131,6 +138,12 @@ geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 	g->h=xa.height;
 	return(g);
 }
+
+void LFSTK_windowClass::LFSTK_setFontColourName(int p,char* colour)
+{
+	this->fontColourNames[p]=strdup(colour);
+}
+
 
 
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char* foreground,char* background)

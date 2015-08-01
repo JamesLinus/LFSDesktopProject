@@ -50,7 +50,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void mouseDown();
 		void mouseUp();
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
-		void drawLabel();
+		void drawLabel(int p);
 
 	private:
 		menuItemStruct		*menus;
@@ -65,7 +65,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		int					highlightColour;
 		int					activeColour;
 		bool				inWindow;
-		LFSTK_windowClass	*wc;
+		//LFSTK_windowClass	*wc;
 };
 
 #endif

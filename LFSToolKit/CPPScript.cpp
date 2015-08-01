@@ -209,11 +209,36 @@ int main(int argc, char **argv)
 	menuItemStruct *ms,*pms;
 	int				sx=0;
 	int				sy=0;
+	Window			dumpwind;
+	int				dumpint;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+	Display			*disp;
 
 	setCatagories();
-	wc=new LFSTK_windowClass(500,1100,800,400,true,"rgb:00/00/00","rgb:80/80/80");
-	wc->LFSTK_setDecorated(true);
+	makestatic=true;
 
+	disp=XOpenDisplay(NULL);
+	if(disp==NULL)
+		exit(1);
+	
+	if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
+		{
+			sx=win_x_return-10;
+			sy=win_y_return-10;
+			//makestatic=false;
+		}
+//	terminalCommand=argv[1];
+
+	wc=new LFSTK_windowClass(sx,sy,800,400,true,"rgb:00/00/00","rgb:80/80/80");
+	wc->LFSTK_setDecorated(true);
+	wc->LFSTK_setFontColourName(FONTNORMALCOL,"black");
+	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
+	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
+
+	sx=0;
+	sy=0;
 	for(int j=0; j<MAXCATS; j++)
 		{
 			bc[j]=NULL;

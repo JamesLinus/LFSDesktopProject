@@ -27,7 +27,8 @@
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
-	free(this->label);
+	if(this->label!=NULL)
+		free(this->label);
 	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
 }
@@ -36,7 +37,7 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 {
 }
 
-void LFSTK_buttonClass::drawLabel()
+void LFSTK_buttonClass::drawLabel(int p)
 {
 	switch(this->labelOrientation)
 		{
@@ -44,7 +45,8 @@ void LFSTK_buttonClass::drawLabel()
 				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
 				break;
 			case CENTRE:
-				ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				//ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
+				ftDrawString_Utf8_withColour(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
 				break;
 		}
 }
@@ -66,7 +68,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
-	this->drawLabel();
+	this->drawLabel(FONTNORMALCOL);
 }
 
 void LFSTK_buttonClass::mouseDown()
@@ -87,7 +89,7 @@ void LFSTK_buttonClass::mouseDown()
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
 
-	this->drawLabel();
+	this->drawLabel(FONTACTIVECOL);
 
 	if(this->callback.pressCallback!=NULL)
 		this->callback.pressCallback(this,this->callback.userData);
@@ -135,7 +137,7 @@ void LFSTK_buttonClass::mouseEnter()
 		}
 
 	this->inWindow=true;
-	this->drawLabel();
+	this->drawLabel(FONTHILITECOL);
 }
 
 unsigned long LFSTK_buttonClass::setColour(const char *name)
@@ -182,7 +184,6 @@ char* LFSTK_buttonClass::LFSTK_getLabel(void)
 {
 	return(this->label);
 }
-
 
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)
 {
