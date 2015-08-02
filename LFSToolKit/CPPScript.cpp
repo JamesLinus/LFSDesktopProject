@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
 	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
 
-	wc->LFSTK_setColourName(NORMALCOLOUR,"#5E3300");
+//	wc->LFSTK_setColourName(NORMALCOLOUR,"#5E3300");
 //	wc->LFSTK_setColourName(PRELIGHTCOLOUR,"#6B4C26");
 //	wc->LFSTK_setColourName(ACTIVECOLOUR,"#412502");
 
@@ -255,8 +255,8 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
-					//bc[menucount]->LFSTK_setColoursFromGlobals();
-					//bc[menucount]->LFSTK_setMenuItemColours(NORMALCOLOUR,"blue");
+					bc[menucount]->LFSTK_setColoursFromGlobals();
+					//bc[menucount]->LFSTK_setMenuItemColours(NORMALCOLOUR,"#102030");
 					//bc[menucount]->LFSTK_setMenuItemColours(PRELIGHTCOLOUR,"red");
 					//bc[menucount]->LFSTK_setMenuItemColours(ACTIVECOLOUR,"#f00080");
 

@@ -91,7 +91,10 @@ void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 	if(globalColoursSet==true)
 		{
 			for(int j=0;j<MAXCOLOURS;j++)
-				this->LFSTK_setColourName(j,globalMenuItemColours[j].name);
+				{
+					this->LFSTK_setColourName(j,globalButtonColours[j].name);
+					this->LFSTK_setMenuItemColours(j,globalMenuItemColours[j].name);
+				}
 		}
 }
 
@@ -148,12 +151,10 @@ void LFSTK_menuButtonClass::mouseDown()
 			bc->LFSTK_setStyle(FLATBUTTON);
 			if(globalColoursSet==true)
 				bc->LFSTK_setColoursFromGlobals();
-			else
-				{
-					bc->LFSTK_setColourName(NORMALCOLOUR,menuItemColours[NORMALCOLOUR].name);
-					bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
-					bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
-				}
+			bc->LFSTK_setColourName(NORMALCOLOUR,menuItemColours[NORMALCOLOUR].name);
+			bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
+			bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
+
 			XMapWindow(wc->display,bc->window);
 			bc->LFSTK_clearWindow();
 			sy+=this->h;

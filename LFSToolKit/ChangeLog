@@ -1,4 +1,6 @@
 0.0.2
+Added setting global colours previously loaded from prefs file to button classes.
+Added setting global colours from prefs file to window class.
 Removed setting colours on create button class.
 Added set colours for menuitems.
 Added init buttons to set default colours.

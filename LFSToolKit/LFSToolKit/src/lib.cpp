@@ -27,28 +27,6 @@
 #include "LFSTKWindow.h"
 #include "LFSTKMenuButton.h"
 #include "lib.h"
-#if 0
-	{"icontheme",TYPESTRING,&iconTheme},
-	{"iconsize",TYPEINT,&iconSize},
-	{"gridsize",TYPEINT,&gridSize},
-	{"gridborder",TYPEINT,&gridBorder},
-	{"refreshrate",TYPEINT,&refreshRate},
-	{"termcommand",TYPESTRING,&terminalCommand},
-	{"showextension",TYPEBOOL,&showSuffix},
-	{"fontface",TYPESTRING,&fontFace},
-	{"labelforeground",TYPESTRING,&foreCol},
-	{"labelbackground",TYPESTRING,&backCol},
-	{"noshow",TYPESTRING,&ignores},
-
-
-button_normal grey50
-button_prelight grey80
-button_active grey40
-
-_normal blue
-menuitem_prelight red
-menuitem_active #ff00ff
-#endif
 
 colourStruct	globalWindowColours[MAXCOLOURS];
 colourStruct	globalButtonColours[MAXCOLOURS];
