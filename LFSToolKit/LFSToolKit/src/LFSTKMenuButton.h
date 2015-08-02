@@ -42,7 +42,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 	public:
 		LFSTK_menuButtonClass();
 		~LFSTK_menuButtonClass();
-		LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact);
+		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity);
 
 		void LFSTK_clearWindow(void);		
 		void mouseEnter();
@@ -52,7 +52,10 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
 		void drawLabel(int p);
 
+		void LFSTK_setMenuItemColours(int p,char* colour);
+
 	private:
+		void initMenuButton(void);
 		menuItemStruct		*menus;
 		int					menuCount;
 		int					x;
@@ -61,11 +64,8 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		int					h;
 		int					blackColour;
 		int					whiteColour;
-		int					normalColour;
-		int					highlightColour;
-		int					activeColour;
 		bool				inWindow;
-		//LFSTK_windowClass	*wc;
+		colourStruct		menuItemColours[MAXCOLOURS];
 };
 
 #endif

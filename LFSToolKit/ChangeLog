@@ -1,2 +1,11 @@
+0.0.2
+Removed setting colours on create button class.
+Added set colours for menuitems.
+Added init buttons to set default colours.
+Added buttons inherit colours from main window.
+Added menu button.
+Added general purpose button.
+Added mainwindow.
+
 0.0.1
 First commit.

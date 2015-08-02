@@ -41,8 +41,10 @@ struct Hints
 
 void LFSTK_windowClass::initWindow(void)
 {
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=NULL;
+	this->fontColourNames[FONTNORMALCOL]=strdup("white");
+	this->fontColourNames[FONTHILITECOL]=strdup("black");
+	this->fontColourNames[FONTACTIVECOL]=strdup("white");
+
 
 	this->colourNames[NORMALCOLOUR].name=strdup("grey50");
 	this->colourNames[PRELIGHTCOLOUR].name=strdup("grey80");
@@ -165,8 +167,7 @@ void LFSTK_windowClass::LFSTK_setColourName(int p,char* colour)
 	this->colourNames[p].pixel=sc.pixel;
 }
 
-
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char* foreground,char* background)
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
@@ -202,7 +203,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override,char*
 	this->listeners=XUniqueContext();
 
 	this->font=ftload(this,this->fontString);
-	//this->fnormal=ftLoadColour(this,foreground);
 	this->LFSTK_setDecorated(true);
 	this->initWindow();
 }

@@ -25,6 +25,22 @@
 #include "LFSTKMenuButton.h"
 #include "lib.h"
 
+void LFSTK_menuButtonClass::initMenuButton(void)
+{
+//	for(int j=0;j<MAXFONTCOLS;j++)
+//		this->fontColourNames[j]=NULL;
+
+	for(int j=0;j<MAXCOLOURS;j++)
+		this->menuItemColours[j].name=NULL;
+
+//	for(int j=0;j<MAXFONTCOLS;j++)
+//		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
+
+	for(int j=0;j<MAXCOLOURS;j++)
+		this->LFSTK_setMenuItemColours(j,this->colourNames[j].name);
+}
+
+
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
 	delete this->menus;
@@ -34,30 +50,27 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+void LFSTK_menuButtonClass::LFSTK_setMenuItemColours(int p,char* colour)
+{
+	XColor tc,sc;
+	if(this->menuItemColours[p].name!=NULL)
+		free(this->menuItemColours[p].name);
+	this->menuItemColours[p].name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->menuItemColours[p].pixel=sc.pixel;
+}
+
 void LFSTK_menuButtonClass::drawLabel(int p)
 {
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				ftDrawString_Utf8_withColour(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
 				break;
 			case CENTRE:
-				//ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
-				ftDrawString_Utf8_withColour(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
 				break;
 		}
-
-/*
-	switch(this->labelOrientation)
-		{
-			case LEFT:
-				ftDrawString_Utf8(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
-				break;
-			case CENTRE:
-				ftDrawString_Utf8(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->label);
-				break;
-		}
-*/
 }
 
 void LFSTK_menuButtonClass::LFSTK_clearWindow()
@@ -65,7 +78,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->normalColour);
+	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->style==EMBOSSEDBUTTON)
@@ -92,7 +105,7 @@ void LFSTK_menuButtonClass::mouseDown()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->activeColour);
+	XSetForeground(this->display,this->gc,this->colourNames[ACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->style==EMBOSSEDBUTTON)
@@ -117,11 +130,8 @@ void LFSTK_menuButtonClass::mouseDown()
 		}
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
-	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true,"rgb:00/00/00","rgb:80/80/80");
+	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true);
 	wc->LFSTK_clearWindow();
-	wc->LFSTK_setFontColourName(FONTNORMALCOL,this->wc->fontColourNames[FONTNORMALCOL]);
-	wc->LFSTK_setFontColourName(FONTHILITECOL,this->wc->fontColourNames[FONTHILITECOL]);
-	wc->LFSTK_setFontColourName(FONTACTIVECOL,this->wc->fontColourNames[FONTACTIVECOL]);
 
 	XMapWindow(wc->display,wc->window);
 	delete g;
@@ -129,11 +139,14 @@ void LFSTK_menuButtonClass::mouseDown()
 	int sy=0;
 	for(int j=0;j<this->menuCount;j++)
 		{
-			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0,"rgb:a0/a0/a0","rgb:d0/d0/d0","rgb:80/80/80");
+			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0);
 			this->menus[j].bc=bc;
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
+			bc->LFSTK_setColourName(NORMALCOLOUR,menuItemColours[NORMALCOLOUR].name);
+			bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
+			bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
 			XMapWindow(wc->display,bc->window);
 			bc->LFSTK_clearWindow();
 			sy+=this->h;
@@ -190,7 +203,7 @@ void LFSTK_menuButtonClass::mouseEnter()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->highlightColour);
+	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->style==EMBOSSEDBUTTON)
@@ -213,23 +226,24 @@ void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 	this->menuCount=cnt;
 }
 
-LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,int x,int y,int w,int h,int gravity,char* colnorm,char* colhi,char* colact)
+LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	XGCValues	gcv;
 
-	this->display=wc->display;
-	this->parent=wc->window;
+	this->wc=parentwc;
+	this->display=this->wc->display;
+	this->parent=this->wc->window;
 
 	this->x=x;
 	this->y=y;
 	this->w=w;
 	this->h=h;
 
-	this->screen=wc->screen;
-	this->visual=wc->visual;
-	this->rootWindow=wc->rootWindow;
-	this->cm=wc->cm;
+	this->screen=this->wc->screen;
+	this->visual=this->wc->visual;
+	this->rootWindow=this->wc->rootWindow;
+	this->cm=this->wc->cm;
 
 	this->label=strdup(label);
 
@@ -238,11 +252,10 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,i
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
+	this->initButton();
+	this->initMenuButton();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
-	this->normalColour=this->setColour(colnorm);
-	this->highlightColour=this->setColour(colhi);
-	this->activeColour=this->setColour(colact);
 
 	this->gc=XCreateGC(this->display,this->parent,0,NULL);
 
@@ -250,7 +263,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* wc,char* label,i
 	this->listen.pointer=this;
 	this->listen.type=2;
 
-	this->wc=wc;
 	this->style=EMBOSSEDBUTTON;
 	this->LFSTK_setLabelOriention(1000);
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);

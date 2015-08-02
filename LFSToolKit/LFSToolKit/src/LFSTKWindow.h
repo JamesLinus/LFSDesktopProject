@@ -31,7 +31,7 @@ class LFSTK_windowClass
 	public:
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
-		LFSTK_windowClass(int x,int y,int w,int h,bool override,char* foreground,char* background);
+		LFSTK_windowClass(int x,int y,int w,int h,bool override);
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h);
@@ -55,10 +55,9 @@ class LFSTK_windowClass
 		Colormap		cm;
 		XContext		listeners;
 
-		fontStruct		*font;
-		//fontColour		*fnormal;
 		char			*fontColourNames[MAXFONTCOLS];
 		colourStruct	colourNames[MAXCOLOURS];
+		fontStruct		*font;
 
 	private:
 		void initWindow(void);

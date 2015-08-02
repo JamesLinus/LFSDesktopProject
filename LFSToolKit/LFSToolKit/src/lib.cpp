@@ -116,13 +116,6 @@ fontColour *ftLoadColour(LFSTK_windowClass *wc,const char *name)
 	return c;
 }
 
-//void ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s)
-//{
-//	XftFont *font=(XftFont*)wc->font->data;
-//	XftDrawChange(wc->fnormal->draw,d);
-//	XftDrawStringUtf8(wc->fnormal->draw,&wc->fnormal->color,font,x,y,(XftChar8 *)s,strlen(s));
-//}
-
 int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 {
 	XftFont *font=(XftFont*)wc->font->data;
@@ -131,7 +124,28 @@ int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 	return info.width-info.x;
 }
 
-void ftDrawString_Utf8_withColour(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s)
+void drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s)
+{
+	XftDraw *draw;
+	XftColor colour;
+
+	if ((draw=XftDrawCreate(wc->display,wc->rootWindow,wc->visual,wc->cm))==NULL)
+		return;
+
+	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,col,&colour))
+		{
+			XftDrawDestroy(draw);
+			return;
+		}
+	
+	XftDrawChange(draw,d);
+	XftDrawStringUtf8(draw,&colour,(XftFont*)wc->font->data,x,y,(XftChar8 *)s,strlen(s));
+	XftDrawDestroy(draw);
+}
+
+
+/*
+void drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s)
 {
 	fontColour *fc=ftLoadColour(wc,col);
 
@@ -140,4 +154,4 @@ void ftDrawString_Utf8_withColour(LFSTK_windowClass *wc,Window d,int x,int y,cha
 	XftDrawStringUtf8(fc->draw,&fc->color,font,x,y,(XftChar8 *)s,strlen(s));
 	free(fc);
 }
-
+*/
