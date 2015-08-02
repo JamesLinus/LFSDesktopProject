@@ -60,6 +60,7 @@ class LFSTK_windowClass
 		char			*fontColourNames[MAXFONTCOLS];
 		colourStruct	colourNames[MAXCOLOURS];
 		fontStruct		*font;
+		char			*fontString;
 
 	private:
 		void initWindow(void);
@@ -67,7 +68,6 @@ class LFSTK_windowClass
 		int			y;
 		int			w;
 		int			h;
-		char		*fontString;
 };
 
 #endif

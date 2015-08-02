@@ -40,7 +40,7 @@ extern colourStruct	globalMenuItemColours[MAXCOLOURS];
 extern bool			globalColoursSet;
 
 void				gadgetEvent(void *self,XEvent *e,int type);
-fontStruct			*ftload(LFSTK_windowClass* wc,const char *name);
+fontStruct			*ftload(LFSTK_windowClass* wc,char *name);
 fontColour			*ftLoadColour(LFSTK_windowClass *wc,const char *name);
 int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 void				drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s);

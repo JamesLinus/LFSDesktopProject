@@ -238,12 +238,36 @@ int main(int argc, char **argv)
 	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
 	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
 
-//	wc->LFSTK_setColourName(NORMALCOLOUR,"#5E3300");
-//	wc->LFSTK_setColourName(PRELIGHTCOLOUR,"#6B4C26");
-//	wc->LFSTK_setColourName(ACTIVECOLOUR,"#412502");
-
 	wc->LFSTK_loadGlobalColours("/home/keithhedger/.config/LFS/lfstoolkit.rc");
+//printf(">>>descent= %i<<<\n",wc->font->ascent);
 
+	wc->LFSTK_setFontString("Bloody:size=10");
+	sx=0;
+	sy=0;
+
+	int addto=wc->font->ascent+wc->font->descent+8;
+	//int addto=24;
+	int maxwid=0;
+
+
+//	for(int j=0;j<MAXCATS;j++)
+	while(myCats[sx]!=NULL)
+		{
+			XftFont *font=(XftFont*)wc->font->data;
+			XGlyphInfo info;
+			
+			//printf(">>>%s<<<\n",myCats[sx]);
+			XftTextExtentsUtf8(wc->display,font,(XftChar8 *)myCats[sx],strlen(myCats[sx]),&info);
+			sx++;
+			if((info.width-info.x)>maxwid)
+				maxwid=info.width;
+//			return info.width-info.x;
+
+			//if(ftTextWidth_Utf8(wc,mainMenus[j].name)>maxwid)
+			//	maxwid=ftTextWidth_Utf8(wc,mainMenus[j].name)>maxwid);
+		}
+
+	maxwid+=8;
 	sx=0;
 	sy=0;
 	for(int j=0; j<MAXCATS; j++)
@@ -251,17 +275,14 @@ int main(int argc, char **argv)
 			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
-					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,100,28,0);
+					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 					bc[menucount]->LFSTK_setColoursFromGlobals();
-					//bc[menucount]->LFSTK_setMenuItemColours(NORMALCOLOUR,"#102030");
-					//bc[menucount]->LFSTK_setMenuItemColours(PRELIGHTCOLOUR,"red");
-					//bc[menucount]->LFSTK_setMenuItemColours(ACTIVECOLOUR,"#f00080");
 
 					XMapWindow(wc->display,bc[menucount]->window);
-					sy+=28;
+					sy+=addto;
 					ms=new menuItemStruct[mainMenus[j].maxentrys];
 					pms=ms;
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
@@ -274,10 +295,12 @@ int main(int argc, char **argv)
 					menucount++;
 				}
 		}
-	XResizeWindow(wc->display,wc->window,100,sy);
-	wc->LFSTK_resizeWindow(100,sy);
+	XResizeWindow(wc->display,wc->window,maxwid,sy);
+	wc->LFSTK_resizeWindow(maxwid,sy);
 	wc->LFSTK_clearWindow();
 	XMapWindow(wc->display,wc->window);
+//	wc->LFSTK_setFontString("ani:size=10");
+//	wc->LFSTK_setFontString("PF Tempesta Five:size=18");
 
 	mainloop=true;
 	while(mainloop==true)

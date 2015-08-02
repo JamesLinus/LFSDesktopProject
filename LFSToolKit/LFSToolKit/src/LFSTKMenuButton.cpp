@@ -102,7 +102,7 @@ void LFSTK_menuButtonClass::mouseDown()
 {
 	LFSTK_buttonClass	*bc;
 	geometryStruct		*g;
-	LFSTK_windowClass	*wc;
+	LFSTK_windowClass	*subwc;
 	int					maxwid=0;
 	XEvent				event;
 	bool				run=true;
@@ -135,16 +135,16 @@ void LFSTK_menuButtonClass::mouseDown()
 		}
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
-	wc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true);
-	wc->LFSTK_clearWindow();
-
-	XMapWindow(wc->display,wc->window);
+	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true);
+	subwc->LFSTK_clearWindow();
+	XMapWindow(subwc->display,subwc->window);
+	subwc->LFSTK_setFontString(this->wc->fontString);
 	delete g;
 
 	int sy=0;
 	for(int j=0;j<this->menuCount;j++)
 		{
-			bc=new LFSTK_buttonClass(wc,this->menus[j].label,0,sy,maxwid,this->h,0);
+			bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,this->h,0);
 			this->menus[j].bc=bc;
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
@@ -155,29 +155,27 @@ void LFSTK_menuButtonClass::mouseDown()
 			bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
 			bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
 
-			XMapWindow(wc->display,bc->window);
+			XMapWindow(subwc->display,bc->window);
 			bc->LFSTK_clearWindow();
 			sy+=this->h;
 		}
 
 	while (run==true)
 		{
-			XNextEvent(wc->display,&event);
-			listener *l=wc->LFSTK_getListener(event.xany.window);
+			XNextEvent(subwc->display,&event);
+			listener *l=subwc->LFSTK_getListener(event.xany.window);
 			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
 				l->function(l->pointer,&event,l->type);
 
 			switch(event.type)
 				{
 				case LeaveNotify:
-					if(event.xany.window==wc->window)
+					if(event.xany.window==subwc->window)
 						run=false;
 					break;
-
 				case Expose:
-					wc->LFSTK_clearWindow();
+					subwc->LFSTK_clearWindow();
 					break;
-
 				default:
 					break;
 				}
@@ -185,7 +183,7 @@ void LFSTK_menuButtonClass::mouseDown()
 
 	for(int j=0;j<this->menuCount;j++)
 		delete this->menus[j].bc;
-	delete wc;
+	delete subwc;
 }
 
 void LFSTK_menuButtonClass::mouseUp()

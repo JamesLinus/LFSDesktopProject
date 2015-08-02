@@ -171,10 +171,9 @@ void gadgetEvent(void *self,XEvent *e,int type)
 //	printf("%i\n",ud);
 }
 
-fontStruct* ftload(LFSTK_windowClass* wc,const char *name)
+fontStruct* ftload(LFSTK_windowClass* wc,char *name)
 {
 	XftFont  *font=NULL;
-
 	if (name != NULL)
 		{
 			font=XftFontOpenXlfd(wc->display,wc->screen,name);

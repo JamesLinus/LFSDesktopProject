@@ -1,4 +1,6 @@
 0.0.2
+Fixed random setting font segfault.
+Fixed font not being set.
 Added setting global colours previously loaded from prefs file to button classes.
 Added setting global colours from prefs file to window class.
 Removed setting colours on create button class.

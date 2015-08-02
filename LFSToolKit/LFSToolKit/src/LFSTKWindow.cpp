@@ -127,6 +127,7 @@ void LFSTK_windowClass::LFSTK_setFontString(char *s)
 	if(this->fontString!=NULL)
 		free(this->fontString);
 	this->fontString=strdup(s);
+	this->font=ftload(this,s);
 }
 
 void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
@@ -191,7 +192,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 	this->h=h;
 	this->fontString=NULL;
 
-	this->LFSTK_setFontString((char*)DEFAULTFONT);
 	this->screen=DefaultScreen(this->display);
 	this->visual=DefaultVisual(this->display,this->screen);
 	this->rootWindow=DefaultRootWindow(this->display);
@@ -209,8 +209,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 	this->gc=XCreateGC(this->display,this->rootWindow,0,NULL);
 
 	this->listeners=XUniqueContext();
+	this->LFSTK_setFontString((char*)DEFAULTFONT);
 
-	this->font=ftload(this,this->fontString);
 	this->LFSTK_setDecorated(true);
 	this->initWindow();
 }
