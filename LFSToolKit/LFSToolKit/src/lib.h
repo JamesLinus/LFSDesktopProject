@@ -24,11 +24,26 @@
 #include <X11/Xlib.h>
 #include "LFSTKWindow.h"
 
-void		gadgetEvent(void *self,XEvent *e,int type);
-fontStruct	*ftload(LFSTK_windowClass* wc,const char *name);
-fontColour	*ftLoadColour(LFSTK_windowClass *wc,const char *name);
-//void		ftDrawString_Utf8(LFSTK_windowClass *wc,Window d,int x,int y,char *s);
-int			ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
-void drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s);
+enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+
+struct args
+{
+	const char*		name;
+	int				type;
+	void*			data;
+};
+
+extern args			lfsToolKitGlobals[];
+extern colourStruct	globalWindowColours[MAXCOLOURS];
+extern colourStruct	globalButtonColours[MAXCOLOURS];
+extern colourStruct	globalMenuItemColours[MAXCOLOURS];
+extern bool			globalColoursSet;
+
+void				gadgetEvent(void *self,XEvent *e,int type);
+fontStruct			*ftload(LFSTK_windowClass* wc,const char *name);
+fontColour			*ftLoadColour(LFSTK_windowClass *wc,const char *name);
+int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
+void				drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s);
+bool 				loadVarsFromFile(char* filepath,args* dataptr);
 
 #endif

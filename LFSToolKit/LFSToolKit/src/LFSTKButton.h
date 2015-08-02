@@ -41,15 +41,16 @@ class LFSTK_buttonClass
 		void LFSTK_setIgnoreCB(bool ignore);
 		bool LFSTK_getIgnoreCB(void);
 		void LFSTK_setLabelOriention(int o);
-		char *LFSTK_getLabel();
+		char *LFSTK_getLabel(void);
 		void LFSTK_setColourName(int p,char* colour);
 
 		virtual void LFSTK_clearWindow(void);		
-		virtual void mouseEnter();
-		virtual void mouseExit();
-		virtual void mouseDown();
-		virtual void mouseUp();
+		virtual void mouseEnter(void);
+		virtual void mouseExit(void);
+		virtual void mouseDown(void);
+		virtual void mouseUp(void);
 		virtual void drawLabel(int p);
+		virtual void LFSTK_setColoursFromGlobals(void);
 
 		Display				*display;
 		Window				parent;

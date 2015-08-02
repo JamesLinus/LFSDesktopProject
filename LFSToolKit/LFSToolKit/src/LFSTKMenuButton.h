@@ -53,6 +53,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void drawLabel(int p);
 
 		void LFSTK_setMenuItemColours(int p,char* colour);
+		void LFSTK_setColoursFromGlobals(void);
 
 	private:
 		void initMenuButton(void);

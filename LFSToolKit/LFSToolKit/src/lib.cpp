@@ -27,11 +27,139 @@
 #include "LFSTKWindow.h"
 #include "LFSTKMenuButton.h"
 #include "lib.h"
+#if 0
+	{"icontheme",TYPESTRING,&iconTheme},
+	{"iconsize",TYPEINT,&iconSize},
+	{"gridsize",TYPEINT,&gridSize},
+	{"gridborder",TYPEINT,&gridBorder},
+	{"refreshrate",TYPEINT,&refreshRate},
+	{"termcommand",TYPESTRING,&terminalCommand},
+	{"showextension",TYPEBOOL,&showSuffix},
+	{"fontface",TYPESTRING,&fontFace},
+	{"labelforeground",TYPESTRING,&foreCol},
+	{"labelbackground",TYPESTRING,&backCol},
+	{"noshow",TYPESTRING,&ignores},
 
+
+button_normal grey50
+button_prelight grey80
+button_active grey40
+
+_normal blue
+menuitem_prelight red
+menuitem_active #ff00ff
+#endif
+
+colourStruct	globalWindowColours[MAXCOLOURS];
+colourStruct	globalButtonColours[MAXCOLOURS];
+colourStruct	globalMenuItemColours[MAXCOLOURS];
+bool			globalColoursSet=false;
+
+args			lfsToolKitGlobals[]=
+{
+//window
+	{"window_normal",TYPESTRING,&globalWindowColours[NORMALCOLOUR]},
+	{"window_prelight",TYPESTRING,&globalWindowColours[PRELIGHTCOLOUR]},
+	{"window_active",TYPESTRING,&globalWindowColours[ACTIVECOLOUR]},
+//button
+	{"button_normal",TYPESTRING,&globalButtonColours[NORMALCOLOUR]},
+	{"button_prelight",TYPESTRING,&globalButtonColours[PRELIGHTCOLOUR]},
+	{"button_active",TYPESTRING,&globalButtonColours[ACTIVECOLOUR]},
+//menu button
+	{"menuitem_normal",TYPESTRING,&globalMenuItemColours[NORMALCOLOUR]},
+	{"menuitem_prelight",TYPESTRING,&globalMenuItemColours[PRELIGHTCOLOUR]},
+	{"menuitem_active",TYPESTRING,&globalMenuItemColours[ACTIVECOLOUR]},
+
+	{NULL,0,NULL}
+};
+
+void saveVarsToFile(const char* filepath,args* dataptr)
+{
+	FILE*	fd=NULL;
+	int		cnt=0;
+
+	if(filepath[0]=='-')
+		fd=stdout;
+	else
+		fd=fopen(filepath,"w");
+
+	if(fd!=NULL)
+		{
+			while(dataptr[cnt].name!=NULL)
+				{
+					switch(dataptr[cnt].type)
+						{
+						case TYPEINT:
+							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
+							break;
+						case TYPESTRING:
+							if(*(char**)(dataptr[cnt].data)!=NULL)
+								fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
+							break;
+						case TYPEBOOL:
+							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
+							break;
+						}
+					cnt++;
+				}
+			fclose(fd);
+		}
+}
+
+bool loadVarsFromFile(char* filepath,args* dataptr)
+{
+	FILE*	fd=NULL;
+	char	buffer[2048];
+	int		cnt;
+	char*	argname=NULL;
+	char*	strarg=NULL;
+
+	fd=fopen(filepath,"r");
+	if(fd!=NULL)
+		{
+			while(feof(fd)==0)
+				{
+					buffer[0]=0;
+					fgets(buffer,2048,fd);
+					sscanf(buffer,"%as %as",&argname,&strarg);
+					cnt=0;
+					while(dataptr[cnt].name!=NULL)
+						{
+							if((strarg!=NULL) && (argname!=NULL) && (strcmp(argname,dataptr[cnt].name)==0))
+								{
+									switch(dataptr[cnt].type)
+										{
+										case TYPEINT:
+											*(int*)dataptr[cnt].data=atoi(strarg);
+											break;
+										case TYPESTRING:
+											if(*(char**)(dataptr[cnt].data)!=NULL)
+												free(*(char**)(dataptr[cnt].data));
+											sscanf(buffer,"%*s %a[^\n]s",(char**)dataptr[cnt].data);
+											break;
+										case TYPEBOOL:
+											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
+											break;
+										}
+								}
+							cnt++;
+						}
+					if(argname!=NULL)
+						free(argname);
+					if(strarg!=NULL)
+						free(strarg);
+					argname=NULL;
+					strarg=NULL;
+				}
+			fclose(fd);
+			return(true);
+		}
+	return(false);
+}
 void gadgetEvent(void *self,XEvent *e,int type)
 {
 
-LFSTK_buttonClass *bc;
+	LFSTK_buttonClass *bc;
 
 	void *ud;
 
@@ -142,16 +270,3 @@ void drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s
 	XftDrawStringUtf8(draw,&colour,(XftFont*)wc->font->data,x,y,(XftChar8 *)s,strlen(s));
 	XftDrawDestroy(draw);
 }
-
-
-/*
-void drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s)
-{
-	fontColour *fc=ftLoadColour(wc,col);
-
-	XftFont *font=(XftFont*)wc->font->data;
-	XftDrawChange(fc->draw,d);
-	XftDrawStringUtf8(fc->draw,&fc->color,font,x,y,(XftChar8 *)s,strlen(s));
-	free(fc);
-}
-*/

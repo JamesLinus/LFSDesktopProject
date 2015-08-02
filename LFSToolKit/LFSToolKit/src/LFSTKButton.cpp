@@ -65,6 +65,15 @@ void LFSTK_buttonClass::drawLabel(int p)
 		}
 }
 
+void LFSTK_buttonClass::LFSTK_setColoursFromGlobals(void)
+{
+	if(globalColoursSet==true)
+		{
+			for(int j=0;j<MAXCOLOURS;j++)
+				this->LFSTK_setColourName(j,globalButtonColours[j].name);
+		}
+}
+
 void LFSTK_buttonClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);

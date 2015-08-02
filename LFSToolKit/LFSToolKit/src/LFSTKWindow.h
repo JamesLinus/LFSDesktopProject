@@ -44,6 +44,8 @@ class LFSTK_windowClass
 		void LFSTK_setColourName(int p,char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
 
+		void LFSTK_loadGlobalColours(char* path);
+
 		geometryStruct	*LFSTK_getGeom(void);
 
 		Display			*display;

@@ -27,19 +27,12 @@
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
-//	for(int j=0;j<MAXFONTCOLS;j++)
-//		this->fontColourNames[j]=NULL;
-
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->menuItemColours[j].name=NULL;
-
-//	for(int j=0;j<MAXFONTCOLS;j++)
-//		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setMenuItemColours(j,this->colourNames[j].name);
 }
-
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
@@ -93,6 +86,15 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 	this->drawLabel(FONTNORMALCOL);
 }
 
+void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
+{
+	if(globalColoursSet==true)
+		{
+			for(int j=0;j<MAXCOLOURS;j++)
+				this->LFSTK_setColourName(j,globalMenuItemColours[j].name);
+		}
+}
+
 void LFSTK_menuButtonClass::mouseDown()
 {
 	LFSTK_buttonClass	*bc;
@@ -144,9 +146,14 @@ void LFSTK_menuButtonClass::mouseDown()
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
-			bc->LFSTK_setColourName(NORMALCOLOUR,menuItemColours[NORMALCOLOUR].name);
-			bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
-			bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
+			if(globalColoursSet==true)
+				bc->LFSTK_setColoursFromGlobals();
+			else
+				{
+					bc->LFSTK_setColourName(NORMALCOLOUR,menuItemColours[NORMALCOLOUR].name);
+					bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
+					bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
+				}
 			XMapWindow(wc->display,bc->window);
 			bc->LFSTK_clearWindow();
 			sy+=this->h;

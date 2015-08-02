@@ -75,6 +75,14 @@ LFSTK_windowClass::LFSTK_windowClass()
 	this->initWindow();
 }
 
+void LFSTK_windowClass::LFSTK_loadGlobalColours(char* path)
+{
+	loadVarsFromFile(path,lfsToolKitGlobals);
+	for(int j=0;j<MAXCOLOURS;j++)
+		this->LFSTK_setColourName(j,globalWindowColours[j].name);
+	globalColoursSet=true;
+}
+
 unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 {
 	XColor tc,sc;
