@@ -33,6 +33,11 @@ colourStruct	globalButtonColours[MAXCOLOURS];
 colourStruct	globalMenuItemColours[MAXCOLOURS];
 bool			globalColoursSet=false;
 
+char			*gFontString=NULL;
+char			*gFontColourNames[MAXFONTCOLS];
+char			*gMenuItemFontString;
+char			*gMenuItemFontColourNames[MAXCOLOURS];
+
 args			lfsToolKitGlobals[]=
 {
 //window
@@ -47,6 +52,17 @@ args			lfsToolKitGlobals[]=
 	{"menuitem_normal",TYPESTRING,&globalMenuItemColours[NORMALCOLOUR]},
 	{"menuitem_prelight",TYPESTRING,&globalMenuItemColours[PRELIGHTCOLOUR]},
 	{"menuitem_active",TYPESTRING,&globalMenuItemColours[ACTIVECOLOUR]},
+	{"menuitem_font",TYPESTRING,&gMenuItemFontString},
+	{"menuitem_font_normal",TYPESTRING,&gMenuItemFontColourNames[NORMALCOLOUR]},
+	{"menuitem_font_prelight",TYPESTRING,&gMenuItemFontColourNames[PRELIGHTCOLOUR]},
+	{"menuitem_font_active",TYPESTRING,&gMenuItemFontColourNames[ACTIVECOLOUR]},
+
+//font
+	{"font",TYPESTRING,&gFontString},
+	{"font_normal",TYPESTRING,&gFontColourNames[NORMALCOLOUR]},
+	{"font_prelight",TYPESTRING,&gFontColourNames[PRELIGHTCOLOUR]},
+	{"font_active",TYPESTRING,&gFontColourNames[ACTIVECOLOUR]},
+
 
 	{NULL,0,NULL}
 };
@@ -171,20 +187,20 @@ void gadgetEvent(void *self,XEvent *e,int type)
 //	printf("%i\n",ud);
 }
 
-fontStruct* ftload(LFSTK_windowClass* wc,char *name)
+fontStruct* ftload(Display *disp,int scr,char *name)
 {
 	XftFont  *font=NULL;
 	if (name != NULL)
 		{
-			font=XftFontOpenXlfd(wc->display,wc->screen,name);
+			font=XftFontOpenXlfd(disp,scr,name);
 			if (font==NULL)
-				font=XftFontOpenName(wc->display,wc->screen,name);
+				font=XftFontOpenName(disp,scr,name);
 			if (font==NULL)
 				fprintf(stderr,"cannot not load font %s",name);
 		}
 
 	if (font==NULL)
-		font=XftFontOpenName(wc->display,wc->screen,DEFAULTFONT);
+		font=XftFontOpenName(disp,scr,DEFAULTFONT);
 
 	if (font==NULL)
 		return NULL;
@@ -198,6 +214,7 @@ fontStruct* ftload(LFSTK_windowClass* wc,char *name)
 	return f;
 }
 
+/*
 fontColour *ftLoadColour(LFSTK_windowClass *wc,const char *name)
 {
 	XftDraw *draw;
@@ -220,6 +237,7 @@ fontColour *ftLoadColour(LFSTK_windowClass *wc,const char *name)
 
 	return c;
 }
+*/
 
 int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 {
@@ -229,21 +247,31 @@ int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 	return info.width-info.x;
 }
 
-void drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s)
+int getTextwidth(Display* disp,XftFont *font,char *s)
 {
-	XftDraw *draw;
+	XGlyphInfo info;
+	XftTextExtentsUtf8(disp,font,(XftChar8 *)s,strlen(s),&info);
+	return info.width-info.x;
+}
+
+void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,char *col,char *s)
+{
+	//XftDraw *draw;
 	XftColor colour;
 
-	if ((draw=XftDrawCreate(wc->display,wc->rootWindow,wc->visual,wc->cm))==NULL)
-		return;
+	//if ((draw=XftDrawCreate(wc->display,wc->rootWindow,wc->visual,wc->cm))==NULL)
+	//	return;
 
 	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,col,&colour))
 		{
-			XftDrawDestroy(draw);
+			//XftDrawDestroy(draw);
 			return;
 		}
 	
-	XftDrawChange(draw,d);
-	XftDrawStringUtf8(draw,&colour,(XftFont*)wc->font->data,x,y,(XftChar8 *)s,strlen(s));
-	XftDrawDestroy(draw);
+	//XftDrawChange(draw,d);
+	XftDrawChange(wc->draw,d);
+//	XftDrawStringUtf8(draw,&colour,(XftFont*)wc->font->data,x,y,(XftChar8 *)s,strlen(s));
+	XftDrawStringUtf8(wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
+//	XftDrawStringUtf8(draw,&wc->colourNames[0].pixel,font,x,y,(XftChar8 *)s,strlen(s));
+//	XftDrawDestroy(draw);
 }

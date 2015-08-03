@@ -241,7 +241,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_loadGlobalColours("/home/keithhedger/.config/LFS/lfstoolkit.rc");
 //printf(">>>descent= %i<<<\n",wc->font->ascent);
 
-	wc->LFSTK_setFontString("Bloody:size=10");
+	//wc->LFSTK_setFontString("Bloody:size=20");
 	sx=0;
 	sy=0;
 
@@ -295,6 +295,15 @@ int main(int argc, char **argv)
 					menucount++;
 				}
 		}
+	//
+	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"normal button",0,sy,maxwid,addto,0);
+	bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
+	bc1->LFSTK_setLabelOriention(CENTRE);
+	bc1->LFSTK_setFontString("Bloody:size=8");
+	//bc1->LFSTK_setColoursFromGlobals();
+	XMapWindow(wc->display,bc1->window);
+sy+=addto;
+
 	XResizeWindow(wc->display,wc->window,maxwid,sy);
 	wc->LFSTK_resizeWindow(maxwid,sy);
 	wc->LFSTK_clearWindow();

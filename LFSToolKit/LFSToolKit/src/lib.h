@@ -39,11 +39,17 @@ extern colourStruct	globalButtonColours[MAXCOLOURS];
 extern colourStruct	globalMenuItemColours[MAXCOLOURS];
 extern bool			globalColoursSet;
 
+extern char			*gFontString;
+extern char			*gFontColourNames[MAXFONTCOLS];
+extern char			*gMenuItemFontString;
+extern char			*gMenuItemFontColourNames[MAXCOLOURS];
+
 void				gadgetEvent(void *self,XEvent *e,int type);
-fontStruct			*ftload(LFSTK_windowClass* wc,char *name);
-fontColour			*ftLoadColour(LFSTK_windowClass *wc,const char *name);
+fontStruct			*ftload(Display *disp,int scr,char *name);
+//fontColour			*ftLoadColour(LFSTK_windowClass *wc,const char *name);
 int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
-void				drawUtf8String(LFSTK_windowClass *wc,Window d,int x,int y,char *col,char *s);
+void				drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,char *col,char *s);
 bool 				loadVarsFromFile(char* filepath,args* dataptr);
+int					getTextwidth(Display* disp,XftFont *font,char *s);
 
 #endif

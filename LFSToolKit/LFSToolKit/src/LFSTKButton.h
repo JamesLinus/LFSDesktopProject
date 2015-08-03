@@ -43,6 +43,8 @@ class LFSTK_buttonClass
 		void LFSTK_setLabelOriention(int o);
 		char *LFSTK_getLabel(void);
 		void LFSTK_setColourName(int p,char* colour);
+		void LFSTK_setFontColourName(int p,char* colour);
+		void LFSTK_setFontString(char *s);
 
 		virtual void LFSTK_clearWindow(void);		
 		virtual void mouseEnter(void);
@@ -72,10 +74,11 @@ class LFSTK_buttonClass
 		buttonCB			callback;
 		int					style;
 		int					labelOrientation;
-		fontStruct			*font;
-		fontColour			*fontColours[MAXFONTCOLS];
+		//fontColour			*fontColours[MAXFONTCOLS];
 		LFSTK_windowClass	*wc;
 	
+		char				*fontString;
+		fontStruct			*font;
 		char				*fontColourNames[MAXFONTCOLS];
 		colourStruct		colourNames[MAXCOLOURS];
 

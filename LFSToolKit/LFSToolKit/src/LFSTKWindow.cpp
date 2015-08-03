@@ -80,6 +80,10 @@ void LFSTK_windowClass::LFSTK_loadGlobalColours(char* path)
 	loadVarsFromFile(path,lfsToolKitGlobals);
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,globalWindowColours[j].name);
+	this->LFSTK_setFontString(gFontString);
+
+	for(int j=0;j<MAXFONTCOLS;j++)
+		this->LFSTK_setFontColourName(j,gFontColourNames[j]);
 	globalColoursSet=true;
 }
 
@@ -127,7 +131,7 @@ void LFSTK_windowClass::LFSTK_setFontString(char *s)
 	if(this->fontString!=NULL)
 		free(this->fontString);
 	this->fontString=strdup(s);
-	this->font=ftload(this,s);
+	this->font=ftload(this->display,this->screen,s);
 }
 
 void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
@@ -196,6 +200,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 	this->visual=DefaultVisual(this->display,this->screen);
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->cm=DefaultColormap(this->display,this->screen);
+	this->draw=XftDrawCreate(this->display,this->rootWindow,this->visual,this->cm);
 
 	wa.bit_gravity=NorthWestGravity;
 	wa.override_redirect=override;

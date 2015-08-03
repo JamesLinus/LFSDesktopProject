@@ -1,4 +1,6 @@
 0.0.2
+Fixed not setting prper colours.
+Added menuitem font and colours.
 Fixed random setting font segfault.
 Fixed font not being set.
 Added setting global colours previously loaded from prefs file to button classes.

@@ -56,11 +56,11 @@ class LFSTK_windowClass
 		Window			rootWindow;		
 		Colormap		cm;
 		XContext		listeners;
-
+		XftDraw 		*draw;
+		char			*fontString;
 		char			*fontColourNames[MAXFONTCOLS];
 		colourStruct	colourNames[MAXCOLOURS];
 		fontStruct		*font;
-		char			*fontString;
 
 	private:
 		void initWindow(void);

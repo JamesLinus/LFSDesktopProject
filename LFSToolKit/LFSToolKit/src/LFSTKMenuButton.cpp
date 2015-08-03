@@ -30,8 +30,30 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->menuItemColours[j].name=NULL;
 
+	this->menuItemFontString=NULL;
+
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setMenuItemColours(j,this->colourNames[j].name);
+
+	this->LFSTK_setFontString(this->wc->fontString);
+	if(globalColoursSet==false)
+		{
+			this->LFSTK_setMenuItemFontString(this->wc->fontString);
+			for(int j=0;j<MAXFONTCOLS;j++)
+				this->LFSTK_setMenuItemsFontColourName(j,fontColourNames[j]);
+		}
+	else
+		{
+			this->LFSTK_setMenuItemFontString(gMenuItemFontString);
+			for(int j=0;j<MAXFONTCOLS;j++)
+				this->LFSTK_setMenuItemsFontColourName(j,gMenuItemFontColourNames[j]);
+		}
+	
+}
+
+void LFSTK_menuButtonClass::LFSTK_setMenuItemsFontColourName(int p,char* colour)
+{
+	this->menuItemFontColourNames[p]=strdup(colour);
 }
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
@@ -43,6 +65,14 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+void LFSTK_menuButtonClass::LFSTK_setMenuItemFontString(char *s)
+{
+	if(this->menuItemFontString!=NULL)
+		free(this->menuItemFontString);
+	this->menuItemFontString=strdup(s);
+	this->menuItemfont=ftload(this->display,this->screen,s);
+}
+
 void LFSTK_menuButtonClass::LFSTK_setMenuItemColours(int p,char* colour)
 {
 	XColor tc,sc;
@@ -50,7 +80,7 @@ void LFSTK_menuButtonClass::LFSTK_setMenuItemColours(int p,char* colour)
 		free(this->menuItemColours[p].name);
 	this->menuItemColours[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->menuItemColours[p].pixel=sc.pixel;
+	this->menuItemColours[p].pixel=sc.pixel;	
 }
 
 void LFSTK_menuButtonClass::drawLabel(int p)
@@ -58,10 +88,10 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				drawUtf8String(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
 			case CENTRE:
-				drawUtf8String(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
 		}
 }
@@ -95,6 +125,8 @@ void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 					this->LFSTK_setColourName(j,globalButtonColours[j].name);
 					this->LFSTK_setMenuItemColours(j,globalMenuItemColours[j].name);
 				}
+			for(int j=0;j<MAXFONTCOLS;j++)
+				this->LFSTK_setMenuItemsFontColourName(j,menuItemFontColourNames[j]);
 		}
 }
 
@@ -106,6 +138,9 @@ void LFSTK_menuButtonClass::mouseDown()
 	int					maxwid=0;
 	XEvent				event;
 	bool				run=true;
+	int					testwid=0;
+	int					addto;
+	int					sy;
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -125,40 +160,36 @@ void LFSTK_menuButtonClass::mouseDown()
 
 	this->drawLabel(FONTACTIVECOL);
 
-	if(this->callback.pressCallback!=NULL)
-		this->callback.pressCallback(this,this->callback.userData);
-
 	for(int j=0;j<this->menuCount;j++)
 		{
-			if(ftTextWidth_Utf8(this->wc,this->menus[j].label)>maxwid)
-				maxwid=ftTextWidth_Utf8(this->wc,this->menus[j].label);
+			testwid=getTextwidth(this->display,(XftFont*)(this->menuItemfont->data),this->menus[j].label);
+			if(testwid>maxwid)
+				maxwid=testwid;
 		}
+
+	addto=this->menuItemfont->ascent+this->menuItemfont->descent+8;
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
-	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*this->h,true);
-	subwc->LFSTK_clearWindow();
-	XMapWindow(subwc->display,subwc->window);
-	subwc->LFSTK_setFontString(this->wc->fontString);
-	delete g;
-
-	int sy=0;
+	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,true);
+	sy=0;
 	for(int j=0;j<this->menuCount;j++)
 		{
-			bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,this->h,0);
+			bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
 			this->menus[j].bc=bc;
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
-			if(globalColoursSet==true)
-				bc->LFSTK_setColoursFromGlobals();
-			bc->LFSTK_setColourName(NORMALCOLOUR,menuItemColours[NORMALCOLOUR].name);
-			bc->LFSTK_setColourName(PRELIGHTCOLOUR,menuItemColours[PRELIGHTCOLOUR].name);
-			bc->LFSTK_setColourName(ACTIVECOLOUR,menuItemColours[ACTIVECOLOUR].name);
-
-			XMapWindow(subwc->display,bc->window);
-			bc->LFSTK_clearWindow();
-			sy+=this->h;
+			for(int j=0;j<MAXCOLOURS;j++)
+				bc->LFSTK_setColourName(j,menuItemColours[j].name);
+			for(int j=0;j<MAXFONTCOLS;j++)
+				bc->LFSTK_setFontColourName(j,menuItemFontColourNames[j]);
+			bc->LFSTK_setFontString(this->menuItemFontString);
+			sy+=addto;
 		}
+
+	XMapWindow(subwc->display,subwc->window);
+	for(int j=0;j<this->menuCount;j++)
+		XMapWindow(subwc->display,this->menus[j].bc->window);
 
 	while (run==true)
 		{
@@ -174,7 +205,6 @@ void LFSTK_menuButtonClass::mouseDown()
 						run=false;
 					break;
 				case Expose:
-					subwc->LFSTK_clearWindow();
 					break;
 				default:
 					break;
@@ -184,6 +214,7 @@ void LFSTK_menuButtonClass::mouseDown()
 	for(int j=0;j<this->menuCount;j++)
 		delete this->menus[j].bc;
 	delete subwc;
+	delete g;
 }
 
 void LFSTK_menuButtonClass::mouseUp()

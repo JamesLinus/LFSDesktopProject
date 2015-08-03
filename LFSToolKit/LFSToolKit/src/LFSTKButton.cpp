@@ -33,11 +33,15 @@ void LFSTK_buttonClass::initButton(void)
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->colourNames[j].name=NULL;
 
+	this->fontString=NULL;
+
 	for(int j=0;j<MAXFONTCOLS;j++)
 		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,this->wc->colourNames[j].name);
+
+	this->LFSTK_setFontString(wc->fontString);
 }
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
@@ -52,15 +56,28 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 {
 }
 
+void LFSTK_buttonClass::LFSTK_setFontString(char *s)
+{
+	if(this->fontString!=NULL)
+		free(this->fontString);
+	this->fontString=strdup(s);
+	this->font=ftload(this->display,this->screen,s);
+}
+
+void LFSTK_buttonClass::LFSTK_setFontColourName(int p,char* colour)
+{
+	this->fontColourNames[p]=strdup(colour);
+}
+
 void LFSTK_buttonClass::drawLabel(int p)
 {
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				drawUtf8String(this->wc,this->window,2,(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
 			case CENTRE:
-				drawUtf8String(this->wc,this->window,(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->wc->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
 		}
 }
@@ -71,6 +88,8 @@ void LFSTK_buttonClass::LFSTK_setColoursFromGlobals(void)
 		{
 			for(int j=0;j<MAXCOLOURS;j++)
 				this->LFSTK_setColourName(j,globalButtonColours[j].name);
+			for(int j=0;j<MAXFONTCOLS;j++)
+				this->LFSTK_setFontColourName(j,gFontColourNames[j]);
 		}
 }
 
