@@ -339,6 +339,7 @@ int main(int argc,char *argv[])
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	asprintf(&terminalCommand,"xterm -e ");
+	asprintf(&lfstkFile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 
 	loadVarsFromFile(prefsfile,wmPrefs," ");
 	free(prefsfile);

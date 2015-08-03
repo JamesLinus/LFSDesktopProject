@@ -1,4 +1,5 @@
 0.0.13
+Appmenu now uses global colours fom ~/.config/LFS/lfstoolkit.rc
 Added 'Appmenu'.
 Added linking to LFS Tool Kit library.
 
