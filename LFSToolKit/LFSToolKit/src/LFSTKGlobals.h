@@ -38,20 +38,12 @@ struct buttonCB
 	bool		ignoreCallback;
 };
 
-//struct fontColour
-//{
-//	XftColor	color;
-//	XftDraw		*draw;
-//	Visual		*visual;
-//	Colormap	colormap;
-//};
-
 struct fontStruct
 {
 	int			ascent;
 	int			descent;
 	int			size;
-	void		*data;
+	XftFont		*data;
 };
 
 struct listener

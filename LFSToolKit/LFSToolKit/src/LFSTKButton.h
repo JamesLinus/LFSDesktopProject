@@ -74,7 +74,6 @@ class LFSTK_buttonClass
 		buttonCB			callback;
 		int					style;
 		int					labelOrientation;
-		//fontColour			*fontColours[MAXFONTCOLS];
 		LFSTK_windowClass	*wc;
 	
 		char				*fontString;

@@ -214,31 +214,6 @@ fontStruct* ftload(Display *disp,int scr,char *name)
 	return f;
 }
 
-/*
-fontColour *ftLoadColour(LFSTK_windowClass *wc,const char *name)
-{
-	XftDraw *draw;
-	XftColor colour;
-
-	if ((draw=XftDrawCreate(wc->display,wc->rootWindow,wc->visual,wc->cm))==NULL)
-		return NULL;
-
-	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,name,&colour))
-		{
-			XftDrawDestroy(draw);
-			return NULL;
-		}
-
-	fontColour *c=(fontColour*)malloc(sizeof(fontColour));
-	c->draw=draw;
-	c->color=colour;
-	c->visual=wc->visual;
-	c->colormap=wc->cm;
-
-	return c;
-}
-*/
-
 int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 {
 	XftFont *font=(XftFont*)wc->font->data;
@@ -256,22 +231,11 @@ int getTextwidth(Display* disp,XftFont *font,char *s)
 
 void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,char *col,char *s)
 {
-	//XftDraw *draw;
 	XftColor colour;
 
-	//if ((draw=XftDrawCreate(wc->display,wc->rootWindow,wc->visual,wc->cm))==NULL)
-	//	return;
-
 	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,col,&colour))
-		{
-			//XftDrawDestroy(draw);
-			return;
-		}
+		return;
 	
-	//XftDrawChange(draw,d);
 	XftDrawChange(wc->draw,d);
-//	XftDrawStringUtf8(draw,&colour,(XftFont*)wc->font->data,x,y,(XftChar8 *)s,strlen(s));
 	XftDrawStringUtf8(wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
-//	XftDrawStringUtf8(draw,&wc->colourNames[0].pixel,font,x,y,(XftChar8 *)s,strlen(s));
-//	XftDrawDestroy(draw);
 }

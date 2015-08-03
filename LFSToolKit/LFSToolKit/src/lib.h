@@ -46,7 +46,6 @@ extern char			*gMenuItemFontColourNames[MAXCOLOURS];
 
 void				gadgetEvent(void *self,XEvent *e,int type);
 fontStruct			*ftload(Display *disp,int scr,char *name);
-//fontColour			*ftLoadColour(LFSTK_windowClass *wc,const char *name);
 int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 void				drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,char *col,char *s);
 bool 				loadVarsFromFile(char* filepath,args* dataptr);
