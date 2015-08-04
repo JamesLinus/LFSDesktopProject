@@ -158,7 +158,7 @@ void gadgetEvent(void *self,XEvent *e,int type)
 	void *ud;
 
 	bc=static_cast<LFSTK_buttonClass*>(self);
-	ud=bc->LFSTK_getCallbackUD();
+//	ud=bc->LFSTK_getCallbackUD();
 
 	switch (e->type)
 		{

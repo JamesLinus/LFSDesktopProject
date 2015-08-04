@@ -172,6 +172,13 @@ void LFSTK_menuButtonClass::mouseDown()
 	g=this->wc->LFSTK_getGeom();
 	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,true);
 	sy=0;
+
+	for(int j=0;j<MAXCOLOURS;j++)
+		subwc->LFSTK_setColourName(j,menuItemColours[j].name);
+	for(int j=0;j<MAXFONTCOLS;j++)
+		subwc->LFSTK_setFontColourName(j,menuItemFontColourNames[j]);
+	subwc->LFSTK_setFontString(this->menuItemFontString);
+
 	for(int j=0;j<this->menuCount;j++)
 		{
 			bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
@@ -179,12 +186,6 @@ void LFSTK_menuButtonClass::mouseDown()
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
-			for(int j=0;j<MAXCOLOURS;j++)
-				bc->LFSTK_setColourName(j,menuItemColours[j].name);
-			for(int j=0;j<MAXFONTCOLS;j++)
-				bc->LFSTK_setFontColourName(j,menuItemFontColourNames[j]);
-			bc->LFSTK_setFontString(this->menuItemFontString);
-			bc->LFSTK_setFontString(menuItemFontString);
 			sy+=addto;
 		}
 
@@ -214,6 +215,7 @@ void LFSTK_menuButtonClass::mouseDown()
 
 	for(int j=0;j<this->menuCount;j++)
 		delete this->menus[j].bc;
+
 	delete subwc;
 	delete g;
 }
@@ -295,7 +297,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* l
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
 
-	this->gc=XCreateGC(this->display,this->parent,0,NULL);
+	this->gc=this->wc->gc;
 
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;

@@ -48,7 +48,6 @@ LFSTK_buttonClass::~LFSTK_buttonClass()
 {
 	if(this->label!=NULL)
 		free(this->label);
-	XFreeGC(this->display,this->gc);
 	XDestroyWindow(this->display,this->window);
 }
 
@@ -261,14 +260,13 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,char* label,int
 	wa.bit_gravity=NorthWestGravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->initButton();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
 
-	this->gc=XCreateGC(this->display,this->parent,0,NULL);
-
+	this->gc=this->wc->gc;
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=1;
