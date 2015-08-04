@@ -184,6 +184,7 @@ void LFSTK_menuButtonClass::mouseDown()
 			for(int j=0;j<MAXFONTCOLS;j++)
 				bc->LFSTK_setFontColourName(j,menuItemFontColourNames[j]);
 			bc->LFSTK_setFontString(this->menuItemFontString);
+			bc->LFSTK_setFontString(menuItemFontString);
 			sy+=addto;
 		}
 
