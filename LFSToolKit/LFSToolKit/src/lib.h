@@ -45,10 +45,10 @@ extern char			*gMenuItemFontString;
 extern char			*gMenuItemFontColourNames[MAXCOLOURS];
 
 void				gadgetEvent(void *self,XEvent *e,int type);
-fontStruct			*ftload(Display *disp,int scr,char *name);
+fontStruct			*ftload(Display *disp,int scr,const char *name);
 int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 void				drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,char *col,char *s);
-bool 				loadVarsFromFile(char* filepath,args* dataptr);
+bool 				loadVarsFromFile(const char* filepath,args* dataptr);
 int					getTextwidth(Display* disp,XftFont *font,char *s);
 
 #endif

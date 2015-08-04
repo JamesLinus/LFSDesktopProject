@@ -75,7 +75,7 @@ LFSTK_windowClass::LFSTK_windowClass()
 	this->initWindow();
 }
 
-void LFSTK_windowClass::LFSTK_loadGlobalColours(char* path)
+void LFSTK_windowClass::LFSTK_loadGlobalColours(const char *path)
 {
 	loadVarsFromFile(path,lfsToolKitGlobals);
 	for(int j=0;j<MAXCOLOURS;j++)
@@ -166,7 +166,7 @@ geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 	return(g);
 }
 
-void LFSTK_windowClass::LFSTK_setFontColourName(int p,char* colour)
+void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 {
 	this->fontColourNames[p]=strdup(colour);
 }

@@ -100,7 +100,7 @@ void saveVarsToFile(const char* filepath,args* dataptr)
 		}
 }
 
-bool loadVarsFromFile(char* filepath,args* dataptr)
+bool loadVarsFromFile(const char* filepath,args* dataptr)
 {
 	FILE*	fd=NULL;
 	char	buffer[2048];
@@ -187,7 +187,7 @@ void gadgetEvent(void *self,XEvent *e,int type)
 //	printf("%i\n",ud);
 }
 
-fontStruct* ftload(Display *disp,int scr,char *name)
+fontStruct* ftload(Display *disp,int scr,const char *name)
 {
 	XftFont  *font=NULL;
 	if (name != NULL)

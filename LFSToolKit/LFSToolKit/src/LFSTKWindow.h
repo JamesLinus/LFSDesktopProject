@@ -40,11 +40,11 @@ class LFSTK_windowClass
 		listener *LFSTK_getListener(Window w);
 
 		void LFSTK_setFontString(char *s);
-		void LFSTK_setFontColourName(int p,char* colour);
+		void LFSTK_setFontColourName(int p,const char *colour);
 		void LFSTK_setColourName(int p,char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
 
-		void LFSTK_loadGlobalColours(char* path);
+		void LFSTK_loadGlobalColours(const char *path);
 
 		geometryStruct	*LFSTK_getGeom(void);
 

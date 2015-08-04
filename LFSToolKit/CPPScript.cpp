@@ -232,9 +232,11 @@ int main(int argc, char **argv)
 //	terminalCommand=argv[1];
 
 	//wc=new LFSTK_windowClass(sx,sy,800,400,true,"rgb:00/00/00","rgb:80/80/80");
+	char *white=strdup("white");
 	wc=new LFSTK_windowClass(sx,sy,800,400,true);
 	wc->LFSTK_setDecorated(true);
 	wc->LFSTK_setFontColourName(FONTNORMALCOL,"white");
+	wc->LFSTK_setFontColourName(FONTNORMALCOL,white);
 	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
 	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
 
@@ -276,7 +278,7 @@ int main(int argc, char **argv)
 			if(mainMenus[j].name!=NULL)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
-					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)0-(j+1));
+					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 					bc[menucount]->LFSTK_setColoursFromGlobals();

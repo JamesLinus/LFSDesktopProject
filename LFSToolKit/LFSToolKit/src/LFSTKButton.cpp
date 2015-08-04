@@ -55,7 +55,7 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 {
 }
 
-void LFSTK_buttonClass::LFSTK_setFontString(char *s)
+void LFSTK_buttonClass::LFSTK_setFontString(const char *s)
 {
 	if(this->fontString!=NULL)
 		free(this->fontString);
@@ -236,7 +236,7 @@ char* LFSTK_buttonClass::LFSTK_getLabel(void)
 	return(this->label);
 }
 
-LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity)
+LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
 	XGCValues	gcv;
