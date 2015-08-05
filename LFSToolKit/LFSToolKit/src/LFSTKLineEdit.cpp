@@ -38,48 +38,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass()
 	XDestroyWindow(this->display,this->window);
 }
 
-void LFSTK_lineEditClass::LFSTK_setFontString(const char *s)
-{
-	if(this->fontString!=NULL)
-		free(this->fontString);
-	this->fontString=strdup(s);
-	this->font=ftload(this->display,this->screen,s);
-}
-
-void LFSTK_lineEditClass::LFSTK_setColourName(int p,char* colour)
-{
-	XColor tc,sc;
-	if(this->colourNames[p].name!=NULL)
-		free(this->colourNames[p].name);
-	this->colourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->colourNames[p].pixel=sc.pixel;
-}
-
-void LFSTK_lineEditClass::initGadget(void)
-{
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=NULL;
-
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->colourNames[j].name=NULL;
-
-	this->fontString=NULL;
-
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
-
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->colourNames[j].name);
-
-	this->LFSTK_setFontString(wc->fontString);
-}
-
-listener* LFSTK_lineEditClass::LFSTK_getListen(void)
-{
-	return(&(this->listen));
-}
-
 LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
@@ -110,14 +68,6 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	XSetForeground(this->display,this->gc,this->whiteColour);
 	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-}
-
-void LFSTK_lineEditClass::LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud)
-{
-	this->callback.pressCallback=downcb;
-	this->callback.releaseCallback=releasecb;
-	this->callback.userData=ud;
-	this->callback.ignoreCallback=false;
 }
 
 void LFSTK_lineEditClass::mouseUp()
@@ -161,10 +111,5 @@ void LFSTK_lineEditClass::mouseEnter()
 
 	this->inWindow=true;
 }
-
-
-
-
-
 
 

@@ -64,7 +64,6 @@ class LFSTK_gadgetClass
 		int					blackColour;
 		int					whiteColour;
 
-
 		Window				window;
 		Display				*display;
 		Window				parent;

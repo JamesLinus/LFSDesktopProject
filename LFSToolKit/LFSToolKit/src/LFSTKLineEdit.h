@@ -34,11 +34,6 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
 		void LFSTK_clearWindow();
-		listener* LFSTK_getListen(void);
-		void LFSTK_setFontString(const char *s);
-		void initGadget(void);
-		void LFSTK_setColourName(int p,char* colour);
-		void LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud);
 		void mouseUp();
 		void mouseDown();
 		void mouseExit();
