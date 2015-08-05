@@ -269,7 +269,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->gc=this->wc->gc;
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
-	this->listen.type=1;
+	this->listen.type=BUTTONGADGET;
 
 	this->style=EMBOSSEDBUTTON;
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);

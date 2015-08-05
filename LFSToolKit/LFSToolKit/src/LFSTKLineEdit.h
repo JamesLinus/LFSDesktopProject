@@ -22,11 +22,58 @@
 #ifndef _LFSTKLINEEDIT_
 #define _LFSTKLINEEDIT_
 
-class LFSTK_lineEditclass
+#include "LFSTKGlobals.h"
+#include "LFSTKWindow.h"
+
+class LFSTK_lineEditClass
 {
 	public:
-		LFSTK_lineEditclass();
-		~LFSTK_lineEditclass();
+		LFSTK_lineEditClass();
+		~LFSTK_lineEditClass();
+		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+
+		void LFSTK_clearWindow();
+		listener* LFSTK_getListen(void);
+		void LFSTK_setFontString(const char *s);
+		void initGadget(void);
+		void LFSTK_setColourName(int p,char* colour);
+		void LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud);
+		void mouseUp();
+		void mouseDown();
+		void mouseExit();
+		void mouseEnter();
+
+
+
+
+		Display				*display;
+		Window				parent;
+		Window				window;
+		GC					gc;
+
+		int					screen;
+		Visual				*visual;
+		Window				rootWindow;		
+		Colormap			cm;
+
+	private:
+		int					x;
+		int					y;
+		int					w;
+		int					h;
+		int					blackColour;
+		int					whiteColour;
+
+		char				*label;
+		listener			listen;
+		buttonCB			callback;
+
+		LFSTK_windowClass	*wc;
+		char				*fontString;
+		fontStruct			*font;
+		char				*fontColourNames[MAXFONTCOLS];
+		colourStruct		colourNames[MAXCOLOURS];
+		bool				inWindow;
 };
 
 #endif

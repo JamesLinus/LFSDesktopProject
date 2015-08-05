@@ -16,6 +16,7 @@ exit $retval
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
 #include "LFSTKMenuButton.h"
+#include "LFSTKLineEdit.h"
 
 #define BUFFERSIZE 2048
 #define MAXCATS 14
@@ -42,6 +43,11 @@ bool					mainloop=false;
 bool					makestatic=false;
 LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS];
+
+void lecb(void *p,void* ud)
+{
+	printf("le callback\n");
+}
 
 void bcb(void *p,void* ud)
 {
@@ -305,7 +311,15 @@ int main(int argc, char **argv)
 	bc1->LFSTK_setFontString("Bloody:size=8");
 	//bc1->LFSTK_setColoursFromGlobals();
 	XMapWindow(wc->display,bc1->window);
-sy+=addto;
+	sy+=addto;
+
+
+	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
+	le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
+	//bc1->LFSTK_setColoursFromGlobals();
+	XMapWindow(wc->display,le->window);
+	sy+=addto;
+
 
 	XResizeWindow(wc->display,wc->window,maxwid,sy);
 	wc->LFSTK_resizeWindow(maxwid,sy);

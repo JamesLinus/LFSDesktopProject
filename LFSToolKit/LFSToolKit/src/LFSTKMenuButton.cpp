@@ -299,7 +299,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* l
 
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
-	this->listen.type=2;
+	this->listen.type=MENUBUTTONGADGET;
 
 	this->style=EMBOSSEDBUTTON;
 	this->LFSTK_setLabelOriention(1000);

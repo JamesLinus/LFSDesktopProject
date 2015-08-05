@@ -26,6 +26,8 @@
 #include "LFSTKButton.h"
 #include "LFSTKWindow.h"
 #include "LFSTKMenuButton.h"
+#include "LFSTKLineEdit.h"
+
 #include "lib.h"
 
 colourStruct	globalWindowColours[MAXCOLOURS];
@@ -150,39 +152,62 @@ bool loadVarsFromFile(const char* filepath,args* dataptr)
 		}
 	return(false);
 }
+
 void gadgetEvent(void *self,XEvent *e,int type)
 {
 
-	LFSTK_buttonClass *bc;
+	LFSTK_buttonClass *bc=NULL;
+	LFSTK_lineEditClass *le=NULL;
 
 	void *ud;
 
-	bc=static_cast<LFSTK_buttonClass*>(self);
+printf("---%i---\n",type);
+	if((type==BUTTONGADGET) || (type==MENUBUTTONGADGET))
+		bc=static_cast<LFSTK_buttonClass*>(self);
+	if(type==LINEEDITGADGET)
+		le=static_cast<LFSTK_lineEditClass*>(self);
 //	ud=bc->LFSTK_getCallbackUD();
 
-	switch (e->type)
+	switch(type)
 		{
-		case EnterNotify:
-			//printf("enter - ");
-			bc->mouseEnter();
-			break;
-		case LeaveNotify:
-			//printf("leave - %i - %i\n",bc->parent,e->xany.window);
-			bc->mouseExit();
-		break;
-		case ButtonRelease:
-			bc->mouseUp();
-			break;
-		case MotionNotify:
-//			printf("move - ");
-			break;
-		case ButtonPress:
-//			printf("press - ");
-			bc->mouseDown();
-			break;
-		case Expose:
-			bc->LFSTK_clearWindow();
-			break;
+			case BUTTONGADGET:
+			case MENUBUTTONGADGET:
+				switch (e->type)
+					{
+						case EnterNotify:
+							bc->mouseEnter();
+							break;
+						case LeaveNotify:
+							bc->mouseExit();
+							break;
+						case ButtonRelease:
+							bc->mouseUp();
+							break;
+						case MotionNotify:
+							break;
+						case ButtonPress:
+							bc->mouseDown();
+							break;
+						case Expose:
+							bc->LFSTK_clearWindow();
+							break;
+					}
+				break;
+
+			case LINEEDITGADGET:
+				switch (e->type)
+					{
+						case ButtonRelease:
+							le->mouseUp();
+							break;
+						case ButtonPress:
+							le->mouseDown();
+							break;
+						case Expose:
+							le->LFSTK_clearWindow();
+							break;
+					}
+				break;
 		}
 //	printf("%i\n",ud);
 }
