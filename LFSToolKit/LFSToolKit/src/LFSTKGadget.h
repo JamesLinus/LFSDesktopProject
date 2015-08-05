@@ -56,6 +56,7 @@ class LFSTK_gadgetClass
 	protected:
 		listener* LFSTK_getListen(void);
 		listener			listen;
+
 		int					x;
 		int					y;
 		int					w;
@@ -73,9 +74,6 @@ class LFSTK_gadgetClass
 		Visual				*visual;
 		Window				rootWindow;		
 		Colormap			cm;
-
-
-
 
 		buttonCB			callback;
 

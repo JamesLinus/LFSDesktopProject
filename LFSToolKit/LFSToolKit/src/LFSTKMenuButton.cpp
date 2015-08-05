@@ -267,42 +267,21 @@ void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	XGCValues	gcv;
 
-	this->wc=parentwc;
-	this->display=this->wc->display;
-	this->parent=this->wc->window;
-
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-
-	this->screen=this->wc->screen;
-	this->visual=this->wc->visual;
-	this->rootWindow=this->wc->rootWindow;
-	this->cm=this->wc->cm;
-
-	this->label=strdup(label);
+	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.bit_gravity=NorthWestGravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	//this->initButton();
 	this->initMenuButton();
- 	this->blackColour=BlackPixel(this->display,this->screen);
-	this->whiteColour=WhitePixel(this->display,this->screen);
 
-	this->gc=this->wc->gc;
+	this->style=EMBOSSEDBUTTON;
+	this->LFSTK_setLabelOriention(CENTRE);
 
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=MENUBUTTONGADGET;
-
-	this->style=EMBOSSEDBUTTON;
-	this->LFSTK_setLabelOriention(1000);
-	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }

@@ -156,58 +156,31 @@ bool loadVarsFromFile(const char* filepath,args* dataptr)
 void gadgetEvent(void *self,XEvent *e,int type)
 {
 
-	LFSTK_gadgetClass *bc=NULL;
-	LFSTK_lineEditClass *le=NULL;
+	LFSTK_gadgetClass *gadget=NULL;
 
 	void *ud;
 
-printf("---%i---\n",type);
-	if((type==BUTTONGADGET) || (type==MENUBUTTONGADGET))
-		bc=static_cast<LFSTK_gadgetClass*>(self);
-	if(type==LINEEDITGADGET)
-		le=static_cast<LFSTK_lineEditClass*>(self);
-//	ud=bc->LFSTK_getCallbackUD();
+//printf("---%i---\n",type);
+	gadget=static_cast<LFSTK_gadgetClass*>(self);
 
-	switch(type)
+	switch (e->type)
 		{
-			case BUTTONGADGET:
-//			case MENUBUTTONGADGET:
-				switch (e->type)
-					{
-						case EnterNotify:
-							bc->mouseEnter();
-							break;
-						case LeaveNotify:
-							bc->mouseExit();
-							break;
-						case ButtonRelease:
-							bc->mouseUp();
-							break;
-						case MotionNotify:
-							break;
-						case ButtonPress:
-							bc->mouseDown();
-							break;
-						case Expose:
-							bc->LFSTK_clearWindow();
-							break;
-					}
+			case EnterNotify:
+				gadget->mouseEnter();
 				break;
-
-			case 1000:
-			//case LINEEDITGADGET:
-				switch (e->type)
-					{
-						case ButtonRelease:
-							le->mouseUp();
-							break;
-						case ButtonPress:
-							le->mouseDown();
-							break;
-						case Expose:
-							le->LFSTK_clearWindow();
-							break;
-					}
+			case LeaveNotify:
+				gadget->mouseExit();
+				break;
+			case ButtonRelease:
+				gadget->mouseUp();
+				break;
+			case MotionNotify:
+				break;
+			case ButtonPress:
+				gadget->mouseDown();
+				break;
+			case Expose:
+				gadget->LFSTK_clearWindow();
 				break;
 		}
 //	printf("%i\n",ud);

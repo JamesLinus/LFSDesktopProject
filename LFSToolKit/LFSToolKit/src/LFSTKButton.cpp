@@ -27,9 +27,6 @@
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
-	if(this->label!=NULL)
-		free(this->label);
-	XDestroyWindow(this->display,this->window);
 }
 
 LFSTK_buttonClass::LFSTK_buttonClass()
@@ -184,7 +181,6 @@ char* LFSTK_buttonClass::LFSTK_getLabel(void)
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	XGCValues	gcv;
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 

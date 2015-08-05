@@ -279,7 +279,7 @@ int main(int argc, char **argv)
 	maxwid+=8;
 	sx=0;
 	sy=0;
-#if 0
+#if 1
 	for(int j=0; j<MAXCATS; j++)
 		{
 			bc[j]=NULL;
@@ -291,7 +291,7 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 					bc[menucount]->LFSTK_setColoursFromGlobals();
 
-					XMapWindow(wc->display,bc[menucount]->window);
+					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
 					sy+=addto;
 					ms=new menuItemStruct[mainMenus[j].maxentrys];
 					pms=ms;
@@ -318,14 +318,14 @@ int main(int argc, char **argv)
 	sy+=addto;
 bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 
-//	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
-//	le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
+	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
+	le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 	//bc1->LFSTK_setColoursFromGlobals();
-//	XMapWindow(wc->display,le->window);
+	XMapWindow(wc->display,le->LFSTK_getWindow());
 	sy+=addto;
 
-maxwid=100;
-sy=100;
+//maxwid=100;
+//sy=100;
 
 	XResizeWindow(wc->display,wc->window,maxwid,sy);
 	wc->LFSTK_resizeWindow(maxwid,sy);

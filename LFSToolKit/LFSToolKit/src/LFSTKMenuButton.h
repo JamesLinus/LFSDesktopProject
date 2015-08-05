@@ -62,18 +62,11 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void LFSTK_setMenuItemsFontColourName(int p,char* colour);
 		
 		int					menuCount;
-		int					x;
-		int					y;
-		int					w;
-		int					h;
-		int					blackColour;
-		int					whiteColour;
-		bool				inWindow;
+
 		colourStruct		menuItemColours[MAXCOLOURS];
 		char				*menuItemFontColourNames[MAXFONTCOLS];
 		char				*menuItemFontString;
 		fontStruct			*menuItemfont;
-		bool				made;
 };
 
 #endif

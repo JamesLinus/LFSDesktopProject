@@ -83,39 +83,16 @@ listener* LFSTK_lineEditClass::LFSTK_getListen(void)
 LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
-	XGCValues	gcv;
 
-	this->wc=parentwc;
-	this->display=this->wc->display;
-	this->parent=this->wc->window;
-
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-
-	this->screen=this->wc->screen;
-	this->visual=this->wc->visual;
-	this->rootWindow=this->wc->rootWindow;
-	this->cm=this->wc->cm;
-
-	this->label=strdup(label);
-
+	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 	wa.bit_gravity=NorthWestGravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->initGadget();
- 	this->blackColour=BlackPixel(this->display,this->screen);
-	this->whiteColour=WhitePixel(this->display,this->screen);
-
-	this->gc=this->wc->gc;
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
-
-	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }
 
@@ -124,8 +101,15 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	XSetForeground(this->display,this->gc,whiteColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+
+	XSetForeground(this->display,this->gc,this->blackColour);
+	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
+	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+	XSetForeground(this->display,this->gc,this->whiteColour);
+	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
+	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 }
 
 void LFSTK_lineEditClass::LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud)
@@ -165,8 +149,15 @@ void LFSTK_lineEditClass::mouseEnter()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
+	XSetForeground(this->display,this->gc,whiteColour);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+
+	XSetForeground(this->display,this->gc,this->blackColour);
+	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
+	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
+	XSetForeground(this->display,this->gc,this->whiteColour);
+	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
+	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 
 	this->inWindow=true;
 }

@@ -24,8 +24,9 @@
 
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
+#include "LFSTKGadget.h"
 
-class LFSTK_lineEditClass
+class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 {
 	public:
 		LFSTK_lineEditClass();
@@ -42,38 +43,6 @@ class LFSTK_lineEditClass
 		void mouseDown();
 		void mouseExit();
 		void mouseEnter();
-
-
-
-
-		Display				*display;
-		Window				parent;
-		Window				window;
-		GC					gc;
-
-		int					screen;
-		Visual				*visual;
-		Window				rootWindow;		
-		Colormap			cm;
-
-	private:
-		int					x;
-		int					y;
-		int					w;
-		int					h;
-		int					blackColour;
-		int					whiteColour;
-
-		char				*label;
-		listener			listen;
-		buttonCB			callback;
-
-		LFSTK_windowClass	*wc;
-		char				*fontString;
-		fontStruct			*font;
-		char				*fontColourNames[MAXFONTCOLS];
-		colourStruct		colourNames[MAXCOLOURS];
-		bool				inWindow;
 };
 
 #endif
