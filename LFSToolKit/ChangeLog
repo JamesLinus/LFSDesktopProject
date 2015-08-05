@@ -1,10 +1,17 @@
-0.0.2
+0.0.4
+All button clases now inherit from base gadget class.
+Added line edit class.
+Added base gadget class.
+
+0.0.3
 Fixed not setting proper colours.
 Added menuitem font and colours.
 Fixed random setting font segfault.
 Fixed font not being set.
 Added setting global colours previously loaded from prefs file to button classes.
 Added setting global colours from prefs file to window class.
+
+0.0.2
 Removed setting colours on create button class.
 Added set colours for menuitems.
 Added init buttons to set default colours.
