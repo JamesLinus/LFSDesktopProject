@@ -46,7 +46,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	wa.bit_gravity=NorthWestGravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
@@ -83,8 +83,10 @@ void LFSTK_lineEditClass::mouseUp()
 }
 void LFSTK_lineEditClass::mouseDown()
 {
-	if(this->callback.pressCallback!=NULL)
-		this->callback.pressCallback(this,this->callback.userData);
+	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+	
+//	if(this->callback.pressCallback!=NULL)
+//		this->callback.pressCallback(this,this->callback.userData);
 
 }
 
@@ -92,6 +94,7 @@ void LFSTK_lineEditClass::mouseExit()
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	XUngrabKeyboard(this->display,CurrentTime);
 }
 
 void LFSTK_lineEditClass::mouseEnter()
@@ -112,4 +115,13 @@ void LFSTK_lineEditClass::mouseEnter()
 	this->inWindow=true;
 }
 
+void LFSTK_lineEditClass::keyRelease(XEvent *e)
+{
+	char c[255];
+	KeySym keysym_return;
+	XLookupString((XKeyEvent*)&(e->xkey),(char*)&c,255, &keysym_return, NULL);
+
+printf("key=%c\n",e->xkey.keycode);
+printf("key==%c\n",c);
+}
 

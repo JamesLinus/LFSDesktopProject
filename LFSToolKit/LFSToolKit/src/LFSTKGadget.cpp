@@ -169,6 +169,9 @@ void LFSTK_gadgetClass::mouseEnter()
 	this->inWindow=true;
 }
 
+void LFSTK_gadgetClass::keyRelease(XEvent *e)
+{
+}
 
 
 

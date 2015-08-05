@@ -182,6 +182,17 @@ void gadgetEvent(void *self,XEvent *e,int type)
 			case Expose:
 				gadget->LFSTK_clearWindow();
 				break;
+			case FocusIn:
+				printf("focus in\n");
+				break;
+			case FocusOut:
+				printf("focus out\n");
+				break;
+			case KeyRelease:
+				gadget->keyRelease(e);
+				printf("KeyRelease\n");
+				break;
+				
 		}
 //	printf("%i\n",ud);
 }
