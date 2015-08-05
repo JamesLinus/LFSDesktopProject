@@ -156,14 +156,14 @@ bool loadVarsFromFile(const char* filepath,args* dataptr)
 void gadgetEvent(void *self,XEvent *e,int type)
 {
 
-	LFSTK_buttonClass *bc=NULL;
+	LFSTK_gadgetClass *bc=NULL;
 	LFSTK_lineEditClass *le=NULL;
 
 	void *ud;
 
 printf("---%i---\n",type);
 	if((type==BUTTONGADGET) || (type==MENUBUTTONGADGET))
-		bc=static_cast<LFSTK_buttonClass*>(self);
+		bc=static_cast<LFSTK_gadgetClass*>(self);
 	if(type==LINEEDITGADGET)
 		le=static_cast<LFSTK_lineEditClass*>(self);
 //	ud=bc->LFSTK_getCallbackUD();
@@ -171,7 +171,7 @@ printf("---%i---\n",type);
 	switch(type)
 		{
 			case BUTTONGADGET:
-			case MENUBUTTONGADGET:
+//			case MENUBUTTONGADGET:
 				switch (e->type)
 					{
 						case EnterNotify:
@@ -194,7 +194,8 @@ printf("---%i---\n",type);
 					}
 				break;
 
-			case LINEEDITGADGET:
+			case 1000:
+			//case LINEEDITGADGET:
 				switch (e->type)
 					{
 						case ButtonRelease:

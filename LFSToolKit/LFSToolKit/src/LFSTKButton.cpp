@@ -25,25 +25,6 @@
 #include "LFSTKButton.h"
 #include "lib.h"
 
-void LFSTK_buttonClass::initButton(void)
-{
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=NULL;
-
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->colourNames[j].name=NULL;
-
-	this->fontString=NULL;
-
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
-
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->colourNames[j].name);
-
-	this->LFSTK_setFontString(wc->fontString);
-}
-
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
 	if(this->label!=NULL)
@@ -53,19 +34,6 @@ LFSTK_buttonClass::~LFSTK_buttonClass()
 
 LFSTK_buttonClass::LFSTK_buttonClass()
 {
-}
-
-void LFSTK_buttonClass::LFSTK_setFontString(const char *s)
-{
-	if(this->fontString!=NULL)
-		free(this->fontString);
-	this->fontString=strdup(s);
-	this->font=ftload(this->display,this->screen,s);
-}
-
-void LFSTK_buttonClass::LFSTK_setFontColourName(int p,char* colour)
-{
-	this->fontColourNames[p]=strdup(colour);
 }
 
 void LFSTK_buttonClass::drawLabel(int p)
@@ -188,29 +156,6 @@ unsigned long LFSTK_buttonClass::setColour(const char *name)
 	return sc.pixel;
 }
 
-void LFSTK_buttonClass::LFSTK_setColourName(int p,char* colour)
-{
-	XColor tc,sc;
-	if(this->colourNames[p].name!=NULL)
-		free(this->colourNames[p].name);
-	this->colourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->colourNames[p].pixel=sc.pixel;
-}
-
-listener* LFSTK_buttonClass::LFSTK_getListen(void)
-{
-	return(&(this->listen));
-}
-
-void LFSTK_buttonClass::LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud)
-{
-	this->callback.pressCallback=downcb;
-	this->callback.releaseCallback=releasecb;
-	this->callback.userData=ud;
-	this->callback.ignoreCallback=false;
-}
-
 void LFSTK_buttonClass::LFSTK_setStyle(int s)
 {
 	this->style=s;
@@ -241,37 +186,16 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	XSetWindowAttributes	wa;
 	XGCValues	gcv;
 
-	this->wc=parentwc;
-	this->display=this->wc->display;
-	this->parent=this->wc->window;
-
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-
-	this->screen=this->wc->screen;
-	this->visual=this->wc->visual;
-	this->rootWindow=this->wc->rootWindow;
-	this->cm=this->wc->cm;
-
-	this->label=strdup(label);
+	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.bit_gravity=NorthWestGravity;
-
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->initButton();
- 	this->blackColour=BlackPixel(this->display,this->screen);
-	this->whiteColour=WhitePixel(this->display,this->screen);
-
-	this->gc=this->wc->gc;
+	this->style=EMBOSSEDBUTTON;
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=BUTTONGADGET;
 
-	this->style=EMBOSSEDBUTTON;
-	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 }

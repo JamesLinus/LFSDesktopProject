@@ -279,6 +279,7 @@ int main(int argc, char **argv)
 	maxwid+=8;
 	sx=0;
 	sy=0;
+#if 0
 	for(int j=0; j<MAXCATS; j++)
 		{
 			bc[j]=NULL;
@@ -305,21 +306,26 @@ int main(int argc, char **argv)
 				}
 		}
 	//
+#endif
+//	XMapWindow(wc->display,wc->window);
+
 	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"normal button",0,sy,maxwid,addto,0);
 	bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
 	bc1->LFSTK_setLabelOriention(CENTRE);
-	bc1->LFSTK_setFontString("Bloody:size=8");
+	bc1->LFSTK_setFontString("Bloody:size=18");
+	bc1->LFSTK_setColoursFromGlobals();
+	XMapWindow(wc->display,bc1->LFSTK_getWindow());
+	sy+=addto;
+bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
+
+//	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
+//	le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 	//bc1->LFSTK_setColoursFromGlobals();
-	XMapWindow(wc->display,bc1->window);
+//	XMapWindow(wc->display,le->window);
 	sy+=addto;
 
-
-	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
-	le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
-	//bc1->LFSTK_setColoursFromGlobals();
-	XMapWindow(wc->display,le->window);
-	sy+=addto;
-
+maxwid=100;
+sy=100;
 
 	XResizeWindow(wc->display,wc->window,maxwid,sy);
 	wc->LFSTK_resizeWindow(maxwid,sy);

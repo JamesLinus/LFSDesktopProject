@@ -27,68 +27,36 @@
 
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
+#include "LFSTKGadget.h"
 
-class LFSTK_buttonClass
+class LFSTK_buttonClass : public LFSTK_gadgetClass
 {
 	public:
 		LFSTK_buttonClass();
 		~LFSTK_buttonClass();
 		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
-		void LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud);
 		void *LFSTK_getCallbackUD(void);
 		void LFSTK_setStyle(int s);
 		void LFSTK_setIgnoreCB(bool ignore);
 		bool LFSTK_getIgnoreCB(void);
 		void LFSTK_setLabelOriention(int o);
 		char *LFSTK_getLabel(void);
-		void LFSTK_setColourName(int p,char* colour);
-		void LFSTK_setFontColourName(int p,char* colour);
-		void LFSTK_setFontString(const char *s);
 
-		virtual void LFSTK_clearWindow(void);		
-		virtual void mouseEnter(void);
-		virtual void mouseExit(void);
-		virtual void mouseDown(void);
-		virtual void mouseUp(void);
+		void LFSTK_clearWindow(void);		
+		void mouseEnter(void);
+		void mouseExit(void);
+		void mouseDown(void);
+		void mouseUp(void);
+
 		virtual void drawLabel(int p);
 		virtual void LFSTK_setColoursFromGlobals(void);
 
-		Display				*display;
-		Window				parent;
-		Window				window;
-		GC					gc;
-
-		int					screen;
-		Visual				*visual;
-		Window				rootWindow;		
-		Colormap			cm;
-
 	protected:
-		listener *LFSTK_getListen(void);
 		unsigned long setColour(const char *name);
-		void initButton(void);
 
-		char				*label;
-		listener			listen;
-		buttonCB			callback;
 		int					style;
 		int					labelOrientation;
-		LFSTK_windowClass	*wc;
-	
-		char				*fontString;
-		fontStruct			*font;
-		char				*fontColourNames[MAXFONTCOLS];
-		colourStruct		colourNames[MAXCOLOURS];
-
-	private:
-		int					x;
-		int					y;
-		int					w;
-		int					h;
-		int					blackColour;
-		int					whiteColour;
-		bool				inWindow;
 };
 
 #endif
