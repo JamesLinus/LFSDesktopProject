@@ -17,7 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
+#include <unistd.h>
+#include <stdlib.h>
+
+#include <X11/Xlib.h>
+
+#include "LFSTKLineEdit.h"
+#include "lib.h"
+
+
 LFSTK_lineEditclass::~LFSTK_lineEditclass()
 {
 }
