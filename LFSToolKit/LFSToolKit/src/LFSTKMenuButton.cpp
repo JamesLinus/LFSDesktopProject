@@ -190,8 +190,7 @@ void LFSTK_menuButtonClass::mouseDown()
 		}
 
 	XMapWindow(subwc->display,subwc->window);
-	for(int j=0;j<this->menuCount;j++)
-		XMapWindow(subwc->display,this->menus[j].bc->window);
+	XMapSubwindows(subwc->display,subwc->window);
 
 	while (run==true)
 		{
@@ -207,19 +206,18 @@ void LFSTK_menuButtonClass::mouseDown()
 						run=false;
 					break;
 				case Expose:
-					break;
+				break;
 				default:
 					break;
 				}
 		}
-
 	for(int j=0;j<this->menuCount;j++)
 		delete this->menus[j].bc;
 
 	delete subwc;
 	delete g;
 }
-
+	
 void LFSTK_menuButtonClass::mouseUp()
 {
 	if(this->inWindow==false)

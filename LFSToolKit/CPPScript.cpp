@@ -242,6 +242,7 @@ int main(int argc, char **argv)
 
 	wc->LFSTK_loadGlobalColours("/home/keithhedger/.config/LFS/lfstoolkit.rc");
 //printf(">>>descent= %i<<<\n",wc->font->ascent);
+//	wc->LFSTK_setFontString("PF Tempesta Five:size=18");
 
 	//wc->LFSTK_setFontString("Bloody:size=20");
 	sx=0;
@@ -311,7 +312,6 @@ sy+=addto;
 	wc->LFSTK_clearWindow();
 	XMapWindow(wc->display,wc->window);
 //	wc->LFSTK_setFontString("ani:size=10");
-//	wc->LFSTK_setFontString("PF Tempesta Five:size=18");
 
 	mainloop=true;
 	while(mainloop==true)

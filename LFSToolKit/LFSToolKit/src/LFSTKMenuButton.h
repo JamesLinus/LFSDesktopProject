@@ -73,6 +73,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		char				*menuItemFontColourNames[MAXFONTCOLS];
 		char				*menuItemFontString;
 		fontStruct			*menuItemfont;
+		bool				made;
 };
 
 #endif
