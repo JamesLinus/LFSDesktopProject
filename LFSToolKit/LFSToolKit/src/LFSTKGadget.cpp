@@ -173,6 +173,10 @@ void LFSTK_gadgetClass::keyRelease(XEvent *e)
 {
 }
 
+void LFSTK_gadgetClass::lostFocus(XEvent *e)
+{
+}
+
 
 
 

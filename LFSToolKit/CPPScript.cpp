@@ -44,8 +44,29 @@ bool					makestatic=false;
 LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS];
 
+bool inWindow(void)
+{
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+
+	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+		{
+			geometryStruct *g=wc->LFSTK_getGeom();
+			if((root_x_return>g->x) && (root_x_return<(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(g->y+g->h)))
+				return(true);
+		}
+	return(false);
+}
+
 void lecb(void *p,void* ud)
 {
+	mainloop=false;
+	exit(0);
 	printf("le callback\n");
 }
 
@@ -189,25 +210,6 @@ void setCatagories(void)
 		}
 }
 
-bool inWindow(void)
-{
-	Window			root_return;
-	Window			child_return;
-	int				root_x_return;
-	int				root_y_return;
-	int				win_x_return;
-	int				win_y_return;
-	unsigned int	mask_return;
-
-	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-		{
-			geometryStruct *g=wc->LFSTK_getGeom();
-			if((root_x_return>g->x) && (root_x_return<(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(g->y+g->h)))
-				return(true);
-		}
-	return(false);
-}
-
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -309,17 +311,17 @@ int main(int argc, char **argv)
 #endif
 //	XMapWindow(wc->display,wc->window);
 
-	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"normal button",0,sy,maxwid,addto,0);
+	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"exit",0,sy,maxwid,addto,0);
 	bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
 	bc1->LFSTK_setLabelOriention(CENTRE);
-	bc1->LFSTK_setFontString("Bloody:size=18");
+	bc1->LFSTK_setFontString("Bloody:size=10");
 	bc1->LFSTK_setColoursFromGlobals();
 	XMapWindow(wc->display,bc1->LFSTK_getWindow());
 	sy+=addto;
 bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 
 	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
-	le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
+	//le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 	//bc1->LFSTK_setColoursFromGlobals();
 	XMapWindow(wc->display,le->LFSTK_getWindow());
 	sy+=addto;
@@ -345,7 +347,7 @@ bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 			switch(event.type)
 				{
 					case LeaveNotify:
-						mainloop=inWindow();
+						//mainloop=inWindow();
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();

@@ -41,10 +41,14 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void mouseExit(void);
 		void mouseEnter(void);
 		void keyRelease(XEvent *e);
+		void lostFocus(XEvent *e);
 
 	private:
 		void drawLabel(void);
-		 std::string buffer;
+
+		std::string	buffer;
+		int			cursorPos;
+		bool		gotFocus;
 };
 
 #endif

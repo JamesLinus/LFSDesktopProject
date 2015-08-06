@@ -177,20 +177,22 @@ void gadgetEvent(void *self,XEvent *e,int type)
 			case MotionNotify:
 				break;
 			case ButtonPress:
+				XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToNone,CurrentTime);
 				gadget->mouseDown();
 				break;
 			case Expose:
 				gadget->LFSTK_clearWindow();
 				break;
 			case FocusIn:
-				printf("focus in\n");
+				//printf("focus in\n");
 				break;
 			case FocusOut:
-				printf("focus out\n");
+				gadget->lostFocus(e);
+				//printf("focus out\n");
 				break;
 			case KeyRelease:
 				gadget->keyRelease(e);
-				printf("KeyRelease\n");
+				//printf("KeyRelease\n");
 				break;
 				
 		}
@@ -232,14 +234,14 @@ int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
 	return info.width-info.x;
 }
 
-int getTextwidth(Display* disp,XftFont *font,char *s)
+int getTextwidth(Display* disp,XftFont *font,const char *s)
 {
 	XGlyphInfo info;
 	XftTextExtentsUtf8(disp,font,(XftChar8 *)s,strlen(s),&info);
 	return info.width-info.x;
 }
 
-void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,char *col,const char *s)
+void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s)
 {
 	XftColor colour;
 

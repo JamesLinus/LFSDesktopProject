@@ -52,6 +52,8 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
+	this->cursorPos=0;
+	this->buffer="";
 }
 
 void LFSTK_lineEditClass::LFSTK_clearWindow()
@@ -86,17 +88,21 @@ void LFSTK_lineEditClass::mouseUp()
 void LFSTK_lineEditClass::mouseDown()
 {
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
-	
-//	if(this->callback.pressCallback!=NULL)
-//		this->callback.pressCallback(this,this->callback.userData);
-
+	this->gotFocus=true;
 }
 
-void LFSTK_lineEditClass::mouseExit()
+void LFSTK_lineEditClass::mouseExit(void)
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+}
+
+void LFSTK_lineEditClass::lostFocus(XEvent *e)
+{
 	XUngrabKeyboard(this->display,CurrentTime);
+	this->gotFocus=false;
+	this->LFSTK_clearWindow();
+	this->inWindow=false;
 }
 
 void LFSTK_lineEditClass::mouseEnter()
@@ -120,29 +126,51 @@ void LFSTK_lineEditClass::mouseEnter()
 
 void LFSTK_lineEditClass::drawLabel(void)
 {
-	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[FONTHILITECOL],this->buffer.c_str());
+	int x;
+
+	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",this->buffer.c_str());
+	if(this->gotFocus==true)
+		{
+			x=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str());
+			XSetForeground(this->display,this->gc,this->blackColour);
+			XDrawLine(this->display,this->window,this->gc,2+x,3,2+x,this->h-3);	
+		}
 }
 
 void LFSTK_lineEditClass::keyRelease(XEvent *e)
 {
-	char c[255];
-	KeySym keysym_return;
+	int		x;
+	char	c[255];
+	KeySym	keysym_return;
+
 	XLookupString((XKeyEvent*)&(e->xkey),(char*)&c,255, &keysym_return, NULL);
 
-printf("key=%c\n",e->xkey.keycode);
-printf("key==%c\n",c[0]);
-//c[1]=0;str.erase (str.begin()+5, str.end()-9);
-if(keysym_return==XK_BackSpace)
-{
-//this->buffer.erase(this->buffer.end()-1,1);
-if(this->buffer.length()>0)
-this->buffer.erase(this->buffer.end()-1, this->buffer.end());
-}
-else
-this->buffer+=c[0];
-printf("key==%s\n",this->buffer.c_str());
-this->LFSTK_clearWindow();
-	this->drawLabel();
+	switch(keysym_return)
+		{
+			case XK_BackSpace:
+				if(this->cursorPos>0)
+					{
+						this->buffer.erase(this->cursorPos-1,1);
+						this->cursorPos--;
+					}
+				break;
+			case XK_Left:
+				if(this->cursorPos>0)
+					this->cursorPos--;
+				break;
+			case XK_Right:
+				if(this->cursorPos<this->buffer.length())
+					this->cursorPos++;
+				break;
 
+			default:
+				this->buffer.insert(this->cursorPos,1,c[0]);
+				this->cursorPos++;
+				break;
+		}
+
+	this->LFSTK_clearWindow();
+	this->drawLabel();
+//	printf("--%i--\n",this->cursorPos);
 }
 
