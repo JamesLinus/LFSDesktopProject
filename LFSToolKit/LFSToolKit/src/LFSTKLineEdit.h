@@ -22,6 +22,8 @@
 #ifndef _LFSTKLINEEDIT_
 #define _LFSTKLINEEDIT_
 
+#include <string>
+
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
 #include "LFSTKGadget.h"
@@ -41,6 +43,8 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void keyRelease(XEvent *e);
 
 	private:
+		void drawLabel(void);
+		 std::string buffer;
 };
 
 #endif

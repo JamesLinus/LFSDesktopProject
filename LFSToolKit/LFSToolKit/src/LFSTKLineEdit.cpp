@@ -68,6 +68,8 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	XSetForeground(this->display,this->gc,this->whiteColour);
 	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+
+	this->drawLabel();
 }
 
 void LFSTK_lineEditClass::mouseUp()
@@ -113,6 +115,12 @@ void LFSTK_lineEditClass::mouseEnter()
 	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 
 	this->inWindow=true;
+	this->drawLabel();
+}
+
+void LFSTK_lineEditClass::drawLabel(void)
+{
+	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[FONTHILITECOL],this->buffer.c_str());
 }
 
 void LFSTK_lineEditClass::keyRelease(XEvent *e)
@@ -122,6 +130,19 @@ void LFSTK_lineEditClass::keyRelease(XEvent *e)
 	XLookupString((XKeyEvent*)&(e->xkey),(char*)&c,255, &keysym_return, NULL);
 
 printf("key=%c\n",e->xkey.keycode);
-printf("key==%c\n",c);
+printf("key==%c\n",c[0]);
+//c[1]=0;str.erase (str.begin()+5, str.end()-9);
+if(keysym_return==XK_BackSpace)
+{
+//this->buffer.erase(this->buffer.end()-1,1);
+if(this->buffer.length()>0)
+this->buffer.erase(this->buffer.end()-1, this->buffer.end());
+}
+else
+this->buffer+=c[0];
+printf("key==%s\n",this->buffer.c_str());
+this->LFSTK_clearWindow();
+	this->drawLabel();
+
 }
 
