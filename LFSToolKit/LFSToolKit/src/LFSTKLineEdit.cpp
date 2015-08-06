@@ -148,7 +148,7 @@ void LFSTK_lineEditClass::getClip(void)
 	unsigned char	*data=NULL;
 	Atom			type;
 	int				format,result;
-	unsigned long	len,bytesLeft,dummy;
+	unsigned long	len=0,bytesLeft=0,dummy=0;
 	bool			run=true;
 	XEvent			event;
 
@@ -171,19 +171,15 @@ void LFSTK_lineEditClass::getClip(void)
 				}
 
 			XGetWindowProperty(this->display,this->window,XA_CLIPBOARD,0,0,False,AnyPropertyType,&type,&format,&len,&bytesLeft,&data);
-			if (data)
+			if(data!=NULL)
 				{
 					XFree(data);
 					data=NULL;
 				}
 
-			// If there is any data
-			if (bytesLeft)
+			if(bytesLeft>0)
 				{
-					// Fetch the data
 					result=XGetWindowProperty(this->display,this->window,XA_CLIPBOARD,0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
-
-					// If we got some data,duplicate it
 					if (result==Success)
 						{
 							this->buffer.insert(this->cursorPos,(char*)data);
@@ -191,8 +187,6 @@ void LFSTK_lineEditClass::getClip(void)
 							XFree(data);
 						}
 				}
-
-			// Delete the property now that we are finished with it
 			XDeleteProperty(this->display,this->window,XA_CLIPBOARD);
 		}
 }
