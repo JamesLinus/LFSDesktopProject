@@ -1,4 +1,6 @@
 0.0.4
+Added paste to line edit.
+Added cursor keys to line edit.
 All button clases now inherit from base gadget class.
 Added line edit class.
 Added base gadget class.
