@@ -191,7 +191,7 @@ void gadgetEvent(void *self,XEvent *e,int type)
 				//printf("focus out\n");
 				break;
 			case KeyRelease:
-				gadget->keyRelease(e);
+				gadget->keyRelease(&(e->xkey));
 				//printf("KeyRelease\n");
 				break;
 				

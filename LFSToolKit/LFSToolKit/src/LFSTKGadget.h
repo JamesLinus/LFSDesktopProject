@@ -38,7 +38,7 @@ class LFSTK_gadgetClass
 		virtual void mouseExit();
 		virtual void mouseEnter();
 		virtual void lostFocus(XEvent *e);
-		virtual void keyRelease(XEvent *e);
+		virtual void keyRelease(XKeyEvent *e);
 
 		void LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud);
 

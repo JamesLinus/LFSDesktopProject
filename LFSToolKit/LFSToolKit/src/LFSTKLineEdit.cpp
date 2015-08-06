@@ -54,6 +54,12 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 	this->cursorPos=0;
 	this->buffer="";
+
+	XA_CLIPBOARD=XInternAtom(this->display,"CLIPBOARD",True);
+	XA_COMPOUND_TEXT = XInternAtom(this->display, "COMPOUND_TEXT",true);
+	XA_UTF8_STRING = XInternAtom(this->display, "UTF8_STRING",true);
+	XA_TARGETS = XInternAtom(this->display, "TARGETS", True);
+
 }
 
 void LFSTK_lineEditClass::LFSTK_clearWindow()
@@ -137,14 +143,85 @@ void LFSTK_lineEditClass::drawLabel(void)
 		}
 }
 
-void LFSTK_lineEditClass::keyRelease(XEvent *e)
+void LFSTK_lineEditClass::getClip(void)
+{
+	printf("do paste\n");
+
+	Window			selectionOwner;
+	char			*text=NULL;
+	unsigned char	*data=NULL;
+	Atom			type;
+	int				format,result;
+	unsigned long	len,bytesLeft,dummy;
+	bool			run=true;
+	XEvent			event;
+
+	selectionOwner = XGetSelectionOwner(this->display,XA_CLIPBOARD);
+	if (selectionOwner != None)
+	{
+		XConvertSelection(this->display, XA_CLIPBOARD, XA_UTF8_STRING,XA_CLIPBOARD,this->window, CurrentTime);
+		XFlush(this->display);
+
+		while (run==true)
+			{
+				XNextEvent(this->display,&event);
+				switch(event.type)
+					{
+					case SelectionNotify:
+						if(event.xselection.requestor==this->window)
+							run=false;
+						break;
+					}
+			}
+
+		XGetWindowProperty(this->display,this->window,XA_CLIPBOARD, 0, 0, False, AnyPropertyType, &type,&format, &len, &bytesLeft, &data);
+		if (data)
+			{
+				XFree(data);
+				data=NULL;
+			}
+
+		// If there is any data
+		if (bytesLeft)
+			{
+			// Fetch the data
+				result=XGetWindowProperty(this->display,this->window,XA_CLIPBOARD,0,bytesLeft,False,AnyPropertyType,&type,&format,&len,&dummy,&data);
+
+			// If we got some data, duplicate it
+			if (result==Success)
+				{
+					text=strdup((char *) data);
+					XFree(data);
+				}
+			}
+
+		// Delete the property now that we are finished with it
+		XDeleteProperty(this->display,this->window,XA_CLIPBOARD);
+	}
+
+if(text!=NULL);
+	{
+		           printf("----%s----\n",text);
+		this->buffer.insert(this->cursorPos,text);
+		free(text);
+	}
+}
+
+void LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
 	int		x;
 	char	c[255];
 	KeySym	keysym_return;
 
-	XLookupString((XKeyEvent*)&(e->xkey),(char*)&c,255, &keysym_return, NULL);
+	XLookupString(e,(char*)&c,255, &keysym_return, NULL);
 
+	if(e->state==ControlMask)
+		{
+			if(keysym_return==XK_v)
+				this->getClip();
+		}
+	else
+		{
 	switch(keysym_return)
 		{
 			case XK_BackSpace:
@@ -162,15 +239,22 @@ void LFSTK_lineEditClass::keyRelease(XEvent *e)
 				if(this->cursorPos<this->buffer.length())
 					this->cursorPos++;
 				break;
+			case XK_End:
+				this->cursorPos=this->buffer.length();
+				break;
+			case XK_Home:
+				this->cursorPos=0;
+				break;
 
 			default:
 				this->buffer.insert(this->cursorPos,1,c[0]);
 				this->cursorPos++;
 				break;
 		}
-
+		}
 	this->LFSTK_clearWindow();
 	this->drawLabel();
-//	printf("--%i--\n",this->cursorPos);
+	//printf("--%i--\n",this->cursorPos);
+	//printf("--%i--\n",e->state);
 }
 

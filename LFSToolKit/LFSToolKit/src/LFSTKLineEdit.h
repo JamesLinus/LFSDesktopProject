@@ -27,6 +27,7 @@
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
 #include "LFSTKGadget.h"
+#include <X11/Xatom.h>
 
 class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 {
@@ -40,11 +41,17 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void mouseDown(void);
 		void mouseExit(void);
 		void mouseEnter(void);
-		void keyRelease(XEvent *e);
+		void keyRelease(XKeyEvent *e);
 		void lostFocus(XEvent *e);
 
 	private:
 		void drawLabel(void);
+		void getClip(void);
+
+		Atom XA_CLIPBOARD;
+		Atom XA_COMPOUND_TEXT;
+		Atom XA_UTF8_STRING;
+		Atom XA_TARGETS;
 
 		std::string	buffer;
 		int			cursorPos;
