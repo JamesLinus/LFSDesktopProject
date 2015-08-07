@@ -4,8 +4,6 @@ include ../flagsandlibs
 include ../sources
 include ../headers
 
-CXXFLAGS = -g0 -Wall
-
 man1_MANS = ../resources/man/lfstoolkit.1
 include_HEADERS = $(APIHEADERS)
 
@@ -14,6 +12,4 @@ liblfstoolkit_la_SOURCES = $(COMMONSRC)
 
 liblfstoolkit_la_CXXFLAGS = -Wl,--version-script=../src/exportmap
 liblfstoolkit_la_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
-
-
 
