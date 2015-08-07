@@ -44,7 +44,7 @@ extern char			*gFontColourNames[MAXFONTCOLS];
 extern char			*gMenuItemFontString;
 extern char			*gMenuItemFontColourNames[MAXCOLOURS];
 
-void				gadgetEvent(void *self,XEvent *e,int type);
+bool				gadgetEvent(void *self,XEvent *e,int type);
 fontStruct			*ftload(Display *disp,int scr,const char *name);
 int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 void				drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s);

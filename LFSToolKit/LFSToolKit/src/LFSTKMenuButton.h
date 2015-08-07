@@ -45,10 +45,10 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity);
 
 		void LFSTK_clearWindow(void);		
-		void mouseEnter();
-		void mouseExit();
-		void mouseDown();
-		void mouseUp();
+		bool mouseEnter();
+		bool mouseExit();
+		bool mouseDown();
+		bool mouseUp();
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
 		void drawLabel(int p);
 

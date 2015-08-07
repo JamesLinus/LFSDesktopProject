@@ -153,10 +153,10 @@ bool loadVarsFromFile(const char* filepath,args* dataptr)
 	return(false);
 }
 
-void gadgetEvent(void *self,XEvent *e,int type)
+bool gadgetEvent(void *self,XEvent *e,int type)
 {
-
-	LFSTK_gadgetClass *gadget=NULL;
+	bool				retval=true;
+	LFSTK_gadgetClass	*gadget=NULL;
 
 //printf("---%i---\n",type);
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
@@ -164,19 +164,19 @@ void gadgetEvent(void *self,XEvent *e,int type)
 	switch (e->type)
 		{
 			case EnterNotify:
-				gadget->mouseEnter();
+				retval=gadget->mouseEnter();
 				break;
 			case LeaveNotify:
-				gadget->mouseExit();
+				retval=gadget->mouseExit();
 				break;
 			case ButtonRelease:
-				gadget->mouseUp();
+				retval=gadget->mouseUp();
 				break;
 			case MotionNotify:
 				break;
 			case ButtonPress:
 				XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToNone,CurrentTime);
-				gadget->mouseDown();
+				retval=gadget->mouseDown();
 				break;
 			case Expose:
 				gadget->LFSTK_clearWindow();
@@ -185,16 +185,18 @@ void gadgetEvent(void *self,XEvent *e,int type)
 				//printf("focus in\n");
 				break;
 			case FocusOut:
-				gadget->lostFocus(e);
+				retval=gadget->lostFocus(e);
 				//printf("focus out\n");
 				break;
 			case KeyRelease:
-				gadget->keyRelease(&(e->xkey));
+				retval=gadget->keyRelease(&(e->xkey));
 				//printf("KeyRelease\n");
-				break;
-				
+				break;		
 		}
 //	printf("%i\n",ud);
+	if(retval==false)
+		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
+	return(retval);
 }
 
 fontStruct* ftload(Display *disp,int scr,const char *name)

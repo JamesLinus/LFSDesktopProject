@@ -90,7 +90,7 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 			case LEFT:
 				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
-			case CENTRE:
+			default://centre
 				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
 		}
@@ -130,7 +130,7 @@ void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 		}
 }
 
-void LFSTK_menuButtonClass::mouseDown()
+bool LFSTK_menuButtonClass::mouseDown()
 {
 	LFSTK_buttonClass	*bc;
 	geometryStruct		*g;
@@ -216,9 +216,10 @@ void LFSTK_menuButtonClass::mouseDown()
 
 	delete subwc;
 	delete g;
+	return(true);
 }
 	
-void LFSTK_menuButtonClass::mouseUp()
+bool LFSTK_menuButtonClass::mouseUp()
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -226,17 +227,19 @@ void LFSTK_menuButtonClass::mouseUp()
 		{
 			this->mouseEnter();
 			if((this->callback.releaseCallback!=NULL) && ((this->callback.ignoreCallback==false)))
-				this->callback.releaseCallback(this,this->callback.userData);
+				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
+	return(true);
 }
 
-void LFSTK_menuButtonClass::mouseExit()
+bool LFSTK_menuButtonClass::mouseExit()
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	return(true);
 }
 
-void LFSTK_menuButtonClass::mouseEnter()
+bool LFSTK_menuButtonClass::mouseEnter()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -256,6 +259,7 @@ void LFSTK_menuButtonClass::mouseEnter()
 
 	this->inWindow=true;
 	this->drawLabel(FONTHILITECOL);
+	return(true);
 }
 
 void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)

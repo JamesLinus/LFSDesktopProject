@@ -33,8 +33,8 @@ enum {BUTTONGADGET=1,MENUBUTTONGADGET,LINEEDITGADGET};
 
 struct buttonCB
 {
-	void		(*pressCallback)(void *,void*);
-	void		(*releaseCallback)(void *,void*);
+	bool		(*pressCallback)(void *,void*);
+	bool		(*releaseCallback)(void *,void*);
 	void		*userData;
 	bool		ignoreCallback;
 };
@@ -49,7 +49,7 @@ struct fontStruct
 
 struct listener
 {
-	void		(*function)(void *,XEvent *,int);
+	bool		(*function)(void *,XEvent *,int);
 	void		*pointer;
 	int			type;
 };

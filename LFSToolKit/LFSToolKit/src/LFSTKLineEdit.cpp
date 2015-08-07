@@ -79,7 +79,7 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->drawLabel();
 }
 
-void LFSTK_lineEditClass::mouseUp()
+bool LFSTK_lineEditClass::mouseUp()
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -87,30 +87,34 @@ void LFSTK_lineEditClass::mouseUp()
 		{
 			this->mouseEnter();
 			if(this->callback.releaseCallback!=NULL)
-				this->callback.releaseCallback(this,this->callback.userData);
+				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
+	return(true);
 }
-void LFSTK_lineEditClass::mouseDown()
+bool LFSTK_lineEditClass::mouseDown()
 {
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 	this->gotFocus=true;
+	return(true);
 }
 
-void LFSTK_lineEditClass::mouseExit(void)
+bool LFSTK_lineEditClass::mouseExit(void)
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	return(true);
 }
 
-void LFSTK_lineEditClass::lostFocus(XEvent *e)
+bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
 	XUngrabKeyboard(this->display,CurrentTime);
 	this->gotFocus=false;
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	return(true);
 }
 
-void LFSTK_lineEditClass::mouseEnter()
+bool LFSTK_lineEditClass::mouseEnter()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -127,6 +131,12 @@ void LFSTK_lineEditClass::mouseEnter()
 
 	this->inWindow=true;
 	this->drawLabel();
+	return(true);
+}
+
+const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
+{
+	return(const_cast<std::string*>(&(this->buffer)));
 }
 
 void LFSTK_lineEditClass::drawLabel(void)
@@ -220,7 +230,7 @@ void LFSTK_lineEditClass::getClip(void)
 		}
 }
 
-void LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
+bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
 	char	c[255];
 	KeySym	keysym_return;
@@ -273,5 +283,6 @@ void LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 		}
 	this->LFSTK_clearWindow();
 	this->drawLabel();
+	return(true);
 }
 

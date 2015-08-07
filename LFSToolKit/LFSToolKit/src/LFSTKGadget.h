@@ -33,14 +33,14 @@ class LFSTK_gadgetClass
 		virtual ~LFSTK_gadgetClass();
 
 		virtual void LFSTK_clearWindow();
-		virtual void mouseUp();
-		virtual void mouseDown();
-		virtual void mouseExit();
-		virtual void mouseEnter();
-		virtual void lostFocus(XEvent *e);
-		virtual void keyRelease(XKeyEvent *e);
+		virtual bool mouseUp();
+		virtual bool mouseDown();
+		virtual bool mouseExit();
+		virtual bool mouseEnter();
+		virtual bool lostFocus(XEvent *e);
+		virtual bool keyRelease(XKeyEvent *e);
 
-		void LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud);
+		void LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 
 		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 

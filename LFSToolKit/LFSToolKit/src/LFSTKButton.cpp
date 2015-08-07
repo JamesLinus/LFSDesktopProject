@@ -40,7 +40,7 @@ void LFSTK_buttonClass::drawLabel(int p)
 			case LEFT:
 				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
-			case CENTRE:
+			default://centre
 				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->font->ascent-2)/2),this->fontColourNames[p],this->label);
 				break;
 		}
@@ -77,7 +77,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	this->drawLabel(FONTNORMALCOL);
 }
 
-void LFSTK_buttonClass::mouseDown()
+bool LFSTK_buttonClass::mouseDown()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -98,10 +98,11 @@ void LFSTK_buttonClass::mouseDown()
 	this->drawLabel(FONTACTIVECOL);
 
 	if(this->callback.pressCallback!=NULL)
-		this->callback.pressCallback(this,this->callback.userData);
+		return(this->callback.pressCallback(this,this->callback.userData));
+	return(true);
 }
 
-void LFSTK_buttonClass::mouseUp()
+bool LFSTK_buttonClass::mouseUp()
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -109,8 +110,9 @@ void LFSTK_buttonClass::mouseUp()
 		{
 			this->mouseEnter();
 			if(this->callback.releaseCallback!=NULL)
-				this->callback.releaseCallback(this,this->callback.userData);
+				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
+	return(true);
 }
 
 void* LFSTK_buttonClass::LFSTK_getCallbackUD()
@@ -118,13 +120,14 @@ void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 	return(this->callback.userData);
 }
 
-void LFSTK_buttonClass::mouseExit()
+bool LFSTK_buttonClass::mouseExit()
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	return(true);
 }
 
-void LFSTK_buttonClass::mouseEnter()
+bool LFSTK_buttonClass::mouseEnter()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -144,6 +147,7 @@ void LFSTK_buttonClass::mouseEnter()
 
 	this->inWindow=true;
 	this->drawLabel(FONTHILITECOL);
+	return(true);
 }
 
 unsigned long LFSTK_buttonClass::setColour(const char *name)

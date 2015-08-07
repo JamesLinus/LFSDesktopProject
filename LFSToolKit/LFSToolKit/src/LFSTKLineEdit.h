@@ -37,12 +37,13 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
 		void LFSTK_clearWindow(void);
-		void mouseUp(void);
-		void mouseDown(void);
-		void mouseExit(void);
-		void mouseEnter(void);
-		void keyRelease(XKeyEvent *e);
-		void lostFocus(XEvent *e);
+		const std::string* LFSTK_getBuffer(void);
+		bool mouseUp(void);
+		bool mouseDown(void);
+		bool mouseExit(void);
+		bool mouseEnter(void);
+		bool keyRelease(XKeyEvent *e);
+		bool lostFocus(XEvent *e);
 
 	private:
 		void drawLabel(void);

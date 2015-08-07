@@ -117,7 +117,7 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 }
 
-void LFSTK_gadgetClass::LFSTK_setCallBack(void (*downcb)(void *,void*),void (*releasecb)(void *,void*),void* ud)
+void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
 	this->callback.pressCallback=downcb;
 	this->callback.releaseCallback=releasecb;
@@ -134,7 +134,7 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
-void LFSTK_gadgetClass::mouseUp()
+bool LFSTK_gadgetClass::mouseUp()
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -142,23 +142,25 @@ void LFSTK_gadgetClass::mouseUp()
 		{
 			this->mouseEnter();
 			if(this->callback.releaseCallback!=NULL)
-				this->callback.releaseCallback(this,this->callback.userData);
+				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
+	return(true);
 }
-void LFSTK_gadgetClass::mouseDown()
+
+bool LFSTK_gadgetClass::mouseDown()
 {
 	if(this->callback.pressCallback!=NULL)
-		this->callback.pressCallback(this,this->callback.userData);
-
+		return(this->callback.pressCallback(this,this->callback.userData));
+	return(true);
 }
 
-void LFSTK_gadgetClass::mouseExit()
+bool LFSTK_gadgetClass::mouseExit()
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 }
 
-void LFSTK_gadgetClass::mouseEnter()
+bool LFSTK_gadgetClass::mouseEnter()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -169,12 +171,14 @@ void LFSTK_gadgetClass::mouseEnter()
 	this->inWindow=true;
 }
 
-void LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
+bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
 {
+	return(true);
 }
 
-void LFSTK_gadgetClass::lostFocus(XEvent *e)
+bool LFSTK_gadgetClass::lostFocus(XEvent *e)
 {
+	return(true);
 }
 
 
