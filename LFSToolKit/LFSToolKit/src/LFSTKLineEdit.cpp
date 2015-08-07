@@ -135,16 +135,13 @@ void LFSTK_lineEditClass::drawLabel(void)
 	int	len=this->buffer.length();
 	int curpos;
 
-	std::string str=this->buffer;
-
 	if(getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.c_str())<this->w-4)
 		{
 			startchar=0;
 			len=this->buffer.length();
 			curpos=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
 		}
-
-	if(getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str())>this->w-4)
+	else if(getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str())>this->w-4)
 		{
 			startchar=0;
 			len=this->cursorPos;
@@ -155,8 +152,7 @@ void LFSTK_lineEditClass::drawLabel(void)
 				}
 			curpos=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,len).c_str());
 		}
-
-	if(getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,len).c_str())>this->w-4)
+	else if(getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,len).c_str())>this->w-4)
 		{
 			startchar=0;
 			len=this->buffer.length();
@@ -167,52 +163,12 @@ void LFSTK_lineEditClass::drawLabel(void)
 			curpos=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
 		}
 
-printf("text=%s\n",str.substr(startchar,len).c_str());
-printf("tot text=%s\n",str.c_str());
-
-	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",str.substr(startchar,len).c_str());
+	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",this->buffer.substr(startchar,len).c_str());
 	if(this->gotFocus==true)
 		{
-			//x=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(cnt,this->cursorPos).c_str());
-			//if(x>this->w-4)
-			//	x=this->w-4;
 			XSetForeground(this->display,this->gc,this->blackColour);
 			XDrawLine(this->display,this->window,this->gc,2+curpos,3,2+curpos,this->h-3);
 		}
-
-
-return;
-#if 0
-	int x;
-	int cnt=this->cursorPos;
-	std::string str=this->buffer;
-	x=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(0,this->cursorPos).c_str());
-	int maxchars=str.length();
-				maxchars--;
-	if(x>this->w-4)
-		while(x>this->w-4)
-			{
-				cnt--;
-				maxchars--;
-				str.erase(0,1);
-				x=getTextwidth(this->display,(XftFont*)(this->font->data),str.substr(0,cnt).c_str());
-			}
-		//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",this->buffer.c_str());
-
-//		drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",this->buffer.c_str());
-		//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",str.c_str());
-		drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",str.substr(0,maxchars).c_str());
-
-	if(this->gotFocus==true)
-		{
-			//x=getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(cnt,this->cursorPos).c_str());
-			//if(x>this->w-4)
-			//	x=this->w-4;
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,2+x,3,2+x,this->h-3);
-		}
-	printf("wid=%i, twid=%i, pos=%i, str=%s maxchars=%i\n",this->w,x,this->cursorPos,str.substr(0,maxchars).c_str(),maxchars);
-#endif
 }
 
 void LFSTK_lineEditClass::getClip(void)
@@ -266,7 +222,6 @@ void LFSTK_lineEditClass::getClip(void)
 
 void LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
-	int		x;
 	char	c[255];
 	KeySym	keysym_return;
 
@@ -297,10 +252,17 @@ void LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 						this->cursorPos++;
 					break;
 				case XK_End:
+				case XK_Page_Down:
 					this->cursorPos=this->buffer.length();
 					break;
 				case XK_Home:
+				case XK_Page_Up:
 					this->cursorPos=0;
+					break;
+				case XK_Down:
+				case XK_Up:
+				case XK_Select ... XK_Num_Lock:
+				case XK_F1 ... XK_R15:
 					break;
 
 				default:

@@ -136,7 +136,6 @@ void LFSTK_windowClass::LFSTK_setFontString(char *s)
 
 void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 {
-	Atom	xa;
 	Atom	xa_prop[10];
 	Hints	hints;
 
@@ -184,7 +183,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
-	XGCValues				gcv;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)

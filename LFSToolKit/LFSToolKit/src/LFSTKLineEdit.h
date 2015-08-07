@@ -54,7 +54,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		Atom XA_TARGETS;
 
 		std::string	buffer;
-		int			cursorPos;
+		unsigned	cursorPos;
 		bool		gotFocus;
 };
 

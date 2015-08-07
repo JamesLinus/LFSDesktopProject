@@ -1,4 +1,8 @@
+0.0.5
+Removed linking to unused libs.
+
 0.0.4
+Line edit now scolls correctly.
 Added paste to line edit.
 Added cursor keys to line edit.
 All button clases now inherit from base gadget class.

@@ -31,7 +31,7 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
 	if(this->label!=NULL)
 		free(this->label);
-		XDestroyWindow(this->display,this->window);
+	XDestroyWindow(this->display,this->window);
 }
 
 LFSTK_gadgetClass::LFSTK_gadgetClass()

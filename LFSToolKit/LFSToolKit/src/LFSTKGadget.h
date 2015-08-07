@@ -30,7 +30,7 @@ class LFSTK_gadgetClass
 {
 	public:
 		LFSTK_gadgetClass();
-		~LFSTK_gadgetClass();
+		virtual ~LFSTK_gadgetClass();
 
 		virtual void LFSTK_clearWindow();
 		virtual void mouseUp();
