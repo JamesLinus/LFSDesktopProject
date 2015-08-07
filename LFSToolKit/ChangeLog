@@ -1,5 +1,6 @@
 0.0.5
-Lables now default to centre.
+Callbacks now return a bool.
+Labels now default to centre.
 Removed linking to unused libs.
 
 0.0.4

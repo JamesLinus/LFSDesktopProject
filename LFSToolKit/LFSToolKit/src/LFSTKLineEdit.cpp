@@ -79,22 +79,35 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->drawLabel();
 }
 
+void LFSTK_lineEditClass::LFSTK_setFocus(void)
+{
+//	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
+	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+	this->drawLabel();
+	this->gotFocus=true;
+}
+
 bool LFSTK_lineEditClass::mouseUp()
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
 		{
+//			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+//			this->gotFocus=true;
+			//this->drawLabel();
 			this->mouseEnter();
 			if(this->callback.releaseCallback!=NULL)
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
 	return(true);
 }
+
 bool LFSTK_lineEditClass::mouseDown()
 {
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 	this->gotFocus=true;
+	this->drawLabel();
 	return(true);
 }
 

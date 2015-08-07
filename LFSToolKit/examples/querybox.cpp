@@ -19,7 +19,7 @@ exit $retval
 
 bool				mainloop=true;
 int					width=200;
-int					hite=200;
+int					hite=60;
 LFSTK_lineEditClass	*le;
 
 bool callback(void *p,void* ud)
@@ -41,7 +41,8 @@ int main(int argc, char **argv)
 	XEvent				event;
 	LFSTK_buttonClass	*bc,*bc1;
 
-	le=new LFSTK_lineEditClass(mainwind,"",0,4,width,24,0);
+	le=new LFSTK_lineEditClass(mainwind,"",2,4,width-4,24,0);
+	le->LFSTK_setFocus();
 	XMapWindow(mainwind->display,le->LFSTK_getWindow());
 
 	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,EastGravity);
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
 	XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
 
 	XMapWindow(mainwind->display,mainwind->window);
+	le->LFSTK_setFocus();
 
 	mainloop=true;
 	while(mainloop==true)
@@ -77,6 +79,7 @@ int main(int argc, char **argv)
 						if (event.xclient.message_type == XInternAtom(mainwind->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(mainwind->display, "WM_DELETE_WINDOW", 1))
 							mainloop=false;
 				}
+						//le->LFSTK_setFocus();
 		}
 
 	delete bc;

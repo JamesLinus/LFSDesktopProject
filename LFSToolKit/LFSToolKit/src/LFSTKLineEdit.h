@@ -44,6 +44,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		bool mouseEnter(void);
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
+		void LFSTK_setFocus(void);
 
 	private:
 		void drawLabel(void);
