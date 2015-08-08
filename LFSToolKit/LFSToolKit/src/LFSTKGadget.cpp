@@ -181,6 +181,11 @@ bool LFSTK_gadgetClass::lostFocus(XEvent *e)
 	return(true);
 }
 
+bool LFSTK_gadgetClass::gotFocus(XEvent *e)
+{
+	return(true);
+}
+
 
 
 

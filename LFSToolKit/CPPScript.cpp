@@ -2,7 +2,7 @@
 
 #©keithhedger Mon 20 Jul 14:09:10 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -I/tmp/AAA/usr/local/include -L/tmp/AAA/usr/local/lib -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
+g++ "$0" -I/tmp/AAA/usr/include -L/tmp/AAA/usr/lib -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
 ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -63,20 +63,21 @@ bool inWindow(void)
 	return(false);
 }
 
-void lecb(void *p,void* ud)
+bool lecb(void *p,void* ud)
 {
 	mainloop=false;
 	exit(0);
 	printf("le callback\n");
+	return(false);
 }
 
-void bcb(void *p,void* ud)
+bool bcb(void *p,void* ud)
 {
 	char			buffer[BUFFERSIZE];
 	menuEntryStruct	*menuitem;
 
 	if((long)ud<0)
-		return;
+		return(true);
 
 	menuitem=(menuEntryStruct*)ud;
 
@@ -95,6 +96,7 @@ void bcb(void *p,void* ud)
 					delete bc[j];
 			exit(0);
 		}
+	return(false);
 }
 
 void setCatagories(void)

@@ -2,7 +2,7 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
+g++ "$0"  -I/tmp/AAA/usr/include -L/tmp/AAA/usr/lib $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
 ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -40,9 +40,9 @@ int main(int argc, char **argv)
 	LFSTK_windowClass	*mainwind=new LFSTK_windowClass(0,0,width,hite,false);
 	XEvent				event;
 	LFSTK_buttonClass	*bc,*bc1;
+	bool				firstrun=true;
 
 	le=new LFSTK_lineEditClass(mainwind,"",2,4,width-4,24,0);
-	le->LFSTK_setFocus();
 	XMapWindow(mainwind->display,le->LFSTK_getWindow());
 
 	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,EastGravity);
@@ -54,7 +54,6 @@ int main(int argc, char **argv)
 	XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
 
 	XMapWindow(mainwind->display,mainwind->window);
-	le->LFSTK_setFocus();
 
 	mainloop=true;
 	while(mainloop==true)
@@ -70,6 +69,11 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						mainwind->LFSTK_clearWindow();
+						if(firstrun==true)
+							{
+								firstrun=false;
+								le->LFSTK_setFocus();
+							}
 						break;
 					case ConfigureNotify:
 						mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
@@ -79,7 +83,6 @@ int main(int argc, char **argv)
 						if (event.xclient.message_type == XInternAtom(mainwind->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(mainwind->display, "WM_DELETE_WINDOW", 1))
 							mainloop=false;
 				}
-						//le->LFSTK_setFocus();
 		}
 
 	delete bc;

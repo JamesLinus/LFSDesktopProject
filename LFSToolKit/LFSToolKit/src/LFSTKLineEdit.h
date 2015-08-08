@@ -44,6 +44,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		bool mouseEnter(void);
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
+		bool gotFocus(XEvent *e);
 		void LFSTK_setFocus(void);
 
 	private:
@@ -57,7 +58,7 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 
 		std::string	buffer;
 		unsigned	cursorPos;
-		bool		gotFocus;
+		bool		isFocused;
 };
 
 #endif

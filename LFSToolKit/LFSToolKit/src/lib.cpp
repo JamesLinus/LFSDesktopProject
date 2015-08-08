@@ -182,11 +182,12 @@ bool gadgetEvent(void *self,XEvent *e,int type)
 				gadget->LFSTK_clearWindow();
 				break;
 			case FocusIn:
-				//printf("focus in\n");
+				printf("focus in libev\n");
+				retval=gadget->gotFocus(e);
 				break;
 			case FocusOut:
+				printf("focus out libev\n");
 				retval=gadget->lostFocus(e);
-				//printf("focus out\n");
 				break;
 			case KeyRelease:
 				retval=gadget->keyRelease(&(e->xkey));
