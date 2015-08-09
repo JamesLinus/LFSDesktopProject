@@ -77,7 +77,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	this->drawLabel(FONTNORMALCOL);
 }
 
-bool LFSTK_buttonClass::mouseDown()
+bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -102,13 +102,13 @@ bool LFSTK_buttonClass::mouseDown()
 	return(true);
 }
 
-bool LFSTK_buttonClass::mouseUp()
+bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
 		{
-			this->mouseEnter();
+			this->mouseEnter(e);
 			if(this->callback.releaseCallback!=NULL)
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
@@ -120,14 +120,14 @@ void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 	return(this->callback.userData);
 }
 
-bool LFSTK_buttonClass::mouseExit()
+bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 	return(true);
 }
 
-bool LFSTK_buttonClass::mouseEnter()
+bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -190,7 +190,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 
 	wa.bit_gravity=NorthWestGravity;
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,SubstructureNotifyMask|ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=EMBOSSEDBUTTON;
 	this->listen.function=gadgetEvent;

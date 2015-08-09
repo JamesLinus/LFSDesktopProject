@@ -45,11 +45,11 @@ int main(int argc, char **argv)
 	le=new LFSTK_lineEditClass(mainwind,"",2,4,width-4,24,0);
 	XMapWindow(mainwind->display,le->LFSTK_getWindow());
 
-	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,EastGravity);
+	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,SouthEastGravity);
 	bc->LFSTK_setCallBack(NULL,callback,(void*)1);
 	XMapWindow(mainwind->display,bc->LFSTK_getWindow());
 
-	bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4,75,24,WestGravity);
+	bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4,75,24,SouthWestGravity);
 	bc1->LFSTK_setCallBack(NULL,callback,(void*)2);
 	XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
 

@@ -130,7 +130,7 @@ void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 		}
 }
 
-bool LFSTK_menuButtonClass::mouseDown()
+bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 {
 	LFSTK_buttonClass	*bc;
 	geometryStruct		*g;
@@ -219,27 +219,27 @@ bool LFSTK_menuButtonClass::mouseDown()
 	return(true);
 }
 	
-bool LFSTK_menuButtonClass::mouseUp()
+bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
 		{
-			this->mouseEnter();
+			this->mouseEnter(e);
 			if((this->callback.releaseCallback!=NULL) && ((this->callback.ignoreCallback==false)))
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
 	return(true);
 }
 
-bool LFSTK_menuButtonClass::mouseExit()
+bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 	return(true);
 }
 
-bool LFSTK_menuButtonClass::mouseEnter()
+bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);

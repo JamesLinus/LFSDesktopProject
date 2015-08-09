@@ -164,33 +164,36 @@ bool gadgetEvent(void *self,XEvent *e,int type)
 	switch (e->type)
 		{
 			case EnterNotify:
-				retval=gadget->mouseEnter();
+				retval=gadget->mouseEnter(&e->xbutton);
 				break;
 			case LeaveNotify:
-				retval=gadget->mouseExit();
+				retval=gadget->mouseExit(&e->xbutton);
 				break;
 			case ButtonRelease:
-				retval=gadget->mouseUp();
-				break;
-			case MotionNotify:
+				retval=gadget->mouseUp(&e->xbutton);
 				break;
 			case ButtonPress:
 				XSetInputFocus(gadget->wc->display,e->xbutton.window,RevertToNone,CurrentTime);
-				retval=gadget->mouseDown();
+				retval=gadget->mouseDown(&e->xbutton);
+				break;
+
+			case MotionNotify:
 				break;
 			case Expose:
 				gadget->LFSTK_clearWindow();
 				break;
+
 			case FocusIn:
-				printf("focus in libev\n");
+				//printf("focus in libev\n");
 				retval=gadget->gotFocus(e);
 				break;
 			case FocusOut:
-				printf("focus out libev\n");
+				//printf("focus out libev\n");
 				retval=gadget->lostFocus(e);
 				break;
+
 			case KeyRelease:
-				retval=gadget->keyRelease(&(e->xkey));
+				retval=gadget->keyRelease(&e->xkey);
 				//printf("KeyRelease\n");
 				break;		
 		}

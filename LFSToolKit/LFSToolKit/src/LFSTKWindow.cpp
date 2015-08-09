@@ -205,7 +205,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
 	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity|CWOverrideRedirect,&wa);
-	XSelectInput(this->display,this->window, ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask|LeaveWindowMask|FocusChangeMask);
+	XSelectInput(this->display,this->window, SubstructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
 

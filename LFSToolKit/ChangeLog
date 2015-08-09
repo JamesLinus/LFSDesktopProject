@@ -1,4 +1,6 @@
 0.0.5
+Now supplies relevent event to class event handlers.
+Event hanlers now return a bool - true=event handled, false=pass it along.
 Callbacks now return a bool.
 Labels now default to centre.
 Removed linking to unused libs.

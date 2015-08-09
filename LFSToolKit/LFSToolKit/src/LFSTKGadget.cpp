@@ -134,33 +134,33 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
-bool LFSTK_gadgetClass::mouseUp()
+bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
 		{
-			this->mouseEnter();
+			this->mouseEnter(e);
 			if(this->callback.releaseCallback!=NULL)
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
 	return(true);
 }
 
-bool LFSTK_gadgetClass::mouseDown()
+bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
 	return(true);
 }
 
-bool LFSTK_gadgetClass::mouseExit()
+bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 }
 
-bool LFSTK_gadgetClass::mouseEnter()
+bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);

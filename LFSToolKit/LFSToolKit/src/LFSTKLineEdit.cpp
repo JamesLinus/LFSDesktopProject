@@ -64,7 +64,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 void LFSTK_lineEditClass::LFSTK_clearWindow()
 {
-//printf("from line foc=%i\n",this->isFocused);
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
@@ -83,52 +82,24 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 
 void LFSTK_lineEditClass::LFSTK_setFocus(void)
 {
-printf("set focus\n");
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 	XSetInputFocus(this->display,this->window,RevertToParent,CurrentTime);
 	this->isFocused=true;
 	this->LFSTK_clearWindow();
 }
 
-bool LFSTK_lineEditClass::mouseUp()
+bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 {
-/*
-	if(this->inWindow==false)
-		this->LFSTK_clearWindow();
-	else
-		{
-//			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
-//			this->gotFocus=true;
-			//this->drawLabel();
-			this->mouseEnter();
-			if(this->callback.releaseCallback!=NULL)
-				return(this->callback.releaseCallback(this,this->callback.userData));
-		}
-*/
 	return(true);
 }
 
-bool LFSTK_lineEditClass::mouseDown()
+bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
-printf("mose down\n");
-//	XSetInputFocus(this->display,this->window,RevertToNone,CurrentTime);
-	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
-	this->isFocused=true;
-	this->LFSTK_clearWindow();
-//	this->drawLabel();
-	return(true);
-}
-
-bool LFSTK_lineEditClass::mouseExit(void)
-{
-//	this->LFSTK_clearWindow();
-//	this->inWindow=false;
 	return(true);
 }
 
 bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
-printf("lost focus line\n");
 	XUngrabKeyboard(this->display,CurrentTime);
 	this->isFocused=false;
 	this->inWindow=false;
@@ -138,33 +109,10 @@ printf("lost focus line\n");
 
 bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 {
-printf("got focus line\n");
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
 	this->isFocused=true;
 	this->inWindow=true;
 	this->LFSTK_clearWindow();
-	return(true);
-}
-
-bool LFSTK_lineEditClass::mouseEnter()
-{
-/*
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,whiteColour);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-	XSetForeground(this->display,this->gc,this->blackColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-	XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-	XSetForeground(this->display,this->gc,this->whiteColour);
-	XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-	XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-
-	this->inWindow=true;
-	this->drawLabel();
-*/
 	return(true);
 }
 

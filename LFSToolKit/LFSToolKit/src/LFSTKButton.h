@@ -44,10 +44,10 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		char *LFSTK_getLabel(void);
 
 		void LFSTK_clearWindow(void);		
-		bool mouseEnter(void);
-		bool mouseExit(void);
-		bool mouseDown(void);
-		bool mouseUp(void);
+		bool mouseEnter(XButtonEvent *e);
+		bool mouseExit(XButtonEvent *e);
+		bool mouseDown(XButtonEvent *e);
+		bool mouseUp(XButtonEvent *e);
 
 		virtual void drawLabel(int p);
 		virtual void LFSTK_setColoursFromGlobals(void);

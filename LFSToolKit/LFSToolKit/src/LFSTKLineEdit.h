@@ -38,10 +38,8 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 
 		void LFSTK_clearWindow(void);
 		const std::string* LFSTK_getBuffer(void);
-		bool mouseUp(void);
-		bool mouseDown(void);
-		bool mouseExit(void);
-		bool mouseEnter(void);
+		bool mouseDown(XButtonEvent *e);
+		bool mouseEnter(XButtonEvent *e);
 		bool keyRelease(XKeyEvent *e);
 		bool lostFocus(XEvent *e);
 		bool gotFocus(XEvent *e);
