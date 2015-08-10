@@ -1,4 +1,6 @@
 0.0.5
+Fixed window gravity not working.
+Fixed pager not showing window.
 Now supplies relevent event to class event handlers.
 Event hanlers now return a bool - true=event handled, false=pass it along.
 Callbacks now return a bool.
@@ -7,7 +9,7 @@ Removed linking to unused libs.
 
 0.0.4
 Line edit now scolls correctly.
-Added paste to line edit.
+Added paste ( ctl-v ) to line edit.
 Added cursor keys to line edit.
 All button clases now inherit from base gadget class.
 Added line edit class.

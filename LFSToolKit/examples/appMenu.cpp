@@ -242,7 +242,7 @@ int main(int argc, char **argv)
 
 	//wc=new LFSTK_windowClass(sx,sy,800,400,true,"rgb:00/00/00","rgb:80/80/80");
 	char *white=strdup("white");
-	wc=new LFSTK_windowClass(sx,sy,800,400,true);
+	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
 	wc->LFSTK_setDecorated(true);
 	wc->LFSTK_setFontColourName(FONTNORMALCOL,"white");
 	wc->LFSTK_setFontColourName(FONTNORMALCOL,white);
