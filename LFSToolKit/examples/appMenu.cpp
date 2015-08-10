@@ -354,6 +354,7 @@ bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 						wc->LFSTK_clearWindow();
 						break;
 					case ConfigureNotify:
+					printf("configureWindow\n");
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_clearWindow();
 						break;
