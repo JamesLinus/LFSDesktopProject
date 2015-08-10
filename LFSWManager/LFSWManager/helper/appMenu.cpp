@@ -59,7 +59,7 @@ bool bcb(void *p,void* ud)
 	menuEntryStruct	*menuitem;
 
 	if((long)ud<0)
-		return(false);
+		return(true);
 
 	menuitem=(menuEntryStruct*)ud;
 
@@ -207,7 +207,7 @@ bool inWindow(void)
 	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 		{
 			geometryStruct *g=wc->LFSTK_getGeom();
-			if((root_x_return>g->x) && (root_x_return<(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(g->y+g->h)))
+			if((root_x_return>g->x) && (root_x_return<(int)(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(int)(g->y+g->h)))
 				return(true);
 		}
 	return(false);
@@ -241,7 +241,7 @@ int main(int argc, char **argv)
 			sy=win_y_return-10;
 		}
 	terminalCommand=argv[1];
-	wc=new LFSTK_windowClass(sx,sy,800,400,true);
+	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
 	wc->LFSTK_setDecorated(true);
 	wc->LFSTK_loadGlobalColours(lfstkFile);
 
@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 			if(mainMenus[j].name!=NULL)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
-					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(0-(j+1)));
+					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 					bc[menucount]->LFSTK_setColoursFromGlobals();
