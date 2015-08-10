@@ -25,6 +25,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
+#include <X11/Xatom.h>
+
 #include <string.h>
 
 #include "LFSTKWindow.h"
@@ -63,6 +65,9 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	for(int j=0;j<MAXCOLOURS;j++)
 		if(this->colourNames[j].name!=NULL)
 			free(this->colourNames[j].name);
+
+	if(this->windowName!=NULL)
+		free(this->windowName);
 
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
@@ -170,7 +175,7 @@ void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 	this->fontColourNames[p]=strdup(colour);
 }
 
-void LFSTK_windowClass::LFSTK_setColourName(int p,char* colour)
+void LFSTK_windowClass::LFSTK_setColourName(int p,const char* colour)
 {
 	XColor tc,sc;
 
@@ -179,10 +184,11 @@ void LFSTK_windowClass::LFSTK_setColourName(int p,char* colour)
 	this->colourNames[p].pixel=sc.pixel;
 }
 
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
+	XClassHint				classHint;
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -200,14 +206,20 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,bool override)
 	this->cm=DefaultColormap(this->display,this->screen);
 	this->draw=XftDrawCreate(this->display,this->rootWindow,this->visual,this->cm);
 
-	wa.bit_gravity=NorthWestGravity;
+	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=override;
 	wm_delete_window=XInternAtom(this->display,"WM_DELETE_WINDOW",0);
 
-	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity|CWOverrideRedirect,&wa);
-	XSelectInput(this->display,this->window, SubstructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|StructureNotifyMask|LeaveWindowMask|FocusChangeMask);
+	this->window=XCreateWindow(this->display,this->rootWindow,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWOverrideRedirect,&wa);
+	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
+
+	this->windowName=strdup(name);
+	XStoreName(this->display,this->window,this->windowName);
+	classHint.res_name=this->windowName;
+	classHint.res_class=(char*)"LFSToolKit";
+	XSetClassHint(this->display,this->window,&classHint);
 
 	this->gc=XCreateGC(this->display,this->rootWindow,0,NULL);
 

@@ -170,7 +170,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	addto=this->menuItemfont->ascent+this->menuItemfont->descent+8;
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
-	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,true);
+	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true);
 	sy=0;
 
 	for(int j=0;j<MAXCOLOURS;j++)
@@ -274,10 +274,10 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* l
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
-	wa.bit_gravity=NorthWestGravity;
+	wa.win_gravity=NorthWestGravity;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,SubstructureRedirectMask|Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	XSelectInput(this->display,this->window,Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->initMenuButton();
 

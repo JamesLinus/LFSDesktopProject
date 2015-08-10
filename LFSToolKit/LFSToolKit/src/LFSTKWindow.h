@@ -31,7 +31,7 @@ class LFSTK_windowClass
 	public:
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
-		LFSTK_windowClass(int x,int y,int w,int h,bool override);
+		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override);
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h);
@@ -41,7 +41,7 @@ class LFSTK_windowClass
 
 		void LFSTK_setFontString(char *s);
 		void LFSTK_setFontColourName(int p,const char *colour);
-		void LFSTK_setColourName(int p,char* colour);
+		void LFSTK_setColourName(int p,const char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
 
 		void LFSTK_loadGlobalColours(const char *path);
@@ -68,6 +68,7 @@ class LFSTK_windowClass
 		int			y;
 		int			w;
 		int			h;
+		char		*windowName;
 };
 
 #endif

@@ -44,9 +44,12 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 	this->isFocused=false;
-	wa.bit_gravity=NorthWestGravity;
+	wa.win_gravity=gravity;
+	wa.bit_gravity=gravity;
 
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
+	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
+//	XSelectInput(this->display,this->window,SubstructureNotifyMask|StructureNotifyMask|ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
+//	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
 	this->listen.function=gadgetEvent;
@@ -97,6 +100,17 @@ bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
 	return(true);
 }
+
+void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
+{
+	this->w=w-(pad*2);
+	this->h=h-(pad*2);
+//	printf("w=%i h=%i\n",this->w,this->h);
+	XResizeWindow(this->display,this->window,this->w,this->h);
+	this->LFSTK_clearWindow();
+}
+
+
 
 bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {

@@ -188,9 +188,9 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
-	wa.bit_gravity=NorthWestGravity;
-	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWBitGravity,&wa);
-	XSelectInput(this->display,this->window,SubstructureNotifyMask|ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	wa.win_gravity=gravity;
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=EMBOSSEDBUTTON;
 	this->listen.function=gadgetEvent;

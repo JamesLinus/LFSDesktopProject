@@ -159,6 +159,7 @@ bool gadgetEvent(void *self,XEvent *e,int type)
 	LFSTK_gadgetClass	*gadget=NULL;
 
 //printf("---%i---\n",type);
+//printf("===type=%i====\n",e->type);
 	gadget=static_cast<LFSTK_gadgetClass*>(self);
 
 	switch (e->type)
@@ -180,6 +181,7 @@ bool gadgetEvent(void *self,XEvent *e,int type)
 			case MotionNotify:
 				break;
 			case Expose:
+//			 		printf("xpose from lib\n");
 				gadget->LFSTK_clearWindow();
 				break;
 
@@ -195,7 +197,23 @@ bool gadgetEvent(void *self,XEvent *e,int type)
 			case KeyRelease:
 				retval=gadget->keyRelease(&e->xkey);
 				//printf("KeyRelease\n");
-				break;		
+				break;
+	
+			case ConfigureNotify:
+//				printf("conf>>>>>>>>>\n");
+				break;
+			case GravityNotify:
+//				printf("grav>>>>>>>>>>>\n");
+//				retval=true;
+				break;
+			case ResizeRequest:
+				//XCheckTypedWindowEvent
+//				printf("resize\n");
+				break;
+			case ClientMessage:
+//				printf("ClientMessage\n");
+				break;
+				
 		}
 //	printf("%i\n",ud);
 	if(retval==false)

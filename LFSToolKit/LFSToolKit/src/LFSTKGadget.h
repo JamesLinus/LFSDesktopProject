@@ -33,6 +33,8 @@ class LFSTK_gadgetClass
 		virtual ~LFSTK_gadgetClass();
 
 		virtual void LFSTK_clearWindow();
+		virtual void LFSTK_resizeWindow(int w,int h);
+
 		virtual bool mouseUp(XButtonEvent *e);
 		virtual bool mouseDown(XButtonEvent *e);
 		virtual bool mouseExit(XButtonEvent *e);
@@ -64,6 +66,8 @@ class LFSTK_gadgetClass
 		int					y;
 		int					w;
 		int					h;
+		int					pad;
+
 		int					blackColour;
 		int					whiteColour;
 

@@ -36,6 +36,7 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 
 LFSTK_gadgetClass::LFSTK_gadgetClass()
 {
+	pad=2;
 }
 
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,char* colour)
@@ -169,6 +170,14 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	this->inWindow=true;
+}
+
+void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
+{
+	this->w=w;
+	this->h=h;
+	XResizeWindow(this->display,this->window,w,h);
+	this->LFSTK_clearWindow();
 }
 
 bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
