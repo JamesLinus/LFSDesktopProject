@@ -21,10 +21,18 @@ bool				mainloop=true;
 int					width=300;
 int					hite=60;
 LFSTK_lineEditClass	*le;
+LFSTK_windowClass	*mainwind;
+bool				toggle=false;
 
 bool callback(void *p,void* ud)
 {
 	printf("callback = %p - %s\n",ud,le->LFSTK_getBuffer()->c_str());
+	toggle=!toggle;
+	printf("--toggle= %i--\n",toggle);
+	mainwind->LFSTK_setKeepAbove(toggle);
+	mainwind->LFSTK_setSticky(toggle);
+	XMapWindow(mainwind->display,mainwind->window);
+
 	if((long)ud==1)
 		{
 			mainloop=false;
@@ -37,12 +45,11 @@ bool callback(void *p,void* ud)
 int main(int argc, char **argv)
 {
 	printf("Hello World!\n");
-	LFSTK_windowClass	*mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
 	XEvent				event;
 	LFSTK_buttonClass	*bc,*bc1;
 	bool				firstrun=true;
 
-	mainwind->LFSTK_setColourName(NORMALCOLOUR,"red");
+	mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
 
 	le=new LFSTK_lineEditClass(mainwind,"",0,0,width,24,NorthWestGravity);
 	XMapWindow(mainwind->display,le->LFSTK_getWindow());
@@ -55,7 +62,11 @@ int main(int argc, char **argv)
 	bc1->LFSTK_setCallBack(NULL,callback,(void*)2);
 	XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
 
+
 	XMapWindow(mainwind->display,mainwind->window);
+
+	mainwind->LFSTK_setKeepAbove(toggle);
+	mainwind->LFSTK_setSticky(toggle);
 
 	mainloop=true;
 	while(mainloop==true)

@@ -32,6 +32,10 @@
 #include "LFSTKWindow.h"
 #include "lib.h"
 
+#define _NET_WM_STATE_REMOVE	0
+#define _NET_WM_STATE_ADD		1
+#define _NET_WM_STATE_TOGGLE	2
+
 struct Hints
 {
 	unsigned long   flags;
@@ -184,11 +188,57 @@ void LFSTK_windowClass::LFSTK_setColourName(int p,const char* colour)
 	this->colourNames[p].pixel=sc.pixel;
 }
 
+void LFSTK_windowClass::LFSTK_setSticky(bool set)
+{
+	XClientMessageEvent	xclient;
+	Atom				xa,xa1;
+
+	memset(&xclient,0,sizeof(xclient) );
+	xa=XInternAtom(this->display,"_NET_WM_STATE",False);
+	xa1=XInternAtom(display,"_NET_WM_STATE_STICKY",False);
+
+	xclient.type=ClientMessage;
+	xclient.window=this->window;
+	xclient.message_type=xa;
+	xclient.format=32;
+	if(set==true)
+		xclient.data.l[0] =_NET_WM_STATE_ADD;
+	else
+		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
+	xclient.data.l[1] =xa1;
+	xclient.data.l[2] = 0;
+	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+}
+
+void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
+{
+	XClientMessageEvent	xclient;
+	Atom				xa,xa1;
+
+	memset(&xclient,0,sizeof(xclient) );
+	xa=XInternAtom(this->display,"_NET_WM_STATE",False);
+	xa1=XInternAtom(display,"_NET_WM_STATE_ABOVE",False);
+
+	xclient.type=ClientMessage;
+	xclient.window=this->window;
+	xclient.message_type=xa;
+	xclient.format=32;
+	if(set==true)
+		xclient.data.l[0] =_NET_WM_STATE_ADD;
+	else
+		xclient.data.l[0] =_NET_WM_STATE_REMOVE;
+	xclient.data.l[1] =xa1;
+	xclient.data.l[2] = 0;
+	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+}
+
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
 	XClassHint				classHint;
+	Atom					xa;
+	Atom					xa_prop[3];
 
 	this->display=XOpenDisplay(NULL);
 	if(this->display==NULL)
@@ -214,6 +264,13 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
+
+	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
+	xa_prop[0]=XInternAtom(this->display,"_NET_WM_STATE_STICKY",False);
+	xa_prop[1]=XInternAtom(this->display,"_NET_WM_STATE_ABOVE",False);
+	xa_prop[2]=XInternAtom(this->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
+	if(xa!=None)
+		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,3);
 
 	this->windowName=strdup(name);
 	XStoreName(this->display,this->window,this->windowName);

@@ -311,7 +311,7 @@ int main(int argc, char **argv)
 	//
 #endif
 //	XMapWindow(wc->display,wc->window);
-
+#if 0
 	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"exit",0,sy,maxwid,addto,0);
 	bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
 	bc1->LFSTK_setLabelOriention(CENTRE);
@@ -326,7 +326,7 @@ bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 	//bc1->LFSTK_setColoursFromGlobals();
 	XMapWindow(wc->display,le->LFSTK_getWindow());
 	sy+=addto;
-
+#endif
 //maxwid=100;
 //sy=100;
 
@@ -348,7 +348,7 @@ bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 			switch(event.type)
 				{
 					case LeaveNotify:
-						//mainloop=inWindow();
+						mainloop=inWindow();
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();

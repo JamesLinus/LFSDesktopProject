@@ -43,7 +43,9 @@ class LFSTK_windowClass
 		void LFSTK_setFontColourName(int p,const char *colour);
 		void LFSTK_setColourName(int p,const char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
-
+		void LFSTK_setSticky(bool set);
+		void LFSTK_setKeepAbove(bool set);
+		
 		void LFSTK_loadGlobalColours(const char *path);
 
 		geometryStruct	*LFSTK_getGeom(void);
