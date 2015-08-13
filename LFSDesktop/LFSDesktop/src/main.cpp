@@ -32,6 +32,11 @@
 #include <Xm/Form.h>
 #include <X11/Xaw/Box.h>
 
+#include <LFSTKWindow.h>
+#include <LFSTKButton.h>
+//#include "LFSTKMenuButton.h"
+#include "LFSTKLineEdit.h"
+
 #include "config.h"
 
 #include "globals.h"
@@ -53,6 +58,7 @@ struct	option long_options[] =
 	{"fore-colour",1,0,'4'},
 	{"back-colour",1,0,'b'},
 	{"ignore",1,0,'i'},
+	{"appmenu",0,0,'m'},
 	{"debug",0,0,'d'},
 	{"version",0,0,'v'},
 	{"help",0,0,'?'},
@@ -61,6 +67,9 @@ struct	option long_options[] =
 
 bool	needsRefresh=true;
 bool	loop=true;
+bool	retVal=false;
+int		width=300;
+int		hite=60;
 
 void printhelp(void)
 {
@@ -75,6 +84,7 @@ void printhelp(void)
 			" -4,--fore-colour		Fore colour for label in RGBA hex notation ( default 0xffffffff )\n"
 			" -b,--back-colour		Back colour for label in RGBA hex notation ( default 0x0 )\n"
 			" -i,--ignore			List of ';' seperated disk labels to NOT show on desktop\n"
+			" -m,--appmenu			Show the application menu when right clicking on desktop\n"
 			" -d,--debug			Debug\n"
 			" -v,--version			output version information and exit\n"
 			" -h,-?,--help			print this help\n\n"
@@ -107,25 +117,89 @@ void  alarmCallBack(int sig)
 	alarm(refreshRate);
 }
 
+bool setIconCallback(void *p,void* ud)
+{
+	if((long)ud==1)
+		retVal=false;
+	else
+		retVal=true;
+
+	return(false);
+}
+
 void doCustomIcon(bool useicon)
 {
-	char buffer[MAXBUFFER];
-	FILE *fp;
-	int	retval;
+	XEvent				event;
+	LFSTK_buttonClass	*bc,*bc1;
+	bool				firstrun=true;
+	LFSTK_windowClass	*mainwind;
+	LFSTK_lineEditClass	*le;
+	bool				retfromlib=true;
 
 	if(useicon==true)
 		{
-			sprintf(buffer,LFSDIALOGAPP " c 0 \"Path To Icon ...\"");
-			fp=popen(buffer,"r");
-			fgets(buffer,MAXBUFFER,fp);
-			retval=pclose(fp);
-			if(retval==0)
+			mainwind=new LFSTK_windowClass(0,0,width,hite,"Enter Path To Icon",false);
+			mainwind->LFSTK_loadGlobalColours(tkConfigPath);
+
+			le=new LFSTK_lineEditClass(mainwind,"",0,0,width,24,NorthWestGravity);
+			XMapWindow(mainwind->display,le->LFSTK_getWindow());
+
+			bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,SouthWestGravity);
+			bc->LFSTK_setCallBack(NULL,setIconCallback,(void*)1);
+			XMapWindow(mainwind->display,bc->LFSTK_getWindow());
+
+			bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4,75,24,SouthEastGravity);
+			bc1->LFSTK_setCallBack(NULL,setIconCallback,(void*)2);
+			XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
+
+			XMapWindow(mainwind->display,mainwind->window);
+			mainwind->LFSTK_setKeepAbove(true);
+
+			while(retfromlib==true)
 				{
-					deskIconsArray[foundDiskNumber].icon=strdup(buffer);
+					listener *l=mainwind->LFSTK_getListener(event.xany.window);
+					if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+						retfromlib=l->function(l->pointer,&event,l->type);
+
+					XNextEvent(mainwind->display,&event);
+					switch(event.type)
+						{
+							case LeaveNotify:
+								break;
+							case Expose:
+								mainwind->LFSTK_clearWindow();
+								if(firstrun==true)
+									{
+										firstrun=false;
+										le->LFSTK_setFocus();
+									}
+								break;
+
+							case ConfigureNotify:
+								mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+								mainwind->LFSTK_clearWindow();
+								le->LFSTK_resizeWindow(event.xconfigurerequest.width,24);
+								le->LFSTK_clearWindow();
+								break;
+
+							case ClientMessage:
+								if (event.xclient.message_type == XInternAtom(mainwind->display, "WM_PROTOCOLS", 1) && (Atom)event.xclient.data.l[0] == XInternAtom(mainwind->display, "WM_DELETE_WINDOW", 1))
+									retfromlib=false;
+						}
+				}
+
+			if(retVal==0)
+				{
+					deskIconsArray[foundDiskNumber].icon=strdup(le->LFSTK_getBuffer()->c_str());
 					fileCustomIcon=deskIconsArray[foundDiskNumber].icon;
 					fileGotCustomIcon=true;
 					deskIconsArray[foundDiskNumber].customicon=true;
 				}
+
+			delete bc;
+			delete bc1;
+			delete le;
+			delete mainwind;
 		}
 	else
 		{
@@ -178,7 +252,8 @@ String	fallback_resources[]=
 	NULL,
 };
 
-Widget mountMenu(XtAppContext *app,int x,int y,bool isdisk)
+#if 0
+Widget mountMenuX(XtAppContext *app,int x,int y,bool isdisk)
 {
 	Widget	toplevel,mount,unmount,eject,bmount,custom,remove;
 	int		dump=0;
@@ -213,9 +288,163 @@ Widget mountMenu(XtAppContext *app,int x,int y,bool isdisk)
 	XtRealizeWidget(toplevel);
 	return(toplevel);
 }
+#endif
+
+LFSTK_windowClass	*wc;
+
+bool inWindow(void)
+{
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+
+	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+		{
+			geometryStruct *g=wc->LFSTK_getGeom();
+			if((root_x_return>g->x) && (root_x_return<(g->x+(int)(g->w))) && (root_y_return>g->y) && (root_y_return<(g->y+(int)(g->h))))
+				return(true);
+		}
+	return(false);
+}
+//bool callback(void *p,void* ud)
+bool pushedButtonCB(void *p,void* ud)
+{
+	long	what=(long)ud;
+
+	switch(what)
+		{
+			case BUTTONOPEN:
+			case BUTTONMOUNT:
+			case BUTTONUNMOUNT:
+			case BUTTONEJECT:
+				mountDisk(what);
+				break;
+			case BUTTONADDICON:
+				doCustomIcon(true);
+				break;
+			case BUTTONREMOVEICON:
+				doCustomIcon(false);
+				break;
+		}
+
+	needsRefresh=true;
+	loop=false;
+	return(false);
+}
+
+const char	*mountMenuData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 
 void doPopUp(int x,int y)
 {
+	LFSTK_buttonClass	*bc[6]={NULL,};
+	int					sx=x,sy=y;
+	XEvent				event;
+	char				*fontandsize;
+
+	if(findIcon(x,y)==false)
+		return;
+
+	wc=new LFSTK_windowClass(sx,sy,64,400,"appmenu",true);
+	wc->LFSTK_loadGlobalColours(tkConfigPath);
+	asprintf(&fontandsize,"%s:size=%i",fontName,fontSize);
+
+	wc->LFSTK_setFontString(fontandsize);
+	free(fontandsize);
+	sx=0;
+	sy=0;
+
+	int addto=wc->font->ascent+wc->font->descent+8;
+	int maxwid=0;
+	
+	while(mountMenuData[sx]!=NULL)
+		{
+			XftFont *font=(XftFont*)wc->font->data;
+			XGlyphInfo info;
+			XftTextExtentsUtf8(wc->display,font,(XftChar8 *)mountMenuData[sx],strlen(mountMenuData[sx]),&info);
+			sx++;
+			if((info.width-info.x)>maxwid)
+				maxwid=info.width;
+		}
+
+	maxwid+=8;
+	sx=0;
+	sy=0;
+	if(isDisk==true)
+		{
+
+			bc[0]=new LFSTK_buttonClass(wc,mountMenuData[0],sx,sy,maxwid,24,NorthWestGravity);
+			bc[0]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONMOUNT);
+			XMapWindow(wc->display,bc[0]->LFSTK_getWindow());
+			sy+=addto;
+			bc[1]=new LFSTK_buttonClass(wc,mountMenuData[1],sx,sy,maxwid,24,NorthWestGravity);
+			bc[1]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONUNMOUNT);
+			XMapWindow(wc->display,bc[1]->LFSTK_getWindow());
+			sy+=addto;
+			bc[2]=new LFSTK_buttonClass(wc,mountMenuData[2],sx,sy,maxwid,24,NorthWestGravity);
+			bc[2]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONEJECT);
+			XMapWindow(wc->display,bc[2]->LFSTK_getWindow());
+			sy+=addto;
+
+		}
+	else
+		{
+			bc[3]=new LFSTK_buttonClass(wc,mountMenuData[3],sx,sy,maxwid,24,NorthWestGravity);
+			bc[3]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONOPEN);
+			XMapWindow(wc->display,bc[3]->LFSTK_getWindow());
+			sy+=addto;
+		}
+	bc[4]=new LFSTK_buttonClass(wc,mountMenuData[4],sx,sy,maxwid,24,NorthWestGravity);
+	bc[4]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONADDICON);
+	XMapWindow(wc->display,bc[4]->LFSTK_getWindow());
+	sy+=addto;
+
+	bc[5]=new LFSTK_buttonClass(wc,mountMenuData[5],sx,sy,maxwid,24,NorthWestGravity);
+	bc[5]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONREMOVEICON);
+	XMapWindow(wc->display,bc[5]->LFSTK_getWindow());
+	sy+=addto;
+
+	XResizeWindow(wc->display,wc->window,maxwid,sy);
+	wc->LFSTK_resizeWindow(maxwid,sy);
+	wc->LFSTK_clearWindow();
+	XMapWindow(wc->display,wc->window);
+
+	loop=true;
+	while(loop==true)
+		{
+			listener *l=wc->LFSTK_getListener(event.xany.window);
+
+			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+				l->function(l->pointer,&event,l->type);
+
+			XNextEvent(wc->display,&event);
+			switch(event.type)
+				{
+					case LeaveNotify:
+						loop=inWindow();
+						break;
+					case Expose:
+						wc->LFSTK_clearWindow();
+						break;
+					case ConfigureNotify:
+						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
+						break;
+				}
+		}
+
+	for(int j=0;j<6;j++)
+		if(bc[j]!=NULL)
+			delete bc[j];
+	delete wc;
+}
+
+void doPopUpXX(int x,int y)
+{
+#if 0
 	Widget			mountmenu;
 	XEvent			event;
 	XtAppContext	app;
@@ -260,6 +489,7 @@ void doPopUp(int x,int y)
 			XtAppNextEvent(app,&event);
 			XtDispatchEvent(&event);
 		}
+#endif
 }
 
 void setFontEtc(void)
@@ -329,6 +559,7 @@ int main(int argc,char **argv)
 	int				win_y_return;
 	unsigned int	mask_return;
 	bool			dotidy=false;
+	bool			doShowAppmenu=false;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -372,12 +603,14 @@ int main(int argc,char **argv)
 	showSuffix=false;
 	asprintf(&terminalCommand,"xterm -e ");
 
+	asprintf(&tkConfigPath,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+
 	loadVarsFromFile(prefsPath,desktopPrefs);
 
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hctdsa:x:f:4:b:i:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hctdsma:x:f:4:b:i:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -440,6 +673,10 @@ int main(int argc,char **argv)
 					ignores=strdup(optarg);
 					break;
 
+				case 'm':
+					doShowAppmenu=true;
+					break;
+
 				case 'v':
 					printf("lfsdesktop %s\n",VERSION);
 					return 0;
@@ -476,7 +713,6 @@ int main(int argc,char **argv)
 	screen=DefaultScreen(display);
 	displayWidth=DisplayWidth(display,screen);
 	displayHeight=DisplayHeight(display,screen);
-	//screen=DefaultScreen(display);
 	rootWin=DefaultRootWindow(display);
 	visual=DefaultVisual(display,screen);
 	cm=DefaultColormap(display,screen);
@@ -628,14 +864,17 @@ int main(int argc,char **argv)
 				usleep(25000);
 
 			XCheckWindowEvent(display,rootWin,ButtonPress|ButtonReleaseMask|PointerMotionMask,&ev);
-			if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+			if(doShowAppmenu==true)
 				{
-					if(mask_return & Button3Mask)
+					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
 						{
-							if(child_return==0)
+							if(mask_return & Button3Mask)
 								{
-									sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
-									system(buffer);
+									if(child_return==0)
+										{
+											sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
+											system(buffer);
+										}
 								}
 						}
 				}
@@ -790,6 +1029,10 @@ int main(int argc,char **argv)
 	for(int j=0; j<xCnt; j++)
 		free(xySlot[j]);
 
+	free(diskInfoPath);
+	free(cachePath);
+	free(prefsPath);
+	free(desktopPath);
+	free(tkConfigPath);
 	return 0;
 }
-

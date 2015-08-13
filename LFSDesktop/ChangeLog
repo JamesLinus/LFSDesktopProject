@@ -1,3 +1,9 @@
+0.0.11
+Dialog boxes use the new toolkit.
+Added LFSToolKit library.
+Added Xft lib.
+Made showing 'Appmenu' on right click on desktop optional, default=noshow, now moved to the window manager as it should be.
+
 0.0.10
 Fixed default terminal command not being set if not specified on command line ( defaults to "xterm -e" ).
 
