@@ -104,6 +104,7 @@ int main(int argc, char **argv)
 
 	delete bc;
 	delete bc1;
+	delete le;
 	delete mainwind;
 	return 0;
 	

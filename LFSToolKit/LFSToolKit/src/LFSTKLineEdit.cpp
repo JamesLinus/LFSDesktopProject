@@ -29,9 +29,6 @@
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
-	if(this->label!=NULL)
-		free(this->label);
-	XDestroyWindow(this->display,this->window);
 }
 
 LFSTK_lineEditClass::LFSTK_lineEditClass()
@@ -48,8 +45,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	wa.bit_gravity=gravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
-//	XSelectInput(this->display,this->window,SubstructureNotifyMask|StructureNotifyMask|ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
-//	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
 	this->listen.function=gadgetEvent;

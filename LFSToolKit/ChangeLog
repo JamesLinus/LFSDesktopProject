@@ -1,4 +1,5 @@
 0.0.5
+Fixed double free of line edit data.
 Added keep above and sicky windows.
 Fixed window gravity not working.
 Fixed pager not showing window.

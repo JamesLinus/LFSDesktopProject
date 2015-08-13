@@ -193,6 +193,7 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=EMBOSSEDBUTTON;
+	this->labelOrientation=CENTRE;
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=BUTTONGADGET;
