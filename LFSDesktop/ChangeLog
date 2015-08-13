@@ -1,4 +1,6 @@
 0.0.11
+Removed externel icon dialog box.
+Removed unneeded libs.
 Dialog boxes use the new toolkit.
 Added LFSToolKit library.
 Added Xft lib.

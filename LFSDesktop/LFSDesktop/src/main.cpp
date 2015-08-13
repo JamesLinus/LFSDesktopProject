@@ -9,7 +9,7 @@
 #include <X11/Intrinsic.h>
 #include <X11/extensions/shape.h>
 #include <X11/StringDefs.h>
-#include <X11/Xaw/MenuButton.h>
+//#include <X11/Xaw/MenuButton.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -28,9 +28,9 @@
 #include <limits.h>
 #include <poll.h>
 
-#include <Xm/PushB.h>
-#include <Xm/Form.h>
-#include <X11/Xaw/Box.h>
+//#include <Xm/PushB.h>
+//#include <Xm/Form.h>
+//#include <X11/Xaw/Box.h>
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
@@ -343,17 +343,13 @@ void doPopUp(int x,int y)
 	LFSTK_buttonClass	*bc[6]={NULL,};
 	int					sx=x,sy=y;
 	XEvent				event;
-	char				*fontandsize;
 
 	if(findIcon(x,y)==false)
 		return;
 
 	wc=new LFSTK_windowClass(sx,sy,64,400,"appmenu",true);
 	wc->LFSTK_loadGlobalColours(tkConfigPath);
-	asprintf(&fontandsize,"%s:size=%i",fontName,fontSize);
 
-	wc->LFSTK_setFontString(fontandsize);
-	free(fontandsize);
 	sx=0;
 	sy=0;
 
@@ -440,56 +436,6 @@ void doPopUp(int x,int y)
 		if(bc[j]!=NULL)
 			delete bc[j];
 	delete wc;
-}
-
-void doPopUpXX(int x,int y)
-{
-#if 0
-	Widget			mountmenu;
-	XEvent			event;
-	XtAppContext	app;
-	bool			foundicon;
-	int				win=0,wout=0;
-	bool			mdown=false;
-
-	foundicon=findIcon(x,y);
-	if(foundicon==false)
-		return;
-
-	loop=true;
-
-	mountmenu=mountMenu(&app,x,y,isDisk);
-
-	while(loop==true)
-		{
-			XtAppNextEvent(app,&event);
-			switch(event.type)
-				{
-					case ButtonPress:
-						mdown=true;
-						break;
-					case ButtonRelease:
-						mdown=false;
-						break;
-					case LeaveNotify:
-						wout=event.xcrossing.subwindow;
-						break;
-					case EnterNotify:
-						win=event.xcrossing.subwindow;
-						break;
-				}
-			if(((win==0) && (wout!=0)) && (mdown==false))
-				loop=false;
-			XtDispatchEvent(&event);
-		}
-
-	XtDestroyWidget(mountmenu);
-	while(XtAppPending(app)!=0)
-		{
-			XtAppNextEvent(app,&event);
-			XtDispatchEvent(&event);
-		}
-#endif
 }
 
 void setFontEtc(void)

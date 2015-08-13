@@ -1,80 +1,84 @@
-
 /*
+ *
+ * ©K. D. Hedger. Fri 31 Jul 17:35:44 BST 2015 kdhedger68713@gmail.com
 
-©keithhedger Thu 4 Jun 20:05:59 BST 2015 kdhedger68713@gmail.com
+ * This file (appMenu.cpp) is part of LFSWManager.
 
+ * LFSWManager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
 
-*/
+ * LFSWManager is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-#include <stdio.h>
+ * You should have received a copy of the GNU General Public License
+ * along with LFSWManager.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
-#include <X11/Intrinsic.h>
-#include <X11/StringDefs.h>
+#include <LFSTKWindow.h>
+#include <LFSTKButton.h>
+#include "LFSTKMenuButton.h"
 
-#include <X11/Xaw/MenuButton.h>
-#include <X11/Xaw/SimpleMenu.h>
-#include <X11/Xaw/Sme.h>
-#include <X11/Xaw/SmeBSB.h>
-#include <X11/Xaw/Cardinals.h>
-#include <X11/Xaw/Box.h>
+#define BUFFERSIZE 2048
+#define MAXCATS 14
+#define MAXENTRYS 500
 
-#include <Xm/Xm.h>
-
-#define streq(a,b)	( strcmp((a),(b)) == 0 )
-#define BUFFERSIZE 512
-#define MAXCATS 50
-#define MAXENTRYS 50
-
-struct			menuEntryStruct
+struct menuEntryStruct
 {
-	char			*name;
-	char			*exec;
-	bool			inTerm;
+	char				*name;
+	char				*exec;
+	bool				inTerm;
 };
 
-struct			appMenuStruct
+struct appMenuStruct
 {
-	const char		*name;
-	menuEntryStruct	entry[MAXENTRYS];
-	int				maxentrys;
+	const char			*name;
+	menuEntryStruct		entry[MAXENTRYS];
+	int					maxentrys;
 };
 
-const char		*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
+const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
+const char				*terminalCommand="xterm -e ";
+appMenuStruct			mainMenus[MAXCATS];
+bool					mainloop=false;
+bool					makestatic=false;
+LFSTK_windowClass		*wc;
+LFSTK_menuButtonClass	*bc[MAXCATS];
+char					*lfstkFile=NULL;
 
-String			fallback_resources[]=
+bool bcb(void *p,void* ud)
 {
-					(char*)"*box*.background:		grey",
-					(char*)"*box.Cancel.background:	grey40",
-					(char*)"*box.*.width:			100",
-					(char*)"*box.*.*menu.width:		0",
-					NULL,
-};
+	char			buffer[BUFFERSIZE];
+	menuEntryStruct	*menuitem;
 
-appMenuStruct	mainMenus[MAXCATS];
-bool			mainloop=false;
-bool			makestatic=false;
-const char		*terminalCommand=NULL;
+	if((long)ud<0)
+		return(true);
 
-void entrySelectCB(Widget w,XtPointer data,XtPointer  garbage)
-{
-	int	cat=(int)(long)data/256;
-	int ent=(int)(long)data-(cat*256);
-	char	buffer[BUFFERSIZE];
+	menuitem=(menuEntryStruct*)ud;
 
-	if(!streq(XtName(w),"Exit"))
+	if(ud>0)
 		{
-			if(mainMenus[cat].entry[ent].inTerm==false)
-				sprintf(buffer,"%s &",mainMenus[cat].entry[ent].exec);
+			if(menuitem->inTerm==false)
+				sprintf(buffer,"%s &",menuitem->exec);
 			else
-				sprintf(buffer,"%s %s &",terminalCommand,mainMenus[cat].entry[ent].exec);
-				
+				sprintf(buffer,"%s %s &",terminalCommand,menuitem->exec);
+
 			system(buffer);
+
+			delete wc;
+			for(int j=0;j<MAXCATS;j++)
+				if(bc[j]!=NULL)
+					delete bc[j];
+			exit(0);
 		}
-	else
-		if(makestatic==true)
-			XtAppSetExitFlag(XtWidgetToApplicationContext(w));
-	mainloop=false;
+	return(true);
 }
 
 void setCatagories(void)
@@ -95,6 +99,7 @@ void setCatagories(void)
 		{
 			mainMenus[j].name=NULL;
 			mainMenus[j].maxentrys=0;
+			bc[j]=NULL;
 			for(int k=0; k<MAXENTRYS; k++)
 				{
 					mainMenus[j].entry[k].name=NULL;
@@ -189,16 +194,8 @@ void setCatagories(void)
 		}
 }
 
-int main(int argc,char *argv[])
+bool inWindow(void)
 {
-	Widget			top;
-	Widget			command;
-	Widget			menu;
-	Widget			entry;
-	Widget			box;
-	XtAppContext	app_con;
-	int				x=0,y=0;
-	Display			*display;
 	Window			root_return;
 	Window			child_return;
 	int				root_x_return;
@@ -206,92 +203,127 @@ int main(int argc,char *argv[])
 	int				win_x_return;
 	int				win_y_return;
 	unsigned int	mask_return;
-	XEvent			event;
-	int				win=0,wout=0;
-	bool			mdown=false;
 
-	display=XOpenDisplay(NULL);
-	if(display==NULL)
-		exit(1);
+	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+		{
+			geometryStruct *g=wc->LFSTK_getGeom();
+			if((root_x_return>g->x) && (root_x_return<(int)(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(int)(g->y+g->h)))
+				return(true);
+		}
+	return(false);
+}
+
+int main(int argc, char **argv)
+{
+	XEvent			event;
+	int				menucount=0;
+	menuItemStruct *ms,*pms;
+	int				sx=0;
+	int				sy=0;
+	Window			dumpwind;
+	int				dumpint;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+	Display			*disp;
 
 	setCatagories();
 	makestatic=true;
+	asprintf(&lfstkFile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+
+	disp=XOpenDisplay(NULL);
+	if(disp==NULL)
+		exit(1);
 	
-	if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-	{
-		x=win_x_return-10;
-		y=win_y_return-10;
-		makestatic=false;
-	}
+	if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
+		{
+			sx=win_x_return-10;
+			sy=win_y_return-10;
+		}
 	terminalCommand=argv[1];
+	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
+	wc->LFSTK_setDecorated(true);
+	wc->LFSTK_loadGlobalColours(lfstkFile);
 
-	top=XtVaAppInitialize(&app_con,"appmenu",NULL,ZERO,&argc,argv,fallback_resources,NULL);
+	sx=0;
+	sy=0;
 
-	box=XtVaCreateManagedWidget("box",boxWidgetClass,top,NULL);
+	int addto=wc->font->ascent+wc->font->descent+8;
+	int maxwid=0;
+
+	while(myCats[sx]!=NULL)
+		{
+			XftFont *font=(XftFont*)wc->font->data;
+			XGlyphInfo info;
+			
+			XftTextExtentsUtf8(wc->display,font,(XftChar8 *)myCats[sx],strlen(myCats[sx]),&info);
+			sx++;
+			if((info.width-info.x)>maxwid)
+				maxwid=info.width;
+		}
+
+	maxwid+=8;
+	sx=0;
+	sy=0;
 
 	for(int j=0; j<MAXCATS; j++)
 		{
+			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
-					command=XtVaCreateManagedWidget(mainMenus[j].name,menuButtonWidgetClass,box,NULL);
-					menu=XtVaCreatePopupShell("menu",simpleMenuWidgetClass,command,NULL);
+					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
+					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
+					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
+					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
+					bc[menucount]->LFSTK_setColoursFromGlobals();
+
+					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
+					sy+=addto;
+					ms=new menuItemStruct[mainMenus[j].maxentrys];
+					pms=ms;
 					for(int k=0; k<mainMenus[j].maxentrys; k++)
 						{
-							entry=XtVaCreateManagedWidget(mainMenus[j].entry[k].name,smeBSBObjectClass,menu,NULL);
-							XtAddCallback(entry,XtNcallback,entrySelectCB,(XtPointer)(long)(j*256+k));
+							pms->label=mainMenus[j].entry[k].name;
+							pms->userData=(void*)&mainMenus[j].entry[k];
+							pms++;
 						}
+					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
+					menucount++;
 				}
 		}
+	XResizeWindow(wc->display,wc->window,maxwid,sy);
+	wc->LFSTK_resizeWindow(maxwid,sy);
+	wc->LFSTK_clearWindow();
+	XMapWindow(wc->display,wc->window);
 
-	if(makestatic==true)
+	mainloop=true;
+	while(mainloop==true)
 		{
-			command = XtVaCreateManagedWidget("Exit", commandWidgetClass, box,NULL);
-		    XtAddCallback(command, XtNcallback,entrySelectCB, NULL);
-		}
-   
-	XtVaSetValues(top,XmNmwmDecorations,0,NULL);
-	XtVaSetValues(top,XmNoverrideRedirect,TRUE,NULL);
-	XtVaSetValues(top,XmNx,x,XmNy,y,NULL);
+			listener *l=wc->LFSTK_getListener(event.xany.window);
 
-	XtRealizeWidget(top);
-	if(makestatic==true)
-		{
-			XtAppMainLoop(app_con);
-		}
-	else
-		{
-			mainloop=true;
-			while(mainloop==true)
+			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+				l->function(l->pointer,&event,l->type);
+
+			XNextEvent(wc->display,&event);
+			switch(event.type)
 				{
-					XtAppNextEvent(app_con,&event);
-					switch(event.type)
-						{
-							case ButtonPress:
-								mdown=true;
-								break;
-							case ButtonRelease:
-								mdown=false;
-								break;
-							case LeaveNotify:
-								wout=event.xcrossing.subwindow;
-								break;
-							case EnterNotify:
-								win=event.xcrossing.subwindow;
-								break;
-						}
-					if(((win==0) && (wout!=0)) && (mdown==false))
-						mainloop=false;
-					XtDispatchEvent(&event);
-				}
-
-			XtDestroyWidget(top);
-			while(XtAppPending(app_con)!=0)
-				{
-					XtAppNextEvent(app_con,&event);
-					XtDispatchEvent(&event);
+					case LeaveNotify:
+						mainloop=inWindow();
+						break;
+					case Expose:
+						wc->LFSTK_clearWindow();
+						break;
+					case ConfigureNotify:
+						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
+						wc->LFSTK_clearWindow();
+						break;
 				}
 		}
-	XtAppSetExitFlag(app_con);
-	return(0);
+
+	delete wc;
+	for(int j=0;j<MAXCATS;j++)
+		if(bc[j]!=NULL)
+			delete bc[j];
+	free(lfstkFile);
+	return 0;
 }
-
