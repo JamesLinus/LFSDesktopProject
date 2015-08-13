@@ -1,15 +1,29 @@
+/*
+ *
+ * ©K. D. Hedger. Thu 13 Aug 16:55:34 BST 2015 kdhedger68713@gmail.com
 
-//Mon 31 Jul 2006 12:30:55 BST
-//
-//LFSDesktop
-//
+ * This file (main.cpp) is part of LFSDesktop.
+
+ * LFSDesktop is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+
+ * LFSDesktop is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSDesktop.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
 #include <X11/extensions/shape.h>
 #include <X11/StringDefs.h>
-//#include <X11/Xaw/MenuButton.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -28,13 +42,8 @@
 #include <limits.h>
 #include <poll.h>
 
-//#include <Xm/PushB.h>
-//#include <Xm/Form.h>
-//#include <X11/Xaw/Box.h>
-
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
-//#include "LFSTKMenuButton.h"
 #include "LFSTKLineEdit.h"
 
 #include "config.h"
@@ -47,29 +56,30 @@
 
 #define UNKNOWNARG -100
 
-struct	option long_options[] =
+struct option		long_options[] =
 {
-	{"clean",0,0,'c'},
-	{"tidy",0,0,'t'},
-	{"theme",1,0,'a'},
-	{"term-command",1,0,'x'},
-	{"show-extension",0,0,'s'},
-	{"font",1,0,'f'},
-	{"fore-colour",1,0,'4'},
-	{"back-colour",1,0,'b'},
-	{"ignore",1,0,'i'},
-	{"appmenu",0,0,'m'},
-	{"debug",0,0,'d'},
-	{"version",0,0,'v'},
-	{"help",0,0,'?'},
-	{0,0,0,0}
+					{"clean",0,0,'c'},
+					{"tidy",0,0,'t'},
+					{"theme",1,0,'a'},
+					{"term-command",1,0,'x'},
+					{"show-extension",0,0,'s'},
+					{"font",1,0,'f'},
+					{"fore-colour",1,0,'4'},
+					{"back-colour",1,0,'b'},
+					{"ignore",1,0,'i'},
+					{"appmenu",0,0,'m'},
+					{"debug",0,0,'d'},
+					{"version",0,0,'v'},
+					{"help",0,0,'?'},
+					{0,0,0,0}
 };
 
-bool	needsRefresh=true;
-bool	loop=true;
-bool	retVal=false;
-int		width=300;
-int		hite=60;
+bool				needsRefresh=true;
+bool				loop=true;
+bool				retVal=false;
+int					width=320;
+int					hite=60;
+LFSTK_windowClass	*wc;
 
 void printhelp(void)
 {
@@ -244,54 +254,6 @@ void pushedButton(Widget w,XtPointer data,XtPointer  garbage)
 	loop=false;
 }
 
-String	fallback_resources[]=
-{
-	(char*)"*boxmount.*.width:		85",
-	(char*)"*boxmount*.background:	grey",
-	(char*)"*boxmount*.foreground:	Black",
-	NULL,
-};
-
-#if 0
-Widget mountMenuX(XtAppContext *app,int x,int y,bool isdisk)
-{
-	Widget	toplevel,mount,unmount,eject,bmount,custom,remove;
-	int		dump=0;
-
-	toplevel=XtVaAppInitialize(app,"appmenu",NULL,0,&dump,NULL,fallback_resources,NULL);
-
-	bmount=XtVaCreateManagedWidget("boxmount",boxWidgetClass,toplevel,NULL);
-	if(isdisk==true)
-		{
-			mount=XtVaCreateManagedWidget("Mount",commandWidgetClass,bmount,NULL);
-			unmount=XtVaCreateManagedWidget("Unmount",commandWidgetClass,bmount,NULL);
-			eject=XtVaCreateManagedWidget("Eject",commandWidgetClass,bmount,NULL);
-
-			XtAddCallback(mount,XtNcallback,pushedButton,(XtPointer)(long)BUTTONMOUNT);
-			XtAddCallback(unmount,XtNcallback,pushedButton,(XtPointer)(long)BUTTONUNMOUNT);
-			XtAddCallback(eject,XtNcallback,pushedButton,(XtPointer)(long)BUTTONEJECT);
-		}
-	else
-		{
-			mount=XtVaCreateManagedWidget("Open",commandWidgetClass,bmount,NULL);
-			XtAddCallback(mount,XtNcallback,pushedButton,(XtPointer)(long)BUTTONOPEN);
-		}
-
-	custom=XtVaCreateManagedWidget("Custom Icon",commandWidgetClass,bmount,NULL);
-	XtAddCallback(custom,XtNcallback,pushedButton,(XtPointer)(long)BUTTONADDICON);
-	remove=XtVaCreateManagedWidget("Remove Icon",commandWidgetClass,bmount,NULL);
-	XtAddCallback(remove,XtNcallback,pushedButton,(XtPointer)(long)BUTTONREMOVEICON);
-
-	XtVaSetValues(toplevel,XmNmwmDecorations,0,NULL);
-	XtVaSetValues(toplevel,XmNoverrideRedirect,TRUE,NULL);
-	XtVaSetValues(toplevel,XmNx,x,XmNy,y,NULL);
-	XtRealizeWidget(toplevel);
-	return(toplevel);
-}
-#endif
-
-LFSTK_windowClass	*wc;
-
 bool inWindow(void)
 {
 	Window			root_return;
@@ -310,7 +272,7 @@ bool inWindow(void)
 		}
 	return(false);
 }
-//bool callback(void *p,void* ud)
+
 bool pushedButtonCB(void *p,void* ud)
 {
 	long	what=(long)ud;
@@ -341,7 +303,7 @@ const char	*mountMenuData[]={"Mount","Unmount","Eject","Open","Custom Icon","Rem
 void doPopUp(int x,int y)
 {
 	LFSTK_buttonClass	*bc[6]={NULL,};
-	int					sx=x,sy=y;
+	int					sx=x-10,sy=y-10;
 	XEvent				event;
 
 	if(findIcon(x,y)==false)
@@ -384,7 +346,6 @@ void doPopUp(int x,int y)
 			bc[2]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONEJECT);
 			XMapWindow(wc->display,bc[2]->LFSTK_getWindow());
 			sy+=addto;
-
 		}
 	else
 		{
@@ -393,6 +354,7 @@ void doPopUp(int x,int y)
 			XMapWindow(wc->display,bc[3]->LFSTK_getWindow());
 			sy+=addto;
 		}
+
 	bc[4]=new LFSTK_buttonClass(wc,mountMenuData[4],sx,sy,maxwid,24,NorthWestGravity);
 	bc[4]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONADDICON);
 	XMapWindow(wc->display,bc[4]->LFSTK_getWindow());
