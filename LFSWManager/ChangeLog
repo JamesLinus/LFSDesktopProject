@@ -1,5 +1,9 @@
 0.0.13
-Fixed minor refreesh bug in appmenu.
+Redone non-themed window name.
+Removed unneeded  creation/deletion of GC's.
+Redone non-themed buttons.
+Redone non-themed window borders.
+Fixed minor refresh bug in appmenu.
 Appmenu now uses global colours fom ~/.config/LFS/lfstoolkit.rc
 Added 'Appmenu'.
 Added linking to LFS Tool Kit library.

@@ -133,6 +133,9 @@ enum maxButtonParts {MAXACTIVE=NUMTHEMEPARTS+4,MAXINACTIVE,MAXPRELIGHT,MAXPRESSE
 enum minButtonParts {MINACTIVE=NUMTHEMEPARTS+8,MININACTIVE,MINPRELIGHT,MINPRESSED};
 enum shadeButtonParts {SHADEACTIVE=NUMTHEMEPARTS+12,SHADEINACTIVE,SHADEPRELIGHT,SHADEPRESSED};
 
+//buttons
+enum {SHADEBUTTON=0,MINBUTTON,MAXBUTTON,CLOSEBUTTON};
+
 #define NUMBEROFPARTS NUMTHEMEPARTS+sizeof(closeButtonParts)+sizeof(maxButtonParts)+sizeof(minButtonParts)+sizeof(shadeButtonParts)
 
 struct	themeStruct
@@ -166,24 +169,15 @@ extern const char		*xerror;
 extern Display			*dpy;
 extern Window			root;
 
-// Normal colors
-extern unsigned long	foregroundpixel;
-extern unsigned long	backgroundpixel;
-
-// Highlight colors
-extern unsigned long	hlforegroundpixel;
-extern unsigned long	hlbackgroundpixel;
-
-// Normal colors
-extern GC				foreground;
-extern GC				background;
-
-// Highlight colors
-extern GC				hlforeground;
-extern GC				hlbackground;
-
-//extern int				lineheight;
-//extern int				halfleading;
+//new colours
+//active frame fill
+extern unsigned long	activeFrameFill;
+extern unsigned long	activeFrame;
+extern unsigned long	inactiveFrameFill;
+extern unsigned long	inactiveFrame;
+//buttons
+extern GC				activeGC;
+extern GC				inactiveGC;
 
 extern struct font		*font;
 extern struct fontcolor	*fhighlight;
@@ -199,6 +193,7 @@ extern XContext			listeners;
 extern const char		*progname;
 extern int				blackColor;
 extern int				whiteColor;
+extern GC				mainGC;
 
 //wm prefs
 extern int				placement;

@@ -30,6 +30,7 @@ XContext			listeners;
 const char			*progname;
 int					blackColor;
 int					whiteColor;
+GC					mainGC;
 
 //wm prefs
 int					placement=MOUSEMONITOR;
@@ -51,6 +52,16 @@ int					frameTop;
 int					frameBottom;
 int					frameLeft;
 int					frameRight;
+
+//new colours
+//active frame
+unsigned long		activeFrameFill;
+unsigned long		activeFrame;
+unsigned long		inactiveFrame;
+unsigned long		inactiveFrameFill;
+//buttons
+GC					activeGC;
+GC					inactiveGC;
 
 #ifdef _DEBUGLEVEL_
 //debug

@@ -95,14 +95,6 @@ const char		*displayname=NULL;
 const char		*xerror=NULL;
 
 Window 			root;
-unsigned long	foregroundpixel;
-unsigned long	backgroundpixel;
-unsigned long	hlforegroundpixel;
-unsigned long	hlbackgroundpixel;
-GC				foreground;
-GC				background;
-GC				hlforeground;
-GC				hlbackground;
 
 sigset_t		sigmask;
 
@@ -448,6 +440,7 @@ int main(int argc,char *argv[])
 	visual=DefaultVisual(dpy,screen);
 	blackColor=BlackPixel(dpy,screen);
 	whiteColor=WhitePixel(dpy,screen);
+	mainGC=XCreateGC(dpy,root,0,NULL);
 
 	cnt=ScreenCount(dpy);
 	p=XineramaQueryScreens(dpy,&cnt);
@@ -506,6 +499,7 @@ int main(int argc,char *argv[])
 
 	fnormal=ftloadcolor(fontColours[FORE]);
 	fhighlight=ftloadcolor(fontColours[FOCUSEDFORE]);
+
 	if (fnormal==NULL || fhighlight==NULL)
 		{
 			errorf("cannot load font colors");
@@ -532,28 +526,19 @@ int main(int argc,char *argv[])
 	else
 		shadeBitmap=&shadeodd;
 
-	foregroundpixel=getpixel(fontColours[FORE]);
-	backgroundpixel=getpixel(fontColours[BACK]);
-	hlforegroundpixel=getpixel(fontColours[FOCUSEDFORE]);
-	hlbackgroundpixel=getpixel(fontColours[FOCUSEDBACK]);
+	activeFrameFill=getpixel(fontColours[FOCUSEDBACK]);
+	activeFrame=getpixel(fontColours[FOCUSEDFORE]);
+	inactiveFrameFill=getpixel(fontColours[BACK]);
+	inactiveFrame=getpixel(fontColours[FORE]);
 
 	XGCValues	gcv;
-	gcv.foreground=foregroundpixel;
-	gcv.background=backgroundpixel;
-	foreground=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
+	gcv.foreground=whiteColor;
+	gcv.background=inactiveFrameFill;
+	activeGC=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
 
-	gcv.foreground=backgroundpixel;
-	gcv.background=foregroundpixel;
-
-	background=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
-
-	gcv.foreground=hlforegroundpixel;
-	gcv.background=hlbackgroundpixel;
-	hlforeground=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
-
-	gcv.foreground=hlbackgroundpixel;
-	gcv.background=hlforegroundpixel;
-	hlbackground=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
+	gcv.foreground=blackColor;
+	gcv.background=inactiveFrameFill;
+	inactiveGC=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
 
 	listeners=XUniqueContext();
 
@@ -661,10 +646,8 @@ int main(int argc,char *argv[])
 	ftfreecolor(fhighlight);
 	ftfree(font);
 
-	XFreeGC(dpy,foreground);
-	XFreeGC(dpy,background);
-	XFreeGC(dpy,hlforeground);
-	XFreeGC(dpy,hlbackground);
+	XFreeGC(dpy,activeGC);
+	XFreeGC(dpy,inactiveGC);
 	XCloseDisplay(dpy);
 
 	return exitstatus;

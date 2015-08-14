@@ -50,17 +50,26 @@ bitmap	*shadeBitmap;
 void update(struct button *b)
 {
 	CHECKPOINT
-	bool	invert;
-	int		usepixnum=0;
-	int		partoffset=0;
+	int				usepixnum=0;
+	int				partoffset=0;
+	unsigned long	framefill;
+	unsigned long	frame;
+
+	if((b->f!=NULL) && (b->f->client!=NULL) && (chasfocus(b->f->client)==true))
+		{
+			partoffset=0;
+			framefill=activeFrameFill;
+			frame=activeFrame;
+		}
+	else
+		{
+			partoffset=1;
+			framefill=inactiveFrameFill;
+			frame=inactiveFrame;
+		}
 
 	if(theme.useTheme==true)
 		{
-			if((b->f!=NULL) && (b->f->client!=NULL) && (chasfocus(b->f->client)==true))
-				partoffset=0;
-			else
-				partoffset=1;
-
 			if(partoffset==1)
 				usepixnum=1;
 			else
@@ -74,31 +83,41 @@ void update(struct button *b)
 						usepixnum=3;
 				}
 
-			GC gc=XCreateGC(dpy,b->f->window,0,NULL);
 			usepixnum=b->buttonNumber+usepixnum;
-			XSetClipMask(dpy,gc,theme.masks[usepixnum]);
-			XSetClipOrigin(dpy,gc,0,0);
-			XCopyArea(dpy,theme.pixmaps[usepixnum],b->window,gc,0,0,theme.partsWidth[usepixnum],theme.partsHeight[usepixnum],0,0);
+			XSetClipMask(dpy,mainGC,theme.masks[usepixnum]);
+			XSetClipOrigin(dpy,mainGC,0,0);
+			XCopyArea(dpy,theme.pixmaps[usepixnum],b->window,mainGC,0,0,theme.partsWidth[usepixnum],theme.partsHeight[usepixnum],0,0);
 			XShapeCombineMask(dpy,b->window,ShapeBounding,0,0,theme.masks[usepixnum],ShapeSet);
 		}
 	else
 		{
-			invert=b->pressed && b->entered;
-			GC fg=invert ? background : foreground;
-			GC bg=invert ? foreground : background;
+			XSetForeground(dpy,activeGC,framefill);	
+			XFillRectangle(dpy,b->pixmap,activeGC,0,0,b->width,b->height);
+			XSetForeground(dpy,activeGC,whiteColor);
+			XSetBackground(dpy,activeGC,framefill);
+			drawbitmap(b->pixmap,activeGC,b->bitmap,(b->width-b->bitmap->width) / 2,(b->height-b->bitmap->height) / 2);
 
-			XFillRectangle(dpy,b->pixmap,bg,0,0,b->width,b->height);
+			XSetForeground(dpy,activeGC,frame);
+			XDrawRectangle(dpy,b->pixmap,activeGC,0,0,b->width-1,b->height-1);
 
-			drawbitmap(b->pixmap,fg,b->bitmap,(b->width-b->bitmap->width) / 2,(b->height-b->bitmap->height) / 2);
+			if(b->entered==true)
+				XSetLineAttributes(dpy,activeGC,6,LineSolid,CapButt,JoinMiter);
+			else
+				XSetLineAttributes(dpy,activeGC,0,LineSolid,CapButt,JoinMiter);
 
-			if(!invert)
+			if(!(b->pressed && b->entered))
 				{
-					XSetLineAttributes(dpy,fg,b->entered ? 1+2 * 2 : 0,LineSolid,CapButt,JoinMiter);
-					XDrawRectangle(dpy,b->pixmap,fg,0,0,b->width-1,b->height-1);
-					XSetLineAttributes(dpy,fg,0,LineSolid,CapButt,JoinMiter);
+					XDrawRectangle(dpy,b->pixmap,activeGC,0,0,b->width-1,b->height-1);
 				}
 
-			XCopyArea(dpy,b->pixmap,b->window,fg,0,0,b->width,b->height,0,0);
+			if(b->pressed==true)
+				{
+					XSetForeground(dpy,activeGC,whiteColor);
+					XDrawRectangle(dpy,b->pixmap,activeGC,0,0,b->width-1,b->height-1);
+				}
+
+			XSetLineAttributes(dpy,activeGC,0,LineSolid,CapButt,JoinMiter);	
+			XCopyArea(dpy,b->pixmap,b->window,activeGC,0,0,b->width,b->height,0,0);
 		}
 }
 
@@ -152,7 +171,7 @@ void expose(struct button *b,XExposeEvent *e)
 	if(theme.useTheme==true)
 		update(b);
 	else
-		XCopyArea(dpy,b->pixmap,b->window,foreground,e->x,e->y,e->width,e->height,e->x,e->y);
+		XCopyArea(dpy,b->pixmap,b->window,activeGC,e->x,e->y,e->width,e->height,e->x,e->y);
 }
 
 void buttonevent(void *self,XEvent *e)
@@ -206,7 +225,6 @@ struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bi
 	setlistener(b->window,&b->listen);
 	XGrabButton(dpy,Button1,AnyModifier,b->window,False,EnterWindowMask | LeaveWindowMask | ButtonReleaseMask,GrabModeAsync,GrabModeAsync,None,None);
 	XSelectInput(dpy,b->window,EnterWindowMask | LeaveWindowMask | StructureNotifyMask | ExposureMask);
-//	update(b);
 	XMapWindow(dpy,b->window);
 	
 	return b;

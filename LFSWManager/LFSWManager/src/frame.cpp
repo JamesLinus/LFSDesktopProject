@@ -394,12 +394,13 @@ void repaint(struct frame *f)
 	namewidth=MIN(namewidth,f->width-2 * (1+font->size));
 	namewidth=MAX(namewidth,0);
 
+	if(chasfocus(f->client)==true)
+		partoffset=0;
+	else
+		partoffset=1;
+
 	if(theme.useTheme==true)
 		{
-			if(chasfocus(f->client)==true)
-				partoffset=0;
-			else
-				partoffset=1;
 
 			if(f->mask!=None)
 				XFreePixmap(dpy,f->mask);
@@ -618,51 +619,48 @@ void repaint(struct frame *f)
 			XSetForeground(dpy,f->maskGC,whiteColor);
 			XFillRectangle(dpy,f->mask,f->maskGC,theme.leftWidth,theme.titleBarHeight,f->width-theme.rightWidth-theme.leftWidth,f->height-theme.titleBarHeight-theme.bottomHeight);
 			XShapeCombineMask(dpy,f->window,ShapeBounding,0,0,f->mask,ShapeSet);
-
-
-#if 0
-if(partoffset==0)
-{
-//printf(">>x=%i y=%i\n",f->bottomRightResizer->x,f->bottomRightResizer->y);
-			gc=XCreateGC(dpy,f->bottomRightResizer->window,0,NULL);
-			XSetClipMask(dpy,gc,None);
-			XSetFillStyle(dpy,gc,FillSolid);
-
-			//XSetForeground(dpy,f->maskGC,whiteColor);
-			XFillRectangle(dpy,f->bottomRightResizer->window,background,0,0,100,100);
-			XFillRectangle(dpy,f->topleftresizer->window,background,0,0,100,100);
-			XFillRectangle(dpy,f->toprightresizer->window,background,0,0,100,100);
-			XFillRectangle(dpy,f->bottomLeftResizer->window,background,0,0,100,100);
-			XFillRectangle(dpy,f->leftResizer->window,background,0,0,5000,5000);
-			XFillRectangle(dpy,f->rightResizer->window,background,0,0,5000,5000);
-
-			XFillRectangle(dpy,f->bottomResizer->window,background,0,0,5000,5000);
-printf("h=%i\n",f->rightResizer->height);
-}
-#endif
 		}
 	else
 		{
 			// Title area
 			int x=1;
-			XFillRectangle(dpy,f->window,*f->background,x,1,font->size,frameTop);
-			x += font->size;
-			if (f->pixmap != None)
-				XCopyArea(dpy,f->pixmap,f->window,foreground,0,0,namewidth,frameTop,x,1);
-			x += namewidth;
-			XFillRectangle(dpy,f->window,*f->background,x,1,f->width-1-x,frameTop);
+			unsigned long  framefill;
+			unsigned long  frame;
+
+			if(partoffset==0)
+				{
+					framefill=activeFrameFill;
+					frame=activeFrame;
+					usecolour=fhighlight;
+				}
+			else
+				{
+					framefill=inactiveFrameFill;
+					frame=inactiveFrame;
+					usecolour=fnormal;
+				}
+
+			XSetForeground(dpy,mainGC,framefill);
+			XFillRectangle(dpy,f->window,mainGC,x,1,f->width-2,frameTop);
+//title  string
+			if (f->client->netwmname != NULL)
+				ftdrawstring_utf8(f->window,font,usecolour,4,(frameTop/2)+((font->ascent-2)/2),f->client->netwmname);
+			else if (f->client->wmname != NULL)
+				ftdrawstring(f->window,font,usecolour,4,(frameTop/2)+((font->ascent-2)/2),f->client->wmname);
 
 			// Border
-			XDrawRectangle(dpy,f->window,foreground,0,0,f->width-1,f->height-1);
+			XSetForeground(dpy,mainGC,frame);
+			XDrawRectangle(dpy,f->window,mainGC,0,0,f->width-1,f->height-1);
 
 			// Title bottom border
-			XDrawLine(dpy,f->window,foreground,frameLeft,frameTop-1,f->width-frameRight-1,frameTop-1);
+			XDrawLine(dpy,f->window,mainGC,frameLeft,frameTop-1,f->width-frameRight-1,frameTop-1);
 
 			// Window area
-			XFillRectangle(dpy,f->window,*f->background,1,frameTop,f->width-2,f->height-1-frameTop);
+			XSetForeground(dpy,mainGC,framefill);
+			XFillRectangle(dpy,f->window,mainGC,1,frameTop,f->width-2,f->height-1-frameTop);
 
-			XFillRectangle(dpy,f->window,*f->background,1,frameTop-1,frameLeft-1,1);
-			XFillRectangle(dpy,f->window,*f->background,f->width-frameRight,frameTop-1,frameRight-1,1);
+			XFillRectangle(dpy,f->window,mainGC,1,frameTop-1,frameLeft-1,1);
+			XFillRectangle(dpy,f->window,mainGC,f->width-frameRight,frameTop-1,frameRight-1,1);
 		}
 }
 
@@ -782,32 +780,12 @@ void fupdate(struct frame *f)
 	Bool hasfocus=chasfocus(f->client);
 
 	if(hasfocus)
-		f->background=&hlbackground;
+		f->background=&activeGC;
 	else
-		f->background=&background;
+		f->background=&inactiveGC;
 
 	f->namewidth=namewidth(font,f->client);
-	if(theme.useTheme==false)
-		{
-			if (f->pixmap != None)
-				{
-					XFreePixmap(dpy,f->pixmap);
-					f->pixmap=None;
-				}
 
-			if (f->namewidth>0)
-				{
-					f->pixmap=XCreatePixmap(dpy,root,f->namewidth,frameTop,DefaultDepth(dpy,screen));
-					XFillRectangle(dpy,f->pixmap,*f->background,0,0,f->namewidth,frameTop);
-					drawname(f->pixmap,font,hasfocus ? fhighlight: fnormal,0,2+font->ascent,f->client);
-
-					if (f->client->desk==DESK_ALL)
-						{
-							int y=2+font->ascent+font->descent / 2;
-							XDrawLine(dpy,f->pixmap,hasfocus ? hlforeground : foreground,0,y,f->namewidth,y);
-						}
-				}
-		}
 	if(f->deletebutton!=NULL)
 		update(f->deletebutton);
 	if(f->maximize!=NULL)
@@ -1385,7 +1363,6 @@ void fdestroy(struct frame *f)
 	XDestroyWindow(dpy,f->window);
 	free(f);
 
-	//assert(fcount>0);
 	fcount--;
 	if (fcount==0)
 		{
