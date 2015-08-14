@@ -93,7 +93,10 @@ void update(struct button *b)
 		{
 			XSetForeground(dpy,activeGC,framefill);	
 			XFillRectangle(dpy,b->pixmap,activeGC,0,0,b->width,b->height);
-			XSetForeground(dpy,activeGC,whiteColor);
+			if(partoffset==0)
+				XSetForeground(dpy,activeGC,whiteColor);
+			else
+				XSetForeground(dpy,activeGC,frame);
 			XSetBackground(dpy,activeGC,framefill);
 			drawbitmap(b->pixmap,activeGC,b->bitmap,(b->width-b->bitmap->width) / 2,(b->height-b->bitmap->height) / 2);
 

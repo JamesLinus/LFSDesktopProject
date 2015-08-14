@@ -498,7 +498,7 @@ int main(int argc,char *argv[])
 		}
 
 	fnormal=ftloadcolor(fontColours[FORE]);
-	fhighlight=ftloadcolor(fontColours[FOCUSEDFORE]);
+	fhighlight=ftloadcolor("white");
 
 	if (fnormal==NULL || fhighlight==NULL)
 		{
