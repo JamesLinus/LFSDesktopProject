@@ -109,9 +109,7 @@ void update(struct button *b)
 				XSetLineAttributes(dpy,activeGC,0,LineSolid,CapButt,JoinMiter);
 
 			if(!(b->pressed && b->entered))
-				{
-					XDrawRectangle(dpy,b->pixmap,activeGC,0,0,b->width-1,b->height-1);
-				}
+				XDrawRectangle(dpy,b->pixmap,activeGC,0,0,b->width-1,b->height-1);
 
 			if(b->pressed==true)
 				{
