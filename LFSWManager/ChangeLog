@@ -1,5 +1,5 @@
 0.0.13
-Butons on inactive windows now use insactive colours.
+Butons on inactive windows now use inactive colours.
 Window name now in white same as buttons.
 Redone non-themed window name.
 Removed unneeded  creation/deletion of GC's.

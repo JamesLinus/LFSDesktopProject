@@ -181,10 +181,11 @@ void usage(FILE *f)
 	fprintf(f,"%s\nUsage: %s [[ OPT ] ... [ OPT ]] [ DISPLAY ]\n"
 	        "-n	number		Number of desktops\n"
 	        "-t	font		Title font\n"
-	        "-f	colour		Forecolour\n"
-	        "-b	colour		back colour\n"
-	        "-F	colour		Focused forecolour\n"
-	        "-B	colour		Focusud backcolour\n"
+	        "-B	colour		Active fill colour\n"
+	        "-b	colour		Inactive fill colour\n"
+	        "-F	colour		Active frame colour\n"
+	        "-f	colour		Inactive frame colour\n"
+			"-X colour		Button and title colour\n"
 	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
 			"-T	theme		Path to theme\n"
@@ -318,10 +319,12 @@ int main(int argc,char *argv[])
 
 	runlevel=RL_STARTUP;
 
-	fontColours[FOCUSEDFORE]=strdup("rgb:00/00/00");
-	fontColours[FOCUSEDBACK]=strdup("rgb:00/ff/ff");
-	fontColours[FORE]=strdup("rgb:00/00/00");
-	fontColours[BACK]=strdup("rgb:ff/ff/ff");
+	fontColours[ACTIVEFRAME]=strdup("rgb:00/00/00");
+	fontColours[ACTIVEFRAMEFILL]=strdup("rgb:00/ff/ff");
+	fontColours[INACTIVEFRAME]=strdup("rgb:00/00/00");
+	fontColours[INACTIVEFRAMEFILL]=strdup("rgb:ff/ff/ff");
+	fontColours[TEXTCOLOUR]=strdup("rgb:ff/ff/ff");
+
 	Desk ndesk=0;
 	numberOfDesktops=4;
 	placement=CENTREMMONITOR;
@@ -339,25 +342,32 @@ int main(int argc,char *argv[])
 	ndesk=numberOfDesktops;
 
 	int opt;
-	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:n:t:l:T:w:x:")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
 		switch (opt)
 			{
+
 			case 'B':
-				free(fontColours[FOCUSEDBACK]);
-				fontColours[FOCUSEDBACK]=strdup(optarg);
+				free(fontColours[ACTIVEFRAMEFILL]);
+				fontColours[ACTIVEFRAMEFILL]=strdup(optarg);
 				break;
+
 			case 'b':
-				free(fontColours[BACK]);
-				fontColours[BACK]=strdup(optarg);
+				free(fontColours[INACTIVEFRAMEFILL]);
+				fontColours[INACTIVEFRAMEFILL]=strdup(optarg);
 				break;
 			case 'F':
-				free(fontColours[FOCUSEDFORE]);
-				fontColours[FOCUSEDFORE]=strdup(optarg);
+				free(fontColours[ACTIVEFRAME]);
+				fontColours[ACTIVEFRAME]=strdup(optarg);
 				break;
 			case 'f':
-				free(fontColours[FORE]);
-				fontColours[FORE]=strdup(optarg);
+				free(fontColours[INACTIVEFRAME]);
+				fontColours[INACTIVEFRAME]=strdup(optarg);
 				break;
+			case 'X':
+				free(fontColours[TEXTCOLOUR]);
+				fontColours[TEXTCOLOUR]=strdup(optarg);
+				break;
+
 			case 'n':
 				{
 					errno=0;
@@ -497,8 +507,8 @@ int main(int argc,char *argv[])
 			frameRight=theme.rightWidth;
 		}
 
-	fnormal=ftloadcolor(fontColours[FORE]);
-	fhighlight=ftloadcolor("white");
+	fnormal=ftloadcolor(fontColours[INACTIVEFRAME]);
+	fhighlight=ftloadcolor(fontColours[TEXTCOLOUR]);
 
 	if (fnormal==NULL || fhighlight==NULL)
 		{
@@ -526,19 +536,16 @@ int main(int argc,char *argv[])
 	else
 		shadeBitmap=&shadeodd;
 
-	activeFrameFill=getpixel(fontColours[FOCUSEDBACK]);
-	activeFrame=getpixel(fontColours[FOCUSEDFORE]);
-	inactiveFrameFill=getpixel(fontColours[BACK]);
-	inactiveFrame=getpixel(fontColours[FORE]);
+	activeFrame=getpixel(fontColours[ACTIVEFRAME]);
+	activeFrameFill=getpixel(fontColours[ACTIVEFRAMEFILL]);
+	inactiveFrame=getpixel(fontColours[INACTIVEFRAME]);
+	inactiveFrameFill=getpixel(fontColours[INACTIVEFRAMEFILL]);
+	widgetColour=getpixel(fontColours[TEXTCOLOUR]);
 
 	XGCValues	gcv;
 	gcv.foreground=whiteColor;
 	gcv.background=inactiveFrameFill;
 	activeGC=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
-
-	gcv.foreground=blackColor;
-	gcv.background=inactiveFrameFill;
-	inactiveGC=XCreateGC(dpy,root,GCForeground | GCBackground,&gcv);
 
 	listeners=XUniqueContext();
 
@@ -647,8 +654,12 @@ int main(int argc,char *argv[])
 	ftfree(font);
 
 	XFreeGC(dpy,activeGC);
-	XFreeGC(dpy,inactiveGC);
 	XCloseDisplay(dpy);
+
+	free(terminalCommand);
+	free(lfstkFile);
+	for(int j=0;j<TEXTCOLOUR+1;j++)
+		free(fontColours[j]);
 
 	return exitstatus;
 }

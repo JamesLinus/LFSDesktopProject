@@ -17,10 +17,11 @@ enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 args	wmPrefs[]=
 {
-	{"focusedfore",TYPESTRING,&fontColours[FOCUSEDFORE]},
-	{"focusedback",TYPESTRING,&fontColours[FOCUSEDBACK]},
-	{"fore",TYPESTRING,&fontColours[FORE]},
-	{"back",TYPESTRING,&fontColours[BACK]},
+	{"wmactive_frame",TYPESTRING,&fontColours[ACTIVEFRAME]},
+	{"wmactive_fill",TYPESTRING,&fontColours[ACTIVEFRAMEFILL]},
+	{"wminactive_frame",TYPESTRING,&fontColours[INACTIVEFRAME]},
+	{"wminactive_fill",TYPESTRING,&fontColours[INACTIVEFRAMEFILL]},
+	{"widgetcolour",TYPESTRING,&fontColours[TEXTCOLOUR]},
 	{"placement",TYPEINT,&placement},
 	{"titlefont",TYPESTRING,&titleFont},
 	{"desktops",TYPEINT,&numberOfDesktops},
@@ -34,8 +35,8 @@ args	themeRC[]=
 {
 	{"button_offset",TYPEINT,&theme.buttonOffset},
 	{"button_spacing",TYPEINT,&theme.buttonSpacing},
-	{"active_text_color",TYPESTRING,&fontColours[FOCUSEDFORE]},
-	{"inactive_text_color",TYPESTRING,&fontColours[FORE]},
+	{"active_text_color",TYPESTRING,&fontColours[TEXTCOLOUR]},
+	{"inactive_text_color",TYPESTRING,&fontColours[INACTIVEFRAME]},
 	{NULL,0,NULL}
 };
 

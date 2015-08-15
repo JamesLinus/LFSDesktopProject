@@ -54,18 +54,21 @@ void update(struct button *b)
 	int				partoffset=0;
 	unsigned long	framefill;
 	unsigned long	frame;
+	unsigned long	text;
 
 	if((b->f!=NULL) && (b->f->client!=NULL) && (chasfocus(b->f->client)==true))
 		{
 			partoffset=0;
 			framefill=activeFrameFill;
 			frame=activeFrame;
+			text=widgetColour;
 		}
 	else
 		{
 			partoffset=1;
 			framefill=inactiveFrameFill;
 			frame=inactiveFrame;
+			text=inactiveFrame;
 		}
 
 	if(theme.useTheme==true)
@@ -94,9 +97,9 @@ void update(struct button *b)
 			XSetForeground(dpy,activeGC,framefill);	
 			XFillRectangle(dpy,b->pixmap,activeGC,0,0,b->width,b->height);
 			if(partoffset==0)
-				XSetForeground(dpy,activeGC,whiteColor);
+				XSetForeground(dpy,activeGC,text);
 			else
-				XSetForeground(dpy,activeGC,frame);
+				XSetForeground(dpy,activeGC,text);
 			XSetBackground(dpy,activeGC,framefill);
 			drawbitmap(b->pixmap,activeGC,b->bitmap,(b->width-b->bitmap->width) / 2,(b->height-b->bitmap->height) / 2);
 
@@ -113,7 +116,7 @@ void update(struct button *b)
 
 			if(b->pressed==true)
 				{
-					XSetForeground(dpy,activeGC,whiteColor);
+					XSetForeground(dpy,activeGC,text);
 					XDrawRectangle(dpy,b->pixmap,activeGC,0,0,b->width-1,b->height-1);
 				}
 

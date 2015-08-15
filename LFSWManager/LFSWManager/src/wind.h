@@ -56,7 +56,7 @@
 typedef unsigned long Desk;
 
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
-enum {FOCUSEDFORE=0,FOCUSEDBACK,FORE,BACK};
+//enum {FOCUSEDFORE=0,FOCUSEDBACK,FORE,BACK};
 
 struct geometry
 {
@@ -135,6 +135,7 @@ enum shadeButtonParts {SHADEACTIVE=NUMTHEMEPARTS+12,SHADEINACTIVE,SHADEPRELIGHT,
 
 //buttons
 enum {SHADEBUTTON=0,MINBUTTON,MAXBUTTON,CLOSEBUTTON};
+enum {ACTIVEFRAME=0,ACTIVEFRAMEFILL,INACTIVEFRAME,INACTIVEFRAMEFILL,TEXTCOLOUR};
 
 #define NUMBEROFPARTS NUMTHEMEPARTS+sizeof(closeButtonParts)+sizeof(maxButtonParts)+sizeof(minButtonParts)+sizeof(shadeButtonParts)
 
@@ -175,9 +176,9 @@ extern unsigned long	activeFrameFill;
 extern unsigned long	activeFrame;
 extern unsigned long	inactiveFrameFill;
 extern unsigned long	inactiveFrame;
+extern unsigned long	widgetColour;
 //buttons
 extern GC				activeGC;
-extern GC				inactiveGC;
 
 extern struct font		*font;
 extern struct fontcolor	*fhighlight;
@@ -199,7 +200,7 @@ extern GC				mainGC;
 extern int				placement;
 extern	unsigned int	numberOfDesktops;
 extern char				*titleFont;
-extern char				*fontColours[4];
+extern char				*fontColours[5];
 extern int				liveUpdate;
 extern char				*terminalCommand;
 extern char				*lfstkFile;
