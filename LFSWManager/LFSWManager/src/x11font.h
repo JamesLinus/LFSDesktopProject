@@ -15,7 +15,7 @@
 
 #define DEFAULTFONT "sans-serif:size=10"
 
-struct fontcolor *ftloadcolor(const char *);
+struct fontcolor *ftloadcolor(const char *,const char *fallback);
 void ftfreecolor(struct fontcolor *);
 struct font *ftload(const char *);
 void ftfree(struct font *);

@@ -1,4 +1,8 @@
 0.0.13
+Added -k option to prevent reading of options from ~/.config/LFS/lfstoolkit.rc.
+Added -X option to command line to set text/button colour.
+Text colour and menu buttons no use the same colours.
+Can now set the menu button colour when not using theme. 
 Butons on inactive windows now use inactive colours.
 Window name now in white same as buttons.
 Redone non-themed window name.
@@ -6,7 +10,7 @@ Removed unneeded  creation/deletion of GC's.
 Redone non-themed buttons.
 Redone non-themed window borders.
 Fixed minor refresh bug in appmenu.
-Appmenu now uses global colours fom ~/.config/LFS/lfstoolkit.rc
+Appmenu now uses global colours from ~/.config/LFS/lfstoolkit.rc
 Added 'Appmenu'.
 Added linking to LFS Tool Kit library.
 

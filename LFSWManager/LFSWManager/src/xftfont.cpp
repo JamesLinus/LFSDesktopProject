@@ -76,7 +76,7 @@ struct fontcolor
 	Colormap colormap;
 };
 
-struct fontcolor *ftloadcolor(const char *name)
+struct fontcolor *ftloadcolor(const char *name,const char *fallback)
 {
 	CHECKPOINT
 	XftDraw *draw;
@@ -84,13 +84,17 @@ struct fontcolor *ftloadcolor(const char *name)
 	Visual *visual=DefaultVisual(dpy,screen);
 	Colormap colormap=DefaultColormap(dpy,screen);
 
-	if ((draw=XftDrawCreate(dpy,root,visual,colormap))==NULL)
+	if((draw=XftDrawCreate(dpy,root,visual,colormap))==NULL)
 		return NULL;
 
-	if (!XftColorAllocName(dpy,visual,colormap,name,&color))
+	if(!XftColorAllocName(dpy,visual,colormap,name,&color))
 		{
-			XftDrawDestroy(draw);
-			return NULL;
+			errorf("Can't alloc colour %s, using fallback %s",name,fallback);	
+			if(!XftColorAllocName(dpy,visual,colormap,fallback,&color))
+				{	
+					XftDrawDestroy(draw);
+					return NULL;
+				}
 		}
 
 	struct fontcolor *c=(struct fontcolor*)xmalloc(sizeof *c);
