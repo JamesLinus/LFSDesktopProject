@@ -1,10 +1,10 @@
-.TH "LFSWMANAGER" "1" "0.0.12" "K. D. Hedger" ""
+.TH "LFSWMANAGER" "1" "0.0.13" "K. D. Hedger" ""
 .SH "NAME"
 lfswmanager - window manager
 .br
 
 .SH "SYNOPSIS"
-\fBlfswmanager\fR [ \fB-n\fR number ] [ \fB-t \fRfont ] [ \fB-f \fRcolor ] [ \fB-b \fRcolor ] [ \fB-F \fRcolor ] [ \fB-B \fRcolor ] [ \fB-p\fR placement ] [ \fB-l\fR liveupdates ] [ \fB-\fRT theme ] [ \fB-w\fR outfile ] [ display ]
+\fBlfswmanager\fR [ OPTION ] ...  [ display ]
 .br
 .SH "DESCRIPTION"
 \fBLFSWManager\fR is a window manager for the X Window System.  It supports virtual desktops, Xft font rendering, and is pretty standards compliant, the code base is from the 'wind' window manager available here:
@@ -21,56 +21,72 @@ A \fIdisplay\fR argument may be specified to manage a display other than the def
 The following options are recognized:
 .br
 
-\fB-n \fRnumber
+\fB-n\fR	number
 .br
 	Set initial number of virtual desktops.  Zero means keep current setting, and is the default. If no current setting exists, 12 desktops are allocated.
 .br
 
-\fB-t \fRfont
+\fB-t\fR	font
 .br
-	Use \fIfont\fR for window titles.
-.br
-
-\fB-f \fRcolour
-.br
-	Use \fIcolour\fR as foreground.
+	Use font for window titles.
 .br
 
-\fB-b \fRcolour
+\fB-B\fR	colour
 .br
-	Use \fIcolour\fR as background.
-.br
-
-\fB-F \fRcolour
-.br
-	Use \fIcolour\fR as focused foreground.
+	Active fill colour.
 .br
 
-\fB-B \fRcolour
+\fB-b\fR	colour
 .br
-	Use \fIcolour\fR as focused background.
+	Inactive fill colour.
 .br
 
-\fB-p\fR placement
+\fB-F\fR	colour
+.br
+	Active frame colour.
+.br
+
+\fB-f\fR	colour
+.br
+	Inactive frame colour.
+.br
+
+\fB-X\fR	colour
+.br
+	Button and title colour.
+.br
+
+\fB-k\fR
+.br
+	Don't use LFSToolKit rc file ( ~/.config/LFS/lfstoolkit.rc ) to set options, ( default use if available ).
+.br
+
+\fB-p\fR	placement
 .br
 	Set new window placement.
 .br
 	0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ).
 .br
 
-\fB-l\fR liveupdate
+\fB-l\fR	liveupdate
 .br
 	Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest.
 .br
 
-\fB-T\fR theme
+\fB-T\fR	theme
 .br
 	Path to theme eg "/usr/share/themes/Crux", "/home/keithhedger/.themes/OldBrownWood".
 .br
 	If no theme is specified either on the command line or in the prefs file then a basic window border is drawn using the colours above ( default ).
 .br
+	
+.br
+\fB-X\fR	command
+.br
+	Set terminal command ( default xterm -e ).
+.br
 
-\fB-w\fR outfile
+\fB-w\fR	outfile
 .br
 	After setting prefs from default, prefsfile and command line write out a prefsfile to outfile and quit ( MUST be last option ).
 .br
@@ -158,23 +174,32 @@ Preference file is at ~/.config/LFS/lfswmanager.rc.
 Sample prefs file:
 .br
 
-focusedfore white
-.br
-focusedback #5E3300
-.br
-fore grey60
-.br
-back #62503A
-.br
 placement 2
 .br
 titlefont sans:size=10
 .br
 desktops 6
 .br
-liveupdate 2
+liveupdate 10
 .br
 theme /usr/share/themes/Crux
+.br
+termcommand xfce4-terminal -x 
+.br
+wmactive_frame #948069
+.br
+wmactive_fill #5E3300
+.br
+wminactive_frame #9B9184
+.br
+wminactive_fill #836C51
+.br
+widgetcolour white
+.br
+
+N.B.
+.br
+Prefs file MUST end in newline.
 .br
 .SH "AUTHOR"
 K. D. Hedger, \fIkdhedger68713@gmail.com\fR
