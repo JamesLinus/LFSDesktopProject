@@ -350,11 +350,71 @@ int main(int argc,char *argv[])
 					case 'k':
 						loadtkopts=false;
 						break;
+					case 'T':
+						if(theme.pathToTheme!=NULL)
+							free(theme.pathToTheme);
+						theme.pathToTheme=strdup(optarg);
+						break;
 				}
+		}
+
+	if (optind<argc)
+		displayname=argv[optind++];
+
+	XSetErrorHandler(errhandler);
+
+	if ((dpy=XOpenDisplay(displayname))==NULL)
+		{
+			errorf("cannot open display \"%s\"",XDisplayName(displayname));
+			exit(1);
+		}
+	XSynchronize(dpy,xLibWarnings);
+
+	screen=DefaultScreen(dpy);
+	displayWidth=DisplayWidth(dpy,screen);
+	displayHeight=DisplayHeight(dpy,screen);
+
+	root=DefaultRootWindow(dpy);
+	visual=DefaultVisual(dpy,screen);
+	blackColor=BlackPixel(dpy,screen);
+	whiteColor=WhitePixel(dpy,screen);
+	mainGC=XCreateGC(dpy,root,0,NULL);
+
+	cnt=ScreenCount(dpy);
+	p=XineramaQueryScreens(dpy,&cnt);
+	if(p!=NULL)
+		{
+			if(cnt>0)
+				{
+					monitorData=(monitors*)malloc(sizeof(monitors)*cnt);
+					numberOfMonitors=cnt;
+
+					for (int x=0; x<cnt; x++)
+						{
+							monitorData[x].monW=p[x].width;
+							monitorData[x].monH=p[x].height;
+							monitorData[x].monX=p[x].x_org;
+							monitorData[x].monY=p[x].y_org;
+						}
+				}
+			free(p);
 		}
 
 	if(loadtkopts==true)
 		loadVarsFromFile(lfstkFile,wmPrefs," ");
+
+	if((fileExists(theme.pathToTheme)==0) && (theme.pathToTheme!=NULL))
+		{
+			char	*themercpath;
+			theme.buttonOffset=40;
+			theme.useTheme=true;
+			loadTheme();
+			asprintf(&themercpath,"%s/xfwm4/themerc",theme.pathToTheme);
+			loadVarsFromFile(themercpath,themeRC,"=");
+			free(themercpath);
+		}
+	else
+		theme.useTheme=false;
 
 	optind=1;
 	while ((opt=getopt(argc,argv,"?hkp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
@@ -409,9 +469,6 @@ int main(int argc,char *argv[])
 				liveUpdate=atoi(optarg);
 				break;
 			case 'T':
-				if(theme.pathToTheme!=NULL)
-					free(theme.pathToTheme);
-				theme.pathToTheme=strdup(optarg);
 				break;
 			case 'w':
 				saveVarsToFile(optarg,wmPrefs," ");
@@ -447,65 +504,12 @@ int main(int argc,char *argv[])
 	xLibWarnings=false;
 #endif
 
-	XSetErrorHandler(errhandler);
-
-	if ((dpy=XOpenDisplay(displayname))==NULL)
-		{
-			errorf("cannot open display \"%s\"",XDisplayName(displayname));
-			exit(1);
-		}
-
-	XSynchronize(dpy,xLibWarnings);
-
-	screen=DefaultScreen(dpy);
-	displayWidth=DisplayWidth(dpy,screen);
-	displayHeight=DisplayHeight(dpy,screen);
-
-	root=DefaultRootWindow(dpy);
-	visual=DefaultVisual(dpy,screen);
-	blackColor=BlackPixel(dpy,screen);
-	whiteColor=WhitePixel(dpy,screen);
-	mainGC=XCreateGC(dpy,root,0,NULL);
-
-	cnt=ScreenCount(dpy);
-	p=XineramaQueryScreens(dpy,&cnt);
-	if(p!=NULL)
-		{
-			if(cnt>0)
-				{
-					monitorData=(monitors*)malloc(sizeof(monitors)*cnt);
-					numberOfMonitors=cnt;
-
-					for (int x=0; x<cnt; x++)
-						{
-							monitorData[x].monW=p[x].width;
-							monitorData[x].monH=p[x].height;
-							monitorData[x].monX=p[x].x_org;
-							monitorData[x].monY=p[x].y_org;
-						}
-				}
-			free(p);
-		}
-
 	font=ftload(titleFont);
 	if (font==NULL)
 		{
 			errorf("cannot load font");
 			exit(1);
 		}
-
-	if((fileExists(theme.pathToTheme)==0) && (theme.pathToTheme!=NULL))
-		{
-			char	*themercpath;
-			theme.buttonOffset=40;
-			theme.useTheme=true;
-			loadTheme();
-			asprintf(&themercpath,"%s/xfwm4/themerc",theme.pathToTheme);
-			loadVarsFromFile(themercpath,themeRC,"=");
-			free(themercpath);
-		}
-	else
-		theme.useTheme=false;
 
 	if(theme.useTheme==false)
 		{
