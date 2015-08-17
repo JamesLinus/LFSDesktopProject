@@ -157,6 +157,9 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 * Set callback for widget.
 * \param downcb Mouse down callback.
 * \param releasecb Mouse up callback.
+* \note Format for callback is "bool functioname(void *p,void* ud)"
+* \note First param passed to callback is pointer to object.
+* \note Second param passed to callback is user data.
 */
 void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
