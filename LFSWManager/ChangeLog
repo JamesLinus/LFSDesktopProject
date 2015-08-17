@@ -1,5 +1,5 @@
 0.0.13
-Command line can overide ( some )m theme settings.
+Command line can overide ( some ) theme settings.
 Added -k option to prevent reading of options from ~/.config/LFS/lfstoolkit.rc.
 Added -X option to command line to set text/button colour.
 Text colour and menu buttons no use the same colours.
