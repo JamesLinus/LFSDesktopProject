@@ -37,6 +37,16 @@ struct menuItemStruct
 };
 
 
+/**
+ *
+ * \brief Menu button class for LFSToolKit.
+ *
+ * Basic menu class for LFSToolKit.
+ * \note Menu data passed to gadget is NOT owned by gadgetEvent
+ * \note and MUST be freed by application.
+ *
+ */
+
 class LFSTK_menuButtonClass : public LFSTK_buttonClass
 {
 	public:

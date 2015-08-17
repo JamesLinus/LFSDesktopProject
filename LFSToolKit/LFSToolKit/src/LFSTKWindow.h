@@ -26,6 +26,16 @@
 
 #include "LFSTKGlobals.h"
 
+/**
+ *
+ * \brief Window class for LFSToolKit.
+ *
+ * Basic window class for LFSToolKit.
+ *
+ * \note The main window class MUST be passed to child widgets.
+ *
+ */
+
 class LFSTK_windowClass
 {
 	public:

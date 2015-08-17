@@ -29,6 +29,13 @@
 #include "LFSTKGadget.h"
 #include <X11/Xatom.h>
 
+/**
+ *
+ * \brief Line edit class for LFSToolKit.
+ *
+ * Basic line editing class for LFSToolKit.
+ *
+ */
 class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 {
 	public:

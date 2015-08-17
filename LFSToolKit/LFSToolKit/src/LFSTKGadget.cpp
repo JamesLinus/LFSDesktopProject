@@ -26,7 +26,6 @@
 #include "LFSTKGadget.h"
 #include "lib.h"
 
-
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
 	if(this->label!=NULL)
@@ -39,6 +38,13 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 	pad=2;
 }
 
+/*! Return 'len' bytes from 'start'.
+    \param src Haystack.
+    \param start Start character number.
+    \param len Number of bytes to return.
+    \return Pointer to static buffer, do not free.
+    \note Values outside the range of the string or -1 is the same as 0 or strlen(Haystack).
+*/
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,char* colour)
 {
 	this->fontColourNames[p]=strdup(colour);

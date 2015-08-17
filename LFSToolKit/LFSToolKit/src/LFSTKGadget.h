@@ -25,6 +25,13 @@
 
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
+/**
+ *
+ * \brief Base class for LFSToolKit gadgets.
+ *
+ * Base class for LFSToolKit gadgets.
+ *
+ */
 
 class LFSTK_gadgetClass
 {
