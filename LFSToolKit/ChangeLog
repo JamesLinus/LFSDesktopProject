@@ -1,3 +1,8 @@
+0.0.6
+Mostly done documentation.
+Use make docs to make ddocs ( sic ), make install-docs to install in ${prefix}/share/doc/LFSToolKit
+Added doxygen to config/makefiles to generate documentation.
+
 0.0.5
 Fixed double free of line edit data.
 Added keep above and sicky windows.
