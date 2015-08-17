@@ -33,6 +33,11 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 {
 }
 
+/**
+* Draw label.
+* \param p Button state.
+* \note State FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+*/
 void LFSTK_buttonClass::drawLabel(int p)
 {
 	switch(this->labelOrientation)
@@ -46,6 +51,9 @@ void LFSTK_buttonClass::drawLabel(int p)
 		}
 }
 
+/**
+* Set colours from global colours if loaded.
+*/
 void LFSTK_buttonClass::LFSTK_setColoursFromGlobals(void)
 {
 	if(globalColoursSet==true)
@@ -77,6 +85,11 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 	this->drawLabel(FONTNORMALCOL);
 }
 
+/**
+* Mouse down callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
@@ -102,6 +115,11 @@ bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse up callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 {
 	if(this->inWindow==false)
@@ -115,11 +133,22 @@ bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 	return(true);
 }
 
+
+/**
+* Return callback user data.
+* \note Returns a void* so must be cast.
+* \note return value must not be freed.
+*/
 void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 {
 	return(this->callback.userData);
 }
 
+/**
+* Mouse exit callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 {
 	this->LFSTK_clearWindow();
@@ -127,6 +156,11 @@ bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse enter callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
@@ -150,6 +184,11 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Set clour from name.
+* \param name.
+* \return Pixel value.
+*/
 unsigned long LFSTK_buttonClass::setColour(const char *name)
 {
 	XColor tc,sc;
@@ -157,31 +196,63 @@ unsigned long LFSTK_buttonClass::setColour(const char *name)
 	return sc.pixel;
 }
 
+/**
+* Set buton style.
+* \param s.
+* \note s=FLATBUTTON=0,EMBOSSEDBUTTON=1.
+*/
 void LFSTK_buttonClass::LFSTK_setStyle(int s)
 {
 	this->style=s;
 }
 
+/**
+* Ignore callbacks.
+* \param ignore.
+*/
 void LFSTK_buttonClass::LFSTK_setIgnoreCB(bool ignore)
 {
 	this->callback.ignoreCallback=ignore;
 }
 
+/**
+* Get the current ignore callbacks state.
+*/
 bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
 {
 	return(this->callback.ignoreCallback);
 }
 
+/**
+* Set label orientation.
+* \param o.
+* \note o=LEFT=0,CENTRE=1,RIGHT=2.
+*/
 void LFSTK_buttonClass::LFSTK_setLabelOriention(int o)
 {
 	this->labelOrientation=o;
 }
 
+/**
+* Get the label.
+* \return char* Returned string must not be freed.
+*/
 char* LFSTK_buttonClass::LFSTK_getLabel(void)
 {
 	return(this->label);
 }
 
+/**
+* Main button constructor.
+*
+* \param parentwc Main parent window class.
+* \param label Displayed name.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param gravity Button gravity.
+*/
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
