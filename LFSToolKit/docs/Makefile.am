@@ -7,4 +7,4 @@ install-data-hook:
 	$(INSTALL) -d $(DESTDIR)$(docdir)
 	cp -rvp html $(DESTDIR)$(docdir)
 
-endif 
+endif
