@@ -32,7 +32,6 @@
  * Base class for LFSToolKit gadgets.
  *
  */
-
 class LFSTK_gadgetClass
 {
 	public:

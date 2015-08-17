@@ -35,6 +35,17 @@ LFSTK_lineEditClass::LFSTK_lineEditClass()
 {
 }
 
+/**
+* Main line edit constructor.
+*
+* \param parentwc Main parent window class.
+* \param label Displayed name.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param gravity Button gravity.
+*/
 LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
@@ -78,6 +89,9 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	this->drawLabel();
 }
 
+/**
+* Set this gadget to have the focus..
+*/
 void LFSTK_lineEditClass::LFSTK_setFocus(void)
 {
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
@@ -86,11 +100,21 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 	this->LFSTK_clearWindow();
 }
 
+/**
+* Mouse enter callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 {
 	return(true);
 }
 
+/**
+* Mouse down callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
 	return(true);
@@ -100,13 +124,15 @@ void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 {
 	this->w=w-(pad*2);
 	this->h=h-(pad*2);
-//	printf("w=%i h=%i\n",this->w,this->h);
 	XResizeWindow(this->display,this->window,this->w,this->h);
 	this->LFSTK_clearWindow();
 }
 
-
-
+/**
+* Lost focus callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
 	XUngrabKeyboard(this->display,CurrentTime);
@@ -116,6 +142,11 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 	return(true);
 }
 
+/**
+* Got focus callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 {
 	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
@@ -125,6 +156,11 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 	return(true);
 }
 
+/**
+* Return the contents of the gadget.
+* \return Return's a std::string.
+* \note Don't free the returned string.
+*/
 const std::string* LFSTK_lineEditClass::LFSTK_getBuffer(void)
 {
 	return(const_cast<std::string*>(&(this->buffer)));
@@ -222,6 +258,11 @@ void LFSTK_lineEditClass::getClip(void)
 		}
 }
 
+/**
+* Key release callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 {
 	char	c[255];
@@ -277,7 +318,6 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 				}
 		}
 	this->LFSTK_clearWindow();
-//	this->drawLabel();
 	return(true);
 }
 

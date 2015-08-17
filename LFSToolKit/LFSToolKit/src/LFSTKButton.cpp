@@ -133,7 +133,6 @@ bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 	return(true);
 }
 
-
 /**
 * Return callback user data.
 * \note Returns a void* so must be cast.

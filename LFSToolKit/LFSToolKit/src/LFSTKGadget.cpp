@@ -38,23 +38,32 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 	pad=2;
 }
 
-/*! Return 'len' bytes from 'start'.
-    \param src Haystack.
-    \param start Start character number.
-    \param len Number of bytes to return.
-    \return Pointer to static buffer, do not free.
-    \note Values outside the range of the string or -1 is the same as 0 or strlen(Haystack).
+/**
+* Set the colour name for font.
+* \param p Font state.
+* \param colour Colour name.
+* \note state is FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
 */
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,char* colour)
 {
 	this->fontColourNames[p]=strdup(colour);
 }
 
+/**
+* Get the gadget's window ID.
+* \return Returns windows XID.
+*/
 Window LFSTK_gadgetClass::LFSTK_getWindow(void)
 {
 	return(this->window);
 }
 
+/**
+* Set default font string.
+* \param s Font string.
+* \note eg:
+* \note "sans-serif:size=8".
+*/
 void LFSTK_gadgetClass::LFSTK_setFontString(const char *s)
 {
 	if(this->fontString!=NULL)
@@ -63,6 +72,12 @@ void LFSTK_gadgetClass::LFSTK_setFontString(const char *s)
 	this->font=ftload(this->display,this->screen,s);
 }
 
+/**
+* Set the colour name for gadget.
+* \param p Gadget state.
+* \param colour Colour name.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+*/
 void LFSTK_gadgetClass::LFSTK_setColourName(int p,char* colour)
 {
 	XColor tc,sc;
@@ -92,12 +107,26 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->LFSTK_setFontString(wc->fontString);
 }
 
-//
+
+/**
+* Get the listener for gadget.
+* \return listener.
+*/
 listener* LFSTK_gadgetClass::LFSTK_getListen(void)
 {
 	return(&(this->listen));
 }
 
+/**
+* Do common setup for gadget.
+* \param parentwc Main parent window class.
+* \param label Displayed name.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param gravity Button gravity.
+*/
 void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	this->wc=parentwc;
@@ -124,6 +153,11 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 }
 
+/**
+* Set callback for widget.
+* \param downcb Mouse down callback.
+* \param releasecb Mouse up callback.
+*/
 void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud)
 {
 	this->callback.pressCallback=downcb;
@@ -141,6 +175,11 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
+/**
+* Mouse up callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
 	if(this->inWindow==false)
@@ -154,6 +193,11 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse down callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
 	if(this->callback.pressCallback!=NULL)
@@ -161,12 +205,22 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse exit callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 }
 
+/**
+* Mouse enter callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
@@ -186,22 +240,33 @@ void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)
 	this->LFSTK_clearWindow();
 }
 
+/**
+* Key release callback.
+* \param e XKeyEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::keyRelease(XKeyEvent *e)
 {
 	return(true);
 }
 
+/**
+* Lost focus callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::lostFocus(XEvent *e)
 {
 	return(true);
 }
 
+/**
+* Got focus callback.
+* \param e XEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_gadgetClass::gotFocus(XEvent *e)
 {
 	return(true);
 }
-
-
-
-
 

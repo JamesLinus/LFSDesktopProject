@@ -48,9 +48,14 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 			for(int j=0;j<MAXFONTCOLS;j++)
 				this->LFSTK_setMenuItemsFontColourName(j,gMenuItemFontColourNames[j]);
 		}
-	
 }
 
+/**
+* Set the colour name for font in menu items.
+* \param p Font state.
+* \param colour Colour name.
+* \note state is FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+*/
 void LFSTK_menuButtonClass::LFSTK_setMenuItemsFontColourName(int p,char* colour)
 {
 	this->menuItemFontColourNames[p]=strdup(colour);
@@ -65,6 +70,12 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+/**
+* Set font string for menu items.
+* \param s Font string.
+* \note eg:
+* \note "sans-serif:size=8".
+*/
 void LFSTK_menuButtonClass::LFSTK_setMenuItemFontString(char *s)
 {
 	if(this->menuItemFontString!=NULL)
@@ -73,6 +84,12 @@ void LFSTK_menuButtonClass::LFSTK_setMenuItemFontString(char *s)
 	this->menuItemfont=ftload(this->display,this->screen,s);
 }
 
+/**
+* Set the colours for menu items.
+* \param p Font state.
+* \param colour Colour name.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+*/
 void LFSTK_menuButtonClass::LFSTK_setMenuItemColours(int p,char* colour)
 {
 	XColor tc,sc;
@@ -83,6 +100,11 @@ void LFSTK_menuButtonClass::LFSTK_setMenuItemColours(int p,char* colour)
 	this->menuItemColours[p].pixel=sc.pixel;	
 }
 
+/**
+* Draw label.
+* \param p Button state.
+* \note State FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+*/
 void LFSTK_menuButtonClass::drawLabel(int p)
 {
 	switch(this->labelOrientation)
@@ -116,6 +138,9 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 	this->drawLabel(FONTNORMALCOL);
 }
 
+/**
+* Set colours from global colours if loaded.
+*/
 void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 {
 	if(globalColoursSet==true)
@@ -130,6 +155,12 @@ void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 		}
 }
 
+/**
+* Mouse down callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+* \note This shows the menu items previously loaded.
+*/
 bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 {
 	LFSTK_buttonClass	*bc;
@@ -219,6 +250,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	return(true);
 }
 	
+/**
+* Mouse up callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 {
 	if(this->inWindow==false)
@@ -232,6 +268,11 @@ bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse exit callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 {
 	this->LFSTK_clearWindow();
@@ -239,6 +280,11 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Mouse enter callback.
+* \param e XButtonEvent passed from mainloop->listener.
+* \return Return true if event fully handeled or false to pass it on.
+*/
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
@@ -262,12 +308,29 @@ bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 	return(true);
 }
 
+/**
+* Add array of menu items to gadget.
+* \param menus Pointer to array of menuItemStruct's.
+* \param cnt Length of array.
+* \note It is up to the caller to set the menuItemStruct and free it when finished.
+*/
 void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 {
 	this->menus=menus;
 	this->menuCount=cnt;
 }
 
+/**
+* Main menu button constructor.
+*
+* \param parentwc Main parent window class.
+* \param label Displayed name.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param gravity Button gravity.
+*/
 LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
