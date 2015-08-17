@@ -34,5 +34,12 @@ PKG_CHECK_MODULES(XFT, $XFT_MODULES)
 AC_SUBST(XFT_CFLAGS)
 AC_SUBST(XFT_LIBS)
 
-AC_OUTPUT(Makefile LFSToolKit/app/Makefile)
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN";
+   then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support])
+fi
+AM_CONDITIONAL([HAVE_DOXYGEN],
+[test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Doxyfile])])
+
+AC_OUTPUT(Makefile LFSToolKit/app/Makefile  docs/Makefile)
 
