@@ -65,7 +65,6 @@ args			lfsToolKitGlobals[]=
 	{"font_prelight",TYPESTRING,&gFontColourNames[PRELIGHTCOLOUR]},
 	{"font_active",TYPESTRING,&gFontColourNames[ACTIVECOLOUR]},
 
-
 	{NULL,0,NULL}
 };
 
