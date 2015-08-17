@@ -45,12 +45,15 @@ struct Hints
 	unsigned long   status;
 };
 
+/**
+ * Set default colours.
+ *
+ */
 void LFSTK_windowClass::initWindow(void)
 {
 	this->fontColourNames[FONTNORMALCOL]=strdup("white");
 	this->fontColourNames[FONTHILITECOL]=strdup("black");
 	this->fontColourNames[FONTACTIVECOL]=strdup("white");
-
 
 	this->colourNames[NORMALCOLOUR].name=strdup("grey50");
 	this->colourNames[PRELIGHTCOLOUR].name=strdup("grey80");
@@ -84,6 +87,10 @@ LFSTK_windowClass::LFSTK_windowClass()
 	this->initWindow();
 }
 
+/**
+* Load global options.
+* \param path Path to prefs file.
+*/
 void LFSTK_windowClass::LFSTK_loadGlobalColours(const char *path)
 {
 	loadVarsFromFile(path,lfsToolKitGlobals);
@@ -96,6 +103,11 @@ void LFSTK_windowClass::LFSTK_loadGlobalColours(const char *path)
 	globalColoursSet=true;
 }
 
+/**
+* Set colour from name.
+* \param name Colour name eg "#ff00ff".
+* \return Pixel colour.
+*/
 unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 {
 	XColor tc,sc;
@@ -111,6 +123,12 @@ void LFSTK_windowClass::LFSTK_clearWindow()
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
+/**
+* Set child gadget listner.
+* \param w Window of child gadget.
+* \param l Child gadgets listner.
+* \note Should only be called from child gadget constructor.
+*/
 void LFSTK_windowClass::LFSTK_setListener(Window w,listener *l)
 {
 	if (l==NULL)
@@ -126,6 +144,14 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
 	this->LFSTK_clearWindow();
 }
 
+/**
+* Get child gadget listner.
+* \param w Window of child gadget.
+* \return Listener of child gadget.
+* \note For use in main event loop.
+* \note eg:
+* \note listener *l=wc->LFSTK_getListener(event.xany.window);
+*/
 listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 {
 	listener *l=NULL;
@@ -135,6 +161,12 @@ listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 		return NULL;
 }
 
+/**
+* Set default font string.
+* \param s Font string.
+* \note eg:
+* \note "sans-serif:size=8".
+*/
 void LFSTK_windowClass::LFSTK_setFontString(char *s)
 {
 	if(this->fontString!=NULL)
@@ -143,6 +175,10 @@ void LFSTK_windowClass::LFSTK_setFontString(char *s)
 	this->font=ftload(this->display,this->screen,s);
 }
 
+/**
+* Set window decorated.
+* \param isDecorated.
+*/
 void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 {
 	Atom	xa_prop[10];
@@ -160,6 +196,11 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 		}
 }
 
+/**
+* Get window geometry.
+* \return geometry structure.
+* \note Caller should free structure after use.
+*/
 geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 {
 	geometryStruct		*g=new geometryStruct;
@@ -174,11 +215,23 @@ geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 	return(g);
 }
 
+/**
+* Set the colour name for font.
+* \param p Font state.
+* \param colour Colour name.
+* \note state is FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+*/
 void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 {
 	this->fontColourNames[p]=strdup(colour);
 }
 
+/**
+* Set the colour name for window.
+* \param p Window state.
+* \param colour Colour name.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+*/
 void LFSTK_windowClass::LFSTK_setColourName(int p,const char* colour)
 {
 	XColor tc,sc;
@@ -188,6 +241,10 @@ void LFSTK_windowClass::LFSTK_setColourName(int p,const char* colour)
 	this->colourNames[p].pixel=sc.pixel;
 }
 
+/**
+* Set window sticky.
+* \param set.
+*/
 void LFSTK_windowClass::LFSTK_setSticky(bool set)
 {
 	XClientMessageEvent	xclient;
@@ -210,6 +267,10 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
+/**
+* Set window keep above.
+* \param set.
+*/
 void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 {
 	XClientMessageEvent	xclient;
@@ -232,6 +293,15 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
 }
 
+/**
+* Main window constructor.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param name Window name.
+* \param override True=ignore window manager placement.
+*/
 LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override)
 {
 	XSetWindowAttributes	wa;
