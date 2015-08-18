@@ -1,6 +1,6 @@
 0.0.6
 Mostly done documentation.
-Use make docs to make ddocs ( sic ), make install-docs to install in ${prefix}/share/doc/LFSToolKit
+Use make docs to make docs ( sic ), make install-docs to install in ${prefix}/share/doc/LFSToolKit
 Added doxygen to config/makefiles to generate documentation.
 
 0.0.5
