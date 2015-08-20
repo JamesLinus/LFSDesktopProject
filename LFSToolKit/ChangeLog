@@ -1,6 +1,8 @@
 0.0.7
+Cursor set to end of line in line edit when first shown.
+Added inactive states to prefs file.
 Added 'inactive' state to gadgets.
-Fixed to many refreshes in line edit.
+Fixed too many refreshes in line edit.
 
 0.0.6
 Fixed bug in line edit gadget where no button pressed with shift etc.

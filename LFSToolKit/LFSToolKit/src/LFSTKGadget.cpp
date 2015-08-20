@@ -114,14 +114,11 @@ void LFSTK_gadgetClass::initGadget(void)
 		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
-	{
 		this->LFSTK_setColourName(j,this->wc->colourNames[j].name);
-printf("--j=%i name=%s--\n",j,this->wc->colourNames[j].name);
-}
+
 	this->LFSTK_setFontString(wc->fontString);
 	this->LFSTK_setActive(true);
 }
-
 
 /**
 * Get the listener for gadget.
