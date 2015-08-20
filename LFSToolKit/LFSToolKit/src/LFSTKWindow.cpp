@@ -105,6 +105,16 @@ void LFSTK_windowClass::LFSTK_loadGlobalColours(const char *path)
 }
 
 /**
+* Get path to current theme.
+* \return const char* Path.
+*/
+const char* LFSTK_windowClass::LFSTK_getThemePath(void)
+{
+	return(gThemePath);
+}
+
+
+/**
 * Set colour from name.
 * \param name Colour name eg "#ff00ff".
 * \return Pixel colour.

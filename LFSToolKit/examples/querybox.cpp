@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
 	mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
 
-	le=new LFSTK_lineEditClass(mainwind,"",0,0,width,24,NorthWestGravity);
+	le=new LFSTK_lineEditClass(mainwind,"Hello World",0,0,width,24,NorthWestGravity);
 	XMapWindow(mainwind->display,le->LFSTK_getWindow());
 
 	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,SouthWestGravity);

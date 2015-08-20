@@ -57,6 +57,7 @@ class LFSTK_windowClass
 		void LFSTK_setKeepAbove(bool set);
 		
 		void LFSTK_loadGlobalColours(const char *path);
+		const char *LFSTK_getThemePath(void);
 
 		geometryStruct	*LFSTK_getGeom(void);
 

@@ -43,6 +43,8 @@ extern char			*gFontString;
 extern char			*gFontColourNames[MAXFONTCOLS];
 extern char			*gMenuItemFontString;
 extern char			*gMenuItemFontColourNames[MAXCOLOURS];
+//theme
+extern char			*gThemePath;
 
 bool				gadgetEvent(void *self,XEvent *e,int type);
 fontStruct			*ftload(Display *disp,int scr,const char *name);

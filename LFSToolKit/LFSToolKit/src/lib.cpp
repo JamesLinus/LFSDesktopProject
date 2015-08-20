@@ -39,6 +39,7 @@ char			*gFontString=NULL;
 char			*gFontColourNames[MAXFONTCOLS];
 char			*gMenuItemFontString;
 char			*gMenuItemFontColourNames[MAXCOLOURS];
+char			*gThemePath=NULL;
 
 args			lfsToolKitGlobals[]=
 {
@@ -67,6 +68,9 @@ args			lfsToolKitGlobals[]=
 	{"font_normal",TYPESTRING,&gFontColourNames[NORMALCOLOUR]},
 	{"font_prelight",TYPESTRING,&gFontColourNames[PRELIGHTCOLOUR]},
 	{"font_active",TYPESTRING,&gFontColourNames[ACTIVECOLOUR]},
+
+//window manager
+	{"theme",TYPESTRING,&gThemePath},
 
 	{NULL,0,NULL}
 };
@@ -134,7 +138,7 @@ bool loadVarsFromFile(const char* filepath,args* dataptr)
 											if(*(char**)(dataptr[cnt].data)!=NULL)
 												free(*(char**)(dataptr[cnt].data));
 											sscanf(buffer,"%*s %m[^\n]s",(char**)dataptr[cnt].data);
-											break;
+										break;
 										case TYPEBOOL:
 											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
 											break;
@@ -271,7 +275,7 @@ void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,con
 
 	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,col,&colour))
 		return;
-	
+
 	XftDrawChange(wc->draw,d);
 	XftDrawStringUtf8(wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
 }
