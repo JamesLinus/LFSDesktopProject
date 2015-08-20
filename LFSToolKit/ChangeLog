@@ -1,4 +1,5 @@
 0.0.6
+Fixed bug in line edit gadget where no button pressed with shift etc.
 Mostly done documentation.
 Use make docs to make docs ( sic ), make install-docs to install in ${prefix}/share/doc/LFSToolKit
 Added doxygen to config/makefiles to generate documentation.

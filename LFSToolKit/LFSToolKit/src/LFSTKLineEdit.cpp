@@ -63,7 +63,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->listen.type=LINEEDITGADGET;
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
 	this->cursorPos=0;
-	this->buffer="";
+	this->buffer=label;
 
 	XA_CLIPBOARD=XInternAtom(this->display,"CLIPBOARD",True);
 	XA_COMPOUND_TEXT=XInternAtom(this->display,"COMPOUND_TEXT",true);
@@ -107,6 +107,9 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 */
 bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	return(true);
 }
 
@@ -117,6 +120,9 @@ bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	return(true);
 }
 
@@ -135,10 +141,13 @@ void LFSTK_lineEditClass::LFSTK_resizeWindow(int w,int h)
 */
 bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 {
-	XUngrabKeyboard(this->display,CurrentTime);
-	this->isFocused=false;
-	this->inWindow=false;
-	this->LFSTK_clearWindow();
+	if(this->isFocused==true)
+		{
+			XUngrabKeyboard(this->display,CurrentTime);
+			this->isFocused=false;
+			this->inWindow=false;
+			this->LFSTK_clearWindow();
+		}
 	return(true);
 }
 
@@ -149,10 +158,13 @@ bool LFSTK_lineEditClass::lostFocus(XEvent *e)
 */
 bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 {
-	XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
-	this->isFocused=true;
-	this->inWindow=true;
-	this->LFSTK_clearWindow();
+	if(this->isFocused==false)
+		{
+			XGrabKeyboard(this->display,this->window,true,GrabModeAsync,GrabModeAsync,CurrentTime);
+			this->isFocused=true;
+			this->inWindow=true;
+			this->LFSTK_clearWindow();
+		}
 	return(true);
 }
 
@@ -268,6 +280,9 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 	char	c[255];
 	KeySym	keysym_return;
 
+	if(this->ignoreEvents==true)
+		return(true);
+
 	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
 
 	if(this->isFocused==false)
@@ -312,6 +327,8 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 					break;
 
 				default:
+					if(c[0]==0)
+						break;
 					this->buffer.insert(this->cursorPos,1,c[0]);
 					this->cursorPos++;
 					break;

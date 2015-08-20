@@ -173,6 +173,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int					addto;
 	int					sy;
 
+	if(this->ignoreEvents==true)
+		return(true);
+
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
@@ -257,6 +260,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
@@ -275,6 +281,9 @@ bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 	return(true);
@@ -287,6 +296,9 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 

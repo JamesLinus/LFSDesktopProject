@@ -53,10 +53,13 @@ class LFSTK_gadgetClass
 
 		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
-		void LFSTK_setColourName(int p,char* colour);
+		void LFSTK_setColourName(int p,const char* colour);
+		const char* LFSTK_getColourName(int p);
 		void LFSTK_setFontString(const char *s);
 		void LFSTK_setFontColourName(int p,char* colour);
 		Window LFSTK_getWindow(void);
+
+		void LFSTK_setIgnoreEvents(bool ignore);
 
 		LFSTK_windowClass	*wc;
 		char				*label;
@@ -66,6 +69,7 @@ class LFSTK_gadgetClass
 
 	protected:
 		listener* LFSTK_getListen(void);
+
 		listener			listen;
 
 		int					x;
@@ -94,6 +98,7 @@ class LFSTK_gadgetClass
 		char				*fontColourNames[MAXFONTCOLS];
 		colourStruct		colourNames[MAXCOLOURS];
 		bool				inWindow;
+		bool				ignoreEvents;
 };
 
 #endif

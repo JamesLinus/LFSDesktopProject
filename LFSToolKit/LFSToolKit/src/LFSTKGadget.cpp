@@ -78,7 +78,7 @@ void LFSTK_gadgetClass::LFSTK_setFontString(const char *s)
 * \param colour Colour name.
 * \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
 */
-void LFSTK_gadgetClass::LFSTK_setColourName(int p,char* colour)
+void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 {
 	XColor tc,sc;
 	if(this->colourNames[p].name!=NULL)
@@ -86,6 +86,18 @@ void LFSTK_gadgetClass::LFSTK_setColourName(int p,char* colour)
 	this->colourNames[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
 	this->colourNames[p].pixel=sc.pixel;
+}
+
+/**
+* Get the colour name for gadget.
+* \param p Gadget state.
+* \return colour Const colour name.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note Donot free returned value.
+*/
+const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
+{
+	return(this->colourNames[p].name);
 }
 
 void LFSTK_gadgetClass::initGadget(void)
@@ -105,6 +117,7 @@ void LFSTK_gadgetClass::initGadget(void)
 		this->LFSTK_setColourName(j,this->wc->colourNames[j].name);
 
 	this->LFSTK_setFontString(wc->fontString);
+	this->LFSTK_setIgnoreEvents(false);
 }
 
 
@@ -169,6 +182,16 @@ void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*re
 	this->callback.ignoreCallback=false;
 }
 
+/**
+* Set ignore mouse events for widget.
+* \param ignore Ignore events.
+* \note Setting to true will just return false;
+*/
+void LFSTK_gadgetClass::LFSTK_setIgnoreEvents(bool ignore)
+{
+	this->ignoreEvents=ignore;
+}
+
 void LFSTK_gadgetClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
@@ -185,6 +208,9 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 */
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
@@ -203,6 +229,9 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
 	return(true);
@@ -215,8 +244,12 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
+	return(true);
 }
 
 /**
@@ -226,6 +259,9 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
@@ -233,6 +269,7 @@ bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	this->inWindow=true;
+	return(true);
 }
 
 void LFSTK_gadgetClass::LFSTK_resizeWindow(int w,int h)

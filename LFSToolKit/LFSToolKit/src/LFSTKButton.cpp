@@ -92,6 +92,9 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 */
 bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
@@ -122,6 +125,9 @@ bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
 	else
@@ -150,6 +156,9 @@ void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 */
 bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 	return(true);
@@ -162,6 +171,9 @@ bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 {
+	if(this->ignoreEvents==true)
+		return(true);
+
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
