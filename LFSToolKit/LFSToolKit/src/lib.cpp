@@ -46,14 +46,17 @@ args			lfsToolKitGlobals[]=
 	{"window_normal",TYPESTRING,&globalWindowColours[NORMALCOLOUR]},
 	{"window_prelight",TYPESTRING,&globalWindowColours[PRELIGHTCOLOUR]},
 	{"window_active",TYPESTRING,&globalWindowColours[ACTIVECOLOUR]},
+	{"window_inactive",TYPESTRING,&globalWindowColours[INACTIVECOLOUR]},
 //button
 	{"button_normal",TYPESTRING,&globalButtonColours[NORMALCOLOUR]},
 	{"button_prelight",TYPESTRING,&globalButtonColours[PRELIGHTCOLOUR]},
 	{"button_active",TYPESTRING,&globalButtonColours[ACTIVECOLOUR]},
+	{"button_inactive",TYPESTRING,&globalButtonColours[INACTIVECOLOUR]},
 //menu button
 	{"menuitem_normal",TYPESTRING,&globalMenuItemColours[NORMALCOLOUR]},
 	{"menuitem_prelight",TYPESTRING,&globalMenuItemColours[PRELIGHTCOLOUR]},
 	{"menuitem_active",TYPESTRING,&globalMenuItemColours[ACTIVECOLOUR]},
+	{"menuitem_inactive",TYPESTRING,&globalMenuItemColours[INACTIVECOLOUR]},
 	{"menuitem_font",TYPESTRING,&gMenuItemFontString},
 	{"menuitem_font_normal",TYPESTRING,&gMenuItemFontColourNames[NORMALCOLOUR]},
 	{"menuitem_font_prelight",TYPESTRING,&gMenuItemFontColourNames[PRELIGHTCOLOUR]},

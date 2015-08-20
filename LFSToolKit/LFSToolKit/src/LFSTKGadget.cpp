@@ -114,10 +114,12 @@ void LFSTK_gadgetClass::initGadget(void)
 		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
+	{
 		this->LFSTK_setColourName(j,this->wc->colourNames[j].name);
-
+printf("--j=%i name=%s--\n",j,this->wc->colourNames[j].name);
+}
 	this->LFSTK_setFontString(wc->fontString);
-	this->LFSTK_setIgnoreEvents(false);
+	this->LFSTK_setActive(true);
 }
 
 
@@ -183,13 +185,13 @@ void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*re
 }
 
 /**
-* Set ignore mouse events for widget.
-* \param ignore Ignore events.
-* \note Setting to true will just return false;
+* Set gadget active state.
+* \param active Gadget active or not.
+* \note Setting to false deactivates widget;
 */
-void LFSTK_gadgetClass::LFSTK_setIgnoreEvents(bool ignore)
+void LFSTK_gadgetClass::LFSTK_setActive(bool active)
 {
-	this->ignoreEvents=ignore;
+	this->isActive=active;
 }
 
 void LFSTK_gadgetClass::LFSTK_clearWindow()
@@ -197,7 +199,10 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	if(this->isActive==true)
+		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	else
+		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 
@@ -208,8 +213,11 @@ void LFSTK_gadgetClass::LFSTK_clearWindow()
 */
 bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -229,8 +237,11 @@ bool LFSTK_gadgetClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
@@ -244,8 +255,11 @@ bool LFSTK_gadgetClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
@@ -259,8 +273,11 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);

@@ -62,7 +62,11 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
-	this->cursorPos=0;
+//	if(strlen(label)>0)
+		this->cursorPos=strlen(label);
+//	else
+//		this->cursorPos=0;
+
 	this->buffer=label;
 
 	XA_CLIPBOARD=XInternAtom(this->display,"CLIPBOARD",True);
@@ -76,7 +80,11 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,whiteColour);
+//	XSetForeground(this->display,this->gc,whiteColour);
+	if(this->isActive==true)
+		XSetForeground(this->display,this->gc,whiteColour);
+	else
+		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	XSetForeground(this->display,this->gc,this->blackColour);
@@ -107,8 +115,11 @@ void LFSTK_lineEditClass::LFSTK_setFocus(void)
 */
 bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	return(true);
 }
@@ -120,8 +131,11 @@ bool LFSTK_lineEditClass::mouseEnter(XButtonEvent *e)
 */
 bool LFSTK_lineEditClass::mouseDown(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	return(true);
 }
@@ -280,8 +294,11 @@ bool LFSTK_lineEditClass::keyRelease(XKeyEvent *e)
 	char	c[255];
 	KeySym	keysym_return;
 
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	XLookupString(e,(char*)&c,255,&keysym_return,NULL);
 

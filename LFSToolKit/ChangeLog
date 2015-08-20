@@ -1,3 +1,7 @@
+0.0.7
+Added 'inactive' state to gadgets.
+Fixed to many refreshes in line edit.
+
 0.0.6
 Fixed bug in line edit gadget where no button pressed with shift etc.
 Mostly done documentation.

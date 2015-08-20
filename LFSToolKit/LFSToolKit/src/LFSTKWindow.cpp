@@ -58,6 +58,7 @@ void LFSTK_windowClass::initWindow(void)
 	this->colourNames[NORMALCOLOUR].name=strdup("grey50");
 	this->colourNames[PRELIGHTCOLOUR].name=strdup("grey80");
 	this->colourNames[ACTIVECOLOUR].name=strdup("grey40");
+	this->colourNames[INACTIVECOLOUR].name=strdup("grey90");
 }
 
 LFSTK_windowClass::~LFSTK_windowClass()
@@ -115,11 +116,15 @@ unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 	return sc.pixel;
 }
 
-void LFSTK_windowClass::LFSTK_clearWindow()
+void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
-	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	if(this->isActive==true)
+		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	else
+		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
+		
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
 

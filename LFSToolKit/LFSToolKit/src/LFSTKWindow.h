@@ -81,6 +81,7 @@ class LFSTK_windowClass
 		int			w;
 		int			h;
 		char		*windowName;
+		bool		isActive;
 };
 
 #endif

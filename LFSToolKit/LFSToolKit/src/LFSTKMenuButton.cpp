@@ -123,7 +123,11 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	if(this->isActive==true)
+		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	else
+		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
+
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->style==EMBOSSEDBUTTON)
@@ -173,8 +177,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int					addto;
 	int					sy;
 
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -260,8 +267,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -281,8 +291,11 @@ bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
@@ -296,8 +309,11 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);

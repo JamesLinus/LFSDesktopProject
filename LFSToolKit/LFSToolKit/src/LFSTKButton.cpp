@@ -65,12 +65,15 @@ void LFSTK_buttonClass::LFSTK_setColoursFromGlobals(void)
 		}
 }
 
-void LFSTK_buttonClass::LFSTK_clearWindow()
+void LFSTK_buttonClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-	XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	if(this->isActive==true)
+		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+	else
+		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->style==EMBOSSEDBUTTON)
@@ -92,8 +95,11 @@ void LFSTK_buttonClass::LFSTK_clearWindow()
 */
 bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -125,8 +131,11 @@ bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 */
 bool LFSTK_buttonClass::mouseUp(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	if(this->inWindow==false)
 		this->LFSTK_clearWindow();
@@ -156,8 +165,11 @@ void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 */
 bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
@@ -171,8 +183,11 @@ bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 {
-	if(this->ignoreEvents==true)
-		return(true);
+	if(this->isActive==false)
+		{
+			this->LFSTK_clearWindow();
+			return(true);
+		}
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);

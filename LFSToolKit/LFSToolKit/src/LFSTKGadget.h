@@ -38,7 +38,7 @@ class LFSTK_gadgetClass
 		LFSTK_gadgetClass();
 		virtual ~LFSTK_gadgetClass();
 
-		virtual void LFSTK_clearWindow();
+		virtual void LFSTK_clearWindow(void);
 		virtual void LFSTK_resizeWindow(int w,int h);
 
 		virtual bool mouseUp(XButtonEvent *e);
@@ -59,7 +59,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setFontColourName(int p,char* colour);
 		Window LFSTK_getWindow(void);
 
-		void LFSTK_setIgnoreEvents(bool ignore);
+		void LFSTK_setActive(bool active);
 
 		LFSTK_windowClass	*wc;
 		char				*label;
@@ -98,7 +98,7 @@ class LFSTK_gadgetClass
 		char				*fontColourNames[MAXFONTCOLS];
 		colourStruct		colourNames[MAXCOLOURS];
 		bool				inWindow;
-		bool				ignoreEvents;
+		bool				isActive;
 };
 
 #endif
