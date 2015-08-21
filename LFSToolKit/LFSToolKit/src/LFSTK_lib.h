@@ -21,11 +21,22 @@
 #ifndef _LFSTK_LIB_
 #define _LFSTK_LIB_
 
+#include "LFSTKGlobals.h"
+
+enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+
+struct args
+{
+	const char*		name;
+	int				type;
+	void*			data;
+};
+
 /**
  *
- * \brief Base class for LFSToolKit gadgets.
+ * \brief Library class for LFSToolKit.
  *
- * Base class for LFSToolKit gadgets.
+ * Library class for LFSToolKit.
  *
  */
 class LFSTK_lib
@@ -33,8 +44,23 @@ class LFSTK_lib
 	public:
 		LFSTK_lib();
 		~LFSTK_lib();
-sdfdf
+		bool LFSTK_loadVarsFromFile(const char* filepath,args* dataptr);
+
+		const char *LFSTK_getThemeName(void);
+
+		colourStruct	globalWindowColours[MAXCOLOURS];
+		colourStruct	globalButtonColours[MAXCOLOURS];
+		colourStruct	globalMenuItemColours[MAXCOLOURS];
+		bool			globalColoursSet;
+
+		char			*gFontString;
+		char			*gFontColourNames[MAXFONTCOLS];
+		char			*gMenuItemFontString;
+		char			*gMenuItemFontColourNames[MAXCOLOURS];
+		char			*gThemePath;
+
 	private:
+		args			lfsToolKitGlobals[];
 
 	protected:
 

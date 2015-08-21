@@ -1,4 +1,5 @@
 0.0.7
+Added LFSTK_lib class.
 Cursor set to end of line in line edit when first shown.
 Added inactive states to prefs file.
 Added 'inactive' state to gadgets.
