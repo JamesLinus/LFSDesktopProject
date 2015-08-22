@@ -285,6 +285,7 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 /**
 * Set window keep above.
 * \param set.
+* \note Must be set AFTER window has been mapped.
 */
 void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 {
@@ -306,6 +307,25 @@ void LFSTK_windowClass::LFSTK_setKeepAbove(bool set)
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2] = 0;
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+}
+
+/**
+* Set window active.
+* \param set.
+* \note Must be set AFTER window has been mapped ( in expose event ).
+*/
+void LFSTK_windowClass::LFSTK_setActive(bool set)
+{
+	this->isActive=set;
+}
+
+/**
+* Get window active.
+* \return isActive.
+*/
+bool LFSTK_windowClass::LFSTK_getActive(void)
+{
+	return(this->isActive);
 }
 
 /**
@@ -334,6 +354,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->w=w;
 	this->h=h;
 	this->fontString=NULL;
+	this->isActive=false;
 
 	this->screen=DefaultScreen(this->display);
 	this->visual=DefaultVisual(this->display,this->screen);

@@ -97,6 +97,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int					testwid=0;
 	int					addto;
 	int					sy;
+	fontStruct			*tfont;
 
 	if(this->isActive==false)
 		{
@@ -122,14 +123,15 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	this->drawLabel(FONTACTIVECOL);
 
+	tfont=ftload(this->display,this->screen,this->wc->globalLib->globalMenuItemFontString);
 	for(int j=0;j<this->menuCount;j++)
 		{
-			testwid=getTextwidth(this->display,(XftFont*)(this->font->data),this->menus[j].label);
+			testwid=getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
 			if(testwid>maxwid)
 				maxwid=testwid;
 		}
 
-	addto=this->font->ascent+this->font->descent+8;
+	addto=tfont->ascent+tfont->descent+8;
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
 	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true);

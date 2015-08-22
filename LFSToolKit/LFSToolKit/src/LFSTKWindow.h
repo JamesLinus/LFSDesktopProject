@@ -56,6 +56,8 @@ class LFSTK_windowClass
 		void LFSTK_setDecorated(bool isDecorated);
 		void LFSTK_setSticky(bool set);
 		void LFSTK_setKeepAbove(bool set);
+		void LFSTK_setActive(bool set);
+		bool LFSTK_getActive(void);
 
 		geometryStruct	*LFSTK_getGeom(void);
 
