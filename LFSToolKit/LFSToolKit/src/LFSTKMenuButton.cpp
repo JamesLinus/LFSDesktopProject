@@ -27,29 +27,21 @@
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->menuItemColours[j].name=NULL;
+//	for(int j=0;j<MAXCOLOURS;j++)
+//		this->menuItemColours[j].name=NULL;
+//
+//	this->menuItemFontString=NULL;
 
-	this->menuItemFontString=NULL;
+//	for(int j=0;j<MAXCOLOURS;j++)
+//		//this->LFSTK_setMenuItemColours(j,this->colourNames[j].name);
+//		this->LFSTK_setMenuItemColours(j,this->wc->globalLib->globalMenuItemColours[j]);
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setMenuItemColours(j,this->colourNames[j].name);
-
-	this->LFSTK_setFontString(this->wc->fontString);
-	if(globalColoursSet==false)
-		{
-			this->LFSTK_setMenuItemFontString(this->wc->fontString);
-			for(int j=0;j<MAXFONTCOLS;j++)
-				this->LFSTK_setMenuItemsFontColourName(j,fontColourNames[j]);
-		}
-	else
-		{
-			this->LFSTK_setMenuItemFontString(gMenuItemFontString);
-			for(int j=0;j<MAXFONTCOLS;j++)
-				this->LFSTK_setMenuItemsFontColourName(j,gMenuItemFontColourNames[j]);
-		}
+//	this->LFSTK_setFontString(this->wc->fontString);
+//	this->LFSTK_setMenuItemFontString(this->wc->globalLib->globalMenuItemFontString);
+//	for(int j=0;j<MAXFONTCOLS;j++)
+//		this->LFSTK_setMenuItemsFontColourName(j,wc->globalLib->globalMenuItemFontColourNames[j]);
 }
-
+#if 0
 /**
 * Set the colour name for font in menu items.
 * \param p Font state.
@@ -60,7 +52,7 @@ void LFSTK_menuButtonClass::LFSTK_setMenuItemsFontColourName(int p,char* colour)
 {
 	this->menuItemFontColourNames[p]=strdup(colour);
 }
-
+#endif
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
 	delete this->menus;
@@ -70,6 +62,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+#if 0
 /**
 * Set font string for menu items.
 * \param s Font string.
@@ -99,7 +92,7 @@ void LFSTK_menuButtonClass::LFSTK_setMenuItemColours(int p,char* colour)
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
 	this->menuItemColours[p].pixel=sc.pixel;	
 }
-
+#endif
 /**
 * Draw label.
 * \param p Button state.
@@ -142,6 +135,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 	this->drawLabel(FONTNORMALCOL);
 }
 
+#if 0
 /**
 * Set colours from global colours if loaded.
 */
@@ -158,7 +152,7 @@ void LFSTK_menuButtonClass::LFSTK_setColoursFromGlobals(void)
 				this->LFSTK_setMenuItemsFontColourName(j,menuItemFontColourNames[j]);
 		}
 }
-
+#endif
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -203,22 +197,22 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	for(int j=0;j<this->menuCount;j++)
 		{
-			testwid=getTextwidth(this->display,(XftFont*)(this->menuItemfont->data),this->menus[j].label);
+			//testwid=getTextwidth(this->display,(XftFont*)(this->menuItemfont->data),this->menus[j].label);
+			testwid=getTextwidth(this->display,(XftFont*)(this->font->data),this->menus[j].label);
 			if(testwid>maxwid)
 				maxwid=testwid;
 		}
 
-	addto=this->menuItemfont->ascent+this->menuItemfont->descent+8;
+//	addto=this->menuItemfont->ascent+this->menuItemfont->descent+8;
+	addto=this->font->ascent+this->font->descent+8;
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
 	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true);
 	sy=0;
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		subwc->LFSTK_setColourName(j,menuItemColours[j].name);
 	for(int j=0;j<MAXFONTCOLS;j++)
-		subwc->LFSTK_setFontColourName(j,menuItemFontColourNames[j]);
-	subwc->LFSTK_setFontString(this->menuItemFontString);
+		subwc->LFSTK_setFontColourName(j,this->wc->globalLib->globalMenuItemFontColourNames[j]);
+	subwc->LFSTK_setFontString(this->wc->globalLib->globalMenuItemFontString);
 
 	for(int j=0;j<this->menuCount;j++)
 		{
@@ -227,6 +221,10 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
+			for(int j=0;j<MAXCOLOURS;j++)
+	//			bc->LFSTK_setColourName(j,menuItemColours[j].name);
+				bc->LFSTK_setColourName(j,this->wc->globalLib->globalMenuItemColours[j]);
+
 			sy+=addto;
 		}
 

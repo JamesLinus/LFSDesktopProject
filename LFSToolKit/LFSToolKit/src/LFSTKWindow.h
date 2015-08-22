@@ -25,6 +25,7 @@
 #include <X11/Xutil.h>
 
 #include "LFSTKGlobals.h"
+#include "LFSTKLib.h"
 
 /**
  *
@@ -51,13 +52,10 @@ class LFSTK_windowClass
 
 		void LFSTK_setFontString(char *s);
 		void LFSTK_setFontColourName(int p,const char *colour);
-		void LFSTK_setColourName(int p,const char* colour);
+		void LFSTK_setWindowColourName(int p,const char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
 		void LFSTK_setSticky(bool set);
 		void LFSTK_setKeepAbove(bool set);
-		
-		void LFSTK_loadGlobalColours(const char *path);
-		const char *LFSTK_getThemePath(void);
 
 		geometryStruct	*LFSTK_getGeom(void);
 
@@ -70,13 +68,18 @@ class LFSTK_windowClass
 		Colormap		cm;
 		XContext		listeners;
 		XftDraw 		*draw;
+
 		char			*fontString;
 		char			*fontColourNames[MAXFONTCOLS];
-		colourStruct	colourNames[MAXCOLOURS];
+		colourStruct	windowColourNames[MAXCOLOURS];
+
+		LFSTK_lib		*globalLib;
+
 		fontStruct		*font;
 
 	private:
 		void initWindow(void);
+		void loadGlobalColours(void);
 		int			x;
 		int			y;
 		int			w;

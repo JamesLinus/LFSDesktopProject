@@ -244,12 +244,12 @@ int main(int argc, char **argv)
 	char *white=strdup("white");
 	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
 	wc->LFSTK_setDecorated(true);
-	wc->LFSTK_setFontColourName(FONTNORMALCOL,"white");
-	wc->LFSTK_setFontColourName(FONTNORMALCOL,white);
-	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
-	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
-
-	wc->LFSTK_loadGlobalColours("/home/keithhedger/.config/LFS/lfstoolkit.rc");
+//	wc->LFSTK_setFontColourName(FONTNORMALCOL,"white");
+//	wc->LFSTK_setFontColourName(FONTNORMALCOL,white);
+//	wc->LFSTK_setFontColourName(FONTHILITECOL,"black");
+//	wc->LFSTK_setFontColourName(FONTACTIVECOL,"white");
+//
+//	wc->LFSTK_loadGlobalColours("/home/keithhedger/.config/LFS/lfstoolkit.rc");
 //printf(">>>descent= %i<<<\n",wc->font->ascent);
 //	wc->LFSTK_setFontString("PF Tempesta Five:size=18");
 
@@ -292,7 +292,7 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
-					bc[menucount]->LFSTK_setColoursFromGlobals();
+					//bc[menucount]->LFSTK_setColoursFromGlobals();
 
 					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
 					sy+=addto;

@@ -17,60 +17,72 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "LFSTK_lib.h"
+#include "LFSTKLib.h"
 
 LFSTK_lib::~LFSTK_lib()
 {
+	free(lfsToolKitGlobals);
 }
 
 LFSTK_lib::LFSTK_lib()
 {
-
-args			lfsToolKitGlobals[]=
-{
+	args myargs[]=
+	{
 //window
-	{"window_normal",TYPESTRING,&(this->globalWindowColours[NORMALCOLOUR])},
-	{"window_prelight",TYPESTRING,&(this->globalWindowColours[PRELIGHTCOLOUR])},
-	{"window_active",TYPESTRING,&(this->globalWindowColours[ACTIVECOLOUR])},
-	{"window_inactive",TYPESTRING,&(this->globalWindowColours[INACTIVECOLOUR])},
+		{"window_normal",TYPESTRING,&(this->globalWindowColours[NORMALCOLOUR])},
+		{"window_prelight",TYPESTRING,&(this->globalWindowColours[PRELIGHTCOLOUR])},
+		{"window_active",TYPESTRING,&(this->globalWindowColours[ACTIVECOLOUR])},
+		{"window_inactive",TYPESTRING,&(this->globalWindowColours[INACTIVECOLOUR])},
 //button
-	{"button_normal",TYPESTRING,&(this->globalButtonColours[NORMALCOLOUR])},
-	{"button_prelight",TYPESTRING,&(this->globalButtonColours[PRELIGHTCOLOUR])},
-	{"button_active",TYPESTRING,&(this->globalButtonColours[ACTIVECOLOUR])},
-	{"button_inactive",TYPESTRING,&(this->globalButtonColours[INACTIVECOLOUR])},
+		{"button_normal",TYPESTRING,&(this->globalButtonColours[NORMALCOLOUR])},
+		{"button_prelight",TYPESTRING,&(this->globalButtonColours[PRELIGHTCOLOUR])},
+		{"button_active",TYPESTRING,&(this->globalButtonColours[ACTIVECOLOUR])},
+		{"button_inactive",TYPESTRING,&(this->globalButtonColours[INACTIVECOLOUR])},
 //menu button
-	{"menuitem_normal",TYPESTRING,&(this->globalMenuItemColours[NORMALCOLOUR])},
-	{"menuitem_prelight",TYPESTRING,&(this->globalMenuItemColours[PRELIGHTCOLOUR])},
-	{"menuitem_active",TYPESTRING,&(this->globalMenuItemColours[ACTIVECOLOUR])},
-	{"menuitem_inactive",TYPESTRING,&(this->globalMenuItemColours[INACTIVECOLOUR])},
-	{"menuitem_font",TYPESTRING,&(this->gMenuItemFontString)},
-	{"menuitem_font_normal",TYPESTRING,&(this->gMenuItemFontColourNames[NORMALCOLOUR])},
-	{"menuitem_font_prelight",TYPESTRING,&(this->gMenuItemFontColourNames[PRELIGHTCOLOUR])},
-	{"menuitem_font_active",TYPESTRING,&(this->gMenuItemFontColourNames[ACTIVECOLOUR])},
+		{"menuitem_normal",TYPESTRING,&(this->globalMenuItemColours[NORMALCOLOUR])},
+		{"menuitem_prelight",TYPESTRING,&(this->globalMenuItemColours[PRELIGHTCOLOUR])},
+		{"menuitem_active",TYPESTRING,&(this->globalMenuItemColours[ACTIVECOLOUR])},
+		{"menuitem_inactive",TYPESTRING,&(this->globalMenuItemColours[INACTIVECOLOUR])},
+		{"menuitem_font",TYPESTRING,&(this->globalMenuItemFontString)},
+		{"menuitem_font_normal",TYPESTRING,&(this->globalMenuItemFontColourNames[NORMALCOLOUR])},
+		{"menuitem_font_prelight",TYPESTRING,&(this->globalMenuItemFontColourNames[PRELIGHTCOLOUR])},
+		{"menuitem_font_active",TYPESTRING,&(this->globalMenuItemFontColourNames[ACTIVECOLOUR])},
 
 //font
-	{"font",TYPESTRING,&(this->gFontString)},
-	{"font_normal",TYPESTRING,&(this->gFontColourNames[NORMALCOLOUR])},
-	{"font_prelight",TYPESTRING,&(this->gFontColourNames[PRELIGHTCOLOUR])},
-	{"font_active",TYPESTRING,&(this->gFontColourNames[ACTIVECOLOUR])},
+		{"font",TYPESTRING,&(this->globalFontString)},
+		{"font_normal",TYPESTRING,&(this->globalFontColourNames[NORMALCOLOUR])},
+		{"font_prelight",TYPESTRING,&(this->globalFontColourNames[PRELIGHTCOLOUR])},
+		{"font_active",TYPESTRING,&(this->globalFontColourNames[ACTIVECOLOUR])},
 
 //window manager
-	{"theme",TYPESTRING,&(this->gThemePath)},
+		{"theme",TYPESTRING,&(this->globalThemePath)},
 
-	{NULL,0,NULL}
-};
+		{NULL,0,NULL},
+	};
 
-}
+	lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
+	memcpy(lfsToolKitGlobals,myargs,sizeof(myargs));
 
-const char *LFSTK_lib::LFSTK_getThemeName(void)
-{
-	return(this->gThemePath);
+	for(int j=0;j<MAXCOLOURS;j++)
+		{
+			this->globalWindowColours[j]=NULL;
+			this->globalButtonColours[j]=NULL;
+			this->globalMenuItemColours[j]=NULL;
+			this->globalMenuItemFontColourNames[j]=NULL;
+		}
+
+	for(int j=0;j<MAXFONTCOLS;j++)
+		this->globalFontColourNames[j]=NULL;
+
+	this->globalFontString=NULL;
+	this->globalMenuItemFontString=NULL;
+	this->globalThemePath=NULL;
 }
 
 bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,args* dataptr)
@@ -103,7 +115,7 @@ bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,args* dataptr)
 											if(*(char**)(dataptr[cnt].data)!=NULL)
 												free(*(char**)(dataptr[cnt].data));
 											sscanf(buffer,"%*s %m[^\n]s",(char**)dataptr[cnt].data);
-										break;
+											break;
 										case TYPEBOOL:
 											*(bool*)dataptr[cnt].data=(bool)atoi(strarg);
 											break;

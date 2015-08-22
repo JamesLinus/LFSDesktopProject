@@ -211,7 +211,7 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 }
 
 /**
-* Set clour from name.
+* Set colour from name.
 * \param name.
 * \return Pixel value.
 */

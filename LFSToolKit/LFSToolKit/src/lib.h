@@ -24,14 +24,14 @@
 #include <X11/Xlib.h>
 #include "LFSTKWindow.h"
 
-enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
-
-struct args
-{
-	const char*		name;
-	int				type;
-	void*			data;
-};
+//enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+//
+//struct args
+//{
+//	const char*		name;
+//	int				type;
+//	void*			data;
+//};
 
 extern args			lfsToolKitGlobals[];
 extern colourStruct	globalWindowColours[MAXCOLOURS];
@@ -50,7 +50,7 @@ bool				gadgetEvent(void *self,XEvent *e,int type);
 fontStruct			*ftload(Display *disp,int scr,const char *name);
 int					ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s);
 void				drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s);
-bool 				loadVarsFromFile(const char* filepath,args* dataptr);
+//bool 				loadVarsFromFile(const char* filepath,args* dataptr);
 int					getTextwidth(Display* disp,XftFont *font,const char *s);
 
 #endif

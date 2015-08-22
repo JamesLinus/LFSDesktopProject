@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include "LFSTKWindow.h"
+#include "LFSTKLib.h"
 #include "lib.h"
 
 #define _NET_WM_STATE_REMOVE	0
@@ -51,14 +52,23 @@ struct Hints
  */
 void LFSTK_windowClass::initWindow(void)
 {
+	char	*env;
+
 	this->fontColourNames[FONTNORMALCOL]=strdup("white");
 	this->fontColourNames[FONTHILITECOL]=strdup("black");
 	this->fontColourNames[FONTACTIVECOL]=strdup("white");
 
-	this->colourNames[NORMALCOLOUR].name=strdup("grey50");
-	this->colourNames[PRELIGHTCOLOUR].name=strdup("grey80");
-	this->colourNames[ACTIVECOLOUR].name=strdup("grey40");
-	this->colourNames[INACTIVECOLOUR].name=strdup("grey90");
+	this->windowColourNames[NORMALCOLOUR].name=strdup("grey50");
+	this->windowColourNames[PRELIGHTCOLOUR].name=strdup("grey80");
+	this->windowColourNames[ACTIVECOLOUR].name=strdup("grey40");
+	this->windowColourNames[INACTIVECOLOUR].name=strdup("grey90");
+
+	this->globalLib=new LFSTK_lib;
+
+	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+	this->globalLib->LFSTK_loadVarsFromFile(env,globalLib->lfsToolKitGlobals);
+	free(env);
+	this->loadGlobalColours();
 }
 
 LFSTK_windowClass::~LFSTK_windowClass()
@@ -71,11 +81,13 @@ LFSTK_windowClass::~LFSTK_windowClass()
 			free(this->fontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		if(this->colourNames[j].name!=NULL)
-			free(this->colourNames[j].name);
+		if(this->windowColourNames[j].name!=NULL)
+			free(this->windowColourNames[j].name);
 
 	if(this->windowName!=NULL)
 		free(this->windowName);
+
+	delete this->globalLib;
 
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
@@ -88,31 +100,15 @@ LFSTK_windowClass::LFSTK_windowClass()
 	this->initWindow();
 }
 
-/**
-* Load global options.
-* \param path Path to prefs file.
-*/
-void LFSTK_windowClass::LFSTK_loadGlobalColours(const char *path)
+void LFSTK_windowClass::loadGlobalColours(void)
 {
-	loadVarsFromFile(path,lfsToolKitGlobals);
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,globalWindowColours[j].name);
-	this->LFSTK_setFontString(gFontString);
+		this->LFSTK_setWindowColourName(j,globalLib->globalWindowColours[j]);
 
+	this->LFSTK_setFontString(globalLib->globalFontString);
 	for(int j=0;j<MAXFONTCOLS;j++)
-		this->LFSTK_setFontColourName(j,gFontColourNames[j]);
-	globalColoursSet=true;
+		this->LFSTK_setFontColourName(j,globalLib->globalFontColourNames[j]);
 }
-
-/**
-* Get path to current theme.
-* \return const char* Path.
-*/
-const char* LFSTK_windowClass::LFSTK_getThemePath(void)
-{
-	return(gThemePath);
-}
-
 
 /**
 * Set colour from name.
@@ -131,9 +127,9 @@ void LFSTK_windowClass::LFSTK_clearWindow(void)
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+		XSetForeground(this->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
 	else
-		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
+		XSetForeground(this->display,this->gc,this->windowColourNames[INACTIVECOLOUR].pixel);
 		
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 }
@@ -238,6 +234,8 @@ geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 */
 void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 {
+	if(this->fontColourNames[p]!=NULL)
+		free(this->fontColourNames[p]);
 	this->fontColourNames[p]=strdup(colour);
 }
 
@@ -247,14 +245,48 @@ void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 * \param colour Colour name.
 * \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
 */
-void LFSTK_windowClass::LFSTK_setColourName(int p,const char* colour)
+void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 {
 	XColor tc,sc;
 
-	this->colourNames[p].name=strdup(colour);
+	if(this->windowColourNames[p].name!=NULL)
+		free(this->windowColourNames[p].name);
+	this->windowColourNames[p].name=strdup(colour);
 	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->colourNames[p].pixel=sc.pixel;
+	this->windowColourNames[p].pixel=sc.pixel;
 }
+
+#if 0
+/**
+* Set the colours for buttons.
+* \param p Button state.
+* \param colour Colour name.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+*/
+void LFSTK_windowClass::LFSTK_setButtonColourName(int p,const char* colour)
+{
+	XColor tc,sc;
+
+	this->buttonColourNames[p].name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->buttonColourNames[p].pixel=sc.pixel;
+}
+
+/**
+* Set the colour for menu items.
+* \param p Menu Item state.
+* \param colour Colour name.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+*/
+void LFSTK_windowClass::LFSTK_setMenuItemColourName(int p,const char* colour)
+{
+	XColor tc,sc;
+
+	this->menuItemColourNames[p].name=strdup(colour);
+	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
+	this->menuItemColourNames[p].pixel=sc.pixel;
+}
+#endif
 
 /**
 * Set window sticky.

@@ -62,21 +62,21 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
 		void drawLabel(int p);
 
-		void LFSTK_setMenuItemColours(int p,char* colour);
-		void LFSTK_setColoursFromGlobals(void);
+//		void LFSTK_setMenuItemColours(int p,char* colour);
+//		void LFSTK_setColoursFromGlobals(void);
 
 	private:
 		void initMenuButton(void);
 		menuItemStruct		*menus;
-		void LFSTK_setMenuItemFontString(char *s);
-		void LFSTK_setMenuItemsFontColourName(int p,char* colour);
+//		void LFSTK_setMenuItemFontString(char *s);
+//		void LFSTK_setMenuItemsFontColourName(int p,char* colour);
 		
 		int					menuCount;
 
-		colourStruct		menuItemColours[MAXCOLOURS];
-		char				*menuItemFontColourNames[MAXFONTCOLS];
-		char				*menuItemFontString;
-		fontStruct			*menuItemfont;
+//		colourStruct		menuItemColours[MAXCOLOURS];
+//		char				*menuItemFontColourNames[MAXFONTCOLS];
+//		char				*menuItemFontString;
+//		fontStruct			*menuItemfont;
 };
 
 #endif
