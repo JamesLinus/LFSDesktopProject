@@ -244,7 +244,6 @@ int main(int argc, char **argv)
 	terminalCommand=argv[1];
 	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
 	wc->LFSTK_setDecorated(true);
-	wc->LFSTK_loadGlobalColours(lfstkFile);
 
 	sx=0;
 	sy=0;
@@ -276,7 +275,6 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
-					bc[menucount]->LFSTK_setColoursFromGlobals();
 
 					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
 					sy+=addto;

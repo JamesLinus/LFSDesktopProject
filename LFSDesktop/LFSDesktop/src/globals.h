@@ -28,17 +28,11 @@
 #define RESERVED 2
 #define MAXBUFFER 512
 
-enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+#include <LFSTKGlobals.h>
+
 enum {CACHEFOLDER,DISKFOLDER};
 enum {HOMEDATA=0,ROOTDATA};
 enum {BUTTONMOUNT=1,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREMOVEICON};
-
-struct args
-{
-	const char*	name;
-	int			type;
-	void*		data;
-};
 
 struct deskIcons
 {

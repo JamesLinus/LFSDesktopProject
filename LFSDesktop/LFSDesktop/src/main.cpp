@@ -149,7 +149,6 @@ void doCustomIcon(bool useicon)
 	if(useicon==true)
 		{
 			mainwind=new LFSTK_windowClass(0,0,width,hite,"Enter Path To Icon",false);
-			mainwind->LFSTK_loadGlobalColours(tkConfigPath);
 
 			le=new LFSTK_lineEditClass(mainwind,"",0,0,width,24,NorthWestGravity);
 			XMapWindow(mainwind->display,le->LFSTK_getWindow());
@@ -310,7 +309,6 @@ void doPopUp(int x,int y)
 		return;
 
 	wc=new LFSTK_windowClass(sx,sy,64,400,"appmenu",true);
-	wc->LFSTK_loadGlobalColours(tkConfigPath);
 
 	sx=0;
 	sy=0;
