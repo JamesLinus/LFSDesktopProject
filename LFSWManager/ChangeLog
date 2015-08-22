@@ -1,3 +1,7 @@
+0.0.14
+Code clean.
+Updated for new tool kit.
+
 0.0.13
 Command line can overide ( some ) theme settings.
 Added -k option to prevent reading of options from ~/.config/LFS/lfstoolkit.rc.

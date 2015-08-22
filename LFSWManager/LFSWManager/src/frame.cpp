@@ -777,12 +777,7 @@ void fupdate(struct frame *f)
 				}
 		}
 
-	Bool hasfocus=chasfocus(f->client);
-
-//	if(hasfocus)
-		f->background=&activeGC;
-//	else
-//		f->background=&activeGC;
+	f->background=&activeGC;
 
 	f->namewidth=namewidth(font,f->client);
 
