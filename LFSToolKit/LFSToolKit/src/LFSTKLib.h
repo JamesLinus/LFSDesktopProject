@@ -25,16 +25,6 @@
 
 #define MAXVARS 100
 
-//enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
-//
-//struct args
-//{
-//	const char*		name;
-//	int				type;
-//	void*			data;
-//};
-
-
 /**
  *
  * \brief Library class for LFSToolKit.

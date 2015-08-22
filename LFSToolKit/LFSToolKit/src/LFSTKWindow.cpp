@@ -256,38 +256,6 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 	this->windowColourNames[p].pixel=sc.pixel;
 }
 
-#if 0
-/**
-* Set the colours for buttons.
-* \param p Button state.
-* \param colour Colour name.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
-*/
-void LFSTK_windowClass::LFSTK_setButtonColourName(int p,const char* colour)
-{
-	XColor tc,sc;
-
-	this->buttonColourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->buttonColourNames[p].pixel=sc.pixel;
-}
-
-/**
-* Set the colour for menu items.
-* \param p Menu Item state.
-* \param colour Colour name.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
-*/
-void LFSTK_windowClass::LFSTK_setMenuItemColourName(int p,const char* colour)
-{
-	XColor tc,sc;
-
-	this->menuItemColourNames[p].name=strdup(colour);
-	XAllocNamedColor(this->display,this->cm,colour,&sc,&tc);
-	this->menuItemColourNames[p].pixel=sc.pixel;
-}
-#endif
-
 /**
 * Set window sticky.
 * \param set.

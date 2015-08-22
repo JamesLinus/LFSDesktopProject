@@ -58,11 +58,8 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		bool mouseUp(XButtonEvent *e);
 
 		virtual void drawLabel(int p);
-		virtual void LFSTK_setColoursFromGlobals(void);
 
 	protected:
-		unsigned long setColour(const char *name);
-
 		int					style;
 		int					labelOrientation;
 };

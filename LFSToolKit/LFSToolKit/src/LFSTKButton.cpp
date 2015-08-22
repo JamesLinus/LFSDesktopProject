@@ -51,20 +51,6 @@ void LFSTK_buttonClass::drawLabel(int p)
 		}
 }
 
-/**
-* Set colours from global colours if loaded.
-*/
-void LFSTK_buttonClass::LFSTK_setColoursFromGlobals(void)
-{
-	if(globalColoursSet==true)
-		{
-			for(int j=0;j<MAXCOLOURS;j++)
-				this->LFSTK_setColourName(j,globalButtonColours[j].name);
-			for(int j=0;j<MAXFONTCOLS;j++)
-				this->LFSTK_setFontColourName(j,gFontColourNames[j]);
-		}
-}
-
 void LFSTK_buttonClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
@@ -208,18 +194,6 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 	this->inWindow=true;
 	this->drawLabel(FONTHILITECOL);
 	return(true);
-}
-
-/**
-* Set colour from name.
-* \param name.
-* \return Pixel value.
-*/
-unsigned long LFSTK_buttonClass::setColour(const char *name)
-{
-	XColor tc,sc;
-	XAllocNamedColor(this->display,this->cm,name,&sc,&tc);
-	return sc.pixel;
 }
 
 /**
