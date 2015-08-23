@@ -36,7 +36,7 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 /**
 * Draw label.
 * \param p Button state.
-* \note State FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
 */
 void LFSTK_buttonClass::drawLabel(int p)
 {
@@ -71,7 +71,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
-	this->drawLabel(FONTNORMALCOL);
+	this->drawLabel(NORMALCOLOUR);
 }
 
 /**
@@ -103,7 +103,7 @@ bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
 
-	this->drawLabel(FONTACTIVECOL);
+	this->drawLabel(ACTIVECOLOUR);
 
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
@@ -192,7 +192,7 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->inWindow=true;
-	this->drawLabel(FONTHILITECOL);
+	this->drawLabel(PRELIGHTCOLOUR);
 	return(true);
 }
 

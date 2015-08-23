@@ -1,4 +1,7 @@
 0.0.7
+Minor revision bump.
+Made global names in lib class private.
+Added default colour/font names.
 Added set/get active to window class.
 Fixed is Active not being set on window class constructor.
 Removed redundant init routines.

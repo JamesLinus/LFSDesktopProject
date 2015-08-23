@@ -50,7 +50,7 @@ class LFSTK_windowClass
 		void LFSTK_setListener(Window w,listener *l);
 		listener *LFSTK_getListener(Window w);
 
-		void LFSTK_setFontString(char *s);
+		void LFSTK_setFontString(const char *s);
 		void LFSTK_setFontColourName(int p,const char *colour);
 		void LFSTK_setWindowColourName(int p,const char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
@@ -72,7 +72,7 @@ class LFSTK_windowClass
 		XftDraw 		*draw;
 
 		char			*fontString;
-		char			*fontColourNames[MAXFONTCOLS];
+		char			*fontColourNames[MAXCOLOURS];
 		colourStruct	windowColourNames[MAXCOLOURS];
 
 		LFSTK_lib		*globalLib;

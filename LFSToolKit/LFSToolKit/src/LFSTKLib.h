@@ -23,7 +23,8 @@
 
 #include "LFSTKGlobals.h"
 
-#define MAXVARS 100
+#define	MAXVARS 100
+enum	{TYPEWINDOW=0,TYPEBUTTON,TYPEMENUITEM,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT,TYPETHEME};
 
 /**
  *
@@ -38,18 +39,21 @@ class LFSTK_lib
 		LFSTK_lib();
 		~LFSTK_lib();
 		bool LFSTK_loadVarsFromFile(const char* filepath,args* dataptr);
+		const char *LFSTK_getGlobalString(int state,int type);
 
+		bool			globalColoursSet;
+		args			*lfsToolKitGlobals;
+
+
+	private:
 		char			*globalWindowColours[MAXCOLOURS];
 		char			*globalButtonColours[MAXCOLOURS];
 		char			*globalMenuItemColours[MAXCOLOURS];
 
 		char			*globalFontString;
-		char			*globalFontColourNames[MAXFONTCOLS];
+		char			*globalFontColourNames[MAXCOLOURS];
 		char			*globalMenuItemFontString;
 		char			*globalMenuItemFontColourNames[MAXCOLOURS];
 		char			*globalThemePath;
-
-		bool			globalColoursSet;
-		args			*lfsToolKitGlobals;
 };
 #endif

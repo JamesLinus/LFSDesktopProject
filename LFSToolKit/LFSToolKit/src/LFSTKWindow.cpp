@@ -54,9 +54,10 @@ void LFSTK_windowClass::initWindow(void)
 {
 	char	*env;
 
-	this->fontColourNames[FONTNORMALCOL]=strdup("white");
-	this->fontColourNames[FONTHILITECOL]=strdup("black");
-	this->fontColourNames[FONTACTIVECOL]=strdup("white");
+	this->fontColourNames[NORMALCOLOUR]=strdup("white");
+	this->fontColourNames[PRELIGHTCOLOUR]=strdup("black");
+	this->fontColourNames[ACTIVECOLOUR]=strdup("white");
+	this->fontColourNames[INACTIVECOLOUR]=strdup("grey80");
 
 	this->windowColourNames[NORMALCOLOUR].name=strdup("grey50");
 	this->windowColourNames[PRELIGHTCOLOUR].name=strdup("grey80");
@@ -76,7 +77,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 	if(this->fontString!=NULL)
 		free(this->fontString);
 
-	for(int j=0;j<MAXFONTCOLS;j++)
+	for(int j=0;j<MAXCOLOURS;j++)
 		if(this->fontColourNames[j]!=NULL)
 			free(this->fontColourNames[j]);
 
@@ -103,11 +104,14 @@ LFSTK_windowClass::LFSTK_windowClass()
 void LFSTK_windowClass::loadGlobalColours(void)
 {
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setWindowColourName(j,globalLib->globalWindowColours[j]);
+//		this->LFSTK_setWindowColourName(j,this->globalLib->globalWindowColours[j]);
+		this->LFSTK_setWindowColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEWINDOW));
 
-	this->LFSTK_setFontString(globalLib->globalFontString);
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->LFSTK_setFontColourName(j,globalLib->globalFontColourNames[j]);
+//	this->LFSTK_setFontString(this->globalLib->globalFontString);
+	this->LFSTK_setFontString(this->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
+	for(int j=0;j<MAXCOLOURS;j++)
+//		this->LFSTK_setFontColourName(j,this->globalLib->globalFontColourNames[j]);
+		this->LFSTK_setFontColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
 }
 
 /**
@@ -178,7 +182,7 @@ listener* LFSTK_windowClass::LFSTK_getListener(Window w)
 * \note eg:
 * \note "sans-serif:size=8".
 */
-void LFSTK_windowClass::LFSTK_setFontString(char *s)
+void LFSTK_windowClass::LFSTK_setFontString(const char *s)
 {
 	if(this->fontString!=NULL)
 		free(this->fontString);
@@ -230,7 +234,7 @@ geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 * Set the colour name for font.
 * \param p Font state.
 * \param colour Colour name.
-* \note state is FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
 */
 void LFSTK_windowClass::LFSTK_setFontColourName(int p,const char *colour)
 {

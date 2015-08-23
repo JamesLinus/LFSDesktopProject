@@ -42,7 +42,7 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 * Set the colour name for font.
 * \param p Font state.
 * \param colour Colour name.
-* \note state is FONTNORMALCOL=0,FONTHILITECOL=1,FONTACTIVECOL=2.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
 */
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,char* colour)
 {
@@ -102,7 +102,7 @@ const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
 
 void LFSTK_gadgetClass::initGadget(void)
 {
-	for(int j=0;j<MAXFONTCOLS;j++)
+	for(int j=0;j<MAXCOLOURS;j++)
 		this->fontColourNames[j]=NULL;
 
 	for(int j=0;j<MAXCOLOURS;j++)
@@ -110,13 +110,17 @@ void LFSTK_gadgetClass::initGadget(void)
 
 	this->fontString=NULL;
 
-	for(int j=0;j<MAXFONTCOLS;j++)
-		this->fontColourNames[j]=strdup(this->wc->fontColourNames[j]);
+	for(int j=0;j<MAXCOLOURS;j++)
+//		this->fontColourNames[j]=strdup(this->wc->globalLib->globalFontColourNames[j]);
+		this->fontColourNames[j]=strdup(this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+//		globalFontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->globalLib->globalButtonColours[j]);
+//		this->LFSTK_setColourName(j,this->wc->globalLib->globalButtonColours[j]);
+		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 
-	this->LFSTK_setFontString(wc->fontString);
+	//this->LFSTK_setFontString(this->wc->globalLib->globalFontString);
+	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->LFSTK_setActive(true);
 }
 

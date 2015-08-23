@@ -25,9 +25,77 @@
 
 #include "LFSTKLib.h"
 
+enum {DEFNORMAL,DEFPRELIE,DEFACTIVE,DEFINACTIVE,DEFFONTNORMAL,DEFFONTPRELIE,DEFFONTACTIVE,DEFFONTINACTIVE};
+
+const char *defaultColourStrings[]={"grey50","grey80","grey40","grey90"};
+const char *defaultFontColourStrings[]={"white","black","white","grey80"};
+const char *defaultFontString="sans-serif:size=10";
+const char *defaultThemePath="/usr/share/themes/Crux/xfwm4";
+
 LFSTK_lib::~LFSTK_lib()
 {
 	free(lfsToolKitGlobals);
+}
+
+/**
+* Gets a global string or the default.
+*
+* \param state Gadget state.
+* \param type Type of string to get.
+* \return const char* String.
+* \note Don't free return value.
+* \note If global string not loaded return default.
+*/
+const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
+{
+	const char	*ptr=NULL;
+	
+	switch(type)
+		{
+			case TYPEWINDOW:
+				ptr=this->globalWindowColours[state];
+				if(ptr==NULL)
+					ptr=defaultColourStrings[state];
+				break;
+			case TYPEBUTTON:
+				ptr=this->globalButtonColours[state];
+				if(ptr==NULL)
+					ptr=defaultColourStrings[state];
+				break;
+			case TYPEMENUITEM:
+				ptr=this->globalMenuItemColours[state];
+				if(ptr==NULL)
+					ptr=defaultColourStrings[state];
+				break;
+			case TYPEFONTCOLOUR:
+				ptr=this->globalFontColourNames[state];
+				if(ptr==NULL)
+					ptr=defaultFontColourStrings[state];
+				break;
+			case TYPEMENUITEMFONTCOLOUR:
+				ptr=this->globalMenuItemFontColourNames[state];
+				if(ptr==NULL)
+					ptr=defaultFontColourStrings[state];
+				break;
+			case TYPEMENUITEMFONT:
+				ptr=this->globalMenuItemFontString;
+				if(ptr==NULL)
+					ptr=defaultFontString;			
+				break;
+			case TYPEFONT:
+				ptr=this->globalFontString;
+				if(ptr==NULL)
+					ptr=defaultFontString;
+				break;
+			case TYPETHEME:
+				ptr=this->globalThemePath;
+				if(ptr==NULL)
+					ptr=defaultThemePath;
+				break;
+		}
+
+	if(ptr!=NULL)
+		return(ptr);
 }
 
 LFSTK_lib::LFSTK_lib()
@@ -53,12 +121,14 @@ LFSTK_lib::LFSTK_lib()
 		{"menuitem_font_normal",TYPESTRING,&(this->globalMenuItemFontColourNames[NORMALCOLOUR])},
 		{"menuitem_font_prelight",TYPESTRING,&(this->globalMenuItemFontColourNames[PRELIGHTCOLOUR])},
 		{"menuitem_font_active",TYPESTRING,&(this->globalMenuItemFontColourNames[ACTIVECOLOUR])},
+		{"menuitem_font_inactive",TYPESTRING,&(this->globalMenuItemFontColourNames[INACTIVECOLOUR])},
 
 //font
 		{"font",TYPESTRING,&(this->globalFontString)},
 		{"font_normal",TYPESTRING,&(this->globalFontColourNames[NORMALCOLOUR])},
 		{"font_prelight",TYPESTRING,&(this->globalFontColourNames[PRELIGHTCOLOUR])},
 		{"font_active",TYPESTRING,&(this->globalFontColourNames[ACTIVECOLOUR])},
+		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
 
 //window manager
 		{"theme",TYPESTRING,&(this->globalThemePath)},
@@ -77,7 +147,7 @@ LFSTK_lib::LFSTK_lib()
 			this->globalMenuItemFontColourNames[j]=NULL;
 		}
 
-	for(int j=0;j<MAXFONTCOLS;j++)
+	for(int j=0;j<MAXCOLOURS;j++)
 		this->globalFontColourNames[j]=NULL;
 
 	this->globalFontString=NULL;
@@ -85,6 +155,17 @@ LFSTK_lib::LFSTK_lib()
 	this->globalThemePath=NULL;
 }
 
+/**
+* Load variables from prefs file.
+*
+* \param filepath Path to prefs file.
+* \param args Argument list..
+* \return bool Success.
+* \note args is an array of the form:
+* \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
+* \note eg:
+* \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
+*/
 bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,args* dataptr)
 {
 	FILE*	fd=NULL;
