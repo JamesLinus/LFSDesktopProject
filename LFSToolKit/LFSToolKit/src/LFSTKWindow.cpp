@@ -104,13 +104,10 @@ LFSTK_windowClass::LFSTK_windowClass()
 void LFSTK_windowClass::loadGlobalColours(void)
 {
 	for(int j=0;j<MAXCOLOURS;j++)
-//		this->LFSTK_setWindowColourName(j,this->globalLib->globalWindowColours[j]);
 		this->LFSTK_setWindowColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEWINDOW));
 
-//	this->LFSTK_setFontString(this->globalLib->globalFontString);
 	this->LFSTK_setFontString(this->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	for(int j=0;j<MAXCOLOURS;j++)
-//		this->LFSTK_setFontColourName(j,this->globalLib->globalFontColourNames[j]);
 		this->LFSTK_setFontColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
 }
 

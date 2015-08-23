@@ -123,9 +123,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	this->drawLabel(ACTIVECOLOUR);
 
-//	tfont=ftload(this->display,this->screen,this->wc->globalLib->globalMenuItemFontString);
 	tfont=ftload(this->display,this->screen,this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT));
-//	globalMenuItemFontString);
 	for(int j=0;j<this->menuCount;j++)
 		{
 			testwid=getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
@@ -140,10 +138,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	sy=0;
 
 	for(int j=0;j<MAXCOLOURS;j++)
-//		subwc->LFSTK_setFontColourName(j,subwc->globalLib->globalMenuItemFontColourNames[j]);
 		subwc->LFSTK_setFontColourName(j,subwc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
-		//globalMenuItemFontColourNames[j]);
-//	subwc->LFSTK_setFontString(subwc->globalLib->globalMenuItemFontString);
 	subwc->LFSTK_setFontString(subwc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT));
 
 	for(int j=0;j<this->menuCount;j++)
@@ -154,7 +149,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
 			for(int j=0;j<MAXCOLOURS;j++)
-//				bc->LFSTK_setColourName(j,subwc->globalLib->globalMenuItemColours[j]);
 				bc->LFSTK_setColourName(j,subwc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
 
 			sy+=addto;

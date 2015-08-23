@@ -111,15 +111,11 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->fontString=NULL;
 
 	for(int j=0;j<MAXCOLOURS;j++)
-//		this->fontColourNames[j]=strdup(this->wc->globalLib->globalFontColourNames[j]);
 		this->fontColourNames[j]=strdup(this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
-//		globalFontColourNames[j]);
 
 	for(int j=0;j<MAXCOLOURS;j++)
-//		this->LFSTK_setColourName(j,this->wc->globalLib->globalButtonColours[j]);
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 
-	//this->LFSTK_setFontString(this->wc->globalLib->globalFontString);
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->LFSTK_setActive(true);
 }

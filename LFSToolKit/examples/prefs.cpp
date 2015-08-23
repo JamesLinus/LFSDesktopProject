@@ -104,9 +104,7 @@ int main(int argc, char **argv)
 	sx=col2;
 	sy=10;
 	bc[MENUNORM]=new LFSTK_buttonClass(wc,"Menu Normal",sx,sy,bwidth,24,NorthWestGravity);
-//	bc[MENUNORM]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->globalMenuItemColours[NORMALCOLOUR]);
 	bc[MENUNORM]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEM));
-//	globalMenuItemColours[NORMALCOLOUR]);
 	static_cast<LFSTK_buttonClass*>(bc[MENUNORM])->LFSTK_setStyle(FLATBUTTON);
 
 	sx+=spacing;
@@ -116,7 +114,6 @@ int main(int argc, char **argv)
 	sx=col2;
 	sy+=vspacing;
 	bc[MENUPRELITE]=new LFSTK_buttonClass(wc,"Menu Prelight",sx,sy,bwidth,24,NorthWestGravity);
-//	bc[MENUPRELITE]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->globalMenuItemColours[PRELIGHTCOLOUR]);
 	bc[MENUPRELITE]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(PRELIGHTCOLOUR,TYPEMENUITEM));
 	static_cast<LFSTK_buttonClass*>(bc[MENUPRELITE])->LFSTK_setStyle(FLATBUTTON);
 
@@ -127,7 +124,6 @@ int main(int argc, char **argv)
 	sx=col2;
 	sy+=vspacing;
 	bc[MENUACTIVE]=new LFSTK_buttonClass(wc,"Menu Active",sx,sy,bwidth,24,NorthWestGravity);
-//	bc[MENUACTIVE]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->globalMenuItemColours[ACTIVECOLOUR]);
 	bc[MENUACTIVE]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(ACTIVECOLOUR,TYPEMENUITEM));
 	static_cast<LFSTK_buttonClass*>(bc[MENUACTIVE])->LFSTK_setStyle(FLATBUTTON);
 
@@ -138,7 +134,6 @@ int main(int argc, char **argv)
 	sx=col2;
 	sy+=vspacing;
 	bc[MENUINACTIVE]=new LFSTK_buttonClass(wc,"Menu Inactive",sx,sy,bwidth,24,NorthWestGravity);
-//	bc[MENUINACTIVE]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->globalMenuItemColours[INACTIVECOLOUR]);
 	bc[MENUINACTIVE]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEMENUITEM));
 	static_cast<LFSTK_buttonClass*>(bc[MENUINACTIVE])->LFSTK_setStyle(FLATBUTTON);
 
@@ -150,7 +145,6 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 	bc[THEMELABEL]=new LFSTK_buttonClass(wc,"Theme",sx,sy,bwidth,24,NorthWestGravity);
 	bc[THEMELABEL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
-//	bc[THEMELABEL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEM));
 	static_cast<LFSTK_buttonClass*>(bc[THEMELABEL])->LFSTK_setStyle(FLATBUTTON);
 
 	sx+=spacing;
