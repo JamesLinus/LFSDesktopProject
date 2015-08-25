@@ -25,38 +25,6 @@
 
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
-#if 0
-		{"window_normal",TYPESTRING,&(this->globalWindowColours[NORMALCOLOUR])},
-		{"window_prelight",TYPESTRING,&(this->globalWindowColours[PRELIGHTCOLOUR])},
-		{"window_active",TYPESTRING,&(this->globalWindowColours[ACTIVECOLOUR])},
-		{"window_inactive",TYPESTRING,&(this->globalWindowColours[INACTIVECOLOUR])},
-//button
-		{"button_normal",TYPESTRING,&(this->globalButtonColours[NORMALCOLOUR])},
-		{"button_prelight",TYPESTRING,&(this->globalButtonColours[PRELIGHTCOLOUR])},
-		{"button_active",TYPESTRING,&(this->globalButtonColours[ACTIVECOLOUR])},
-		{"button_inactive",TYPESTRING,&(this->globalButtonColours[INACTIVECOLOUR])},
-//menu button
-		{"menuitem_normal",TYPESTRING,&(this->globalMenuItemColours[NORMALCOLOUR])},
-		{"menuitem_prelight",TYPESTRING,&(this->globalMenuItemColours[PRELIGHTCOLOUR])},
-		{"menuitem_active",TYPESTRING,&(this->globalMenuItemColours[ACTIVECOLOUR])},
-		{"menuitem_inactive",TYPESTRING,&(this->globalMenuItemColours[INACTIVECOLOUR])},
-		{"menuitem_font",TYPESTRING,&(this->globalMenuItemFontString)},
-		{"menuitem_font_normal",TYPESTRING,&(this->globalMenuItemFontColourNames[NORMALCOLOUR])},
-		{"menuitem_font_prelight",TYPESTRING,&(this->globalMenuItemFontColourNames[PRELIGHTCOLOUR])},
-		{"menuitem_font_active",TYPESTRING,&(this->globalMenuItemFontColourNames[ACTIVECOLOUR])},
-		{"menuitem_font_inactive",TYPESTRING,&(this->globalMenuItemFontColourNames[INACTIVECOLOUR])},
-
-//font
-		{"font",TYPESTRING,&(this->globalFontString)},
-		{"font_normal",TYPESTRING,&(this->globalFontColourNames[NORMALCOLOUR])},
-		{"font_prelight",TYPESTRING,&(this->globalFontColourNames[PRELIGHTCOLOUR])},
-		{"font_active",TYPESTRING,&(this->globalFontColourNames[ACTIVECOLOUR])},
-		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
-
-//window manager
-		{"theme",TYPESTRING,&(this->globalThemePath)},
-#endif
-
 
 /**
  *

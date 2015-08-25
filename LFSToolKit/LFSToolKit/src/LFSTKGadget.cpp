@@ -99,7 +99,7 @@ const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
 {
 	return(this->colourNames[p].name);
 }
-
+//needs re vamping
 void LFSTK_gadgetClass::initGadget(void)
 {
 	for(int j=0;j<MAXCOLOURS;j++)

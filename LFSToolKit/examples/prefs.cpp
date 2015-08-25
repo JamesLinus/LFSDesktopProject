@@ -18,7 +18,8 @@ exit $retval
 #include "LFSTKLineEdit.h"
 #include "LFSTKLib.h"
 
-enum {EXIT=0,APPLY,THEMELABEL,THEMEBOX,BNORMAL,ENORMAL,BPRELIGHT,EPRELIGHT,BACTIVE,EACTIVE,BINACTIVE,EINACTIVE,MENUNORM,EMENUNORM,MENUPRELITE,EMENUPRELITE,MENUACTIVE,EMENUACTIVE,MENUINACTIVE,EMENUINACTIVE,NOMORE};//,FONTNORMCOL,EFONTNORMCOL,FONTPRELIRECOL,EFONTPRELITECOL,FONTACTIVECOL,EFONTACTIVECOL,FONTINACTIVECOL,EFONTINACTIVECOL,NOMORE};
+enum {EXIT=0,APPLY,THEMELABEL,THEMEBOX,BNORMAL,ENORMAL,BPRELIGHT,EPRELIGHT,BACTIVE,EACTIVE,BINACTIVE,EINACTIVE,MENUNORM,EMENUNORM,MENUPRELITE,EMENUPRELITE,MENUACTIVE,EMENUACTIVE,MENUINACTIVE,EMENUINACTIVE,WNORMAL,EWNORMAL,NOMORE};
+//,FONTNORMCOL,EFONTNORMCOL,FONTPRELIRECOL,EFONTPRELITECOL,FONTACTIVECOL,EFONTACTIVECOL,FONTINACTIVECOL,EFONTINACTIVECOL,NOMORE};
 
 bool					mainloop=false;
 LFSTK_windowClass		*wc;
@@ -36,6 +37,11 @@ bool callback(void *p,void* ud)
 	switch((long)ud)
 		{
 			case APPLY:
+				wc->LFSTK_setWindowColourName(NORMALCOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
+				wc->LFSTK_clearWindow();
+				bc[THEMELABEL]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
+				bc[THEMELABEL]->LFSTK_clearWindow();
+
 				for(int j=BNORMAL;j<NOMORE;j+=2)
 					bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[j+1])->LFSTK_getBuffer()->c_str()));
 
@@ -140,6 +146,16 @@ int main(int argc, char **argv)
 	sx+=spacing;
 	bc[EMENUINACTIVE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEMENUITEM),sx,sy-1,bwidth,24,NorthWestGravity);
 	bc[EMENUINACTIVE]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EMENUINACTIVE])->LFSTK_getBuffer()->c_str()));
+
+
+	sx=col3;
+	bc[WNORMAL]=new LFSTK_buttonClass(wc,"Window",sx,sy,bwidth,24,NorthWestGravity);
+	bc[WNORMAL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
+	static_cast<LFSTK_buttonClass*>(bc[WNORMAL])->LFSTK_setStyle(FLATBUTTON);
+
+	sx+=spacing;
+	bc[EWNORMAL]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),sx,sy-1,bwidth,24,NorthWestGravity);
+	bc[EWNORMAL]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
 
 	sx=col1;
 	sy+=vspacing;

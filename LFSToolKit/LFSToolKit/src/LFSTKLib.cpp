@@ -31,6 +31,7 @@ const char *defaultColourStrings[]={"grey50","grey80","grey40","grey90"};
 const char *defaultFontColourStrings[]={"white","black","white","grey80"};
 const char *defaultFontString="sans-serif:size=10";
 const char *defaultThemePath="/usr/share/themes/Crux/xfwm4";
+const char *defaultFrameStrings[]={"black","#00ffff","black","white","white"};
 
 LFSTK_lib::~LFSTK_lib()
 {
@@ -92,14 +93,21 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				if(ptr==NULL)
 					ptr=defaultThemePath;
 				break;
+			case TYPEWMFRAME:
+				ptr=this->globalFrameColours[state];
+				if(ptr==NULL)
+					ptr=defaultFrameStrings[state];
+				break;
 		}
 
 	if(ptr!=NULL)
 		return(ptr);
 }
 
-LFSTK_lib::LFSTK_lib()
+LFSTK_lib::LFSTK_lib(bool loadvars)
 {
+	char *env=NULL;
+
 	args myargs[]=
 	{
 //window
@@ -131,13 +139,18 @@ LFSTK_lib::LFSTK_lib()
 		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
 
 //window manager
+		{"wmactive_frame",TYPESTRING,&(this->globalFrameColours[ACTIVEFRAME])},
+		{"wmactive_fill",TYPESTRING,&(this->globalFrameColours[ACTIVEFRAMEFILL])},
+		{"wminactive_frame",TYPESTRING,&(this->globalFrameColours[INACTIVEFRAME])},
+		{"wminactive_fill",TYPESTRING,&(this->globalFrameColours[INACTIVEFRAMEFILL])},
+		{"widgetcolour",TYPESTRING,&(this->globalFrameColours[WIDGETCOLOUR])},
 		{"theme",TYPESTRING,&(this->globalThemePath)},
 
 		{NULL,0,NULL},
 	};
 
-	lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
-	memcpy(lfsToolKitGlobals,myargs,sizeof(myargs));
+	this->lfsToolKitGlobals=(args*)calloc(1,sizeof(myargs));
+	memcpy(this->lfsToolKitGlobals,myargs,sizeof(myargs));
 
 	for(int j=0;j<MAXCOLOURS;j++)
 		{
@@ -147,12 +160,22 @@ LFSTK_lib::LFSTK_lib()
 			this->globalMenuItemFontColourNames[j]=NULL;
 		}
 
+	for(int j=0;j<MAXFRAMECOLOURS;j++)
+		this->globalFrameColours[j]=NULL;
+
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->globalFontColourNames[j]=NULL;
 
 	this->globalFontString=NULL;
 	this->globalMenuItemFontString=NULL;
 	this->globalThemePath=NULL;
+
+	if(loadvars==true)
+		{
+			asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+			this->LFSTK_loadVarsFromFile(env,this->lfsToolKitGlobals);
+			free(env);
+		}
 }
 
 /**

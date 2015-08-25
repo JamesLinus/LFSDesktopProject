@@ -50,7 +50,7 @@ struct Hints
  * Set default colours.
  *
  */
-void LFSTK_windowClass::initWindow(void)
+void LFSTK_windowClass::initWindow(bool loadvars)
 {
 	char	*env;
 
@@ -64,11 +64,7 @@ void LFSTK_windowClass::initWindow(void)
 	this->windowColourNames[ACTIVECOLOUR].name=strdup("grey40");
 	this->windowColourNames[INACTIVECOLOUR].name=strdup("grey90");
 
-	this->globalLib=new LFSTK_lib;
-
-	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-	this->globalLib->LFSTK_loadVarsFromFile(env,globalLib->lfsToolKitGlobals);
-	free(env);
+	this->globalLib=new LFSTK_lib(loadvars);
 	this->loadGlobalColours();
 }
 
@@ -98,7 +94,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 
 LFSTK_windowClass::LFSTK_windowClass()
 {
-	this->initWindow();
+	this->initWindow(false);
 }
 
 void LFSTK_windowClass::loadGlobalColours(void)
@@ -337,8 +333,9 @@ bool LFSTK_windowClass::LFSTK_getActive(void)
 * \param h Height.
 * \param name Window name.
 * \param override True=ignore window manager placement.
+* \param loadvars Load default variables from file, default=true.
 */
-LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override)
+LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars)
 {
 	XSetWindowAttributes	wa;
 	Atom					wm_delete_window;
@@ -391,7 +388,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->LFSTK_setFontString((char*)DEFAULTFONT);
 
 	this->LFSTK_setDecorated(true);
-	this->initWindow();
+	this->initWindow(loadvars);
 }
 
 

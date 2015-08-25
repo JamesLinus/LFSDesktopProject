@@ -98,6 +98,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	int					addto;
 	int					sy;
 	fontStruct			*tfont;
+	const char			*itemfont;
 
 	if(this->isActive==false)
 		{
@@ -123,7 +124,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	this->drawLabel(ACTIVECOLOUR);
 
-	tfont=ftload(this->display,this->screen,this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT));
+	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+	tfont=ftload(this->display,this->screen,itemfont);
 	for(int j=0;j<this->menuCount;j++)
 		{
 			testwid=getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
@@ -134,12 +136,12 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	addto=tfont->ascent+tfont->descent+8;
 	maxwid+=4;
 	g=this->wc->LFSTK_getGeom();
-	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true);
+	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true,false);
 	sy=0;
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		subwc->LFSTK_setFontColourName(j,subwc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
-	subwc->LFSTK_setFontString(subwc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT));
+		subwc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
+	subwc->LFSTK_setFontString(itemfont);
 
 	for(int j=0;j<this->menuCount;j++)
 		{
@@ -148,8 +150,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			bc->LFSTK_setLabelOriention(LEFT);
 			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
 			bc->LFSTK_setStyle(FLATBUTTON);
+			bc->LFSTK_setFontString(itemfont);
 			for(int j=0;j<MAXCOLOURS;j++)
-				bc->LFSTK_setColourName(j,subwc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
+				bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
 
 			sy+=addto;
 		}
