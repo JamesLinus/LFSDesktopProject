@@ -44,7 +44,7 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 * \param colour Colour name.
 * \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
 */
-void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,char* colour)
+void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour)
 {
 	this->fontColourNames[p]=strdup(colour);
 }

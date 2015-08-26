@@ -57,7 +57,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setColourName(int p,const char* colour);
 		const char* LFSTK_getColourName(int p);
 		void LFSTK_setFontString(const char *s);
-		void LFSTK_setFontColourName(int p,char* colour);
+		void LFSTK_setFontColourName(int p,const char* colour);
 		Window LFSTK_getWindow(void);
 
 		void LFSTK_setActive(bool active);
