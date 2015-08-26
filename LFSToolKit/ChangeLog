@@ -1,4 +1,5 @@
 0.0.7
+Fixe not getting font colours from loaded vars.
 Added load vars from default rc file when creating window, defaults true.
 Minor revision bump.
 Made global names in lib class private.

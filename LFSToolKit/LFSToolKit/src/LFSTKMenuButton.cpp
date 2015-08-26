@@ -139,10 +139,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true,false);
 	sy=0;
 
-	for(int j=0;j<MAXCOLOURS;j++)
-		subwc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
-	subwc->LFSTK_setFontString(itemfont);
-
 	for(int j=0;j<this->menuCount;j++)
 		{
 			bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
@@ -152,8 +148,10 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			bc->LFSTK_setStyle(FLATBUTTON);
 			bc->LFSTK_setFontString(itemfont);
 			for(int j=0;j<MAXCOLOURS;j++)
-				bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
-
+				{
+					bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
+					bc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
+				}
 			sy+=addto;
 		}
 	XMapWindow(subwc->display,subwc->window);
