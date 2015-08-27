@@ -44,24 +44,25 @@ class LFSTK_lib
 		const char *LFSTK_getGlobalString(int state,int type);
 		void LFSTK_setGlobalString(int state,int type,const char *str);
 
-		bool			globalColoursSet;
+		const char* bestFontColour(long pixel);
+		int LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
 
 	private:
-		args			*lfsToolKitGlobals;
+		args	*lfsToolKitGlobals;
 //window stirngs
-		char			*globalWindowColours[MAXCOLOURS];
-		char			*globalButtonColours[MAXCOLOURS];
-		char			*globalMenuItemColours[MAXCOLOURS];
-		char			*globalFontString;
+		char	*globalWindowColours[MAXCOLOURS];
+		char	*globalButtonColours[MAXCOLOURS];
+		char	*globalMenuItemColours[MAXCOLOURS];
+		char	*globalFontString;
 
 //gadget strings
-		char			*globalFontColourNames[MAXCOLOURS];
-		char			*globalMenuItemFontString;
-		char			*globalMenuItemFontColourNames[MAXCOLOURS];
+		char	*globalFontColourNames[MAXCOLOURS];
+		char	*globalMenuItemFontString;
+		char	*globalMenuItemFontColourNames[MAXCOLOURS];
 
 //theme strings
-		char			*globalFrameColours[MAXFRAMECOLOURS];
-		char			*globalThemePath;
+		char	*globalFrameColours[MAXFRAMECOLOURS];
+		char	*globalThemePath;
 
 };
 #endif

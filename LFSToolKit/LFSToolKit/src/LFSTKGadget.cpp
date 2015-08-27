@@ -337,3 +337,22 @@ bool LFSTK_gadgetClass::gotFocus(XEvent *e)
 	return(true);
 }
 
+/**
+* Draw string.
+* \param font Font to use..
+* \param x Xpos.
+* \param y Ypos.
+* \param col Colour.
+* \param s String to draw.
+*/
+void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s)
+{
+	XftColor colour;
+
+	if (!XftColorAllocName(this->wc->display,this->wc->visual,this->wc->cm,col,&colour))
+		return;
+
+	XftDrawChange(this->wc->draw,this->window);
+	XftDrawStringUtf8(this->wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
+}
+

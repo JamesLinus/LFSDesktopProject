@@ -124,23 +124,7 @@ fontStruct* ftload(Display *disp,int scr,const char *name)
 
 	return f;
 }
-
-int ftTextWidth_Utf8(LFSTK_windowClass *wc,char *s)
-{
-	XftFont *font=(XftFont*)wc->font->data;
-	XGlyphInfo info;
-	XftTextExtentsUtf8(wc->display,font,(XftChar8 *)s,strlen(s),&info);
-	return info.width-info.x;
-}
-
-int getTextwidth(Display* disp,XftFont *font,const char *s)
-{
-	XGlyphInfo info;
-	XftTextExtentsUtf8(disp,font,(XftChar8 *)s,strlen(s),&info);
-	return info.width-info.x;
-}
-
-
+/*
 void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s)
 {
 	XftColor colour;
@@ -151,16 +135,4 @@ void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,con
 	XftDrawChange(wc->draw,d);
 	XftDrawStringUtf8(wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
 }
-
-const char* useColour(long pixel)
-{
-	int r,g,b;
-	r=(pixel & 0xff0000)>>16;
-	g=(pixel & 0x00ff00)>>8;
-	b=(pixel & 0x0000ff);
-
-	if((r+r+r+b+g+g+g+g)>>3>128)
-		return("black");
-	else
-		return("white");
-}
+*/

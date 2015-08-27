@@ -371,3 +371,39 @@ const args *LFSTK_lib::LFSTK_getTKArgs(void)
 {
 	return(this->lfsToolKitGlobals);
 }
+
+/**
+* Get best font coloue choice.
+* \param pixel Background pixel colour.
+* \return const char* Colour name.
+* \note Returns "black" or "white" depending on back colour.
+* \note Don't free returned array.
+*/
+const char* LFSTK_lib::bestFontColour(long pixel)
+{
+	int r,g,b;
+	r=(pixel & 0xff0000)>>16;
+	g=(pixel & 0x00ff00)>>8;
+	b=(pixel & 0x0000ff);
+
+	if((r+r+r+b+g+g+g+g)>>3>128)
+		return("black");
+	else
+		return("white");
+}
+
+/**
+* Get width of string.
+* \param disp* Dsiplay.
+* \param font* Font to use.
+* \param str* String.
+* \return int Width in pixels.
+*/
+int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
+{
+	XGlyphInfo info;
+	XftTextExtentsUtf8(disp,font,(XftChar8 *)str,strlen(str),&info);
+	return info.width-info.x;
+}
+
+

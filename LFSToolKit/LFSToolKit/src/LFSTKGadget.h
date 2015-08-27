@@ -71,6 +71,7 @@ class LFSTK_gadgetClass
 
 	protected:
 		listener* LFSTK_getListen(void);
+		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
 
 		listener			listen;
 

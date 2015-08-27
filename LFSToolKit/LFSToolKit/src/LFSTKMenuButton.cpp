@@ -48,15 +48,18 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 	const char *holdcol=this->fontColourNames[p];
 
 	if(this->autoLabelColour==true)
-		holdcol=useColour(this->colourNames[p].pixel);
+		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[p].pixel);
 
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 			default://centre
-				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+			//	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 		}
 }
@@ -133,7 +136,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	tfont=ftload(this->display,this->screen,itemfont);
 	for(int j=0;j<this->menuCount;j++)
 		{
-			testwid=getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
+			testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
 			if(testwid>maxwid)
 				maxwid=testwid;
 		}
