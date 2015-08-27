@@ -118,6 +118,7 @@ void LFSTK_gadgetClass::initGadget(void)
 
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->LFSTK_setActive(true);
+	this->LFSTK_setLabelAutoColour(false);
 }
 
 /**
@@ -189,6 +190,18 @@ void LFSTK_gadgetClass::LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*re
 void LFSTK_gadgetClass::LFSTK_setActive(bool active)
 {
 	this->isActive=active;
+}
+
+/**
+* Set gadget auto colour for label.
+* \param setauto Auto label colour active or not.
+* \note Setting to true overrides the label colour;
+* \note and tries to set it to black or white depending on background.
+* \note defaults to false; 
+*/
+void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
+{
+	this->autoLabelColour=setauto;
 }
 
 void LFSTK_gadgetClass::LFSTK_clearWindow()

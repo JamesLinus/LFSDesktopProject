@@ -61,6 +61,7 @@ class LFSTK_gadgetClass
 		Window LFSTK_getWindow(void);
 
 		void LFSTK_setActive(bool active);
+		void LFSTK_setLabelAutoColour(bool setauto);
 
 		LFSTK_windowClass	*wc;
 		char				*label;
@@ -100,6 +101,7 @@ class LFSTK_gadgetClass
 		colourStruct		colourNames[MAXCOLOURS];
 		bool				inWindow;
 		bool				isActive;
+		bool				autoLabelColour;
 };
 
 #endif

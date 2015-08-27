@@ -292,6 +292,8 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
+				//	bc[menucount]->LFSTK_setLabelAutoColour(true);
+				//	bc[menucount]->LFSTK_setColourName(NORMALCOLOUR,"pink");
 					//bc[menucount]->LFSTK_setColoursFromGlobals();
 
 					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());

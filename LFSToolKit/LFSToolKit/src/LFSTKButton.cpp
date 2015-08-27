@@ -40,13 +40,18 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 */
 void LFSTK_buttonClass::drawLabel(int p)
 {
+	const char *holdcol=this->fontColourNames[p];
+
+	if(this->autoLabelColour==true)
+		holdcol=useColour(this->colourNames[p].pixel);
+
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->font->ascent-2)/2),this->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 			default://centre
-				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->font->ascent-2)/2),this->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 		}
 }
@@ -71,7 +76,11 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
-	this->drawLabel(NORMALCOLOUR);
+
+	if(this->isActive==true)
+		this->drawLabel(NORMALCOLOUR);
+	else
+		this->drawLabel(INACTIVECOLOUR);
 }
 
 /**
