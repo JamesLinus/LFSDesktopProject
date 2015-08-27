@@ -76,10 +76,34 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 				this->globalFontColourNames[state]=strdup(str);
 				break;
 			case TYPEMENUITEMFONTCOLOUR:
+				ptr=this->globalMenuItemFontColourNames[state];
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalMenuItemFontColourNames[state]=strdup(str);
+				break;
 			case TYPEMENUITEMFONT:
+				ptr=this->globalMenuItemFontString;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalMenuItemFontString=strdup(str);
+				break;
 			case TYPEFONT:
+				ptr=this->globalFontString;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalFontString=strdup(str);
+				break;
 			case TYPETHEME:
+				ptr=this->globalThemePath;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalThemePath=strdup(str);
+				break;
 			case TYPEWMFRAME:
+				ptr=this->globalFrameColours[state];
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalFrameColours[state]=strdup(str);
 				break;
 		}
 }

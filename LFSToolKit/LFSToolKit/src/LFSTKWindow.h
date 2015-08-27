@@ -45,7 +45,7 @@ class LFSTK_windowClass
 		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true);
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
-		void LFSTK_resizeWindow(int w,int h);
+		void LFSTK_resizeWindow(int w,int h,bool tellx=true);
 
 		void LFSTK_setListener(Window w,listener *l);
 		listener *LFSTK_getListener(Window w);

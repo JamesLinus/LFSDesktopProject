@@ -1,4 +1,5 @@
 0.0.7
+Fixed manual window resize event loop.
 Fixed not getting font colours from loaded vars.
 Added load vars from default rc file when creating window, defaults true.
 Minor revision bump.

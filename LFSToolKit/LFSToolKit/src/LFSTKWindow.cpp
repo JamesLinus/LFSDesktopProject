@@ -145,10 +145,12 @@ void LFSTK_windowClass::LFSTK_setListener(Window w,listener *l)
 		XSaveContext(this->display,w,this->listeners,(XPointer)l);
 }
 
-void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h)
+void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 {
 	this->w=w;
 	this->h=h;
+	if(tellx==true)
+		XResizeWindow(this->display,this->window,w,h);
 	this->LFSTK_clearWindow();
 }
 
