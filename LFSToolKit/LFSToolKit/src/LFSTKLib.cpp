@@ -39,6 +39,52 @@ LFSTK_lib::~LFSTK_lib()
 }
 
 /**
+* Sets a global string or the default.
+*
+* \param state Gadget state.
+* \param type Type of string to set.
+* \param str New string.
+*/
+void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
+{
+	const char	*ptr=NULL;
+	
+	switch(type)
+		{
+			case TYPEWINDOW:
+				ptr=this->globalWindowColours[state];
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalWindowColours[state]=strdup(str);
+				break;
+			case TYPEBUTTON:
+				ptr=this->globalButtonColours[state];
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalButtonColours[state]=strdup(str);
+				break;
+			case TYPEMENUITEM:
+				ptr=this->globalMenuItemColours[state];
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalMenuItemColours[state]=strdup(str);
+				break;
+			case TYPEFONTCOLOUR:
+				ptr=this->globalFontColourNames[state];
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalFontColourNames[state]=strdup(str);
+				break;
+			case TYPEMENUITEMFONTCOLOUR:
+			case TYPEMENUITEMFONT:
+			case TYPEFONT:
+			case TYPETHEME:
+			case TYPEWMFRAME:
+				break;
+		}
+}
+
+/**
 * Gets a global string or the default.
 *
 * \param state Gadget state.
@@ -186,6 +232,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 * \return bool Success.
 * \note args is an array of the form:
 * \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
+* \note PREFTYPE=TYPEINT|TYPESTRING|TYPEBOOL.
 * \note eg:
 * \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
 */
@@ -238,4 +285,65 @@ bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,args* dataptr)
 			return(true);
 		}
 	return(false);
+}
+
+/**
+* Save variables to prefs file.
+*
+* \param filepath Path to prefs file.
+* \param args Argument list..
+* \note args is an array of the form:
+* \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
+* \note PREFTYPE=TYPEINT|TYPESTRING|TYPEBOOL.
+* \note eg:
+* \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
+*/
+void LFSTK_lib::LFSTK_saveVarsToFile(const char* filepath,const args* dataptr)
+{
+	FILE*	fd=NULL;
+	int		cnt=0;
+
+	if(filepath[0]=='-')
+		fd=stdout;
+	else
+		fd=fopen(filepath,"w");
+
+	if(fd!=NULL)
+		{
+			while(dataptr[cnt].name!=NULL)
+				{
+					switch(dataptr[cnt].type)
+						{
+						case TYPEINT:
+							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
+							break;
+						case TYPESTRING:
+							if(*(char**)(dataptr[cnt].data)!=NULL)
+								fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
+							break;
+						case TYPEBOOL:
+							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
+							break;
+						}
+					cnt++;
+				}
+			if(fd!=stdout)
+				fclose(fd);
+		}
+
+}
+
+/**
+* Get tool kit args array.
+* \return args.
+* \note args is an array of the form:
+* \note PREFNAME,PREFTYPE,VARIABLEADDRESS.
+* \note PREFTYPE=TYPEINT|TYPESTRING|TYPEBOOL.
+* \note eg:
+* \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
+* \note Don't free returned array.
+*/
+const args *LFSTK_lib::LFSTK_getTKArgs(void)
+{
+	return(this->lfsToolKitGlobals);
 }

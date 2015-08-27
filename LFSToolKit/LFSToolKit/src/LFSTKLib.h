@@ -39,7 +39,10 @@ class LFSTK_lib
 		LFSTK_lib(bool loadvars);
 		~LFSTK_lib();
 		bool LFSTK_loadVarsFromFile(const char* filepath,args* dataptr);
+		void LFSTK_saveVarsToFile(const char* filepath,const args* dataptr);
+		const args *LFSTK_getTKArgs(void);
 		const char *LFSTK_getGlobalString(int state,int type);
+		void LFSTK_setGlobalString(int state,int type,const char *str);
 
 		bool			globalColoursSet;
 
