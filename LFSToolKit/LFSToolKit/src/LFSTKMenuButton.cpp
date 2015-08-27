@@ -48,10 +48,10 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label,p);
 				break;
 			default://centre
-				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label);
+				drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),this->fontColourNames[p],this->label,p);
 				break;
 		}
 }

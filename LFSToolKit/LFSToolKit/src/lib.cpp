@@ -140,7 +140,7 @@ int getTextwidth(Display* disp,XftFont *font,const char *s)
 	return info.width-info.x;
 }
 
-void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s)
+void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s,int state)
 {
 	XftColor colour;
 
