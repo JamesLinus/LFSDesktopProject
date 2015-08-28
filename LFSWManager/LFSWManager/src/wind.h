@@ -203,7 +203,6 @@ extern char				*titleFont;
 extern char				*fontColours[5];
 extern int				liveUpdate;
 extern char				*terminalCommand;
-extern char				*lfstkFile;
 
 //theme
 extern themeStruct		theme;

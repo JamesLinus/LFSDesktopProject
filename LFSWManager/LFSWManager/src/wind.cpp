@@ -40,7 +40,6 @@ char				*fontColours[5];
 int					doswapdesk=-1;
 int					liveUpdate=1;
 char				*terminalCommand=NULL;
-char				*lfstkFile=NULL;
 
 //theme
 themeStruct			theme;
@@ -62,12 +61,6 @@ unsigned long		inactiveFrameFill;
 unsigned long		widgetColour;
 //buttons
 GC					activeGC;
-//wmactive_frame #948069
-//wmactive_fill #5E3300
-//wminactive_frame #9B9184
-//wminactive_fill #836C51
-//wmtext	red
-//unsigned long		textColour;
 
 #ifdef _DEBUGLEVEL_
 //debug
