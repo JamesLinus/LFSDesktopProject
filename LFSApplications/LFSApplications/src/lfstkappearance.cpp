@@ -294,19 +294,15 @@ int main(int argc, char **argv)
 			XNextEvent(wc->display,&event);
 			switch(event.type)
 				{
-					case LeaveNotify:
-						//mainloop=inWindow();
 						break;
 					case Expose:
 						wc->LFSTK_setActive(true);
 						wc->LFSTK_clearWindow();
 						break;
 					case ConfigureNotify:
-					//printf("configureWindow\n");
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 						break;
 					default:
-						//XNextEvent(wc->display,&event);
 						break;
 				}
 		}
