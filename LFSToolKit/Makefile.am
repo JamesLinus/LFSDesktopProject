@@ -1,5 +1,5 @@
 
-SUBDIRS = LFSToolKit/app LFSToolKit/helper
+SUBDIRS = LFSToolKit/app
 
 .PHONY: docs
 

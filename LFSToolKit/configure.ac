@@ -41,5 +41,5 @@ fi
 AM_CONDITIONAL([HAVE_DOXYGEN],
 [test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Doxyfile])])
 
-AC_OUTPUT(Makefile LFSToolKit/app/Makefile  docs/Makefile LFSToolKit/helper/Makefile)
+AC_OUTPUT(Makefile LFSToolKit/app/Makefile  docs/Makefile)
 
