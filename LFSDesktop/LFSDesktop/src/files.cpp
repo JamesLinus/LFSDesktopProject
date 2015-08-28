@@ -39,7 +39,6 @@
 char		*diskInfoPath;
 char		*cachePath;
 char		*prefsPath;
-char		*tkConfigPath;
 char		*desktopPath;
 char		findbuffer[2048];
 

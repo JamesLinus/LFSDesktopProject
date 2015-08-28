@@ -33,7 +33,6 @@
 extern char		*diskInfoPath;
 extern char		*cachePath;
 extern char		*prefsPath;
-extern char		*tkConfigPath;
 extern char		*desktopPath;
 
 extern hsearch_data	hashtab;

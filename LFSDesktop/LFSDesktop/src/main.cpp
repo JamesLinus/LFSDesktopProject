@@ -509,8 +509,6 @@ int main(int argc,char **argv)
 	showSuffix=false;
 	asprintf(&terminalCommand,"xterm -e ");
 
-	asprintf(&tkConfigPath,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-
 	loadVarsFromFile(prefsPath,desktopPrefs);
 
 	while (1)
@@ -939,6 +937,5 @@ int main(int argc,char **argv)
 	free(cachePath);
 	free(prefsPath);
 	free(desktopPath);
-	free(tkConfigPath);
 	return 0;
 }
