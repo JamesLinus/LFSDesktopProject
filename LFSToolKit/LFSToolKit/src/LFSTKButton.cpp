@@ -48,12 +48,9 @@ void LFSTK_buttonClass::drawLabel(int p)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 			default://centre
-				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
-				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 		}
@@ -275,8 +272,6 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->style=EMBOSSEDBUTTON;
-	this->labelOrientation=CENTRE;
 	this->listen.function=gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=BUTTONGADGET;

@@ -119,6 +119,8 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->LFSTK_setActive(true);
 	this->LFSTK_setLabelAutoColour(false);
+	this->style=EMBOSSEDBUTTON;
+	this->labelOrientation=CENTRE;
 }
 
 /**
@@ -356,3 +358,25 @@ void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *c
 	XftDrawStringUtf8(this->wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
 }
 
+/**
+* Draw label.
+* \param p Button state.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+*/
+void LFSTK_gadgetClass::drawLabel(int state)
+{
+	const char *holdcol=this->fontColourNames[state];
+
+	if(this->autoLabelColour==true)
+		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[state].pixel);
+
+	switch(this->labelOrientation)
+		{
+			case LEFT:
+				this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				break;
+			default://centre
+				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				break;
+		}
+}

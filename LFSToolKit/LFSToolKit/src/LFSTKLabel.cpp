@@ -22,11 +22,50 @@
 
 LFSTK_labelClass::~LFSTK_labelClass()
 {
-	if(this->label!=NULL)
-		free(this->label);
-	XDestroyWindow(this->display,this->window);
 }
 
 LFSTK_labelClass::LFSTK_labelClass()
 {
+}
+
+void LFSTK_labelClass::LFSTK_clearWindow(void)
+{
+	XSetFillStyle(this->display,this->gc,FillSolid);
+	XSetClipMask(this->display,this->gc,None);
+
+	if(this->isActive==true)
+		XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
+	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+
+	if(this->isActive==true)
+		this->drawLabel(NORMALCOLOUR);
+	else
+		this->drawLabel(INACTIVECOLOUR);
+}
+
+/**
+* Main Label constructor.
+*
+* \param parentwc Main parent window class.
+* \param label Displayed name.
+* \param x X pos.
+* \param y Y pos.
+* \param w Width.
+* \param h Height.
+* \param gravity Button gravity.
+*/
+LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+{
+	XSetWindowAttributes	wa;
+
+	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
+
+	wa.win_gravity=gravity;
+	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+
+	this->style=FLATBUTTON;
+	this->listen.function=NULL;
+	this->listen.pointer=NULL;
+	this->listen.type=LABELGADGET;
 }

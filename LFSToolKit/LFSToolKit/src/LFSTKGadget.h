@@ -63,7 +63,6 @@ class LFSTK_gadgetClass
 		void LFSTK_setLabelAutoColour(bool setauto);
 
 		LFSTK_windowClass	*wc;
-		char				*label;
 
 	private:
 		void initGadget(void);
@@ -71,9 +70,11 @@ class LFSTK_gadgetClass
 	protected:
 		listener* LFSTK_getListen(void);
 		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
+		virtual void drawLabel(int state);
 
 		listener			listen;
 
+		char				*label;
 		int					x;
 		int					y;
 		int					w;
@@ -102,6 +103,8 @@ class LFSTK_gadgetClass
 		bool				inWindow;
 		bool				isActive;
 		bool				autoLabelColour;
+		int					labelOrientation;
+		int					style;
 };
 
 #endif

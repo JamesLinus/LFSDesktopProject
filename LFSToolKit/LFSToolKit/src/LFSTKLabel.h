@@ -24,6 +24,8 @@
 
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
+#include "LFSTKGadget.h"
+
 /**
  *
  * \brief Label class for LFSToolKit gadgets.
@@ -32,6 +34,12 @@
 class LFSTK_labelClass : public LFSTK_gadgetClass
 {
 	public:
+		LFSTK_labelClass();
+		~LFSTK_labelClass();
+
+		LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+
+		void LFSTK_clearWindow(void);
 };
 
 #endif

@@ -60,8 +60,6 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		virtual void drawLabel(int p);
 
 	protected:
-		int					style;
-		int					labelOrientation;
 };
 
 #endif
