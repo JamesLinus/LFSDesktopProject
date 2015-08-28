@@ -124,15 +124,3 @@ fontStruct* ftload(Display *disp,int scr,const char *name)
 
 	return f;
 }
-/*
-void drawUtf8String(LFSTK_windowClass *wc,Window d,XftFont* font,int x,int y,const char *col,const char *s)
-{
-	XftColor colour;
-
-	if (!XftColorAllocName(wc->display,wc->visual,wc->cm,col,&colour))
-		return;
-
-	XftDrawChange(wc->draw,d);
-	XftDrawStringUtf8(wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
-}
-*/

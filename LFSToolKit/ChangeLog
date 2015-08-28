@@ -1,4 +1,5 @@
 0.0.7
+Added Label class.
 Added auto colour for button labels chhoses black/white depending on ( guessed ) brightness.
 Fixed manual window resize event loop.
 Fixed not getting font colours from loaded vars.

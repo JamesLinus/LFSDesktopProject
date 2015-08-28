@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Fri 24 Jul 20:38:28 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Fri 28 Aug 19:17:00 BST 2015 kdhedger68713@gmail.com
 
- * This file (lib.h) is part of LFSToolKit.
+ * This file (LFSTKLabel.cpp) is part of LFSToolKit.
 
  * LFSToolKit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,15 @@
  * along with LFSToolKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _LFSTKLIB_
-#define _LFSTKLIB_
+#include "LFSTKLabel.h"
 
-#include <X11/Xlib.h>
-#include "LFSTKWindow.h"
+LFSTK_labelClass::~LFSTK_labelClass()
+{
+	if(this->label!=NULL)
+		free(this->label);
+	XDestroyWindow(this->display,this->window);
+}
 
-bool		gadgetEvent(void *self,XEvent *e,int type);
-fontStruct	*ftload(Display *disp,int scr,const char *name);
-#endif
+LFSTK_labelClass::LFSTK_labelClass()
+{
+}
