@@ -51,7 +51,6 @@ bool					mainloop=false;
 bool					makestatic=false;
 LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS];
-char					*lfstkFile=NULL;
 
 bool bcb(void *p,void* ud)
 {
@@ -229,7 +228,6 @@ int main(int argc, char **argv)
 
 	setCatagories();
 	makestatic=true;
-	asprintf(&lfstkFile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 
 	disp=XOpenDisplay(NULL);
 	if(disp==NULL)
@@ -322,6 +320,5 @@ int main(int argc, char **argv)
 	for(int j=0;j<MAXCATS;j++)
 		if(bc[j]!=NULL)
 			delete bc[j];
-	free(lfstkFile);
 	return 0;
 }

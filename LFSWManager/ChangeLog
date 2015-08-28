@@ -1,4 +1,6 @@
 0.0.14
+Removed 'k' option.
+Removed manual load of prefs file from appmenu.
 Code clean.
 Updated for new tool kit.
 
@@ -6,7 +8,7 @@ Updated for new tool kit.
 Command line can overide ( some ) theme settings.
 Added -k option to prevent reading of options from ~/.config/LFS/lfstoolkit.rc.
 Added -X option to command line to set text/button colour.
-Text colour and menu buttons no use the same colours.
+Text colour and menu buttons now use the same colours.
 Can now set the menu button colour when not using theme. 
 Butons on inactive windows now use inactive colours.
 Window name now in white same as buttons.

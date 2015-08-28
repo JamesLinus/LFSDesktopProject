@@ -312,7 +312,7 @@ int main(int argc,char *argv[])
 	XineramaScreenInfo	*p=NULL;
 	char				*prefsfile;
 	int					opt;
-	bool				loadtkopts=true;
+	//bool				loadtkopts=true;
 	progname=argv[0];
 	// The Xmb* functions use LC_CTYPE
 	setlocale(LC_CTYPE,"");
@@ -336,13 +336,14 @@ int main(int argc,char *argv[])
 
 	asprintf(&prefsfile,"%s/.config/LFS/lfswmanager.rc",getenv("HOME"));
 	asprintf(&terminalCommand,"xterm -e ");
-	asprintf(&lfstkFile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+//	asprintf(&lfstkFile,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
 
 	loadVarsFromFile(prefsfile,wmPrefs," ");
 	free(prefsfile);
 
 	ndesk=numberOfDesktops;
 
+/*
 	while ((opt=getopt(argc,argv,"?hkp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
 		{
 			switch (opt)
@@ -360,7 +361,7 @@ int main(int argc,char *argv[])
 
 	if (optind<argc)
 		displayname=argv[optind++];
-
+*/
 	XSetErrorHandler(errhandler);
 
 	if ((dpy=XOpenDisplay(displayname))==NULL)
@@ -400,8 +401,8 @@ int main(int argc,char *argv[])
 			free(p);
 		}
 
-	if(loadtkopts==true)
-		loadVarsFromFile(lfstkFile,wmPrefs," ");
+//	if(loadtkopts==true)
+//		loadVarsFromFile(lfstkFile,wmPrefs," ");
 
 	if((fileExists(theme.pathToTheme)==0) && (theme.pathToTheme!=NULL))
 		{
@@ -416,8 +417,9 @@ int main(int argc,char *argv[])
 	else
 		theme.useTheme=false;
 
-	optind=1;
-	while ((opt=getopt(argc,argv,"?hkp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
+//	optind=1;
+//	while ((opt=getopt(argc,argv,"?hkp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
+	while ((opt=getopt(argc,argv,"?hp:B:b:F:f:X:n:t:l:T:w:x:")) != -1)
 		switch (opt)
 			{
 			case 'B':
@@ -441,8 +443,8 @@ int main(int argc,char *argv[])
 				free(fontColours[TEXTCOLOUR]);
 				fontColours[TEXTCOLOUR]=strdup(optarg);
 				break;
-			case 'k':
-				break;
+//			case 'k':
+//				break;
 
 			case 'n':
 				{
@@ -676,7 +678,7 @@ int main(int argc,char *argv[])
 	XCloseDisplay(dpy);
 
 	free(terminalCommand);
-	free(lfstkFile);
+//	free(lfstkFile);
 	for(int j=0;j<TEXTCOLOUR+1;j++)
 		free(fontColours[j]);
 
