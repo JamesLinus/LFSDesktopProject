@@ -16,10 +16,11 @@ exit $retval
 #include <LFSTKButton.h>
 #include "LFSTKMenuButton.h"
 #include "LFSTKLineEdit.h"
+#include "LFSTKLabel.h"
 
 bool				mainloop=true;
 int					width=300;
-int					hite=60;
+int					hite=84;
 LFSTK_lineEditClass	*le;
 LFSTK_windowClass	*mainwind;
 bool				toggle=false;
@@ -47,23 +48,31 @@ int main(int argc, char **argv)
 	printf("Hello World!\n");
 	XEvent				event;
 	LFSTK_buttonClass	*bc,*bc1;
+	LFSTK_labelClass	*label;
+	int					sy=24;
+
 	bool				firstrun=true;
 
 	mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
 
-	le=new LFSTK_lineEditClass(mainwind,"Hello World",0,0,width,24,NorthWestGravity);
+//	mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"dark grey");
+	label=new LFSTK_labelClass(mainwind,"Enter a phrase",0,0,width,24,NorthWestGravity);
+	XMapWindow(mainwind->display,label->LFSTK_getWindow());
+
+	le=new LFSTK_lineEditClass(mainwind,"Hello World",0,sy,width,24,NorthWestGravity);
 	XMapWindow(mainwind->display,le->LFSTK_getWindow());
 
-	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4,75,24,SouthWestGravity);
+	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4+sy,75,24,SouthWestGravity);
 	bc->LFSTK_setCallBack(NULL,callback,(void*)1);
 	XMapWindow(mainwind->display,bc->LFSTK_getWindow());
 
-	bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4,75,24,SouthEastGravity);
+	bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
 	bc1->LFSTK_setCallBack(NULL,callback,(void*)2);
 	XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
 
 
 	XMapWindow(mainwind->display,mainwind->window);
+	mainwind->LFSTK_clearWindow();
 
 	mainwind->LFSTK_setKeepAbove(toggle);
 	mainwind->LFSTK_setSticky(toggle);
@@ -82,6 +91,7 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						mainwind->LFSTK_clearWindow();
+						label->LFSTK_clearWindow();
 						if(firstrun==true)
 							{
 								firstrun=false;

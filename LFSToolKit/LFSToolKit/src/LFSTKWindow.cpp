@@ -66,6 +66,7 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 
 	this->globalLib=new LFSTK_lib(loadvars);
 	this->loadGlobalColours();
+	this->isActive=true;
 }
 
 LFSTK_windowClass::~LFSTK_windowClass()
