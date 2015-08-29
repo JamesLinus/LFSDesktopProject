@@ -380,3 +380,30 @@ void LFSTK_gadgetClass::drawLabel(int state)
 				break;
 		}
 }
+
+void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
+{
+	if(this->label!=NULL)
+		free(this->label);
+	this->label=strdup(newlabel);
+}
+
+/**
+* Get the label.
+* \return char* Returned string must not be freed.
+*/
+const char *LFSTK_gadgetClass::LFSTK_getLabel(void)
+{
+	return(this->label);
+}
+
+/**
+* Set label orientation.
+* \param o.
+* \note o=LEFT=0,CENTRE=1,RIGHT=2.
+*/
+void LFSTK_gadgetClass::LFSTK_setLabelOriention(int orient)
+{
+	this->labelOrientation=orient;
+}
+

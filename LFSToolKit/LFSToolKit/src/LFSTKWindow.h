@@ -43,6 +43,8 @@ class LFSTK_windowClass
 		LFSTK_windowClass();
 		~LFSTK_windowClass();
 		LFSTK_windowClass(int x,int y,int w,int h,const char* name,bool override,bool loadvars=true);
+
+		void LFSTK_showWindow(bool all=true);
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h,bool tellx=true);
@@ -54,10 +56,11 @@ class LFSTK_windowClass
 		void LFSTK_setFontColourName(int p,const char *colour);
 		void LFSTK_setWindowColourName(int p,const char* colour);
 		void LFSTK_setDecorated(bool isDecorated);
-		void LFSTK_setSticky(bool set);
 		void LFSTK_setKeepAbove(bool set);
 		void LFSTK_setActive(bool set);
 		bool LFSTK_getActive(void);
+		void LFSTK_setSticky(bool set);
+		bool LFSTK_getSticky(void);
 
 		geometryStruct	*LFSTK_getGeom(void);
 
@@ -88,6 +91,7 @@ class LFSTK_windowClass
 		int			h;
 		char		*windowName;
 		bool		isActive;
+		bool		isSticky;
 };
 
 #endif

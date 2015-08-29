@@ -24,6 +24,8 @@ int					hite=84;
 LFSTK_lineEditClass	*le;
 LFSTK_windowClass	*mainwind;
 bool				toggle=false;
+LFSTK_buttonClass	*bc,*bc1;
+LFSTK_labelClass	*label;
 
 bool callback(void *p,void* ud)
 {
@@ -32,6 +34,21 @@ bool callback(void *p,void* ud)
 	printf("--toggle= %i--\n",toggle);
 	mainwind->LFSTK_setKeepAbove(toggle);
 	mainwind->LFSTK_setSticky(toggle);
+
+	if(toggle==true)
+		{
+			bc1->LFSTK_setLabel("Un-Stick");
+			label->LFSTK_setLabel("Window is sticky");
+		}
+	else
+		{
+			bc1->LFSTK_setLabel("Stick");
+			label->LFSTK_setLabel("Window is normal");
+		}
+	label->LFSTK_clearWindow();
+	bc1->LFSTK_clearWindow();
+
+	
 	XMapWindow(mainwind->display,mainwind->window);
 
 	if((long)ud==1)
@@ -47,8 +64,6 @@ int main(int argc, char **argv)
 {
 	printf("Hello World!\n");
 	XEvent				event;
-	LFSTK_buttonClass	*bc,*bc1;
-	LFSTK_labelClass	*label;
 	int					sy=24;
 
 	bool				firstrun=true;
@@ -56,22 +71,18 @@ int main(int argc, char **argv)
 	mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
 
 //	mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"dark grey");
-	label=new LFSTK_labelClass(mainwind,"Enter a phrase",0,0,width,24,NorthWestGravity);
-	XMapWindow(mainwind->display,label->LFSTK_getWindow());
+	label=new LFSTK_labelClass(mainwind,"Window is normal",0,0,width,24,NorthWestGravity);
+	label->LFSTK_setFontColourName(NORMALCOLOUR,"dark grey");
 
 	le=new LFSTK_lineEditClass(mainwind,"Hello World",0,sy,width,24,NorthWestGravity);
-	XMapWindow(mainwind->display,le->LFSTK_getWindow());
 
-	bc=new LFSTK_buttonClass(mainwind,"Apply",4,24+4+4+sy,75,24,SouthWestGravity);
+	bc=new LFSTK_buttonClass(mainwind,"OK",4,24+4+4+sy,75,24,SouthWestGravity);
 	bc->LFSTK_setCallBack(NULL,callback,(void*)1);
-	XMapWindow(mainwind->display,bc->LFSTK_getWindow());
 
-	bc1=new LFSTK_buttonClass(mainwind,"Cancel",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
+	bc1=new LFSTK_buttonClass(mainwind,"Stick",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
 	bc1->LFSTK_setCallBack(NULL,callback,(void*)2);
-	XMapWindow(mainwind->display,bc1->LFSTK_getWindow());
 
-
-	XMapWindow(mainwind->display,mainwind->window);
+	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_clearWindow();
 
 	mainwind->LFSTK_setKeepAbove(toggle);

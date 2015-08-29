@@ -233,25 +233,6 @@ bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
 }
 
 /**
-* Set label orientation.
-* \param o.
-* \note o=LEFT=0,CENTRE=1,RIGHT=2.
-*/
-void LFSTK_buttonClass::LFSTK_setLabelOriention(int o)
-{
-	this->labelOrientation=o;
-}
-
-/**
-* Get the label.
-* \return char* Returned string must not be freed.
-*/
-char* LFSTK_buttonClass::LFSTK_getLabel(void)
-{
-	return(this->label);
-}
-
-/**
 * Main button constructor.
 *
 * \param parentwc Main parent window class.

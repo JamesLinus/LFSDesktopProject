@@ -49,18 +49,21 @@ class LFSTK_gadgetClass
 		virtual bool gotFocus(XEvent *e);
 		virtual bool lostFocus(XEvent *e);
 
-		void LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
-
+		Window LFSTK_getWindow(void);
 		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		void LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 
 		void LFSTK_setColourName(int p,const char* colour);
 		const char* LFSTK_getColourName(int p);
 		void LFSTK_setFontString(const char *s);
 		void LFSTK_setFontColourName(int p,const char* colour);
-		Window LFSTK_getWindow(void);
 
 		void LFSTK_setActive(bool active);
 		void LFSTK_setLabelAutoColour(bool setauto);
+
+		void LFSTK_setLabel(const char *newlabel);
+		const char *LFSTK_getLabel(void);
+		void LFSTK_setLabelOriention(int orient);
 
 		LFSTK_windowClass	*wc;
 

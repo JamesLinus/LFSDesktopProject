@@ -257,6 +257,15 @@ void LFSTK_windowClass::LFSTK_setWindowColourName(int p,const char* colour)
 }
 
 /**
+* get window sticky.
+* \return isSticky.
+*/
+bool LFSTK_windowClass::LFSTK_getSticky(void)
+{
+	return(this->isSticky);
+}
+
+/**
 * Set window sticky.
 * \param set.
 */
@@ -280,6 +289,7 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 	xclient.data.l[1] =xa1;
 	xclient.data.l[2] = 0;
 	XSendEvent(this->display,this->rootWindow,False,SubstructureRedirectMask | SubstructureNotifyMask,(XEvent *)&xclient);
+	this->isSticky=set;
 }
 
 /**
@@ -392,6 +402,18 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->LFSTK_setDecorated(true);
 	this->initWindow(loadvars);
+}
+
+/**
+* Show window and all sub windows.
+* \param all Map all subwindows, default=true.
+*/
+void LFSTK_windowClass::LFSTK_showWindow(bool all)
+{
+	XMapWindow(this->display,this->window);
+	if(all==true)
+		XMapSubwindows(this->display,this->window);
+	XMapRaised(this->display,this->window);
 }
 
 

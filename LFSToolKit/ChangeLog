@@ -1,4 +1,7 @@
 0.0.7
+Added show window to window class.
+Added get/set label to base gadget class.
+Added get stick state to window class.
 Fixed not setting window active in constructor.
 Added Label class.
 Added auto colour for button labels chhoses black/white depending on ( guessed ) brightness.
