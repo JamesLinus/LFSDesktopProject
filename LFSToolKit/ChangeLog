@@ -1,4 +1,5 @@
 0.0.7
+Moved load font to lib class.
 Added show window to window class.
 Added get/set label to base gadget class.
 Added get stick state to window class.

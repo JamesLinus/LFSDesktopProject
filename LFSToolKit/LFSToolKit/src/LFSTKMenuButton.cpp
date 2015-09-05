@@ -41,7 +41,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 /**
 * Draw label.
 * \param p Button state.
-* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
 void LFSTK_menuButtonClass::drawLabel(int p)
 {
@@ -53,12 +53,9 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 			default://centre
-			//	drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(ftTextWidth_Utf8(this->wc,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
-				//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 		}
@@ -133,7 +130,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	this->drawLabel(ACTIVECOLOUR);
 
 	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-	tfont=ftload(this->display,this->screen,itemfont);
+	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
 	for(int j=0;j<this->menuCount;j++)
 		{
 			testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
@@ -308,7 +305,8 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* l
 	this->style=EMBOSSEDBUTTON;
 	this->LFSTK_setLabelOriention(CENTRE);
 
-	this->listen.function=gadgetEvent;
+//	this->listen.function=gadgetEvent;
+	this->listen.function=&(this->wc->globalLib->LFSTK_gadgetEvent);
 	this->listen.pointer=this;
 	this->listen.type=MENUBUTTONGADGET;
 	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());

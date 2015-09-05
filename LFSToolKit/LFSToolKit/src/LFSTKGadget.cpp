@@ -42,7 +42,7 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 * Set the colour name for font.
 * \param p Font state.
 * \param colour Colour name.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour)
 {
@@ -69,14 +69,14 @@ void LFSTK_gadgetClass::LFSTK_setFontString(const char *s)
 	if(this->fontString!=NULL)
 		free(this->fontString);
 	this->fontString=strdup(s);
-	this->font=ftload(this->display,this->screen,s);
+	this->font=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,s);
 }
 
 /**
 * Set the colour name for gadget.
 * \param p Gadget state.
 * \param colour Colour name.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
 void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 {
@@ -92,7 +92,7 @@ void LFSTK_gadgetClass::LFSTK_setColourName(int p,const char* colour)
 * Get the colour name for gadget.
 * \param p Gadget state.
 * \return colour Const colour name.
-* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note state is NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 * \note Donot free returned value.
 */
 const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
@@ -361,7 +361,7 @@ void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *c
 /**
 * Draw label.
 * \param p Button state.
-* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
 void LFSTK_gadgetClass::drawLabel(int state)
 {

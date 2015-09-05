@@ -29,7 +29,7 @@
 #include "LFSTKLineEdit.h"
 
 #include "lib.h"
-
+/*
 bool gadgetEvent(void *self,XEvent *e,int type)
 {
 	bool				retval=true;
@@ -97,30 +97,4 @@ bool gadgetEvent(void *self,XEvent *e,int type)
 		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
 	return(retval);
 }
-
-fontStruct* ftload(Display *disp,int scr,const char *name)
-{
-	XftFont  *font=NULL;
-	if (name != NULL)
-		{
-			font=XftFontOpenXlfd(disp,scr,name);
-			if (font==NULL)
-				font=XftFontOpenName(disp,scr,name);
-			if (font==NULL)
-				fprintf(stderr,"cannot not load font %s",name);
-		}
-
-	if (font==NULL)
-		font=XftFontOpenName(disp,scr,DEFAULTFONT);
-
-	if (font==NULL)
-		return NULL;
-
-	fontStruct *f=(fontStruct*)malloc(sizeof(fontStruct));
-	f->size=font->ascent+font->descent;
-	f->ascent=font->ascent;
-	f->descent=font->descent;
-	f->data=font;
-
-	return f;
-}
+*/

@@ -24,6 +24,5 @@
 #include <X11/Xlib.h>
 #include "LFSTKWindow.h"
 
-bool		gadgetEvent(void *self,XEvent *e,int type);
-fontStruct	*ftload(Display *disp,int scr,const char *name);
+//bool		gadgetEvent(void *self,XEvent *e,int type);
 #endif

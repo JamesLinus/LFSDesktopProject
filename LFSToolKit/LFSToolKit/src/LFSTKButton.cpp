@@ -36,7 +36,7 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 /**
 * Draw label.
 * \param p Button state.
-* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
 void LFSTK_buttonClass::drawLabel(int p)
 {
@@ -253,7 +253,8 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-	this->listen.function=gadgetEvent;
+//	this->listen.function=gadgetEvent;
+	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=BUTTONGADGET;
 

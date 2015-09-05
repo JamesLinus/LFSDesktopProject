@@ -46,7 +46,8 @@ class LFSTK_lib
 
 		const char* bestFontColour(long pixel);
 		int LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
-
+		fontStruct* LFSTK_loadFont(Display *disp,int scr,const char *name);
+		static bool LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 	private:
 		args	*lfsToolKitGlobals;
 //window stirngs
