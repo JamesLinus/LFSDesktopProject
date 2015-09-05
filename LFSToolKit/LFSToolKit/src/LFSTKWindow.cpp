@@ -31,7 +31,6 @@
 
 #include "LFSTKWindow.h"
 #include "LFSTKLib.h"
-#include "lib.h"
 
 #define _NET_WM_STATE_REMOVE	0
 #define _NET_WM_STATE_ADD		1

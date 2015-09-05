@@ -23,7 +23,6 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKMenuButton.h"
-#include "lib.h"
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
@@ -305,7 +304,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* l
 	this->style=EMBOSSEDBUTTON;
 	this->LFSTK_setLabelOriention(CENTRE);
 
-//	this->listen.function=gadgetEvent;
 	this->listen.function=&(this->wc->globalLib->LFSTK_gadgetEvent);
 	this->listen.pointer=this;
 	this->listen.type=MENUBUTTONGADGET;

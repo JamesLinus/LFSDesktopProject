@@ -24,7 +24,6 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKGadget.h"
-#include "lib.h"
 
 LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {

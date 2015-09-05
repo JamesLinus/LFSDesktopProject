@@ -23,7 +23,6 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKButton.h"
-#include "lib.h"
 
 LFSTK_buttonClass::~LFSTK_buttonClass()
 {
@@ -253,7 +252,6 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
-//	this->listen.function=gadgetEvent;
 	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=BUTTONGADGET;

@@ -24,8 +24,6 @@
 #include <X11/Xlib.h>
 
 #include "LFSTKLineEdit.h"
-#include "lib.h"
-
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()
 {
@@ -58,15 +56,14 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->window=XCreateWindow(this->display,this->parent,x+pad,y+pad,w-(pad*2),h-(pad*2),0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity|CWBitGravity,&wa);
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask|FocusChangeMask|KeyReleaseMask);
 
-//	this->listen.function=gadgetEvent;
 	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
-//	if(strlen(label)>0)
+	if(strlen(label)>0)
 		this->cursorPos=strlen(label);
-//	else
-//		this->cursorPos=0;
+	else
+		this->cursorPos=0;
 
 	this->buffer=label;
 
