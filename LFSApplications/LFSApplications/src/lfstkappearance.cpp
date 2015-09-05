@@ -24,11 +24,12 @@
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
-#include "LFSTKMenuButton.h"
-#include "LFSTKLineEdit.h"
-#include "LFSTKLib.h"
+#include <LFSTKMenuButton.h>
+#include <LFSTKLineEdit.h>
+#include <LFSTKLabel.h>
+#include <LFSTKLib.h>
 
-enum {EXIT=0,APPLY,SAVE,BUTTONLABEL,NULLLABEL,MENUITEMLABEL,FONTLABEL,FONTBOX,MENUFONTLABEL,MENUFONTBOX,WNORMAL,EWNORMAL,
+enum {EXIT=0,APPLY,SAVE,BUTTONLABEL,NULLLABEL,MENUITEMLABEL,NULLLABEL2,FONTLABEL,FONTBOX,MENUFONTLABEL,MENUFONTBOX,WNORMAL,EWNORMAL,
 
 BNORMAL,ENORMAL,BPRELIGHT,EPRELIGHT,BACTIVE,EACTIVE,BINACTIVE,EINACTIVE,MENUNORM,EMENUNORM,MENUPRELITE,EMENUPRELITE,MENUACTIVE,EMENUACTIVE,MENUINACTIVE,EMENUINACTIVE,
 
@@ -69,6 +70,7 @@ bool callback(void *p,void* ud)
 				wc->LFSTK_clearWindow();
 
 				int butonnum=ENORMAL;
+//set global strings
 				for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
 					{
 						wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,(char*)(static_cast<LFSTK_lineEditClass*>(bc[butonnum])->LFSTK_getBuffer()->c_str()));
@@ -80,59 +82,51 @@ bool callback(void *p,void* ud)
 				wc->globalLib->LFSTK_setGlobalString(-1,TYPEFONT,(char*)(static_cast<LFSTK_lineEditClass*>(bc[FONTBOX])->LFSTK_getBuffer()->c_str()));
 				wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMFONT,(char*)(static_cast<LFSTK_lineEditClass*>(bc[MENUFONTBOX])->LFSTK_getBuffer()->c_str()));
 
+//buttons
 				for(int j=BNORMAL;j<MENUNORM;j+=2)
 					{
 						bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[j+1])->LFSTK_getBuffer()->c_str()));
 						bc[j]->LFSTK_setFontString((char*)(static_cast<LFSTK_lineEditClass*>(bc[FONTBOX])->LFSTK_getBuffer()->c_str()));
 					}
-
+//menu items
 				for(int j=MENUNORM;j<FONTNORMCOL;j+=2)
 					{
 						bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[j+1])->LFSTK_getBuffer()->c_str()));
 						bc[j]->LFSTK_setFontString((char*)(static_cast<LFSTK_lineEditClass*>(bc[MENUFONTBOX])->LFSTK_getBuffer()->c_str()));
 					}
 
+//font button colours
 				int x=ENORMAL-2;
 				int state=0;
 				for(int j=FONTNORMCOL;j<ITEMFONTNORMCOL;j+=2)
 					{
 						bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[x+=2])->LFSTK_getBuffer()->c_str()));
-						bc[j]->LFSTK_setFontColourName(NORMALCOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[j+1])->LFSTK_getBuffer()->c_str()));
-						bc[j]->LFSTK_gadgetClass::LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEFONTCOLOUR));
+						bc[j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEFONTCOLOUR));
+						bc[j]->LFSTK_setFontString((char*)(static_cast<LFSTK_lineEditClass*>(bc[FONTBOX])->LFSTK_getBuffer()->c_str()));
 						state++;
 					}
 
+//fonmt menu item colours
 				x=EMENUNORM-2;
 				state=0;
 				for(int j=ITEMFONTNORMCOL;j<NOMORE;j+=2)
 					{
 						bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[x+=2])->LFSTK_getBuffer()->c_str()));
-						bc[j]->LFSTK_setFontColourName(NORMALCOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[j+1])->LFSTK_getBuffer()->c_str()));
-						bc[j]->LFSTK_gadgetClass::LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEMENUITEMFONTCOLOUR));
+						bc[j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(state,TYPEMENUITEMFONTCOLOUR));
+						bc[j]->LFSTK_setFontString((char*)(static_cast<LFSTK_lineEditClass*>(bc[MENUFONTBOX])->LFSTK_getBuffer()->c_str()));
 						state++;
 					}
 
-				for(int j=FONTNORMCOL;j<ITEMFONTNORMCOL;j+=2)
-					if(bc[j]!=NULL)
-						bc[j]->LFSTK_setFontString((char*)(static_cast<LFSTK_lineEditClass*>(bc[FONTBOX])->LFSTK_getBuffer()->c_str()));
+//set label backgrounds to window back ground
+				for(int j=BUTTONLABEL;j<BNORMAL;j+=2)
+					bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
 
-				for(int j=ITEMFONTNORMCOL;j<NOMORE;j+=2)
-					if(bc[j]!=NULL)
-						bc[j]->LFSTK_setFontString((char*)(static_cast<LFSTK_lineEditClass*>(bc[MENUFONTBOX])->LFSTK_getBuffer()->c_str()));
-
-				for(int j=BUTTONLABEL;j<WNORMAL;j+=2)
-					{
-						bc[j]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
-						bc[j]->LFSTK_clearWindow();
-					}
-				bc[WNORMAL]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
-				bc[WNORMAL]->LFSTK_clearWindow();
-
-				for(int j=BNORMAL;j<NOMORE;j++)
-					if(bc[j]!=NULL)
-							bc[j]->LFSTK_clearWindow();
 				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
 				printf("\n");
+
+				for(int j=BUTTONLABEL;j<NOMORE;j++)
+					if(bc[j]!=NULL)
+						bc[j]->LFSTK_clearWindow();
 				break;
 		}
 	return(true);
@@ -166,19 +160,12 @@ int main(int argc, char **argv)
 	sx=col1;
 	sy=10;
 
-	bc[BUTTONLABEL]=new LFSTK_buttonClass(wc,"Normal Buttons",sx,sy,bwidth,24,NorthWestGravity);
-	bc[BUTTONLABEL]->LFSTK_setActive(false);
-	bc[BUTTONLABEL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
+	bc[BUTTONLABEL]=new LFSTK_labelClass(wc,"Normal Buttons",sx,sy,bwidth,24,NorthWestGravity);
 	bc[BUTTONLABEL]->LFSTK_setLabelAutoColour(true);
-	static_cast<LFSTK_buttonClass*>(bc[BUTTONLABEL])->LFSTK_setStyle(FLATBUTTON);
-	static_cast<LFSTK_buttonClass*>(bc[BUTTONLABEL])->LFSTK_setLabelOriention(LEFT);
+
 	sx=col2;
-	bc[MENUITEMLABEL]=new LFSTK_buttonClass(wc,"Menu Items",sx,sy,bwidth,24,NorthWestGravity);
-	bc[MENUITEMLABEL]->LFSTK_setActive(false);
-	bc[MENUITEMLABEL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
+	bc[MENUITEMLABEL]=new LFSTK_labelClass(wc,"Menu Items",sx,sy,bwidth,24,NorthWestGravity);
 	bc[MENUITEMLABEL]->LFSTK_setLabelAutoColour(true);
-	static_cast<LFSTK_buttonClass*>(bc[MENUITEMLABEL])->LFSTK_setStyle(FLATBUTTON);
-	static_cast<LFSTK_buttonClass*>(bc[MENUITEMLABEL])->LFSTK_setLabelOriention(LEFT);
 	sy+=vspacing;
 
 //buttons
@@ -224,7 +211,7 @@ int main(int argc, char **argv)
 	sx+=spacing;
 	bc[FONTBOX]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT),sx,sy-1,(bwidth*2)+spacing+20,24,NorthWestGravity);
 
-//menbu item font
+//mennu item font
 	sy+=vspacing;
 	sx=col1;
 	bc[MENUFONTLABEL]=new LFSTK_buttonClass(wc,"Menu Item Font",sx,sy,bwidth,24,NorthWestGravity);
@@ -278,18 +265,17 @@ int main(int argc, char **argv)
 	bc[EWNORMAL]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),sx,sy-1,bwidth,24,NorthWestGravity);
 	bc[EWNORMAL]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
 
-	printf("Current Settings:\n\n");
-	callback(NULL,(void*)APPLY);
-	printf("\n\n");
-
-	XMapSubwindows(wc->display,wc->window);
-	XMapRaised(wc->display,wc->window);
 	wc->LFSTK_setKeepAbove(true);
 	sy+=(vspacing*2);
 	wc->LFSTK_resizeWindow(col3-10,sy);
+	wc->LFSTK_showWindow();
 	
-	for(int j=FONTLABEL;j<NOMORE;j+=2)
+	for(int j=BUTTONLABEL;j<NOMORE;j+=2)
 		bc[j]->LFSTK_setActive(false);
+
+	printf("Current Settings:\n\n");
+	callback(NULL,(void*)APPLY);
+	printf("\n\n");
 
 	mainloop=true;
 	while(mainloop==true)
