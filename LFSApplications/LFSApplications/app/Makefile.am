@@ -1,14 +1,16 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 include ../flagsandlibs
-include ../sources
 
-lfstkappearance_SOURCES = $(COMMONSRC)
-
+lfstkappearance_SOURCES = lfstkappearance.cpp
 lfstkappearance_CFLAGS = -O3
 lfstkappearance_CXXFLAGS = -O3
 
+lfswmprefs_SOURCES = lfswmprefs.cpp
+lfswmprefs_CFLAGS = -O3
+lfswmprefs_CXXFLAGS = -O3
+
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS = lfstkappearance
+bin_PROGRAMS = lfstkappearance lfswmprefs
 
