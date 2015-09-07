@@ -2,11 +2,11 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 include ../flagsandlibs
 
-lfstkappearance_SOURCES = lfstkappearance.cpp
+lfstkappearance_SOURCES = ../src/lfstkappearance.cpp
 lfstkappearance_CFLAGS = -O3
 lfstkappearance_CXXFLAGS = -O3
 
-lfswmprefs_SOURCES = lfswmprefs.cpp
+lfswmprefs_SOURCES = ../src/lfswmprefs.cpp
 lfswmprefs_CFLAGS = -O3
 lfswmprefs_CXXFLAGS = -O3
 
