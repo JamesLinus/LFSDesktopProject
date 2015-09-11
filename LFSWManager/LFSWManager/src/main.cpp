@@ -186,7 +186,6 @@ void usage(FILE *f)
 	        "-F	colour		Active frame colour\n"
 	        "-f	colour		Inactive frame colour\n"
 			"-X colour		Button and title colour\n"
-	        "-k				Don't use LFSToolKit rc file ( ~/.config/LFS/lfstoolkit.rc ) to set options, ( default use if available ).\n"
 	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
 			"-T	theme		Path to theme\n"

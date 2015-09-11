@@ -1,4 +1,5 @@
 0.0.2
+Added window manager prefs.
 Added labels.
 Apply prints config to stdout.
 Save save to ~/.config/LFS/lfstooltik.rc.

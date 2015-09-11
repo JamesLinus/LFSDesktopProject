@@ -364,6 +364,7 @@ void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *c
 */
 void LFSTK_gadgetClass::drawLabel(int state)
 {
+printf("gadget draw label\n");
 	const char *holdcol=this->fontColourNames[state];
 
 	if(this->autoLabelColour==true)
@@ -385,6 +386,8 @@ void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
 	if(this->label!=NULL)
 		free(this->label);
 	this->label=strdup(newlabel);
+	printf(">>>>%s<<<<<\n",this->label);
+	this->LFSTK_clearWindow();
 }
 
 /**

@@ -84,6 +84,7 @@ void LFSTK_labelClass::drawLabel(int p)
 
 	if(this->autoLabelColour==true)
 		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[p].pixel);
+//			printf("----%s-----\n",this->label);
 
 	switch(this->labelOrientation)
 		{

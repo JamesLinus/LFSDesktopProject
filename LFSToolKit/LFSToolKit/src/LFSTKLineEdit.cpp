@@ -179,7 +179,7 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 		}
 	return(true);
 }
-
+XXXXXXXXXXXXXXXXxxx
 /**
 * Return the contents of the gadget.
 * \return Return's a std::string.
