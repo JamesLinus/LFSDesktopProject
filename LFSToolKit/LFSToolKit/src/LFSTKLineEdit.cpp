@@ -78,7 +78,6 @@ void LFSTK_lineEditClass::LFSTK_clearWindow()
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
-//	XSetForeground(this->display,this->gc,whiteColour);
 	if(this->isActive==true)
 		XSetForeground(this->display,this->gc,whiteColour);
 	else
@@ -179,7 +178,18 @@ bool LFSTK_lineEditClass::gotFocus(XEvent *e)
 		}
 	return(true);
 }
-XXXXXXXXXXXXXXXXxxx
+
+/**
+* Set the contents of the text buffer.
+* \param const char *str String to set.
+*/
+void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
+{
+	this->buffer=str;
+	this->cursorPos=strlen(str);
+}
+
+
 /**
 * Return the contents of the gadget.
 * \return Return's a std::string.
@@ -224,7 +234,6 @@ void LFSTK_lineEditClass::drawLabel(void)
 			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
 		}
 
-	//drawUtf8String(this->wc,this->window,(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",this->buffer.substr(startchar,len).c_str());
 	this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),"black",this->buffer.substr(startchar,len).c_str());
 
 	if(this->isFocused==true)

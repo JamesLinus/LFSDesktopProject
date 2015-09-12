@@ -340,14 +340,14 @@ void LFSTK_lib::LFSTK_saveVarsToFile(const char* filepath,const args* dataptr)
 					switch(dataptr[cnt].type)
 						{
 						case TYPEINT:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
+							fprintf(fd,"%s %i\n",dataptr[cnt].name,*(int*)dataptr[cnt].data);
 							break;
 						case TYPESTRING:
 							if(*(char**)(dataptr[cnt].data)!=NULL)
-								fprintf(fd,"%s	%s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
+								fprintf(fd,"%s %s\n",dataptr[cnt].name,*(char**)(dataptr[cnt].data));
 							break;
 						case TYPEBOOL:
-							fprintf(fd,"%s	%i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
+							fprintf(fd,"%s %i\n",dataptr[cnt].name,(int)*(bool*)dataptr[cnt].data);
 							break;
 						}
 					cnt++;

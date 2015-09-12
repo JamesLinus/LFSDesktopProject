@@ -47,6 +47,8 @@ class LFSTK_lineEditClass  : public  LFSTK_gadgetClass
 		void LFSTK_resizeWindow(int w,int h);
 
 		const std::string* LFSTK_getBuffer(void);
+		void LFSTK_setBuffer(const char *str);
+
 		bool mouseDown(XButtonEvent *e);
 		bool mouseEnter(XButtonEvent *e);
 		bool keyRelease(XKeyEvent *e);
