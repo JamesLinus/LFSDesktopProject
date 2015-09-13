@@ -1,4 +1,5 @@
 0.0.2
+Added desktop prefs.
 Added window manager prefs.
 Added labels.
 Apply prints config to stdout.
