@@ -38,6 +38,11 @@ class LFSTK_labelClass : public LFSTK_gadgetClass
 		~LFSTK_labelClass();
 
 		LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		bool mouseUp(XButtonEvent *e) {return(true);};
+		bool mouseDown(XButtonEvent *e) {return(true);};
+		bool mouseExit(XButtonEvent *e) {return(true);};
+		bool mouseEnter(XButtonEvent *e) {return(true);};
+
 		void LFSTK_clearWindow(void);
 	private:
 		void drawLabel(int state);

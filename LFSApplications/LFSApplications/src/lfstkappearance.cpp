@@ -265,10 +265,10 @@ int main(int argc, char **argv)
 	bc[EWNORMAL]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),sx,sy-1,bwidth,24,NorthWestGravity);
 	bc[EWNORMAL]->LFSTK_setColourName(INACTIVECOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
 
-	wc->LFSTK_setKeepAbove(true);
 	sy+=(vspacing*2);
 	wc->LFSTK_resizeWindow(col3-10,sy);
 	wc->LFSTK_showWindow();
+	wc->LFSTK_setKeepAbove(true);
 	
 	for(int j=BUTTONLABEL;j<NOMORE;j+=2)
 		bc[j]->LFSTK_setActive(false);

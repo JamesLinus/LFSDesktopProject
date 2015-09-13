@@ -476,7 +476,7 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 			case MotionNotify:
 				break;
 			case Expose:
-//			 		printf("xpose from lib\n");
+			 //		printf("xpose from lib type=%i\n",type);
 				gadget->LFSTK_clearWindow();
 				break;
 

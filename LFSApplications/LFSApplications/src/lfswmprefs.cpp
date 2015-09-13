@@ -35,8 +35,8 @@ enum {ACTIVEFRAME=0,ACTIVEFRAMEFILL,INACTIVEFRAME,INACTIVEFRAMEFILL,TEXTCOLOUR};
 enum {EXIT=0,APPLY,SAVE,NOMORE};
 enum {THEMELABEL=0,TERMLABEL,FONTLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,NOMORELABELS};
 
-const char			*buttonnames[]={"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
-const char			*labelnames[]={"Theme Path","Term Command","Font","Placement","Desktops", "Update"};
+const char			*buttonnames[]= {"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
+const char			*labelnames[]= {"Theme Path","Term Command","Font","Placement","Desktops", "Update"};
 
 enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
 //prefs
@@ -50,8 +50,6 @@ char				*terminalCommand=NULL;
 char				*fontColours[5];
 int					doswapdesk=-1;
 
-//theme
-//themeStruct			theme;
 char				*fontName;
 int					fontSize;
 
@@ -74,55 +72,53 @@ args				wmPrefs[]=
 
 bool				mainloop=false;
 LFSTK_windowClass	*wc;
-LFSTK_buttonClass	*bc[NOMOREBUTTONS]={NULL,};
-LFSTK_buttonClass	*guibc[NOMORE]={NULL,};
-LFSTK_lineEditClass	*le[NOMOREEDITS]={NULL,};
-LFSTK_labelClass	*lb[NOMORELABELS]={NULL,};
+LFSTK_buttonClass	*bc[NOMOREBUTTONS]= {NULL,};
+LFSTK_buttonClass	*guibc[NOMORE]= {NULL,};
+LFSTK_lineEditClass	*le[NOMOREEDITS]= {NULL,};
+LFSTK_labelClass	*lb[NOMORELABELS]= {NULL,};
 char				*env;
 
 void setVars(void)
 {
-				for(int j=BACTIVEFRAME;j<NOMOREBUTTONS;j++)
-					if(bc[j]!=NULL)
-						{
-							bc[j]->LFSTK_setColourName(INACTIVECOLOUR,le[j]->LFSTK_getBuffer()->c_str());
-							bc[j]->LFSTK_clearWindow();
-						}
-				for(int j=EACTIVEFRAME;j<ETHEMEPATH;j++)
-					if(le[j]!=NULL)
-						{
-							if(fontColours[j]!=NULL)
-								free(fontColours[j]);
-							fontColours[j]=strdup((char*)le[j]->LFSTK_getBuffer()->c_str());
-							le[j]->LFSTK_clearWindow();
-						}
-				for(int j=THEMELABEL;j<NOMORELABELS;j++)
-					if(lb[j]!=NULL)
-						lb[j]->LFSTK_clearWindow();
-				if(placement!=NULL)
-					free(placement);
-				placement=strdup(static_cast<const char*>(le[EPLACEMENT]->LFSTK_getBuffer()->c_str()));
-				if(titleFont!=NULL)
-					free(titleFont);
-				titleFont=strdup(static_cast<const char*>(le[ETITLEFONT]->LFSTK_getBuffer()->c_str()));
-				if(numberOfDesktops!=NULL)
-					free(numberOfDesktops);
-				numberOfDesktops=strdup(static_cast<const char*>(le[ENUMDESKS]->LFSTK_getBuffer()->c_str()));
-				if(liveUpdate!=NULL)
-					free(liveUpdate);
-				liveUpdate=strdup(static_cast<const char*>(le[ELIVEUPDATE]->LFSTK_getBuffer()->c_str()));
-				if(pathToTheme!=NULL)
-					free(pathToTheme);
-				pathToTheme=strdup(static_cast<const char*>(le[ETHEMEPATH]->LFSTK_getBuffer()->c_str()));
-				if(terminalCommand!=NULL)
-					free(terminalCommand);
-				terminalCommand=strdup(static_cast<const char*>(le[ETERMCOMMAND]->LFSTK_getBuffer()->c_str()));
-
+	for(int j=BACTIVEFRAME; j<NOMOREBUTTONS; j++)
+		if(bc[j]!=NULL)
+			{
+				bc[j]->LFSTK_setColourName(INACTIVECOLOUR,le[j]->LFSTK_getBuffer()->c_str());
+				bc[j]->LFSTK_clearWindow();
+			}
+	for(int j=EACTIVEFRAME; j<ETHEMEPATH; j++)
+		if(le[j]!=NULL)
+			{
+				if(fontColours[j]!=NULL)
+					free(fontColours[j]);
+				fontColours[j]=strdup((char*)le[j]->LFSTK_getBuffer()->c_str());
+				le[j]->LFSTK_clearWindow();
+			}
+	for(int j=THEMELABEL; j<NOMORELABELS; j++)
+		if(lb[j]!=NULL)
+			lb[j]->LFSTK_clearWindow();
+	if(placement!=NULL)
+		free(placement);
+	placement=strdup(static_cast<const char*>(le[EPLACEMENT]->LFSTK_getBuffer()->c_str()));
+	if(titleFont!=NULL)
+		free(titleFont);
+	titleFont=strdup(static_cast<const char*>(le[ETITLEFONT]->LFSTK_getBuffer()->c_str()));
+	if(numberOfDesktops!=NULL)
+		free(numberOfDesktops);
+	numberOfDesktops=strdup(static_cast<const char*>(le[ENUMDESKS]->LFSTK_getBuffer()->c_str()));
+	if(liveUpdate!=NULL)
+		free(liveUpdate);
+	liveUpdate=strdup(static_cast<const char*>(le[ELIVEUPDATE]->LFSTK_getBuffer()->c_str()));
+	if(pathToTheme!=NULL)
+		free(pathToTheme);
+	pathToTheme=strdup(static_cast<const char*>(le[ETHEMEPATH]->LFSTK_getBuffer()->c_str()));
+	if(terminalCommand!=NULL)
+		free(terminalCommand);
+	terminalCommand=strdup(static_cast<const char*>(le[ETERMCOMMAND]->LFSTK_getBuffer()->c_str()));
 }
-int xx=0;
+
 bool callback(void *p,void* ud)
 {
-
 	if((long)ud==EXIT)
 		{
 			mainloop=false;
@@ -131,18 +127,18 @@ bool callback(void *p,void* ud)
 
 	switch((long)ud)
 		{
-			case SAVE:
-				wc->LFSTK_clearWindow();
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile(env,wmPrefs);
-				break;
+		case SAVE:
+			wc->LFSTK_clearWindow();
+			setVars();
+			wc->globalLib->LFSTK_saveVarsToFile(env,wmPrefs);
+			break;
 
-			case APPLY:
-				wc->LFSTK_clearWindow();
-				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
-				printf("\n");
-				break;
+		case APPLY:
+			wc->LFSTK_clearWindow();
+			setVars();
+			wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
+			printf("\n");
+			break;
 		}
 	return(true);
 }
@@ -183,7 +179,7 @@ int main(int argc, char **argv)
 	sx=col1;
 	sy=10;
 	int state=0;
-	for (int j=BACTIVEFRAME;j<NOMOREBUTTONS;j++)
+	for (int j=BACTIVEFRAME; j<NOMOREBUTTONS; j++)
 		{
 			bc[j]=new LFSTK_buttonClass(wc,buttonnames[state],sx,sy,bwidth,24,NorthWestGravity);
 			bc[j]->LFSTK_setActive(false);
@@ -198,7 +194,7 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	state=0;
-	for(int j=THEMELABEL;j<NOMORELABELS;j++)
+	for(int j=THEMELABEL; j<NOMORELABELS; j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
@@ -216,10 +212,10 @@ int main(int argc, char **argv)
 	le[ETERMCOMMAND]->LFSTK_setBuffer(terminalCommand);
 	sy-=vspacing;
 
-	wc->LFSTK_setKeepAbove(true);
 	sy+=(vspacing*2);
 	wc->LFSTK_resizeWindow(col3-10,sy);
 	wc->LFSTK_showWindow();
+	wc->LFSTK_setKeepAbove(true);
 
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)APPLY);
@@ -236,21 +232,21 @@ int main(int argc, char **argv)
 			XNextEvent(wc->display,&event);
 			switch(event.type)
 				{
-						break;
-					case Expose:
-						wc->LFSTK_setActive(true);
-						callback(NULL,(void*)APPLY);
-						break;
-					case ConfigureNotify:
-						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-						break;
-					default:
-						break;
+					break;
+				case Expose:
+					wc->LFSTK_setActive(true);
+					//callback(NULL,(void*)APPLY);
+					break;
+				case ConfigureNotify:
+					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+					break;
+				default:
+					break;
 				}
 		}
 
 	delete wc;
-	for(int j=0;j<NOMOREBUTTONS;j++)
+	for(int j=0; j<NOMOREBUTTONS; j++)
 		if(bc[j]!=NULL)
 			delete bc[j];
 	return 0;

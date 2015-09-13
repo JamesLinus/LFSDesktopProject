@@ -28,13 +28,22 @@ LFSTK_labelClass::LFSTK_labelClass()
 {
 }
 
+//bool LFSTK_gadgetClass::gotFocus(XEvent *e)
+//{
+//	return(true);
+//}
+
 void LFSTK_labelClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
 	if(this->isActive==true)
+//		XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
 		XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
+	else
+//		XSetForeground(this->display,this->gc,this->wc->windowColourNames[INACTIVECOLOUR].pixel);
+		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->isActive==true)
@@ -65,9 +74,14 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=FLATBUTTON;
-	this->listen.function=NULL;
-	this->listen.pointer=NULL;
+//	this->listen.function=NULL;
+//	this->listen.pointer=NULL;
+
+	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
+	this->listen.pointer=this;
 	this->listen.type=LABELGADGET;
+	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
+
 	this->LFSTK_setActive(true);
 	this->LFSTK_setFontColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
 	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
@@ -84,7 +98,6 @@ void LFSTK_labelClass::drawLabel(int p)
 
 	if(this->autoLabelColour==true)
 		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[p].pixel);
-//			printf("----%s-----\n",this->label);
 
 	switch(this->labelOrientation)
 		{
