@@ -37,6 +37,7 @@ bool			showSuffix=false;
 char			*fontFace=NULL;
 char			*foreCol;
 char			*backCol;
+char			*backAlpha;
 char			*ignores=NULL;
 
 Display			*display;
@@ -56,7 +57,7 @@ int				blackColor;
 int				whiteColor;
 
 GC				labelGC;
-XFontStruct		*labelFont;
+//XFontStruct		*labelFont;
 
 unsigned long	labelBackground;
 unsigned long	labelForeground;
@@ -75,6 +76,7 @@ args			desktopPrefs[]=
 	{"fontface",TYPESTRING,&fontFace},
 	{"labelforeground",TYPESTRING,&foreCol},
 	{"labelbackground",TYPESTRING,&backCol},
+	{"labelalpha",TYPESTRING,&backAlpha},
 	{"noshow",TYPESTRING,&ignores},
 	{NULL,0,NULL}
 };

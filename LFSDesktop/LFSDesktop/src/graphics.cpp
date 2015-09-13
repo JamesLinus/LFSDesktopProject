@@ -239,24 +239,6 @@ void drawIcons(void)
 	XShapeCombineRegion(display,rootWin,ShapeInput,0,0,rg,ShapeSet);
 }
 
-void createColours(void)
-{
-	XColor	colour;
-	int		cc=(int)GXcopyInverted;
-
-	XParseColor(display,DefaultColormap(display,screen),"grey40",&colour);
-	XAllocColor(display,DefaultColormap(display,screen),&colour);
-	labelBackground=colour.pixel;
-	XParseColor(display,DefaultColormap(display,screen),"white",&colour);
-	XAllocColor(display,DefaultColormap(display,screen),&colour);
-	labelForeground=colour.pixel;
-
-	labelGC=XCreateGC(display,drawOnThis,GCFunction,(XGCValues*) &cc);
-	labelFont=XQueryFont(display,XGContextFromGC(gc));
-	if(!labelFont)
-		fprintf(stderr,"XLoadQueryFont: failed loading default font");
-}
-
 int get_argb_visual(Visual** vis,int *depth)
 {
 	/* code from gtk project,gdk_screen_get_rgba_visual */

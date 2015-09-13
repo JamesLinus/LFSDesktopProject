@@ -43,6 +43,7 @@ extern bool				showSuffix;
 extern char				*fontFace;
 extern char				*foreCol;
 extern char				*backCol;
+extern char				*backAlpha;
 extern char				*ignores;
 
 extern Display			*display;
@@ -62,7 +63,7 @@ extern int				blackColor;
 extern int				whiteColor;
 
 extern GC				labelGC;
-extern XFontStruct		*labelFont;
+//extern XFontStruct		*labelFont;
 
 extern unsigned long	labelBackground;
 extern unsigned long	labelForeground;

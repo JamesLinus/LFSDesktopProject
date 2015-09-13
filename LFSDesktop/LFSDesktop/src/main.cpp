@@ -89,10 +89,11 @@ void printhelp(void)
 			" -t,--tidy				Tidy disk info/desktop cache data preserving existing\n"
 			" -a,--theme			Set theme\n"
 			" -x,--term-command		Set terminal command ( default xterm -e )\n"
-			" -s,--show-extension	Set terminal command ( default xterm -e )\n"
+			" -s,--show-extension	Show desktop file extension ( default no show )\n"
 			" -f,--font				Font face ( Sans;0;0;10 - Fontname;Weight(0/1);Slant(0/1/2);Fontsize )\n"
-			" -4,--fore-colour		Fore colour for label in RGBA hex notation ( default 0xffffffff )\n"
-			" -b,--back-colour		Back colour for label in RGBA hex notation ( default 0x0 )\n"
+			" -4,--fore-colour		Fore colour for label in RGB # notation ( default #ffffff )\n"
+			" -b,--back-colour		Back colour for label in RGB # notation ( default #000000 )\n"
+			" -A,--back-alpha		Alpha for label in # notation ( default #ff )\n"
 			" -i,--ignore			List of ';' seperated disk labels to NOT show on desktop\n"
 			" -m,--appmenu			Show the application menu when right clicking on desktop\n"
 			" -d,--debug			Debug\n"
@@ -401,6 +402,7 @@ void doPopUp(int x,int y)
 void setFontEtc(void)
 {
 	char	*ptr;
+	XColor	colour;
 
 	ptr=strtok(fontFace,";");
 	if(ptr!=NULL)
@@ -423,15 +425,24 @@ void setFontEtc(void)
 	else
 		fontSize=10;
 
-	backColour.r=((strtol(backCol,NULL,16)>>24) & 0xff)/256.0;
-	backColour.g=((strtol(backCol,NULL,16)>>16) & 0xff)/256.0;
-	backColour.b=((strtol(backCol,NULL,16)>>8) & 0xff)/256.0;
-	backColour.a=((strtol(backCol,NULL,16)>>0) & 0xff)/256.0;
 
-	foreColour.r=((strtol(foreCol,NULL,16)>>24) & 0xff)/256.0;
-	foreColour.g=((strtol(foreCol,NULL,16)>>16) & 0xff)/256.0;
-	foreColour.b=((strtol(foreCol,NULL,16)>>8) & 0xff)/256.0;
-	foreColour.a=((strtol(foreCol,NULL,16)>>0) & 0xff)/256.0;
+	XParseColor(display,DefaultColormap(display,screen),backCol,&colour);
+	XAllocColor(display,DefaultColormap(display,screen),&colour);
+	labelBackground=colour.pixel;
+
+	XParseColor(display,DefaultColormap(display,screen),foreCol,&colour);
+	XAllocColor(display,DefaultColormap(display,screen),&colour);
+	labelForeground=colour.pixel;
+
+	backColour.r=((labelBackground>>24) & 0xff)/256.0;
+	backColour.g=((labelBackground>>16) & 0xff)/256.0;
+	backColour.b=((labelBackground>>8) & 0xff)/256.0;
+	backColour.a=strtod(backAlpha,NULL);
+
+	foreColour.r=(labelForeground & 0xff)/256.0;
+	foreColour.g=(labelForeground & 0xff)/256.0;
+	foreColour.b=(labelForeground & 0xff)/256.0;
+	foreColour.a=1.0;
 }
 
 int main(int argc,char **argv)
@@ -504,8 +515,9 @@ int main(int argc,char **argv)
 
 	asprintf(&prefsPath,"%s/.config/LFS/lfsdesktop.rc",getenv("HOME"));
 	asprintf(&fontFace,"Sans;0;0;10");
-	asprintf(&foreCol,"0xffffffff");
-	asprintf(&backCol,"0x00000000");
+	asprintf(&foreCol,"#ffffff");
+	asprintf(&backCol,"#000000");
+	asprintf(&backAlpha,"0x00");
 	showSuffix=false;
 	asprintf(&terminalCommand,"xterm -e ");
 
@@ -514,7 +526,7 @@ int main(int argc,char **argv)
 	while (1)
 		{
 			int option_index=0;
-			c=getopt_long (argc,argv,"v?hctdsma:x:f:4:b:i:",long_options,&option_index);
+			c=getopt_long (argc,argv,"v?hctdsma:x:f:4:b:i:A:",long_options,&option_index);
 			if (c==-1)
 				break;
 
@@ -571,6 +583,12 @@ int main(int argc,char **argv)
 					backCol=strdup(optarg);
 					break;
 
+				case 'A':
+					if(backAlpha!=NULL)
+						free(backAlpha);
+					backAlpha=strdup(optarg);
+					break;
+
 				case 'i':
 					if(ignores!=NULL)
 						free(ignores);
@@ -611,7 +629,6 @@ int main(int argc,char **argv)
 	if(display==NULL)
 		exit(1);
 
-	setFontEtc();
 
 	XSynchronize(display,true);
 	screen=DefaultScreen(display);
@@ -636,7 +653,7 @@ int main(int argc,char **argv)
 
 	hcreate(100);
 
-	createColours();
+	setFontEtc();
 
 	xCnt=displayWidth/gridSize;
 	yCnt=displayHeight/gridSize;
@@ -912,7 +929,8 @@ int main(int argc,char **argv)
 									oldboxx=ev.xmotion.x;
 									oldboxy=ev.xmotion.y;
 
-									XSetForeground(display,gc,labelBackground);
+									//XSetForeground(display,gc,labelBackground);
+									XSetForeground(display,gc,whiteColor);
 									XSetFillStyle(display,gc,FillSolid);
 									newboxx=((ev.xmotion.x-gridBorder)/gridSize)*gridSize+(gridBorder/2);
 									newboxy=((ev.xmotion.y-gridBorder)/gridSize)*gridSize+(gridBorder/2);

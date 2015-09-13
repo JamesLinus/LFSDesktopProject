@@ -56,7 +56,6 @@ extern cairoColor			foreColour;
 
 void drawImage(char *type,const char *catagory,int x,int y,bool mounted);
 
-void createColours(void);
 int get_argb_visual(Visual** vis,int *depth);
 void createDesktopWindow(void);
 void drawIcons(void);
