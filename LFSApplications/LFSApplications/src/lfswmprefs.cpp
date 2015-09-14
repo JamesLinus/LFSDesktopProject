@@ -201,7 +201,7 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	state=0;
-	for(int j=THEMELABEL; j<NOMORELABELS; j++)
+	for(int j=THEMELABEL; j<PLACELABEL; j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
@@ -211,6 +211,18 @@ int main(int argc, char **argv)
 			sx=col1;
 			state++;
 		}
+
+	for(int j=PLACELABEL; j<NOMORELABELS; j++)
+		{
+			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
+			lb[j]->LFSTK_setLabelAutoColour(true);
+			sx+=spacing;
+			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,bwidth,24,NorthWestGravity);
+			sy+=vspacing;
+			sx=col1;
+			state++;
+		}
+
 	le[EPLACEMENT]->LFSTK_setBuffer(placement);
 	le[ETITLEFONT]->LFSTK_setBuffer(titleFont);
 	le[ENUMDESKS]->LFSTK_setBuffer(numberOfDesktops);

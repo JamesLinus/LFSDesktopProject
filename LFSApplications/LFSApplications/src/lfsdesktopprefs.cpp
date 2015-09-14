@@ -39,8 +39,15 @@ LFSTK_lineEditClass	*le[NUMPREFS]={NULL,};
 LFSTK_labelClass	*lb[NUMPREFS]={NULL,};
 LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
 
+int					bwidth=96;
+int					spacing=bwidth+10;
+int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+
+#define BIG col2-col1+bwidth
+
 char				*prefs[NUMPREFS]={NULL,};
 const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Show Ext","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
+int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
 
 args				desktopPrefs[]=
 {
@@ -116,11 +123,10 @@ int main(int argc, char **argv)
 	int				sx=0;
 	int				sy=0;
 	geometryStruct	*geom;
-	int				bwidth=96;
 	int				bhite=24;
-	int				spacing=bwidth+10;
+	//int				spacing=bwidth+10;
 	int				vspacing=bhite+10;
-	int				col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+	//int				col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 
 	prefs[ICONTHEME]=strdup("gnome");
 	prefs[ICONSIZE]=strdup("32");
@@ -160,7 +166,7 @@ int main(int argc, char **argv)
 			lb[j]->LFSTK_setActive(false);
 			lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
 			sx+=spacing;
-			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,col2-col1+bwidth,24,NorthWestGravity);
+			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
 			sy+=vspacing;
 			sx=col1;
 		}
