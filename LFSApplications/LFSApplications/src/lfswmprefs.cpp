@@ -32,7 +32,7 @@
 enum {BACTIVEFRAME=0,BACTIVEFILL,BINACTIVEFRAME,BINACTIVEFILL,BWIDGETCOLOUR,NOMOREBUTTONS};
 enum {EACTIVEFRAME=0,EACTIVEFILL,EINACTIVEFRAME,EINACTIVEFILL,EWIDGETCOLOUR,ETHEMEPATH,ETERMCOMMAND,ETITLEFONT,EPLACEMENT,ENUMDESKS,ELIVEUPDATE,NOMOREEDITS};
 enum {ACTIVEFRAME=0,ACTIVEFRAMEFILL,INACTIVEFRAME,INACTIVEFRAMEFILL,TEXTCOLOUR};
-enum {EXIT=0,APPLY,SAVE,NOMORE};
+enum {EXIT=0,APPLY,PRINT,RESTARTWM,NOMORE};
 enum {THEMELABEL=0,TERMLABEL,FONTLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,NOMORELABELS};
 
 const char			*buttonnames[]= {"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
@@ -121,23 +121,30 @@ bool callback(void *p,void* ud)
 {
 	if((long)ud==EXIT)
 		{
+			wc->LFSTK_clearWindow();
+			setVars();
+			wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
+			printf("\n");
 			mainloop=false;
 			return(false);
 		}
 
 	switch((long)ud)
 		{
-		case SAVE:
+		case PRINT:
 			wc->LFSTK_clearWindow();
 			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile(env,wmPrefs);
+			wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
+			printf("\n");
 			break;
 
 		case APPLY:
 			wc->LFSTK_clearWindow();
 			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile("-",wmPrefs);
-			printf("\n");
+			wc->globalLib->LFSTK_saveVarsToFile(env,wmPrefs);
+			system("killall lfswmanager");
+			sleep(1);
+			system("lfswmanager &");
 			break;
 		}
 	return(true);
@@ -174,8 +181,8 @@ int main(int argc, char **argv)
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibc[SAVE]=new LFSTK_buttonClass(wc,"Save",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
-	guibc[SAVE]->LFSTK_setCallBack(NULL,callback,(void*)SAVE);
+	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	sx=col1;
 	sy=10;
 	int state=0;
@@ -218,7 +225,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_setKeepAbove(true);
 
 	printf("Current Settings:\n\n");
-	callback(NULL,(void*)APPLY);
+	callback(NULL,(void*)PRINT);
 	printf("\n\n");
 
 	mainloop=true;

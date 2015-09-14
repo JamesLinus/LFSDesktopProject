@@ -1,4 +1,6 @@
 0.0.2
+Exit from lfswmprefs prints settings to stdout.
+Apply in lfswmprefs now restarts window manager.
 Fixed keep above in all prefs dialogs.
 Added desktop prefs.
 Added window manager prefs.

@@ -29,7 +29,7 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
-enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,BACKCOLOUR,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
+enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
 enum {EXIT=0,APPLY,SAVE,NOMOREBUTTONS};
 
 LFSTK_windowClass	*wc;
@@ -40,7 +40,7 @@ LFSTK_labelClass	*lb[NUMPREFS]={NULL,};
 LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
 
 char				*prefs[NUMPREFS]={NULL,};
-const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Show Ext","Fore Colour","Back Colour","Term Command","Font","Ignore"};
+const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Show Ext","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
 
 args				desktopPrefs[]=
 {
@@ -54,6 +54,7 @@ args				desktopPrefs[]=
 	{"fontface",TYPESTRING,&prefs[FONTFACE]},
 	{"labelforeground",TYPESTRING,&prefs[FORECOLOUR]},
 	{"labelbackground",TYPESTRING,&prefs[BACKCOLOUR]},
+	{"labelalpha",TYPESTRING,&prefs[ALPHA]},
 	{"noshow",TYPESTRING,&prefs[IGNORES]},
 	{NULL,0,NULL}
 };
@@ -63,15 +64,22 @@ char				*env;
 
 void setVars(void)
 {
+	lb[BACKCOLOUR]->LFSTK_setColourName(INACTIVECOLOUR,le[BACKCOLOUR]->LFSTK_getBuffer()->c_str());
+	lb[FORECOLOUR]->LFSTK_setColourName(INACTIVECOLOUR,le[FORECOLOUR]->LFSTK_getBuffer()->c_str());
 	for(int j=ICONTHEME; j<NUMPREFS; j++)
-		if(lb[j]!=NULL)
-			lb[j]->LFSTK_clearWindow();
-
+		{
+			if(lb[j]!=NULL)
+				{
+					lb[j]->LFSTK_clearWindow();
+					if(prefs[j]!=NULL)
+						free(prefs[j]);
+					prefs[j]=strdup(le[j]->LFSTK_getBuffer()->c_str());
+				}
+		}
 }
 
 bool callback(void *p,void* ud)
 {
-
 	if((long)ud==EXIT)
 		{
 			mainloop=false;
@@ -82,8 +90,8 @@ bool callback(void *p,void* ud)
 		{
 			case SAVE:
 				wc->LFSTK_clearWindow();
-				//setVars();
-				//wc->globalLib->LFSTK_saveVarsToFile(env,wmPrefs);
+				setVars();
+				wc->globalLib->LFSTK_saveVarsToFile(env,desktopPrefs);
 				break;
 
 			case APPLY:
@@ -116,9 +124,10 @@ int main(int argc, char **argv)
 	prefs[TERMCOMMAND]=strdup("xterm -e ");
 	prefs[SHOWSUFFIX]=strdup("0");
 	prefs[FONTFACE]=strdup("Sans;0;0;10");
-	prefs[FORECOLOUR]=strdup("0xffffffff");
-	prefs[BACKCOLOUR]=strdup("0x00000000");
-	prefs[IGNORES]=strdup("");
+	prefs[FORECOLOUR]=strdup("#ffffff");
+	prefs[BACKCOLOUR]=strdup("#000000");
+	prefs[ALPHA]=strdup("#ff");
+	prefs[IGNORES]=strdup("xxxx");
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Desktop Prefs",false);
 	wc->LFSTK_setDecorated(true);
@@ -137,57 +146,19 @@ int main(int argc, char **argv)
 	guibc[SAVE]->LFSTK_setCallBack(NULL,callback,(void*)SAVE);
 	sx=col1;
 	sy=10;
-	//int state=0;
-/*
-	asprintf(&fontFace,"Sans;0;0;10");
-	asprintf(&foreCol,"0xffffffff");
-	asprintf(&backCol,"0x00000000");
-	showSuffix=false;
-	asprintf(&terminalCommand,"xterm -e ");
-	{"icontheme",TYPESTRING,&prefs[ICONTHEME]},
-	{"iconsize",TYPESTRING,&prefs[ICONSIZE]},
-	{"gridsize",TYPESTRING,&prefs[GRIDSIZE]},
-	{"gridborder",TYPESTRING,&prefs[GRIDBORDER]},
-	{"refreshrate",TYPESTRING,&prefs[REFRESHRATE]},
-	{"termcommand",TYPESTRING,&prefs[TERMCOMMAND]},
-	{"showextension",TYPESTRING,&prefs[SHOWSUFFIX]},
-	{"fontface",TYPESTRING,&prefs[FONTFACE]},
-	{"labelforeground",TYPESTRING,&prefs[FORECOLOUR]},
-	{"labelbackground",TYPESTRING,&prefs[BACKCOLOUR]},
-	{"noshow",TYPESTRING,&prefs[IGNORES]},
-
-	asprintf(&fontFace,"Sans;0;0;10");
-	asprintf(&foreCol,"0xffffffff");
-	asprintf(&backCol,"0x00000000");
-	showSuffix=false;
-	asprintf(&terminalCommand,"xterm -e ");
-
-
-int				iconSize=40;
-int				gridBorder=32;
-int				gridSize=iconSize+gridBorder;
-int				refreshRate=2;
-char			*terminalCommand=NULL;
-bool			showSuffix=false;
-char			*fontFace=NULL;
-char			*foreCol;
-char			*backCol;
-char			*ignores=NULL;
-
-
-*/
 
 	for(int j=ICONTHEME;j<NUMPREFS;j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
+			lb[j]->LFSTK_setActive(false);
+			lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
 			sx+=spacing;
 			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,col2-col1+bwidth,24,NorthWestGravity);
 			sy+=vspacing;
 			sx=col1;
-			//state++;
 		}
-	sy+=(vspacing*2);
+	sy+=vspacing;
 	wc->LFSTK_resizeWindow(col3-10,sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
@@ -209,9 +180,6 @@ char			*ignores=NULL;
 				{
 						break;
 					case Expose:
-						//wc->LFSTK_clearWindow();
-						//wc->LFSTK_setActive(true);
-						//callback(NULL,(void*)APPLY);
 						wc->LFSTK_clearWindow();
 						
 						break;
@@ -228,6 +196,13 @@ char			*ignores=NULL;
 		if(guibc[j]!=NULL)
 			delete guibc[j];
 
+	for(int j=ICONTHEME;j<NUMPREFS;j++)
+		if(le[j]!=NULL)
+			delete le[j];
+
+	for(int j=ICONTHEME;j<NUMPREFS;j++)
+		if(prefs[j]!=NULL)
+			free(prefs[j]);
 	free(env);
 	return(0);
 };
