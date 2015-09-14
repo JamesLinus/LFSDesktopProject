@@ -30,7 +30,7 @@
 #include <LFSTKLib.h>
 
 enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
-enum {EXIT=0,APPLY,SAVE,NOMOREBUTTONS};
+enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 
 LFSTK_windowClass	*wc;
 //LFSTK_buttonClass	*bc[NOMOREBUTTONS]={NULL,};
@@ -82,23 +82,29 @@ bool callback(void *p,void* ud)
 {
 	if((long)ud==EXIT)
 		{
+			wc->LFSTK_clearWindow();
+			setVars();
+			wc->globalLib->LFSTK_saveVarsToFile("-",desktopPrefs);
+			printf("\n");
 			mainloop=false;
 			return(false);
 		}
 
 	switch((long)ud)
 		{
-			case SAVE:
+			case PRINT:
 				wc->LFSTK_clearWindow();
 				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile(env,desktopPrefs);
+				wc->globalLib->LFSTK_saveVarsToFile("-",desktopPrefs);
+				printf("\n");
 				break;
 
 			case APPLY:
 				wc->LFSTK_clearWindow();
 				setVars();
-				wc->globalLib->LFSTK_saveVarsToFile("-",desktopPrefs);
-				printf("\n");
+				wc->globalLib->LFSTK_saveVarsToFile(env,desktopPrefs);
+				system("lfsdesktop &");
+
 				break;
 		}
 	return(true);
@@ -142,8 +148,8 @@ int main(int argc, char **argv)
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibc[SAVE]=new LFSTK_buttonClass(wc,"Save",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
-	guibc[SAVE]->LFSTK_setCallBack(NULL,callback,(void*)SAVE);
+	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	sx=col1;
 	sy=10;
 

@@ -1,9 +1,12 @@
 0.0.12
+Added '--back-alpha' or '-A' option to command line.
+Colour specs now the same as the wm and tool kit ie use #RGB insatead of 0xRGBA.
+Added 'labelalpha' to prefs to set alpha of label indepenent of colour.
 Removed lfstooolkit prefs code.
 Updated to use new tool kit.
 
 0.0.11
-Updated licence stuff at to of file.
+Updated licence stuff at top of file.
 Removed externel icon dialog box.
 Removed unneeded libs.
 Dialog boxes use the new toolkit.

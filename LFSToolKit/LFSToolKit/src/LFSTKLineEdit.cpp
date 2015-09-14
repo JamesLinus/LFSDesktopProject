@@ -73,6 +73,10 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	XA_TARGETS=XInternAtom(this->display,"TARGETS",True);
 }
 
+
+/**
+* Clear the gadget window to the appropriate state.
+*/
 void LFSTK_lineEditClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);

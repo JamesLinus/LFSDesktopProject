@@ -1,4 +1,8 @@
 0.0.2
+Exit from lfsdesktopprefs prints settings to stdout.
+Apply in lfsdesktopprefs now restarts desktop.
+Exit from lfstkappearance prints settings to stdout.
+Apply in lfstkappearance now writes tool kit prefs.
 Exit from lfswmprefs prints settings to stdout.
 Apply in lfswmprefs now restarts window manager.
 Fixed keep above in all prefs dialogs.

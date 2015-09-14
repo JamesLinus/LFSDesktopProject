@@ -1,4 +1,5 @@
 0.0.14
+Theme now uses just a theme name OR a full path to theme.
 Removed 'k' option.
 Removed manual load of prefs file from appmenu.
 Code clean.

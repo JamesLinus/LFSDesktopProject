@@ -188,7 +188,7 @@ void usage(FILE *f)
 			"-X colour		Button and title colour\n"
 	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
-			"-T	theme		Path to theme\n"
+			"-T	theme		Name of installed theme to use\n"
 			"-x command		Set terminal command ( default xterm -e )\n"
 			"-w	outfile		After setting prefs from default, prefsfile and command line write out a prefsfile and quit ( MUST be last option ).\n"
 	        ,PACKAGE_STRING,progname);
@@ -303,6 +303,37 @@ void loadTheme(void)
 		}
 }
 
+void makeFullPathToTheme(void)
+{
+	char	*buffer;
+//no theme set
+	if(theme.pathToTheme==NULL)
+		return;
+//full path to theme already set
+	if(theme.pathToTheme[0]=='/')
+		return;
+
+//search home themes first
+	asprintf(&buffer,"%s/.themes/%s",getenv("HOME"),theme.pathToTheme);
+	if(fileExists(buffer)==0)
+		{
+			free(theme.pathToTheme);
+			theme.pathToTheme=buffer;
+			return;
+		}
+
+//search global themes
+	free(buffer);
+	asprintf(&buffer,"/usr/share/themes/%s",theme.pathToTheme);
+	if(fileExists(buffer)==0)
+		{
+			free(theme.pathToTheme);
+			theme.pathToTheme=buffer;
+			return;
+		}
+	free(buffer);
+}
+
 int main(int argc,char *argv[])
 {
 	CHECKPOINT
@@ -336,6 +367,8 @@ int main(int argc,char *argv[])
 	asprintf(&terminalCommand,"xterm -e ");
 
 	loadVarsFromFile(prefsfile,wmPrefs," ");
+	makeFullPathToTheme();
+
 	free(prefsfile);
 
 	ndesk=numberOfDesktops;

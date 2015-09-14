@@ -119,6 +119,10 @@ unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 	return sc.pixel;
 }
 
+
+/**
+* Clear the window to the appropriate state.
+*/
 void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);

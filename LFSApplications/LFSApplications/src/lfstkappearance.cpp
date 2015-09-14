@@ -29,7 +29,7 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
-enum {EXIT=0,APPLY,SAVE,BUTTONLABEL,NULLLABEL,MENUITEMLABEL,NULLLABEL2,FONTLABEL,FONTBOX,MENUFONTLABEL,MENUFONTBOX,WNORMAL,EWNORMAL,
+enum {EXIT=0,APPLY,PRINT,BUTTONLABEL,NULLLABEL,MENUITEMLABEL,NULLLABEL2,FONTLABEL,FONTBOX,MENUFONTLABEL,MENUFONTBOX,WNORMAL,EWNORMAL,
 
 BNORMAL,ENORMAL,BPRELIGHT,EPRELIGHT,BACTIVE,EACTIVE,BINACTIVE,EINACTIVE,MENUNORM,EMENUNORM,MENUPRELITE,EMENUPRELITE,MENUACTIVE,EMENUACTIVE,MENUINACTIVE,EMENUINACTIVE,
 
@@ -46,25 +46,8 @@ bool					mainloop=false;
 LFSTK_windowClass		*wc;
 LFSTK_gadgetClass		*bc[NOMORE]={NULL,};
 
-bool callback(void *p,void* ud)
+void setVars(void)
 {
-	char *env;
-
-	if((long)ud==EXIT)
-		{
-			mainloop=false;
-			return(false);
-		}
-
-	switch((long)ud)
-		{
-			case SAVE:
-				asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
-				wc->globalLib->LFSTK_saveVarsToFile(env,wc->globalLib->LFSTK_getTKArgs());
-				free(env);
-				break;
-
-			case APPLY:
 				wc->LFSTK_setWindowColourName(NORMALCOLOUR,(char*)(static_cast<LFSTK_lineEditClass*>(bc[EWNORMAL])->LFSTK_getBuffer()->c_str()));
 				wc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEWINDOW,wc->windowColourNames[NORMALCOLOUR].name);
 				wc->LFSTK_clearWindow();
@@ -127,6 +110,35 @@ bool callback(void *p,void* ud)
 				for(int j=BUTTONLABEL;j<NOMORE;j++)
 					if(bc[j]!=NULL)
 						bc[j]->LFSTK_clearWindow();
+}
+
+bool callback(void *p,void* ud)
+{
+	char *env;
+
+	if((long)ud==EXIT)
+		{
+			setVars();
+			wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
+			printf("\n");
+			mainloop=false;
+			return(false);
+		}
+
+	switch((long)ud)
+		{
+			case PRINT:
+				setVars();
+				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
+				printf("\n");
+				break;
+
+			case APPLY:
+				wc->LFSTK_clearWindow();
+				setVars();
+				asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+				wc->globalLib->LFSTK_saveVarsToFile(env,wc->globalLib->LFSTK_getTKArgs());
+				free(env);
 				break;
 		}
 	return(true);
@@ -153,8 +165,8 @@ int main(int argc, char **argv)
 	bc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	bc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	bc[SAVE]=new LFSTK_buttonClass(wc,"Save",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
-	bc[SAVE]->LFSTK_setCallBack(NULL,callback,(void*)SAVE);
+	bc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	bc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 
 //labels
 	sx=col1;
@@ -274,7 +286,7 @@ int main(int argc, char **argv)
 		bc[j]->LFSTK_setActive(false);
 
 	printf("Current Settings:\n\n");
-	callback(NULL,(void*)APPLY);
+	callback(NULL,(void*)PRINT);
 	printf("\n\n");
 
 	mainloop=true;

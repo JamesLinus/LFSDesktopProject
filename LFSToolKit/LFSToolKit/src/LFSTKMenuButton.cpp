@@ -60,6 +60,10 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 		}
 }
 
+
+/**
+* Clear the gadget window to the appropriate state.
+*/
 void LFSTK_menuButtonClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);

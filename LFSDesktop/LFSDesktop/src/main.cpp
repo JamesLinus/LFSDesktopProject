@@ -66,6 +66,7 @@ struct option		long_options[] =
 					{"font",1,0,'f'},
 					{"fore-colour",1,0,'4'},
 					{"back-colour",1,0,'b'},
+					{"back-alpha",1,0,'A'},
 					{"ignore",1,0,'i'},
 					{"appmenu",0,0,'m'},
 					{"debug",0,0,'d'},
@@ -434,14 +435,14 @@ void setFontEtc(void)
 	XAllocColor(display,DefaultColormap(display,screen),&colour);
 	labelForeground=colour.pixel;
 
-	backColour.r=((labelBackground>>24) & 0xff)/256.0;
-	backColour.g=((labelBackground>>16) & 0xff)/256.0;
-	backColour.b=((labelBackground>>8) & 0xff)/256.0;
+	backColour.r=((labelBackground>>16) & 0xff)/256.0;
+	backColour.g=((labelBackground>>8) & 0xff)/256.0;
+	backColour.b=((labelBackground>>0) & 0xff)/256.0;
 	backColour.a=strtod(backAlpha,NULL);
 
-	foreColour.r=(labelForeground & 0xff)/256.0;
-	foreColour.g=(labelForeground & 0xff)/256.0;
-	foreColour.b=(labelForeground & 0xff)/256.0;
+	foreColour.r=((labelForeground>>16) & 0xff)/256.0;
+	foreColour.g=((labelForeground>>8) & 0xff)/256.0;
+	foreColour.b=((labelForeground>>0) & 0xff)/256.0;
 	foreColour.a=1.0;
 }
 

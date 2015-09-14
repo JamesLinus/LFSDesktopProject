@@ -28,22 +28,22 @@ LFSTK_labelClass::LFSTK_labelClass()
 {
 }
 
-//bool LFSTK_gadgetClass::gotFocus(XEvent *e)
-//{
-//	return(true);
-//}
 
+/**
+* Clear the gadget window to the appropriate state.
+* \note Label background is set to the window normal colour unless the label is set as inactive,
+* \note in which case the label's inactive colour is used.
+*/
 void LFSTK_labelClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
 	if(this->isActive==true)
-//		XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
 		XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
 	else
-//		XSetForeground(this->display,this->gc,this->wc->windowColourNames[INACTIVECOLOUR].pixel);
 		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
+
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->isActive==true)

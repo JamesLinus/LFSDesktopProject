@@ -55,6 +55,9 @@ void LFSTK_buttonClass::drawLabel(int p)
 		}
 }
 
+/**
+* Clear the gadget window to the appropriate state.
+*/
 void LFSTK_buttonClass::LFSTK_clearWindow(void)
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);

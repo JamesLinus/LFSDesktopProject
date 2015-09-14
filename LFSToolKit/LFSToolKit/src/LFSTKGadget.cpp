@@ -205,6 +205,9 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 	this->autoLabelColour=setauto;
 }
 
+/**
+* Clear the gadget window to the appropriate state.
+*/
 void LFSTK_gadgetClass::LFSTK_clearWindow()
 {
 	XSetFillStyle(this->display,this->gc,FillSolid);
