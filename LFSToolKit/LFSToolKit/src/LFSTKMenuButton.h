@@ -52,7 +52,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 	public:
 		LFSTK_menuButtonClass();
 		~LFSTK_menuButtonClass();
-		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity);
+		LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
 		void LFSTK_clearWindow(void);		
 		bool mouseEnter(XButtonEvent *e);

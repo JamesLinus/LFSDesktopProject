@@ -1,4 +1,6 @@
 0.0.7
+Added getgeom to gadget class.
+Fixed getgeom in window class not getting global values.
 Added get buffer to line edit class.
 Moved load font to lib class.
 Added show window to window class.

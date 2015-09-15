@@ -14,7 +14,11 @@ lfsdesktopprefs_SOURCES = ../src/lfsdesktopprefs.cpp
 lfsdesktopprefs_CFLAGS = -O3
 lfsdesktopprefs_CXXFLAGS = -O3
 
+lfsprefsgroup_SOURCES = ../src/lfsprefsgroup.cpp
+lfsprefsgroup_CFLAGS = -O3
+lfsprefsgroup_CXXFLAGS = -O3
+
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS = lfstkappearance lfswmprefs lfsdesktopprefs
+bin_PROGRAMS = lfstkappearance lfswmprefs lfsdesktopprefs lfsprefsgroup
 

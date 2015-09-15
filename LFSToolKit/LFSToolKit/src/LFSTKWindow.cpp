@@ -218,14 +218,18 @@ void LFSTK_windowClass::LFSTK_setDecorated(bool isDecorated)
 geometryStruct *LFSTK_windowClass::LFSTK_getGeom()
 {
 	geometryStruct		*g=new geometryStruct;
-	XWindowAttributes	xa;
+	XWindowAttributes	xwa;
+	int					x,y;
+	Window				child;
 
-	XGetWindowAttributes(this->display,this->window,&xa);
+	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
+	XGetWindowAttributes(this->display,this->window,&xwa);
 
-	g->x=xa.x;
-	g->y=xa.y;
-	g->w=xa.width;
-	g->h=xa.height;
+	g->x=x;
+	g->y=y;
+	g->w=xwa.width;
+	g->h=xwa.height;
+
 	return(g);
 }
 

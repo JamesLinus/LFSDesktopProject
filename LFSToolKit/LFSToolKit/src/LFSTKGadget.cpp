@@ -412,3 +412,26 @@ void LFSTK_gadgetClass::LFSTK_setLabelOriention(int orient)
 	this->labelOrientation=orient;
 }
 
+/**
+* Get gadget geometry.
+* \return geometry structure.
+* \note Caller should free structure after use.
+*/
+geometryStruct *LFSTK_gadgetClass::LFSTK_getGeom(void)
+{
+	geometryStruct		*g=new geometryStruct;
+	XWindowAttributes	xwa;
+	int					x,y;
+	Window				child;
+
+	XTranslateCoordinates(this->display,this->window,this->rootWindow,0,0,&x,&y,&child );
+	XGetWindowAttributes(this->display,this->window,&xwa);
+
+	g->x=x;
+	g->y=y;
+	g->w=xwa.width;
+	g->h=xwa.height;
+
+	return(g);
+}
+

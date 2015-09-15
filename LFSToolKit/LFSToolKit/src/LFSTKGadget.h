@@ -64,6 +64,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setLabel(const char *newlabel);
 		const char *LFSTK_getLabel(void);
 		void LFSTK_setLabelOriention(int orient);
+		geometryStruct *LFSTK_getGeom(void);
 
 		LFSTK_windowClass	*wc;
 

@@ -33,8 +33,6 @@ enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,B
 enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 
 LFSTK_windowClass	*wc;
-//LFSTK_buttonClass	*bc[NOMOREBUTTONS]={NULL,};
-//LFSTK_buttonClass	*guibc[NOMORE]={NULL,};
 LFSTK_lineEditClass	*le[NUMPREFS]={NULL,};
 LFSTK_labelClass	*lb[NUMPREFS]={NULL,};
 LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
@@ -124,9 +122,7 @@ int main(int argc, char **argv)
 	int				sy=0;
 	geometryStruct	*geom;
 	int				bhite=24;
-	//int				spacing=bwidth+10;
 	int				vspacing=bhite+10;
-	//int				col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 
 	prefs[ICONTHEME]=strdup("gnome");
 	prefs[ICONSIZE]=strdup("32");
@@ -139,7 +135,7 @@ int main(int argc, char **argv)
 	prefs[FORECOLOUR]=strdup("#ffffff");
 	prefs[BACKCOLOUR]=strdup("#000000");
 	prefs[ALPHA]=strdup("#ff");
-	prefs[IGNORES]=strdup("xxxx");
+	prefs[IGNORES]=strdup("");
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Desktop Prefs",false);
 	wc->LFSTK_setDecorated(true);

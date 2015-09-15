@@ -143,8 +143,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	addto=tfont->ascent+tfont->descent+8;
 	maxwid+=4;
-	g=this->wc->LFSTK_getGeom();
-	subwc=new LFSTK_windowClass(this->x+g->x,this->y+g->y+this->h,maxwid,this->menuCount*addto,"",true,false);
+	g=this->LFSTK_getGeom();
+	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"",true,false);
 	sy=0;
 
 	for(int j=0;j<this->menuCount;j++)
@@ -292,7 +292,7 @@ void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 * \param h Height.
 * \param gravity Button gravity.
 */
-LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,char* label,int x,int y,int w,int h,int gravity)
+LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
 

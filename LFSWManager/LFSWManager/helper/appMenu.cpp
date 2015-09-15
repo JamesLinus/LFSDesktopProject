@@ -24,7 +24,7 @@
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
-#include "LFSTKMenuButton.h"
+#include <LFSTKMenuButton.h>
 
 #define BUFFERSIZE 2048
 #define MAXCATS 14
