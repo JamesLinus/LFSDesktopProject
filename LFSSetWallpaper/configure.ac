@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([SetLFSWalpaper],[0.0.5],[SetWallpaper],[SetWallpaper])
+AC_INIT([SetLFSWalpaper],[0.0.5],[LFSSetWallpaper],[LFSSetWallpaper])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -32,5 +32,5 @@ PKG_CHECK_MODULES(IMLIB, $IMLIB_MODULES)
 AC_SUBST(IMLIB_LIBS)
 AC_SUBST(IMLIB_CFLAGS)
 
-AC_OUTPUT(Makefile SetWallpaper/app/Makefile)
+AC_OUTPUT(Makefile LFSSetWallpaper/app/Makefile)
 
