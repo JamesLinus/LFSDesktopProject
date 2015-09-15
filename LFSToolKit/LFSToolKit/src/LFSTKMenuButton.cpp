@@ -181,6 +181,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					break;
 				case Expose:
 				break;
+				case ButtonRelease:
+					run=false;
+					break;
 				default:
 					break;
 				}
