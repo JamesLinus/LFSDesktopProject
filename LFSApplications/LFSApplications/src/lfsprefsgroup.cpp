@@ -29,16 +29,15 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
-enum {LOADMENU,NUMPREFS};
-enum {EXIT=0,APPLY,NEWGROUP,NOMOREBUTTONS};
+enum {LOADMENU,ECURRENT,NUMPREFS};
+enum {EXIT=0,APPLY,NEWGROUP,UPDATEGROUP,NOMOREBUTTONS};
 
 LFSTK_windowClass	*wc;
-//LFSTK_lineEditClass	*le[NUMPREFS]={NULL,};
-//LFSTK_labelClass	*lb[NUMPREFS]={NULL,};
+LFSTK_lineEditClass	*current=NULL;
+LFSTK_lineEditClass	*newgroup=NULL;
 LFSTK_menuButtonClass *mb=NULL;
 LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
 
-//					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
 int					bwidth=96;
 int					spacing=bwidth+10;
 int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
@@ -46,6 +45,44 @@ bool				mainloop=false;
 int					maxGroups=20;
 int					numGroups=0;
 menuItemStruct		*groups;
+#define BIG col2-col1+bwidth
+
+int fileExists(const char *name)
+{
+	struct stat buffer;
+	return (stat(name,&buffer));
+}
+
+void makeGroup(const char *grpname)
+{
+	char	*grp;
+	char	*command;
+
+	asprintf(&grp,"%s/.config/LFS/lfsgroupsprefs/%s",getenv("HOME"),grpname);
+	if(fileExists(grp)!=0)
+		mkdir(grp,0755);
+
+	asprintf(&command,"cp %s/.config/LFS/lfs*.rc \"%s\"",getenv("HOME"),grp);
+	system(command);
+
+	free(command);
+	free(grp);
+}
+
+void setGroup(void)
+{
+	char	*command;
+	char	*grp;
+
+	asprintf(&grp,"%s/.config/LFS/lfsgroupsprefs/%s",getenv("HOME"),current->LFSTK_getBuffer()->c_str());
+	if(fileExists(grp)==0)
+		{
+			asprintf(&command,"cp \"%s/.config/LFS/lfsgroupsprefs/%s/\"lfs*.rc %s/.config/LFS",getenv("HOME"),current->LFSTK_getBuffer()->c_str(),getenv("HOME"));
+			system(command);
+			free(command);
+		}
+	free(grp);
+}
 
 bool callback(void *p,void* ud)
 {
@@ -57,19 +94,29 @@ bool callback(void *p,void* ud)
 
 	switch((long)ud)
 		{
+			case UPDATEGROUP:
+				if(strlen(current->LFSTK_getBuffer()->c_str())>0)
+					makeGroup(current->LFSTK_getBuffer()->c_str());
+				break;
+
 			case NEWGROUP:
+				groups[numGroups].label=(char*)strdup(newgroup->LFSTK_getBuffer()->c_str());
+				groups[numGroups].userData=(void*)(long)numGroups+1;
+				groups[numGroups].bc=NULL;
+				numGroups++;
+				mb->LFSTK_addMenus(groups,numGroups);
+				makeGroup(newgroup->LFSTK_getBuffer()->c_str());
 				break;
 
 			case APPLY:
+				if(strlen(current->LFSTK_getBuffer()->c_str())>0)
+					setGroup();
+				system("lfsdesktop &");
+				system("setwallpaper");
+				system("killall lfswmanager;sleep 1;lfswmanager &");
 				break;
 		}
 	return(true);
-}
-
-int fileExists(char *name)
-{
-	struct stat buffer;
-	return (stat(name,&buffer));
 }
 
 void loadGroups()
@@ -93,8 +140,14 @@ void loadGroups()
 	if(fileExists(groupfolder)!=0)
 		{
 			mkdir(groupfolder,0755);
-			return;
+			makeGroup("Current Group");
 		}
+
+	asprintf(&command,"%s/Current Group",groupfolder);
+	if(fileExists(command)!=0)
+		makeGroup("Current Group");
+	free(command);
+
 	asprintf(&command,"find %s -mindepth 1 -maxdepth 1 -type d -printf \"%%f\\n\"",groupfolder);
 	fp=popen(command,"r");
 	if(fp!=NULL)
@@ -127,11 +180,10 @@ bool bcb(void *p,void* ud)
 
 	menuitem=(menuItemStruct*)ud;
 
-
 	if((long)ud>0)
 		{
-			printf(">>>%i<<<\n",(long)ud-1);
-			printf(">>>%s<<<\n",groups[(long)ud-1].label);
+			current->LFSTK_setBuffer(groups[(long)ud-1].label);
+			current->LFSTK_clearWindow();
 		}
 	return(true);
 }
@@ -154,8 +206,8 @@ int main(int argc, char **argv)
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibc[NEWGROUP]=new LFSTK_buttonClass(wc,"New",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
-	guibc[NEWGROUP]->LFSTK_setCallBack(NULL,callback,(void*)NEWGROUP);
+	guibc[UPDATEGROUP]=new LFSTK_buttonClass(wc,"Update",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	guibc[UPDATEGROUP]->LFSTK_setCallBack(NULL,callback,(void*)UPDATEGROUP);
 
 	sx=col1;
 	sy=10;
@@ -169,8 +221,18 @@ int main(int argc, char **argv)
 	
 	loadGroups();
 	mb->LFSTK_addMenus(groups,numGroups);
-	sy+=vspacing;
 
+	sx+=spacing;;
+	current=new LFSTK_lineEditClass(wc,"",sx,sy-1,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+	
+	sx=col1;
+	guibc[NEWGROUP]=new LFSTK_buttonClass(wc,"New",sx,sy,bwidth,24,NorthWestGravity);
+	guibc[NEWGROUP]->LFSTK_setCallBack(NULL,callback,(void*)NEWGROUP);
+	sx+=spacing;;
+	newgroup=new LFSTK_lineEditClass(wc,"New Group",sx,sy-1,BIG,24,NorthWestGravity);
+
+	sy+=vspacing;
 	sy+=vspacing;
 	wc->LFSTK_resizeWindow(col3-10,sy);
 	wc->LFSTK_showWindow();

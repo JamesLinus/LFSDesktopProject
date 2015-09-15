@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
 	mainwind=new LFSTK_windowClass(0,0,width,hite,"Query Box",false);
 
-	mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"grey90");
+	//mainwind->LFSTK_setWindowColourName(NORMALCOLOUR,"grey90");
 	label=new LFSTK_labelClass(mainwind,"Window is normal",0,0,width,24,NorthWestGravity);
 	//label->LFSTK_setFontColourName(NORMALCOLOUR,"dark grey");
 label->LFSTK_setLabelAutoColour(true);

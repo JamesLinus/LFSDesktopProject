@@ -300,11 +300,11 @@ int main(int argc,char **argv)
 	int c;
 	char				*command;
 
-	asprintf(&prefsPath,"%s/.config/LFS/setwallpaper.rc",getenv("HOME"));
+	asprintf(&prefsPath,"%s/.config/LFS/lfssetwallpaper.rc",getenv("HOME"));
 	asprintf(&command,"mkdir -vp %s/.config/LFS/ 2>&1 >/dev/null",getenv("HOME"));
 	system(command);
 	free(command);
-	asprintf(&monitorRCPath,"%s/.config/LFS/monitors.rc",getenv("HOME"));
+	asprintf(&monitorRCPath,"%s/.config/LFS/lfsmonitors.rc",getenv("HOME"));
 
 	backdropMode=STRETCH;
 	multiMode=false;
@@ -313,7 +313,6 @@ int main(int argc,char **argv)
 	if(display==NULL)
 		exit(1);
 
-	//XSynchronize(display,true);
 	screen=DefaultScreen(display);
 	displayWidth=DisplayWidth(display,screen);
 	displayHeight=DisplayHeight(display,screen);
