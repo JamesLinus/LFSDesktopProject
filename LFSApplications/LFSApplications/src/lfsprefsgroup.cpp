@@ -113,7 +113,7 @@ bool callback(void *p,void* ud)
 					setGroup();
 				system("lfsdesktop &");
 				system("setwallpaper");
-				system("killall lfswmanager;sleep 1;lfswmanager &");
+				system("killall lfswmanager;lfswmanager &");
 				break;
 		}
 	return(true);
@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 	guibc[NEWGROUP]=new LFSTK_buttonClass(wc,"New",sx,sy,bwidth,24,NorthWestGravity);
 	guibc[NEWGROUP]->LFSTK_setCallBack(NULL,callback,(void*)NEWGROUP);
 	sx+=spacing;;
-	newgroup=new LFSTK_lineEditClass(wc,"New Group",sx,sy-1,BIG,24,NorthWestGravity);
+	newgroup=new LFSTK_lineEditClass(wc,"",sx,sy-1,BIG,24,NorthWestGravity);
 
 	sy+=vspacing;
 	sy+=vspacing;
@@ -238,6 +238,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
+	current->LFSTK_setBuffer(groups[0].label);
 	mainloop=true;
 	while(mainloop==true)
 		{

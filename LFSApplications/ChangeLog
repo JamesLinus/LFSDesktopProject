@@ -1,4 +1,5 @@
 0.0.2
+Added lfsprefsgroup.
 Exit from lfsdesktopprefs prints settings to stdout.
 Apply in lfsdesktopprefs now restarts desktop.
 Exit from lfstkappearance prints settings to stdout.

@@ -50,6 +50,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 	this->isFocused=false;
+	this->inWindow=false;
 	wa.win_gravity=gravity;
 	wa.bit_gravity=gravity;
 
@@ -60,6 +61,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
 	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
+
 	if(strlen(label)>0)
 		this->cursorPos=strlen(label);
 	else
@@ -72,7 +74,6 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	XA_UTF8_STRING=XInternAtom(this->display,"UTF8_STRING",true);
 	XA_TARGETS=XInternAtom(this->display,"TARGETS",True);
 }
-
 
 /**
 * Clear the gadget window to the appropriate state.
@@ -192,7 +193,6 @@ void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 	this->buffer=str;
 	this->cursorPos=strlen(str);
 }
-
 
 /**
 * Return the contents of the gadget.
