@@ -1,4 +1,9 @@
 0.0.2
+Added lfsdesktopprefs.desktop
+Added lfsprefsgroup.desktop
+Added lfstkappearance.desktop
+Added lfswallpaperprefs.desktop
+Added lfswmprefs.desktop
 Added lfsprefsgroup.
 Exit from lfsdesktopprefs prints settings to stdout.
 Apply in lfsdesktopprefs now restarts desktop.

@@ -101,7 +101,7 @@ bool callback(void *p,void* ud)
 
 			case NEWGROUP:
 				groups[numGroups].label=(char*)strdup(newgroup->LFSTK_getBuffer()->c_str());
-				groups[numGroups].userData=(void*)(long)numGroups+1;
+				groups[numGroups].userData=(void*)(long)(numGroups+1);
 				groups[numGroups].bc=NULL;
 				numGroups++;
 				mb->LFSTK_addMenus(groups,numGroups);
@@ -159,7 +159,7 @@ void loadGroups()
 						{
 							buffer[strlen(buffer)-1]=0;
 							groups[cnt].label=strdup(buffer);
-							groups[cnt].userData=(void*)(long)cnt+1;
+							groups[cnt].userData=(void*)(long)(cnt+1);
 							groups[cnt].bc=NULL;
 							cnt++;
 						}
