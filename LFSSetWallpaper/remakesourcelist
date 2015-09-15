@@ -1,6 +1,6 @@
-#|/bin/bash
+#!/bin/bash
 
 shopt -s nullglob
-cd "SetWallpaper/src"
+cd "LFSSetWallpaper/src"
 csrclst=$(echo "../src/*.c" "../src/*.cpp")
 echo COMMONSRC = $csrclst > ../sources
