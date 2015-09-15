@@ -1,8 +1,23 @@
+/*
+ *
+ * ©K. D. Hedger. Tue 15 Sep 20:20:50 BST 2015 kdhedger68713@gmail.com
 
-//Mon 31 Jul 2006 12:30:55 BST
-//
-//SetLFSWalpaper
-//
+ * This file (main.cpp) is part of LFSSetWallpaper.
+
+ * LFSSetWallpaper is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+
+ * LFSSetWallpaper is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSSetWallpaper.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 #include <X11/Xlib.h>
 #include <Imlib2.h>
@@ -91,7 +106,7 @@ struct option long_options[] =
 
 void printhelp(void)
 {
-	printf("Usage: lfsdesktop [OPTION]\n"
+	printf("Usage: lfssetwallpaper [OPTION]\n"
 	       "Set the desktop wallpaper for LFSDesktop\n"
 	       " -w,--wallpaper	/path/to/wallpaper ARG\n"
 	       " -c,--colour		Background colour N (decimal or hex)\n"

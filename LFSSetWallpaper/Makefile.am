@@ -1,5 +1,5 @@
 
-SUBDIRS = SetWallpaper/app
+SUBDIRS = LFSSetWallpaper/app
 
 remake:
 	$(shell ./remakesourcelist)

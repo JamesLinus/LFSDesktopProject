@@ -3,10 +3,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 include ../flagsandlibs
 include ../sources
 
-setwallpaper_SOURCES = $(COMMONSRC)
+lfssetwallpaper_SOURCES = $(COMMONSRC)
+lfssetwallpaper_CFLAGS = -O3
 
-setwallpaper_CFLAGS = -O3
-man1_MANS = ../resources/man/setwallpaper.1
+man1_MANS = ../resources/man/lfssetwallpaper.1
 
-bin_PROGRAMS = setwallpaper
+bin_PROGRAMS = lfssetwallpaper
 
