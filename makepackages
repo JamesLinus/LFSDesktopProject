@@ -16,7 +16,7 @@ pushd /tmp/tmp
 	tar -cvzf LFSDesktop-$desktopversion.tar.gz LFSDesktop
 
 	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSSetWallpaper
-	rm -r SetWallpaper/.svn
+	rm -r LFSSetWallpaper/.svn
 	tar -cvzf LFSSetWallpaper-$wallpaperversion.tar.gz LFSSetWallpaper
 
 	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSWManager
