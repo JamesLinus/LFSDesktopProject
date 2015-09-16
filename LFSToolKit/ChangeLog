@@ -1,4 +1,5 @@
 0.0.7
+Added reload colours to gadget class.
 Added hide window.
 Fixed race condition if mouse is in line edit gadget on start up.
 Added getgeom to gadget class.
