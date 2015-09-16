@@ -30,16 +30,19 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
-enum {LOADMENU,ECURRENT,NUMPREFS};
 enum {EXIT=0,APPLY,NEWGROUP,UPDATEGROUP,NOMOREBUTTONS};
-
+enum {WALLPAPER=0,TOOLKIT,DESKTOP,WMANAGER,NOMORELAUNCHERS};
+enum {LAUNCHWALLPAPER=100,LAUNCHTOOLKIT,LAUNCHDESKTOP,LAUNCHWMANAGER};
 LFSTK_windowClass	*wc;
 LFSTK_lineEditClass	*current=NULL;
 LFSTK_lineEditClass	*newgroup=NULL;
 LFSTK_menuButtonClass *mb=NULL;
 LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
+LFSTK_buttonClass	*launch[NOMORELAUNCHERS]={NULL,};
+LFSTK_labelClass	*label[NOMORELAUNCHERS]={NULL,};
 
 int					bwidth=96;
+int					bigbwidth=128;
 int					spacing=bwidth+10;
 int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 bool				mainloop=false;
@@ -95,6 +98,27 @@ bool callback(void *p,void* ud)
 
 	switch((long)ud)
 		{
+			case LAUNCHWALLPAPER:
+				wc->LFSTK_hideWindow();
+				system("lfswallpaperprefs");
+				wc->LFSTK_showWindow(false);
+				break;
+			case LAUNCHTOOLKIT:
+				wc->LFSTK_hideWindow();
+				system("lfstkprefs");
+				wc->LFSTK_showWindow(false);
+				break;
+			case LAUNCHDESKTOP:
+				wc->LFSTK_hideWindow();
+				system("lfsdesktopprefs");
+				wc->LFSTK_showWindow(false);
+				break;
+			case LAUNCHWMANAGER:
+				wc->LFSTK_hideWindow();
+				system("lfswmprefs");
+				wc->LFSTK_showWindow(false);
+				break;
+
 			case UPDATEGROUP:
 				if(strlen(current->LFSTK_getBuffer()->c_str())>0)
 					makeGroup(current->LFSTK_getBuffer()->c_str());
@@ -119,6 +143,14 @@ bool callback(void *p,void* ud)
 				system("killall lfswmanager;lfswmanager &");
 				break;
 		}
+
+	wc->LFSTK_reloadGlobals();
+	for(int j=WALLPAPER;j<NOMORELAUNCHERS;j++)
+		launch[j]->LFSTK_reloadColours();
+	for(int j=EXIT;j<NOMOREBUTTONS;j++)
+		guibc[j]->LFSTK_reloadColours();
+	mb->LFSTK_reloadColours();
+
 	return(true);
 }
 
@@ -214,7 +246,37 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	sy=10;
+//enum {WALLPAPER=0,TOOLKIT,DESKTOP,WMANAGER,NOMORELAUNCHERS};
+//wallpaper
+	launch[WALLPAPER]=new LFSTK_buttonClass(wc,"Wallpaper Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
+	launch[WALLPAPER]->LFSTK_setActive(false);
+	launch[WALLPAPER]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHWALLPAPER);
+	sx+=spacing+20;
+	label[WALLPAPER]=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
+//toolkit
+	sx=col1;
+	sy+=vspacing;
+	launch[TOOLKIT]=new LFSTK_buttonClass(wc,"Toolkit Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
+	launch[TOOLKIT]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHTOOLKIT);
+	sx+=spacing+20;
+	label[TOOLKIT]=new LFSTK_labelClass(wc,"Launch Toolkit Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
+//desktop
+	sx=col1;
+	sy+=vspacing;
+	launch[DESKTOP]=new LFSTK_buttonClass(wc,"Desktop Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
+	launch[DESKTOP]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHDESKTOP);
+	sx+=spacing+20;
+	label[DESKTOP]=new LFSTK_labelClass(wc,"Launch Desktop Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
+//wmanager
+	sx=col1;
+	sy+=vspacing;
+	launch[WMANAGER]=new LFSTK_buttonClass(wc,"WM Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
+	launch[WMANAGER]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHWMANAGER);
+	sx+=spacing+20;
+	label[WMANAGER]=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
 
+	sx=col1;
+	sy+=vspacing;
 	mb=new LFSTK_menuButtonClass(wc,"Load Set",sx,sy,bwidth,24,NorthWestGravity);
 	mb->LFSTK_setCallBack(NULL,NULL,NULL);
 	mb->LFSTK_setStyle(EMBOSSEDBUTTON);

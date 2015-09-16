@@ -1,4 +1,5 @@
 0.0.2
+Dialogs now reflect changes in toolkti prefs.
 Renamed lfsprefsgroup.
 Renamed lfstkappearance.
 Added lfsdesktopprefs.desktop

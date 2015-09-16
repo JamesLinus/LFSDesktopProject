@@ -436,3 +436,15 @@ geometryStruct *LFSTK_gadgetClass::LFSTK_getGeom(void)
 	return(g);
 }
 
+/**
+* Reload global colours from main window.
+*/
+void LFSTK_gadgetClass::LFSTK_reloadColours(void)
+{
+	for(int j=0;j<MAXCOLOURS;j++)
+		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+	for(int j=0;j<MAXCOLOURS;j++)
+		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
+}
+

@@ -67,6 +67,33 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->loadGlobalColours();
 	this->isActive=true;
 }
+/**
+ * Reload colours from prefs.
+ * \note to be fixed!
+ */
+void LFSTK_windowClass::LFSTK_reloadGlobals(void)
+{
+	char	*env;
+//
+//	this->fontColourNames[NORMALCOLOUR]=strdup("white");
+//	this->fontColourNames[PRELIGHTCOLOUR]=strdup("black");
+//	this->fontColourNames[ACTIVECOLOUR]=strdup("white");
+//	this->fontColourNames[INACTIVECOLOUR]=strdup("grey80");
+//
+//	this->windowColourNames[NORMALCOLOUR].name=strdup("grey50");
+//	this->windowColourNames[PRELIGHTCOLOUR].name=strdup("grey80");
+//	this->windowColourNames[ACTIVECOLOUR].name=strdup("grey40");
+//	this->windowColourNames[INACTIVECOLOUR].name=strdup("grey90");
+//
+//	this->globalLib=new LFSTK_lib(loadvars);
+	asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+	this->globalLib->LFSTK_loadVarsFromFile(env,this->globalLib->LFSTK_getTKArgs());
+	free(env);
+
+	this->loadGlobalColours();
+	this->isActive=true;
+	this->LFSTK_clearWindow();
+}
 
 LFSTK_windowClass::~LFSTK_windowClass()
 {
@@ -422,5 +449,16 @@ void LFSTK_windowClass::LFSTK_showWindow(bool all)
 		XMapSubwindows(this->display,this->window);
 	XMapRaised(this->display,this->window);
 }
+
+/**
+* Hide window.
+*/
+void LFSTK_windowClass::LFSTK_hideWindow(void)
+{
+	XUnmapWindow(this->display,this->window);
+	XFlush(this->display);
+	XSync(this->display,true);
+}
+
 
 

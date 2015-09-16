@@ -57,6 +57,7 @@ class LFSTK_gadgetClass
 		const char* LFSTK_getColourName(int p);
 		void LFSTK_setFontString(const char *s);
 		void LFSTK_setFontColourName(int p,const char* colour);
+		void LFSTK_reloadColours(void);
 
 		void LFSTK_setActive(bool active);
 		void LFSTK_setLabelAutoColour(bool setauto);

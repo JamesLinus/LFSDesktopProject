@@ -1,4 +1,5 @@
 0.0.7
+Added hide window.
 Fixed race condition if mouse is in line edit gadget on start up.
 Added getgeom to gadget class.
 Fixed getgeom in window class not getting global values.

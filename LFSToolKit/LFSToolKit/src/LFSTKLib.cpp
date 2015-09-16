@@ -159,16 +159,6 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				if(ptr==NULL)
 					ptr=defaultFontString;
 				break;
-//			case TYPETHEME:
-//				ptr=this->globalThemePath;
-//				if(ptr==NULL)
-//					ptr=defaultThemePath;
-//				break;
-//			case TYPEWMFRAME:
-//				ptr=this->globalFrameColours[state];
-//				if(ptr==NULL)
-//					ptr=defaultFrameStrings[state];
-//				break;
 		}
 
 	if(ptr!=NULL)
@@ -208,15 +198,6 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"font_prelight",TYPESTRING,&(this->globalFontColourNames[PRELIGHTCOLOUR])},
 		{"font_active",TYPESTRING,&(this->globalFontColourNames[ACTIVECOLOUR])},
 		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
-
-//window manager
-//		{"wmactive_frame",TYPESTRING,&(this->globalFrameColours[ACTIVEFRAME])},
-//		{"wmactive_fill",TYPESTRING,&(this->globalFrameColours[ACTIVEFRAMEFILL])},
-//		{"wminactive_frame",TYPESTRING,&(this->globalFrameColours[INACTIVEFRAME])},
-//		{"wminactive_fill",TYPESTRING,&(this->globalFrameColours[INACTIVEFRAMEFILL])},
-//		{"widgetcolour",TYPESTRING,&(this->globalFrameColours[WIDGETCOLOUR])},
-//		{"theme",TYPESTRING,&(this->globalThemePath)},
-
 		{NULL,0,NULL},
 	};
 
@@ -231,15 +212,11 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 			this->globalMenuItemFontColourNames[j]=NULL;
 		}
 
-//	for(int j=0;j<MAXFRAMECOLOURS;j++)
-//		this->globalFrameColours[j]=NULL;
-
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->globalFontColourNames[j]=NULL;
 
 	this->globalFontString=NULL;
 	this->globalMenuItemFontString=NULL;
-//	this->globalThemePath=NULL;
 
 	if(loadvars==true)
 		{
@@ -261,7 +238,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 * \note eg:
 * \note {...,"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR],...,NULL,0,NULL};
 */
-bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,args* dataptr)
+bool LFSTK_lib::LFSTK_loadVarsFromFile(const char* filepath,const args* dataptr)
 {
 	FILE*	fd=NULL;
 	char	buffer[2048];
