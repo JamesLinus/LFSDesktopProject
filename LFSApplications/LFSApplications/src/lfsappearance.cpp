@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Mon 14 Sep 16:17:46 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed 16 Sep 11:55:33 BST 2015 kdhedger68713@gmail.com
 
- * This file (lfsprefsgroup.cpp) is part of LFSApplications.
+ * This file (lfsappearance) is part of LFSApplications.
 
  * LFSApplications is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -112,7 +113,7 @@ bool callback(void *p,void* ud)
 				if(strlen(current->LFSTK_getBuffer()->c_str())>0)
 					setGroup();
 				system("lfsdesktop &");
-				system("setwallpaper");
+				system("lfssetwallpaper");
 				system("killall lfswmanager;lfswmanager &");
 				break;
 		}

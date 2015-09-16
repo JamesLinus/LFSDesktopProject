@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Fri 28 Aug 11:49:52 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Wed 16 Sep 11:51:14 BST 2015 kdhedger68713@gmail.com
 
- * This file (lfstkappearance.cpp) is part of LFSApplications.
+ * This file (lfstkprefs.cpp) is part of LFSApplications.
 
  * LFSApplications is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

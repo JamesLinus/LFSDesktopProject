@@ -109,7 +109,6 @@ bool callback(void *p,void* ud)
 				setVars();
 				wc->globalLib->LFSTK_saveVarsToFile(env,desktopPrefs);
 				system("lfsdesktop &");
-
 				break;
 		}
 	return(true);
@@ -172,7 +171,7 @@ int main(int argc, char **argv)
 	wc->LFSTK_setKeepAbove(true);
 
 	printf("Current Settings:\n\n");
-	callback(NULL,(void*)APPLY);
+	callback(NULL,(void*)PRINT);
 	printf("\n\n");
 
 	mainloop=true;
@@ -189,7 +188,6 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
-						
 						break;
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
