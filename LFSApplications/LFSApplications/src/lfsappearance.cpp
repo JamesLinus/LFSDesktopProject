@@ -101,6 +101,8 @@ bool callback(void *p,void* ud)
 				break;
 
 			case NEWGROUP:
+				if(strlen(newgroup->LFSTK_getBuffer()->c_str())<1)
+					return(true);
 				groups[numGroups].label=(char*)strdup(newgroup->LFSTK_getBuffer()->c_str());
 				groups[numGroups].userData=(void*)(long)(numGroups+1);
 				groups[numGroups].bc=NULL;
@@ -144,9 +146,9 @@ void loadGroups()
 			makeGroup("Current Group");
 		}
 
-	asprintf(&command,"%s/Current Group",groupfolder);
+	asprintf(&command,"%s/Current Set",groupfolder);
 	if(fileExists(command)!=0)
-		makeGroup("Current Group");
+		makeGroup("Current Set");
 	free(command);
 
 	asprintf(&command,"find %s -mindepth 1 -maxdepth 1 -type d -printf \"%%f\\n\"",groupfolder);
@@ -213,7 +215,7 @@ int main(int argc, char **argv)
 	sx=col1;
 	sy=10;
 
-	mb=new LFSTK_menuButtonClass(wc,"Group",sx,sy,bwidth,24,NorthWestGravity);
+	mb=new LFSTK_menuButtonClass(wc,"Load Set",sx,sy,bwidth,24,NorthWestGravity);
 	mb->LFSTK_setCallBack(NULL,NULL,NULL);
 	mb->LFSTK_setStyle(EMBOSSEDBUTTON);
 	mb->LFSTK_setLabelOriention(CENTRE);
@@ -228,7 +230,7 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 	
 	sx=col1;
-	guibc[NEWGROUP]=new LFSTK_buttonClass(wc,"New",sx,sy,bwidth,24,NorthWestGravity);
+	guibc[NEWGROUP]=new LFSTK_buttonClass(wc,"New Set",sx,sy,bwidth,24,NorthWestGravity);
 	guibc[NEWGROUP]->LFSTK_setCallBack(NULL,callback,(void*)NEWGROUP);
 	sx+=spacing;;
 	newgroup=new LFSTK_lineEditClass(wc,"",sx,sy-1,BIG,24,NorthWestGravity);
