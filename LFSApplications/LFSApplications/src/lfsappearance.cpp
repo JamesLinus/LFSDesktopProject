@@ -175,7 +175,7 @@ void loadGroups()
 	if(fileExists(groupfolder)!=0)
 		{
 			mkdir(groupfolder,0755);
-			makeGroup("Current Group");
+			makeGroup("Current Set");
 		}
 
 	asprintf(&command,"%s/Current Set",groupfolder);
