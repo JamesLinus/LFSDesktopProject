@@ -17,6 +17,7 @@ exit $retval
 #include "LFSTKMenuButton.h"
 #include "LFSTKLineEdit.h"
 #include "LFSTKLabel.h"
+#include "LFSTKToggleButton.h"
 
 bool				mainloop=true;
 int					width=300;
@@ -24,7 +25,8 @@ int					hite=84;
 LFSTK_lineEditClass	*le;
 LFSTK_windowClass	*mainwind;
 bool				toggle=false;
-LFSTK_buttonClass	*bc,*bc1;
+LFSTK_buttonClass	*bc;//,*bc1;
+LFSTK_toggleButtonClass	*sticky;
 LFSTK_labelClass	*label;
 
 bool callback(void *p,void* ud)
@@ -37,16 +39,16 @@ bool callback(void *p,void* ud)
 
 	if(toggle==true)
 		{
-			bc1->LFSTK_setLabel("Un-Stick");
+			sticky->LFSTK_setLabel("Un-Stick");
 			label->LFSTK_setLabel("Window is sticky");
 		}
 	else
 		{
-			bc1->LFSTK_setLabel("Stick");
+			sticky->LFSTK_setLabel("Stick");
 			label->LFSTK_setLabel("Window is normal");
 		}
 	label->LFSTK_clearWindow();
-	bc1->LFSTK_clearWindow();
+	sticky->LFSTK_clearWindow();
 
 	
 	XMapWindow(mainwind->display,mainwind->window);
@@ -80,8 +82,8 @@ label->LFSTK_setLabelAutoColour(true);
 	bc=new LFSTK_buttonClass(mainwind,"OK",4,24+4+4+sy,75,24,SouthWestGravity);
 	bc->LFSTK_setCallBack(NULL,callback,(void*)1);
 
-	bc1=new LFSTK_buttonClass(mainwind,"Stick",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
-	bc1->LFSTK_setCallBack(NULL,callback,(void*)2);
+	sticky=new LFSTK_toggleButtonClass(mainwind,"Stick",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
+	sticky->LFSTK_setCallBack(NULL,callback,(void*)2);
 
 	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_clearWindow();
@@ -125,7 +127,7 @@ label->LFSTK_setLabelAutoColour(true);
 		}
 
 	delete bc;
-	delete bc1;
+	delete sticky;
 	delete le;
 	delete mainwind;
 	return 0;

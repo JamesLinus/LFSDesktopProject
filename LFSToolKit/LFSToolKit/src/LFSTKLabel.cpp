@@ -74,8 +74,6 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->style=FLATBUTTON;
-//	this->listen.function=NULL;
-//	this->listen.pointer=NULL;
 
 	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
