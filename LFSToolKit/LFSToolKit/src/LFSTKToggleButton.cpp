@@ -81,7 +81,7 @@ void LFSTK_toggleButtonClass::drawBox(int state)
 			bottomcol=holdcol;
 		}
 
-	boxsize=this->h-4;
+	boxsize=this->h/2;
 
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
@@ -100,6 +100,7 @@ void LFSTK_toggleButtonClass::drawBox(int state)
 				XSetForeground(this->display,this->gc,bottomcol);
 				XDrawLine(this->display,this->window,this->gc,0,boxsize,boxsize,boxsize);
 				XDrawLine(this->display,this->window,this->gc,boxsize,boxsize,boxsize,0);
+				
 				break;
 		}		
 }
