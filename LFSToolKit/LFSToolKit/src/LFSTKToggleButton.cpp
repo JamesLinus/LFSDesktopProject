@@ -65,9 +65,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 void LFSTK_toggleButtonClass::drawBox(int state)
 {
 	int boxsize;
+	int	boxy;
 	int	topcol=this->whiteColour;
 	int bottomcol=this->blackColour;
 	int	holdcol;
+	int	indic=3;
 
 	if(state==ACTIVECOLOUR)
 		{
@@ -81,13 +83,13 @@ void LFSTK_toggleButtonClass::drawBox(int state)
 			bottomcol=holdcol;
 		}
 
-	boxsize=this->h/2;
-
+	boxsize=(this->h/2);
+	boxy=(this->h/2)-(boxsize/2);
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
 
 	XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,boxsize,boxsize);
+	XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
 
 	switch(state)
 		{
@@ -95,12 +97,19 @@ void LFSTK_toggleButtonClass::drawBox(int state)
 			case PRELIGHTCOLOUR:
 			case ACTIVECOLOUR:
 				XSetForeground(this->display,this->gc,topcol);
-				XDrawLine(this->display,this->window,this->gc,0,boxsize,0,0);
-				XDrawLine(this->display,this->window,this->gc,0,0,boxsize-1,0);
+				XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
+				XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
 				XSetForeground(this->display,this->gc,bottomcol);
-				XDrawLine(this->display,this->window,this->gc,0,boxsize,boxsize,boxsize);
-				XDrawLine(this->display,this->window,this->gc,boxsize,boxsize,boxsize,0);
-				
+				XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
+				XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
+
+				XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
+				XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
+
+				XSetForeground(this->display,this->gc,topcol);
+				XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
+				XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
+
 				break;
 		}		
 }
