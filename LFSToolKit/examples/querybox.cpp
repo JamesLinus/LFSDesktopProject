@@ -50,7 +50,6 @@ bool callback(void *p,void* ud)
 	label->LFSTK_clearWindow();
 	sticky->LFSTK_clearWindow();
 
-	
 	XMapWindow(mainwind->display,mainwind->window);
 
 	if((long)ud==1)
