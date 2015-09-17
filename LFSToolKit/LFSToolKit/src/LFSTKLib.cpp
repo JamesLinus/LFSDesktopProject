@@ -198,6 +198,8 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"font_prelight",TYPESTRING,&(this->globalFontColourNames[PRELIGHTCOLOUR])},
 		{"font_active",TYPESTRING,&(this->globalFontColourNames[ACTIVECOLOUR])},
 		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
+//other
+		{"autotextcolour",TYPEBOOL,&(this->autoLabelColour)},
 		{NULL,0,NULL},
 	};
 
@@ -217,6 +219,8 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 
 	this->globalFontString=NULL;
 	this->globalMenuItemFontString=NULL;
+
+	this->autoLabelColour=false;
 
 	if(loadvars==true)
 		{
@@ -492,4 +496,22 @@ bool LFSTK_lib::LFSTK_gadgetEvent(void *self,XEvent *e,int type)
 	if(retval==false)
 		XSendEvent(gadget->wc->display,gadget->wc->window,False,0L,e);
 	return(retval);
+}
+
+/**
+* Get global auto text colour.
+* \return bool Use auto text colour in gadgets.
+*/
+bool LFSTK_lib::LFSTK_getAutoLabelColour(void)
+{
+	return(this->autoLabelColour);
+}
+
+/**
+* Set global auto text colour.
+* \param bool Use auto text colour in gadgets.
+*/
+void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
+{
+	this->autoLabelColour=toset;
 }

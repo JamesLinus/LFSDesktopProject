@@ -81,7 +81,7 @@ class LFSTK_windowClass
 		char			*fontString;
 		char			*fontColourNames[MAXCOLOURS];
 		colourStruct	windowColourNames[MAXCOLOURS];
-
+		bool			autoLabelColour;
 		LFSTK_lib		*globalLib;
 
 		fontStruct		*font;

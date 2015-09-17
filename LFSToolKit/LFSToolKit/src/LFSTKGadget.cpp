@@ -121,6 +121,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->style=EMBOSSEDBUTTON;
 	this->labelOrientation=CENTRE;
 	this->inWindow=false;
+	this->autoLabelColour=this->wc->autoLabelColour;
 }
 
 /**

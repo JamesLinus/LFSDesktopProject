@@ -24,7 +24,6 @@
 #include "LFSTKGlobals.h"
 
 #define	MAXVARS 100
-//enum	{TYPEWINDOW=0,TYPEBUTTON,TYPEMENUITEM,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT,TYPETHEME,TYPEWMFRAME};
 enum	{TYPEWINDOW=0,TYPEBUTTON,TYPEMENUITEM,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT};
 
 /**
@@ -44,7 +43,9 @@ class LFSTK_lib
 		const args *LFSTK_getTKArgs(void);
 		const char *LFSTK_getGlobalString(int state,int type);
 		void LFSTK_setGlobalString(int state,int type,const char *str);
-
+		bool LFSTK_getAutoLabelColour(void);
+		void LFSTK_setAutoLabelColour(bool toset);
+	
 		const char* bestFontColour(long pixel);
 		int LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
 		fontStruct* LFSTK_loadFont(Display *disp,int scr,const char *name);
@@ -61,10 +62,6 @@ class LFSTK_lib
 		char	*globalFontColourNames[MAXCOLOURS];
 		char	*globalMenuItemFontString;
 		char	*globalMenuItemFontColourNames[MAXCOLOURS];
-
-//theme strings
-//		char	*globalFrameColours[MAXFRAMECOLOURS];
-//		char	*globalThemePath;
-
+		bool	autoLabelColour;
 };
 #endif

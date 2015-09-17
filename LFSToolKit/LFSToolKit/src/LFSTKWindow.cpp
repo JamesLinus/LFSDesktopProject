@@ -132,6 +132,7 @@ void LFSTK_windowClass::loadGlobalColours(void)
 	this->LFSTK_setFontString(this->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setFontColourName(j,this->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+	this->autoLabelColour=this->globalLib->LFSTK_getAutoLabelColour();
 }
 
 /**
