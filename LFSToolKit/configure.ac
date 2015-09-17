@@ -3,9 +3,9 @@
 
 m4_define([LFSTOOLKIT_MAJ_N],[0])
 m4_define([LFSTOOLKIT_MIN_N],[0])
-m4_define([LFSTOOLKIT_REV_N],[3])
+m4_define([LFSTOOLKIT_REV_N],[4])
 
-AC_INIT([LFSToolKit],[0.0.7],[PROJ],[LFSToolKit])
+AC_INIT([LFSToolKit],[0.0.8],[PROJ],[LFSToolKit])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
