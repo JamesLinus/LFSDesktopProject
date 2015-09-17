@@ -234,6 +234,7 @@ int main(int argc, char **argv)
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Group Prefs",false);
 	wc->LFSTK_setDecorated(true);
+	wc->autoLabelColour=true;
 	geom=wc->LFSTK_getGeom();
 	guibc[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
 	guibc[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
@@ -246,33 +247,32 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	sy=10;
-//enum {WALLPAPER=0,TOOLKIT,DESKTOP,WMANAGER,NOMORELAUNCHERS};
 //wallpaper
 	launch[WALLPAPER]=new LFSTK_buttonClass(wc,"Wallpaper Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
 	launch[WALLPAPER]->LFSTK_setActive(false);
 	launch[WALLPAPER]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHWALLPAPER);
-	sx+=spacing+20;
+	sx+=spacing+32;
 	label[WALLPAPER]=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
 //toolkit
 	sx=col1;
 	sy+=vspacing;
 	launch[TOOLKIT]=new LFSTK_buttonClass(wc,"Toolkit Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
 	launch[TOOLKIT]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHTOOLKIT);
-	sx+=spacing+20;
+	sx+=spacing+32;
 	label[TOOLKIT]=new LFSTK_labelClass(wc,"Launch Toolkit Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
 //desktop
 	sx=col1;
 	sy+=vspacing;
 	launch[DESKTOP]=new LFSTK_buttonClass(wc,"Desktop Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
 	launch[DESKTOP]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHDESKTOP);
-	sx+=spacing+20;
+	sx+=spacing+32;
 	label[DESKTOP]=new LFSTK_labelClass(wc,"Launch Desktop Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
 //wmanager
 	sx=col1;
 	sy+=vspacing;
 	launch[WMANAGER]=new LFSTK_buttonClass(wc,"WM Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
 	launch[WMANAGER]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHWMANAGER);
-	sx+=spacing+20;
+	sx+=spacing+32;
 	label[WMANAGER]=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
 
 	sx=col1;
