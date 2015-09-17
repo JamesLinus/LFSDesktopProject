@@ -122,6 +122,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->labelOrientation=CENTRE;
 	this->inWindow=false;
 	this->autoLabelColour=this->wc->autoLabelColour;
+	this->labelOffset=0;
 }
 
 /**
@@ -369,7 +370,6 @@ void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *c
 */
 void LFSTK_gadgetClass::drawLabel(int state)
 {
-printf("gadget draw label\n");
 	const char *holdcol=this->fontColourNames[state];
 
 	if(this->autoLabelColour==true)
@@ -378,10 +378,13 @@ printf("gadget draw label\n");
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->LFSTK_drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				break;
+			case RIGHT:
+				this->LFSTK_drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 			default://centre
-				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
 				break;
 		}
 }
@@ -391,7 +394,6 @@ void LFSTK_gadgetClass::LFSTK_setLabel(const char *newlabel)
 	if(this->label!=NULL)
 		free(this->label);
 	this->label=strdup(newlabel);
-	printf(">>>>%s<<<<<\n",this->label);
 	this->LFSTK_clearWindow();
 }
 
@@ -448,4 +450,82 @@ void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 }
+
+/**
+* Draw box.
+* \param g Geometry Struture.
+* \param state Button state.
+*/
+void LFSTK_gadgetClass::drawBox(geometryStruct* g,int state,bevelType bevel)
+{
+	int tlcolour;
+	int brcolour;
+	int fillcolour;
+
+	switch(bevel)
+		{
+			case BEVELIN:
+				tlcolour=this->blackColour;
+				brcolour=this->whiteColour;
+				break;
+			case BEVELOUT:
+				tlcolour=this->whiteColour;
+				brcolour=this->blackColour;
+				break;
+			case BEVELNONE:
+				tlcolour=this->colourNames[state].pixel;
+				brcolour=this->colourNames[state].pixel;
+				break;
+		}
+
+	fillcolour=this->colourNames[state].pixel;
+
+	XSetFillStyle(this->display,this->gc,FillSolid);
+	XSetClipMask(this->display,this->gc,None);
+
+	XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
+	XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
+
+//draw top left
+	XSetForeground(this->display,this->gc,tlcolour);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y);
+//draw bootom rite
+	XSetForeground(this->display,this->gc,brcolour);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y+g->h);
+	XDrawLine(this->display,this->window,this->gc,g->x+g->w,g->y+g->h,g->x+g->w,g->y);
+
+//						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
+	//					XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
+
+//						XSetForeground(this->display,this->gc,topcol);
+//						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
+//						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
+	//				}
+
+}
+
+/*
+				if(this->boxStyle==TOGGLECHECK)
+					{
+						XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
+						XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
+
+						XSetForeground(this->display,this->gc,topcol);
+						XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
+						XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
+						XSetForeground(this->display,this->gc,bottomcol);
+						XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
+						XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
+
+						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
+
+						XSetForeground(this->display,this->gc,topcol);
+						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
+					}
+
+*/
+
 

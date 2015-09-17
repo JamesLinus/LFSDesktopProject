@@ -83,6 +83,7 @@ label->LFSTK_setLabelAutoColour(true);
 
 	sticky=new LFSTK_toggleButtonClass(mainwind,"Stick",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
 	sticky->LFSTK_setCallBack(NULL,callback,(void*)2);
+//	sticky->LFSTK_setToggleStyle(TOGGLENORMAL);
 
 	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_clearWindow();

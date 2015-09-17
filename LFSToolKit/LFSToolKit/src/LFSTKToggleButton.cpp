@@ -57,8 +57,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->boxStyle=TOGGLECHECK;
 
 	this->toggleState=false;
+	this->labelOffset=(this->h/2);
+	this->LFSTK_setLabelOriention(LEFT);
 }
 
+#if 0
 /**
 * Draw a togglebox.
 */
@@ -83,35 +86,152 @@ void LFSTK_toggleButtonClass::drawBox(int state)
 			bottomcol=holdcol;
 		}
 
-	boxsize=(this->h/2);
-	boxy=(this->h/2)-(boxsize/2);
+//	if(this->boxStyle==TOGGLENORMAL)
+//		{
+//			boxsize=(this->w);
+//			boxy=0;
+//		}
+	
+
+//	if(this->boxStyle==TOGGLECHECK)
+//		{
+			boxsize=(this->h/2);
+			boxy=(this->h/2)-(boxsize/2);
+//		}
+	
 	XSetFillStyle(this->display,this->gc,FillSolid);
 	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
 
 	switch(state)
 		{
 			case NORMALCOLOUR:
 			case PRELIGHTCOLOUR:
 			case ACTIVECOLOUR:
-				XSetForeground(this->display,this->gc,topcol);
-				XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
-				XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
-				XSetForeground(this->display,this->gc,bottomcol);
-				XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
-				XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
+//				if(this->boxStyle==TOGGLECHECK)
+//					{
+						XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
+						XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
 
-				XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
-				XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
+						XSetForeground(this->display,this->gc,topcol);
+						XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
+						XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
+						XSetForeground(this->display,this->gc,bottomcol);
+						XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
+						XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
 
-				XSetForeground(this->display,this->gc,topcol);
-				XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
-				XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
+
+						XSetForeground(this->display,this->gc,topcol);
+						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
+	//				}
+
+//				if(this->boxStyle==TOGGLENORMAL)
+//					{
+//					}
 
 				break;
-		}		
+		}
+
+	if(this->isActive==true)
+		this->drawLabel(NORMALCOLOUR);
+	else
+		this->drawLabel(INACTIVECOLOUR);
+
+}
+#endif
+/**
+* Draw a togglebox.
+*/
+void LFSTK_toggleButtonClass::drawButton(int state)
+{
+	int boxsize;
+	int	boxy;
+	bevelType bv;
+	geometryStruct	*g=new geometryStruct;
+
+//	int	topcol=this->whiteColour;
+//	int bottomcol=this->blackColour;
+//	int	holdcol;
+//	int	indic=3;
+
+//	if(state==ACTIVECOLOUR)
+//		{
+	//		topcol=this->blackColour;
+		//	bottomcol=this->whiteColour;
+		//}
+	if(this->toggleState==true)
+		{
+			bv=BEVELIN;
+			//holdcol=topcol;
+			//topcol=bottomcol;
+			//bottomcol=holdcol;
+		}
+	else
+		bv=BEVELOUT;
+
+//	if(this->boxStyle==TOGGLENORMAL)
+//		{
+//			boxsize=(this->w);
+//			boxy=0;
+//		}
+	
+
+	if(this->boxStyle==TOGGLECHECK)
+//		{
+			g->x=0;
+			g->w=(this->h/2);
+			g->h=(this->h/2);
+			g->y=g->h-(g->h/2);
+			
+			//boxsize=(this->h/2);
+			//boxy=(this->h/2)-(boxsize/2);
+//		}
+	
+//	XSetFillStyle(this->display,this->gc,FillSolid);
+//	XSetClipMask(this->display,this->gc,None);
+
+	switch(state)
+		{
+			case NORMALCOLOUR:
+			case PRELIGHTCOLOUR:
+			case ACTIVECOLOUR:
+				this->drawBox(g,state,bv);
+//				if(this->boxStyle==TOGGLECHECK)
+//					{
+/*
+						XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
+						XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
+
+						XSetForeground(this->display,this->gc,topcol);
+						XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
+						XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
+						XSetForeground(this->display,this->gc,bottomcol);
+						XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
+						XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
+
+						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
+
+						XSetForeground(this->display,this->gc,topcol);
+						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
+						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
+*/
+	//				}
+
+//				if(this->boxStyle==TOGGLENORMAL)
+//					{
+//					}
+
+				break;
+		}
+
+	if(this->isActive==true)
+		this->drawLabel(NORMALCOLOUR);
+	else
+		this->drawLabel(INACTIVECOLOUR);
+
 }
 
 /**
@@ -126,9 +246,9 @@ void LFSTK_toggleButtonClass::LFSTK_clearWindow()
 
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 	if(this->inWindow==false)
-		this->drawBox(NORMALCOLOUR);
+		this->drawButton(NORMALCOLOUR);
 	else
-		this->drawBox(PRELIGHTCOLOUR);
+		this->drawButton(PRELIGHTCOLOUR);
 }
 
 /**
@@ -145,7 +265,7 @@ bool LFSTK_toggleButtonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->LFSTK_clearWindow();
-	this->drawBox(PRELIGHTCOLOUR);
+	this->drawButton(PRELIGHTCOLOUR);
 	this->inWindow=true;
 	return(true);
 }
@@ -164,7 +284,7 @@ bool LFSTK_toggleButtonClass::mouseExit(XButtonEvent *e)
 		}
 
 	this->LFSTK_clearWindow();
-	this->drawBox(NORMALCOLOUR);
+	this->drawButton(NORMALCOLOUR);
 	this->inWindow=false;
 	return(true);
 }
@@ -183,7 +303,7 @@ bool LFSTK_toggleButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	this->LFSTK_clearWindow();
-	this->drawBox(ACTIVECOLOUR);
+	this->drawButton(ACTIVECOLOUR);
 	
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
@@ -213,4 +333,15 @@ bool LFSTK_toggleButtonClass::mouseUp(XButtonEvent *e)
 				return(this->callback.releaseCallback(this,this->callback.userData));
 		}
 	return(true);
+}
+
+/**
+* Set the toggle button style.
+* \param drawStyle Style=TOGGLECHECK=0,TOGGLERADIO=1,TOGGLENORMAL=2.
+*/
+void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
+{
+	this->boxStyle=ds;
+	if(ds==TOGGLENORMAL)
+		this->labelOffset=0;
 }

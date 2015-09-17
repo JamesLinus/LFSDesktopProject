@@ -48,11 +48,12 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 		bool mouseUp(XButtonEvent *e);
 
 		void LFSTK_clearWindow(void);
+		void LFSTK_setToggleStyle(drawStyle ds);
 
 	private:
 		drawStyle	boxStyle;
-		void drawBox(int state);
-		void drawLabel(void);
+		void drawButton(int state);
+//		void drawLabel(void);
 
 		bool toggleState;
 };

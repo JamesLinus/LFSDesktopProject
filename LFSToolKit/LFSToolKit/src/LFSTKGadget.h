@@ -25,6 +25,7 @@
 #include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
 
+enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
 /**
  *
  * \brief Base class for LFSToolKit gadgets.
@@ -76,6 +77,7 @@ class LFSTK_gadgetClass
 		listener* LFSTK_getListen(void);
 		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
 		virtual void drawLabel(int state);
+		void drawBox(geometryStruct* g,int state,bevelType bevel);
 
 		listener			listen;
 
@@ -110,6 +112,7 @@ class LFSTK_gadgetClass
 		bool				autoLabelColour;
 		int					labelOrientation;
 		int					style;
+		int					labelOffset;
 };
 
 #endif
