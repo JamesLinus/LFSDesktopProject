@@ -303,6 +303,9 @@ int main(int argc, char **argv)
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
+	XFlush(wc->display);
+	XSync(wc->display,false);
+
 	current->LFSTK_setBuffer(groups[0].label);
 	mainloop=true;
 	while(mainloop==true)
