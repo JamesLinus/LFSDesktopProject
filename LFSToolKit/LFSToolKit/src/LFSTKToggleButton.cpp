@@ -105,7 +105,7 @@ void LFSTK_toggleButtonClass::drawButton(int state)
 				}
 			else
 				{
-					if(state==NORMALCOLOUR||state==PRELIGHTCOLOUR)
+					if(state==NORMALCOLOUR||state==PRELIGHTCOLOUR||state==INACTIVECOLOUR)
 						this->drawIndicator(g,state,CHECK);
 				}
 		}	

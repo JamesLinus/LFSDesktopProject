@@ -85,7 +85,7 @@ label->LFSTK_setLabelAutoColour(true);
 	sticky->LFSTK_setCallBack(NULL,callback,(void*)2);
 	//sticky->LFSTK_setToggleStyle(TOGGLENORMAL);
 	sticky->LFSTK_setToggleStyle(TOGGLECHECK);
-	sticky->LFSTK_setValue(false);
+	sticky->LFSTK_setValue(true);
 	sticky->LFSTK_setActive(true);
 	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_clearWindow();
