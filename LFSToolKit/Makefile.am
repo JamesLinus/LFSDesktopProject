@@ -19,4 +19,6 @@ docs-uninstall:
 remake:
 	$(shell ./remakesourcelist)
 
+purge:
+	rm $(DESTDIR)${libdir}/liblfstoolkit.*
 
