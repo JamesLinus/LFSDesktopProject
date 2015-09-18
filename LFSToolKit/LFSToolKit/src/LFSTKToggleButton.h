@@ -49,6 +49,8 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 
 		void LFSTK_clearWindow(void);
 		void LFSTK_setToggleStyle(drawStyle ds);
+		void LFSTK_setValue(bool val);
+		bool LFSTK_getValue(void);
 
 	private:
 		drawStyle	boxStyle;

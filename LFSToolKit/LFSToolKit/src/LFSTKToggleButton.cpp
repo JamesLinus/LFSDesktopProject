@@ -141,6 +141,7 @@ void LFSTK_toggleButtonClass::drawBox(int state)
 
 }
 #endif
+
 /**
 * Draw a togglebox.
 */
@@ -151,80 +152,54 @@ void LFSTK_toggleButtonClass::drawButton(int state)
 	bevelType bv;
 	geometryStruct	*g=new geometryStruct;
 
-//	int	topcol=this->whiteColour;
-//	int bottomcol=this->blackColour;
-//	int	holdcol;
-//	int	indic=3;
-
-//	if(state==ACTIVECOLOUR)
-//		{
-	//		topcol=this->blackColour;
-		//	bottomcol=this->whiteColour;
-		//}
 	if(this->toggleState==true)
 		{
 			bv=BEVELIN;
-			//holdcol=topcol;
-			//topcol=bottomcol;
-			//bottomcol=holdcol;
+			if(state==ACTIVECOLOUR)
+				bv=BEVELOUT;
 		}
 	else
-		bv=BEVELOUT;
-
-//	if(this->boxStyle==TOGGLENORMAL)
-//		{
-//			boxsize=(this->w);
-//			boxy=0;
-//		}
-	
+		{
+			bv=BEVELOUT;
+			if(state==ACTIVECOLOUR)
+				bv=BEVELIN;
+		}
 
 	if(this->boxStyle==TOGGLECHECK)
-//		{
+		{
 			g->x=0;
 			g->w=(this->h/2);
 			g->h=(this->h/2);
-			g->y=g->h-(g->h/2);
-			
-			//boxsize=(this->h/2);
-			//boxy=(this->h/2)-(boxsize/2);
-//		}
-	
-//	XSetFillStyle(this->display,this->gc,FillSolid);
-//	XSetClipMask(this->display,this->gc,None);
+			g->y=g->h-(g->h/2)-1;
+			this->LFSTK_setLabelOriention(LEFT);
+			this->labelOffset=(this->h/2);
+			this->drawBox(g,state,bv);
 
-	switch(state)
+			g->x=2;
+			g->y=g->y+2;
+			g->w=g->w-4;
+			g->h=g->h-4;
+			if(this->toggleState==false)
+				{
+					if(state==ACTIVECOLOUR)
+						this->drawIndicator(g,state,CHECK);
+				}
+			else
+				{
+					if(state==NORMALCOLOUR||state==PRELIGHTCOLOUR)
+						this->drawIndicator(g,state,CHECK);
+				}
+		}	
+
+	if(this->boxStyle==TOGGLENORMAL)
 		{
-			case NORMALCOLOUR:
-			case PRELIGHTCOLOUR:
-			case ACTIVECOLOUR:
-				this->drawBox(g,state,bv);
-//				if(this->boxStyle==TOGGLECHECK)
-//					{
-/*
-						XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
-						XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
-
-						XSetForeground(this->display,this->gc,topcol);
-						XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
-						XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
-						XSetForeground(this->display,this->gc,bottomcol);
-						XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
-						XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
-
-						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
-						XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
-
-						XSetForeground(this->display,this->gc,topcol);
-						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
-						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
-*/
-	//				}
-
-//				if(this->boxStyle==TOGGLENORMAL)
-//					{
-//					}
-
-				break;
+			g->x=0;
+			g->y=0;
+			g->w=this->w-1;
+			g->h=this->h-1;
+			this->LFSTK_setLabelOriention(CENTRE);
+			this->labelOffset=2;
+			this->drawBox(g,state,bv);
 		}
 
 	if(this->isActive==true)
@@ -232,6 +207,7 @@ void LFSTK_toggleButtonClass::drawButton(int state)
 	else
 		this->drawLabel(INACTIVECOLOUR);
 
+	delete g;
 }
 
 /**
@@ -245,10 +221,16 @@ void LFSTK_toggleButtonClass::LFSTK_clearWindow()
 	XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
 
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-	if(this->inWindow==false)
-		this->drawButton(NORMALCOLOUR);
+
+	if(this->isActive==false)
+		this->drawButton(INACTIVECOLOUR);
 	else
-		this->drawButton(PRELIGHTCOLOUR);
+		{
+			if(this->inWindow==false)
+				this->drawButton(NORMALCOLOUR);
+			else
+				this->drawButton(PRELIGHTCOLOUR);
+		}
 }
 
 /**
@@ -345,3 +327,27 @@ void LFSTK_toggleButtonClass::LFSTK_setToggleStyle(drawStyle ds)
 	if(ds==TOGGLENORMAL)
 		this->labelOffset=0;
 }
+
+/**
+* Set the toggle button value.
+* \param bool
+*/
+void LFSTK_toggleButtonClass::LFSTK_setValue(bool val)
+{
+	this->toggleState=val;
+}
+
+/**
+* Set the toggle button value.
+* \param bool
+*/
+bool LFSTK_toggleButtonClass::LFSTK_getValue(void)
+{
+	return(this->toggleState);
+}
+
+
+
+
+
+

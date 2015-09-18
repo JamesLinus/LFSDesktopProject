@@ -36,7 +36,7 @@ bool callback(void *p,void* ud)
 	printf("--toggle= %i--\n",toggle);
 	mainwind->LFSTK_setKeepAbove(toggle);
 	mainwind->LFSTK_setSticky(toggle);
-
+	printf(">>>>%i<<<<<\n",sticky->LFSTK_getValue());
 	if(toggle==true)
 		{
 			sticky->LFSTK_setLabel("Un-Stick");
@@ -83,8 +83,10 @@ label->LFSTK_setLabelAutoColour(true);
 
 	sticky=new LFSTK_toggleButtonClass(mainwind,"Stick",width-4-75,24+4+4+sy,75,24,SouthEastGravity);
 	sticky->LFSTK_setCallBack(NULL,callback,(void*)2);
-//	sticky->LFSTK_setToggleStyle(TOGGLENORMAL);
-
+	//sticky->LFSTK_setToggleStyle(TOGGLENORMAL);
+	sticky->LFSTK_setToggleStyle(TOGGLECHECK);
+	sticky->LFSTK_setValue(false);
+	sticky->LFSTK_setActive(true);
 	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_clearWindow();
 

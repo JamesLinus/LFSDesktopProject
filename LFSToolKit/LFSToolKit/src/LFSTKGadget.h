@@ -26,6 +26,8 @@
 #include "LFSTKWindow.h"
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
+enum indicatorType {CHECK=0,RADIO,PICTURE,NOINDICATOR};
+
 /**
  *
  * \brief Base class for LFSToolKit gadgets.
@@ -78,6 +80,7 @@ class LFSTK_gadgetClass
 		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
 		virtual void drawLabel(int state);
 		void drawBox(geometryStruct* g,int state,bevelType bevel);
+		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
 
 		listener			listen;
 

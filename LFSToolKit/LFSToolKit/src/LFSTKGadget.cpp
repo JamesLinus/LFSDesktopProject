@@ -452,6 +452,28 @@ void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 }
 
 /**
+* Draw indicator.
+* \param g Geometry Struture.
+* \param state Button state.
+* \param indic Indicator type CHECK=0,RADIO=1,PICTURE=2,NOINDICATOR=3.
+*/
+void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType indic)
+{
+
+	switch(indic)
+		{
+			case CHECK:
+				XSetForeground(this->display,this->gc,this->blackColour);
+				XDrawLine(this->display,this->window,this->gc,g->x,g->y+1,g->x+g->w-1,g->y+g->h);
+				XDrawLine(this->display,this->window,this->gc,g->x+1,g->y+g->h,g->x+g->w,g->y+1);
+
+				XSetForeground(this->display,this->gc,this->whiteColour);
+				XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y+g->h);
+				XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y);
+		}
+}
+
+/**
 * Draw box.
 * \param g Geometry Struture.
 * \param state Button state.
@@ -486,14 +508,15 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,int state,bevelType bevel)
 	XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
 	XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
 
-//draw top left
-	XSetForeground(this->display,this->gc,tlcolour);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y);
 //draw bootom rite
 	XSetForeground(this->display,this->gc,brcolour);
 	XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y+g->h);
 	XDrawLine(this->display,this->window,this->gc,g->x+g->w,g->y+g->h,g->x+g->w,g->y);
+
+//draw top left
+	XSetForeground(this->display,this->gc,tlcolour);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y);
 
 //						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
 	//					XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
