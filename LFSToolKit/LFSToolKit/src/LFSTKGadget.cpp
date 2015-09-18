@@ -517,38 +517,5 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,int state,bevelType bevel)
 	XSetForeground(this->display,this->gc,tlcolour);
 	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h);
 	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y);
-
-//						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
-	//					XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
-
-//						XSetForeground(this->display,this->gc,topcol);
-//						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
-//						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
-	//				}
-
 }
-
-/*
-				if(this->boxStyle==TOGGLECHECK)
-					{
-						XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
-						XFillRectangle(this->display,this->window,this->gc,0,boxy,boxsize+1,boxsize);
-
-						XSetForeground(this->display,this->gc,topcol);
-						XDrawLine(this->display,this->window,this->gc,0,boxy,0,boxsize+boxy);
-						XDrawLine(this->display,this->window,this->gc,0,boxy,boxsize+1,boxy);
-						XSetForeground(this->display,this->gc,bottomcol);
-						XDrawLine(this->display,this->window,this->gc,0,boxy+boxsize,boxsize+1,boxy+boxsize);
-						XDrawLine(this->display,this->window,this->gc,boxsize+1,boxy,boxsize+1,boxy+boxsize);
-
-						XDrawLine(this->display,this->window,this->gc,0+indic,boxy+indic,boxsize-indic,boxy+boxsize-indic);
-						XDrawLine(this->display,this->window,this->gc,0+indic,boxy-indic+boxsize,boxsize-indic,boxy+indic);
-
-						XSetForeground(this->display,this->gc,topcol);
-						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy+indic,boxsize-indic+1,boxy+boxsize-indic);
-						XDrawLine(this->display,this->window,this->gc,0+indic+1,boxy-indic+boxsize,boxsize-indic+1,boxy+indic);
-					}
-
-*/
-
 
