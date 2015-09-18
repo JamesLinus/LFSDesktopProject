@@ -32,34 +32,91 @@
 
 enum {EXIT=0,APPLY,PRINT,NOMOREGBS};
 enum {NORMAL=0,PRELIGHT,ACTIVE,INACTIVE,MENUNORMAL,MENUPRELIGHT,MENUACTIVE,MENUINACTIVE,NOMOREBUTTONS};
-enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,NOMOREBUTTONEDITS};
-enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,NOMORELABELS};
+enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,EFONTSTRING,EMENUFONTSTRING,NOMOREBUTTONEDITS};
+enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LFONTSTRING,LMENUFONTSTRING,NOMORELABELS};
 
-LFSTK_windowClass	*wc;
-LFSTK_buttonClass	*guibuttons[NOMOREGBS]={NULL,};
-LFSTK_buttonClass	*normalbuttons[NOMOREBUTTONS]={NULL,};
-LFSTK_lineEditClass *normaledits[NOMOREBUTTONEDITS]={NULL,};
-LFSTK_labelClass	*labels[NOMORELABELS]={NULL,};
+LFSTK_windowClass		*wc;
+LFSTK_buttonClass		*guibuttons[NOMOREGBS]={NULL,};
+LFSTK_buttonClass		*normalbuttons[NOMOREBUTTONS]={NULL,};
+LFSTK_lineEditClass 	*normaledits[NOMOREBUTTONEDITS]={NULL,};
+LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
+LFSTK_toggleButtonClass	*autocolour=NULL;
 
-bool				mainloop=false;
-const char			*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
-const char			*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour"};
+bool					mainloop=false;
+const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
+const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font"};
 
 void setVars(void)
 {
+//window clolour
+	wc->LFSTK_setWindowColourName(NORMALCOLOUR,normaledits[EWINDOWCOLOUR]->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEWINDOW,wc->windowColourNames[NORMALCOLOUR].name);
+	wc->LFSTK_clearWindow();
+//auto label colour
+	wc->globalLib->LFSTK_setAutoLabelColour(autocolour->LFSTK_getValue());
+	wc->autoLabelColour=wc->globalLib->LFSTK_getAutoLabelColour();
+//fonts
+	wc->globalLib->LFSTK_setGlobalString(-1,TYPEFONT,normaledits[EFONTSTRING]->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMFONT,normaledits[EMENUFONTSTRING]->LFSTK_getBuffer()->c_str());
+
+//button colours
+	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
+		{
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEBUTTON,normaledits[ENORMAL+j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEM,normaledits[EMENUNORMAL+j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEFONTCOLOUR,normaledits[EFONTNORMAL+j]->LFSTK_getBuffer()->c_str());
+			wc->globalLib->LFSTK_setGlobalString(j,TYPEMENUITEMFONTCOLOUR,normaledits[EMENUFONTNORMAL+j]->LFSTK_getBuffer()->c_str());
+//reset button colours
+			normalbuttons[NORMAL+j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+			normalbuttons[NORMAL+j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+			normalbuttons[NORMAL+j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
+			normalbuttons[NORMAL+j]->LFSTK_setFontString(wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
+			normalbuttons[NORMAL+j]->LFSTK_clearWindow();
+//reset menu item colours
+			normalbuttons[MENUNORMAL+j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
+			normalbuttons[MENUNORMAL+j]->LFSTK_setFontColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
+			normalbuttons[MENUNORMAL+j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
+			normalbuttons[MENUNORMAL+j]->LFSTK_setFontString(wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT));
+			normalbuttons[MENUNORMAL+j]->LFSTK_clearWindow();
+		}
+
+//reset label background colours
+	for(int j=LNORMBUTTONS;j<NOMORELABELS;j++)
+		{
+			labels[j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
+			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+			labels[j]->LFSTK_clearWindow();
+		}
+	autocolour->LFSTK_setLabelAutoColour(wc->autoLabelColour);
+	autocolour->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
+	autocolour->LFSTK_clearWindow();
 }
 
 bool callback(void *p,void* ud)
 {
 	char *env;
 
-	if((long)ud==EXIT)
+	switch((long)ud)
 		{
-			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
-			printf("\n");
-			mainloop=false;
-			return(false);
+			case EXIT:
+				setVars();
+				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
+				printf("\n");
+				mainloop=false;
+				return(false);
+				break;
+			
+			case PRINT:
+				setVars();
+				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
+				printf("\n");
+				break;
+			case APPLY:
+				setVars();
+				asprintf(&env,"%s/.config/LFS/lfstoolkit.rc",getenv("HOME"));
+				wc->globalLib->LFSTK_saveVarsToFile(env,wc->globalLib->LFSTK_getTKArgs());
+				free(env);
+				break;
 		}
 	return(true);
 }
@@ -93,7 +150,7 @@ int main(int argc, char **argv)
 	guibuttons[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibuttons[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibuttons[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	guibuttons[PRINT]=new LFSTK_buttonClass(wc,"Test",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
 	guibuttons[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 
 //buttons label
@@ -135,6 +192,12 @@ int main(int argc, char **argv)
 			state++;
 			sy+=vspacing;
 		}
+	labels[LFONTSTRING]=new LFSTK_labelClass(wc,labelnames[LFONTSTRING],cols[0],sy,bwidth,24,NorthWestGravity);
+	labels[LFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
+	normaledits[EFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	sy+=vspacing;
+
+
 //menu items labels
 	state=0;
 	for(int j=LMENUBUTTONS;j<=LMENUFONTCOLOUR;j++)
@@ -174,13 +237,27 @@ int main(int argc, char **argv)
 			state++;
 			sy+=vspacing;
 		}
+	labels[LMENUFONTSTRING]=new LFSTK_labelClass(wc,labelnames[LMENUFONTSTRING],cols[0],sy,bwidth,24,NorthWestGravity);
+	labels[LMENUFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
+	normaledits[EMENUFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEMENUITEMFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	sy+=vspacing;
+
+//window label and colour
+	labels[LWINDOWCOLOUR]=new LFSTK_labelClass(wc,labelnames[LWINDOWCOLOUR],cols[0],sy,bwidth,24,NorthWestGravity);
+	labels[LWINDOWCOLOUR]->LFSTK_setLabelOriention(LEFT);	
+	normaledits[EWINDOWCOLOUR]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,bwidth,24,NorthWestGravity);
+
+//auto font colour
+	autocolour=new LFSTK_toggleButtonClass(wc,"Auto Colour",cols[2],sy,bwidth,24,NorthWestGravity);
+	autocolour->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
+	autocolour->LFSTK_setValue(wc->autoLabelColour);
 
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)PRINT);
 	printf("\n\n");
 
 	sy+=(vspacing*2);
-	wc->LFSTK_resizeWindow(cols[4],sy);
+	wc->LFSTK_resizeWindow(cols[3],sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 

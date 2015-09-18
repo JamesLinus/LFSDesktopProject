@@ -1,5 +1,6 @@
 0.0.3
-Added set label auto colour to l;fstk dialog.
+Redone lfstk dialog.
+Added set label auto colour to lfstk dialog.
 
 0.0.2
 Dialogs now reflect changes in toolkti prefs.

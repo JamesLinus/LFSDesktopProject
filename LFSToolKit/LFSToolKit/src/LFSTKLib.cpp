@@ -114,6 +114,7 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 *
 * \param state Gadget state.
 * \param type Type of string to get.
+* \note type=TYPEWINDOW=0,TYPEBUTTON,TYPEMENUITEM,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT
 * \return const char* String.
 * \note Don't free return value.
 * \note If global string not loaded return default.
