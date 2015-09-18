@@ -94,18 +94,6 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 					free((void*)ptr);
 				this->globalFontString=strdup(str);
 				break;
-//			case TYPETHEME:
-//				ptr=this->globalThemePath;
-//				if(ptr!=NULL)
-//					free((void*)ptr);
-//				this->globalThemePath=strdup(str);
-//				break;
-//			case TYPEWMFRAME:
-//				ptr=this->globalFrameColours[state];
-//				if(ptr!=NULL)
-//					free((void*)ptr);
-//				this->globalFrameColours[state]=strdup(str);
-//				break;
 		}
 }
 
