@@ -22,14 +22,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKLib.h>
-
 #include "globals.h"
+#include "appmenu.h"
 
 bool	mainLoop=true;
 
@@ -42,12 +36,12 @@ args	panelPrefs[]=
 	{NULL,0,NULL}
 };
 
-LFSTK_windowClass *mainwind=NULL;
-
 int main(int argc, char **argv)
 {
 	char	*env;
 	XEvent	event;
+
+	terminalCommand=strdup("xterm -e ");
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs panel",true);
 	mainwind->LFSTK_setDecorated(false);
@@ -55,7 +49,6 @@ int main(int argc, char **argv)
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
-			printf(">>mon=%i %i %i %i %i<<\n",onMonitor,mons->x,mons->y,mons->w,mons->h);
 	if(panelWidth==-1)
 		mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
 	else
@@ -65,11 +58,7 @@ int main(int argc, char **argv)
 	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_setKeepAbove(true);
 
-	for(int j=0;j<mainwind->LFSTK_getMonitorCount();j++)
-		{
-			mons=mainwind->LFSTK_getMonitorData(j);
-			printf(">>mon=%i %i %i %i %i<<\n",j,mons->x,mons->y,mons->w,mons->h);
-		}
+	addAppmenu(mons->x,mons->y);
 
 	mainLoop=true;
 	while(mainLoop==true)
@@ -96,5 +85,8 @@ int main(int argc, char **argv)
 		}
 
 	free(env);
+	free(terminalCommand);
+	delete mainwind;
+	delete appButton;
 	return 0;
 }

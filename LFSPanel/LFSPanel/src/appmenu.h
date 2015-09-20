@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 14:41:04 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 20 Sep 15:05:07 BST 2015 kdhedger68713@gmail.com
 
- * This file (globals.h) is part of LFSPanel.
+ * This file (appmenu.h) is part of LFSPanel.
 
  * LFSPanel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef _APPMENU_
+#define _APPMENU_
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "globals.h"
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKLib.h>
+extern LFSTK_buttonClass	*appButton;
+extern int					appx,appy;
 
-#ifndef _GLOBALS_
-#define _GLOBALS_
-
-//prefs
-extern	char				*terminalCommand;
-extern	int					panelHeight;
-extern	int					panelWidth;
-extern	const monitorStruct	*mons;
-extern	int					onMonitor;
-
-//panel window
-extern	LFSTK_windowClass	*mainwind;
+void addAppmenu(int x,int y);
 
 #endif

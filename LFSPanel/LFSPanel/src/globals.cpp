@@ -26,3 +26,6 @@ int					panelHeight=16;
 int					panelWidth=-1;
 const monitorStruct	*mons=NULL;
 int					onMonitor=1;
+
+//panel window
+LFSTK_windowClass	*mainwind=NULL;

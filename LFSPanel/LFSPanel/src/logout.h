@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 14:41:04 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Sun 20 Sep 18:36:35 BST 2015 kdhedger68713@gmail.com
 
- * This file (globals.h) is part of LFSPanel.
+ * This file (logout.h) is part of LFSPanel.
 
  * LFSPanel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,13 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 
-#include <LFSTKWindow.h>
-#include <LFSTKButton.h>
-#include <LFSTKMenuButton.h>
-#include <LFSTKLineEdit.h>
-#include <LFSTKLabel.h>
-#include <LFSTKLib.h>
+#ifndef _LOGOUT_
+#define _LOGOUT_
 
-#ifndef _GLOBALS_
-#define _GLOBALS_
+#include "globals.h"
 
-//prefs
-extern	char				*terminalCommand;
-extern	int					panelHeight;
-extern	int					panelWidth;
-extern	const monitorStruct	*mons;
-extern	int					onMonitor;
-
-//panel window
-extern	LFSTK_windowClass	*mainwind;
+extern LFSTK_menuButtonClass	*logoutButton;
+extern int						logoutX,logoutY;
 
 #endif
