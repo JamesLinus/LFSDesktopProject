@@ -29,15 +29,11 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
+#include "globals.h"
 
-char					*terminalCommand=NULL;
-bool					mainLoop=true;
-int						panelHeight=16;
-int						panelWidth=-1;
-const monitorsStruct	*mons;
-int						onMonitor=0;
+bool	mainLoop=true;
 
-args					panelPrefs[]=
+args	panelPrefs[]=
 {
 	{"panelheight",TYPEINT,&panelHeight},
 	{"panelwidth",TYPEINT,&panelWidth},
@@ -59,6 +55,7 @@ int main(int argc, char **argv)
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
+			printf(">>mon=%i %i %i %i %i<<\n",onMonitor,mons->x,mons->y,mons->w,mons->h);
 	if(panelWidth==-1)
 		mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
 	else
@@ -68,11 +65,11 @@ int main(int argc, char **argv)
 	mainwind->LFSTK_showWindow();
 	mainwind->LFSTK_setKeepAbove(true);
 
-//	for(int j=0;j<mainwind->LFSTK_getMonitorCount();j++)
-//		{
-//			mons=mainwind->LFSTK_getMonitorData(j);
-//			printf(">>mon=%i %i %i %i %i<<\n",j,mons->x,mons->y,mons->w,mons->h);
-//		}
+	for(int j=0;j<mainwind->LFSTK_getMonitorCount();j++)
+		{
+			mons=mainwind->LFSTK_getMonitorData(j);
+			printf(">>mon=%i %i %i %i %i<<\n",j,mons->x,mons->y,mons->w,mons->h);
+		}
 
 	mainLoop=true;
 	while(mainLoop==true)

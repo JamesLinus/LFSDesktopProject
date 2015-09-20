@@ -27,6 +27,14 @@
 #include "LFSTKGlobals.h"
 #include "LFSTKLib.h"
 
+struct	monitorStruct
+{
+	int		x;
+	int		y;
+	int		w;
+	int		h;
+};
+
 /**
  *
  * \brief Window class for LFSToolKit.
@@ -50,6 +58,7 @@ class LFSTK_windowClass
 		void LFSTK_clearWindow(void);
 		unsigned long LFSTK_setColour(const char *name);
 		void LFSTK_resizeWindow(int w,int h,bool tellx=true);
+		void LFSTK_moveWindow(int x,int y,bool tellx=true);
 
 		void LFSTK_setListener(Window w,listener *l);
 		listener *LFSTK_getListener(Window w);
@@ -64,6 +73,9 @@ class LFSTK_windowClass
 		void LFSTK_setSticky(bool set);
 		bool LFSTK_getSticky(void);
 
+		int LFSTK_getMonitorCount(void);
+		const monitorStruct* LFSTK_getMonitorData(int monitor);
+	
 		void LFSTK_reloadGlobals(void);
 
 		geometryStruct	*LFSTK_getGeom(void);
@@ -89,13 +101,16 @@ class LFSTK_windowClass
 	private:
 		void initWindow(bool loadvars);
 		void loadGlobalColours(void);
-		int			x;
-		int			y;
-		int			w;
-		int			h;
-		char		*windowName;
-		bool		isActive;
-		bool		isSticky;
+		void loadMonitorData(void);
+		int				x;
+		int				y;
+		int				w;
+		int				h;
+		char			*windowName;
+		bool			isActive;
+		bool			isSticky;
+		int				monitorCount;
+		monitorStruct	*monitors;
 };
 
 #endif

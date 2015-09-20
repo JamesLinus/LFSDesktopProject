@@ -449,6 +449,7 @@ void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
+	this->autoLabelColour=this->wc->autoLabelColour;
 }
 
 /**

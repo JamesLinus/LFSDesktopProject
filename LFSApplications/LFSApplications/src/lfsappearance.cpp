@@ -146,7 +146,11 @@ bool callback(void *p,void* ud)
 
 	wc->LFSTK_reloadGlobals();
 	for(int j=WALLPAPER;j<NOMORELAUNCHERS;j++)
-		launch[j]->LFSTK_reloadColours();
+		{
+			launch[j]->LFSTK_reloadColours();
+			label[j]->LFSTK_reloadColours();
+			label[j]->LFSTK_clearWindow();
+		}
 	for(int j=EXIT;j<NOMOREBUTTONS;j++)
 		guibc[j]->LFSTK_reloadColours();
 	mb->LFSTK_reloadColours();
@@ -232,7 +236,7 @@ int main(int argc, char **argv)
 	int				bhite=24;
 	int				vspacing=bhite+10;
 
-	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Group Prefs",false);
+	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Appearance",false);
 	wc->LFSTK_setDecorated(true);
 	wc->autoLabelColour=true;
 	geom=wc->LFSTK_getGeom();

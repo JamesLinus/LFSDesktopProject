@@ -1,4 +1,8 @@
 0.0.8
+Added move window to window class.
+Added get monitor count/monitor geom to window class.
+Added loading monitor data to window class.
+Added Xinerama dependency.
 Added 'purge' Makefile target to remove old libs.
 Added different indicators to toggle button.
 Added align right to gadget class.

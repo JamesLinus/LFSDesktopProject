@@ -26,6 +26,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/Xinerama.h>
 
 #include <string.h>
 
@@ -177,6 +178,13 @@ void LFSTK_windowClass::LFSTK_setListener(Window w,listener *l)
 		XSaveContext(this->display,w,this->listeners,(XPointer)l);
 }
 
+/**
+* Resize window.
+* \param w New width.
+* \param h New height.
+* \param tellx Inform X (default=true).
+* \note Should only be called from child gadget constructor.
+*/
 void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 {
 	this->w=w;
@@ -185,6 +193,23 @@ void LFSTK_windowClass::LFSTK_resizeWindow(int w,int h,bool tellx)
 		XResizeWindow(this->display,this->window,w,h);
 	this->LFSTK_clearWindow();
 }
+
+/**
+* Move window.
+* \param x New X.
+* \param y New Y.
+* \param tellx Inform X (default=true).
+* \note Should only be called from child gadget constructor.
+*/
+void LFSTK_windowClass::LFSTK_moveWindow(int x,int y,bool tellx)
+{
+	this->x=x;
+	this->y=y;
+	if(tellx==true)
+		XMoveWindow(this->display,this->window,x,y);
+	this->LFSTK_clearWindow();
+}
+
 
 /**
 * Get child gadget listner.
@@ -374,6 +399,57 @@ bool LFSTK_windowClass::LFSTK_getActive(void)
 }
 
 /**
+* Load size and position of monitors.
+*/
+void LFSTK_windowClass::loadMonitorData(void)
+{
+	int					cnt=-1;
+	XineramaScreenInfo	*p=NULL;
+
+	cnt=ScreenCount(display);
+	p=XineramaQueryScreens(this->display,&cnt);
+	if(p!=NULL)
+		{
+			if(cnt>0)
+				{
+					this->monitors=(monitorStruct*)malloc(sizeof(monitorStruct)*cnt);
+					this->monitorCount=cnt;
+
+					for (int j=0;j<cnt;j++)
+						{
+							monitors[j].x=p[j].x_org;
+							monitors[j].y=p[j].y_org;
+							monitors[j].w=p[j].width;
+							monitors[j].h=p[j].height;
+						}
+				}
+			free(p);
+		}
+}	
+
+/**
+* Get number of monitors.
+* \return int Monitor cnt;
+*/
+
+int LFSTK_windowClass::LFSTK_getMonitorCount(void)
+{
+	return(this->monitorCount);
+}
+
+/**
+* Get monitor data.
+* \param monitor Monitor number.
+* \return monitorsStruct* Monitor struct pointer;
+* \note Do not free returned result;
+*/
+
+const monitorStruct* LFSTK_windowClass::LFSTK_getMonitorData(int monitor)
+{
+	return(&(this->monitors[monitor]));
+}
+
+/**
 * Main window constructor.
 * \param x X pos.
 * \param y Y pos.
@@ -407,6 +483,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->rootWindow=DefaultRootWindow(this->display);
 	this->cm=DefaultColormap(this->display,this->screen);
 	this->draw=XftDrawCreate(this->display,this->rootWindow,this->visual,this->cm);
+	this->loadMonitorData();
 
 	wa.win_gravity=NorthWestGravity;
 	wa.override_redirect=override;
