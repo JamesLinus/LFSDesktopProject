@@ -24,6 +24,7 @@
 
 #include "globals.h"
 #include "appmenu.h"
+#include "logout.h"
 
 bool	mainLoop=true;
 
@@ -55,10 +56,11 @@ int main(int argc, char **argv)
 		mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
 
 	mainwind->LFSTK_moveWindow(mons->x,mons->y);
-	mainwind->LFSTK_showWindow();
-	mainwind->LFSTK_setKeepAbove(true);
+	mainwind->LFSTK_showWindow(false);
 
 	addAppmenu(mons->x,mons->y);
+	addLogout(mons->w,mons->y);
+	mainwind->LFSTK_showWindow(true);
 
 	mainLoop=true;
 	while(mainLoop==true)
