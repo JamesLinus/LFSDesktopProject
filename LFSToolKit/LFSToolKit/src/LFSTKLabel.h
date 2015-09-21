@@ -44,8 +44,6 @@ class LFSTK_labelClass : public LFSTK_gadgetClass
 		bool mouseEnter(XButtonEvent *e) {return(true);};
 
 		void LFSTK_clearWindow(void);
-	//private:
-	//	void drawLabel(int state);
 };
 
 #endif

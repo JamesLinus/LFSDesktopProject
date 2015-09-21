@@ -1,4 +1,7 @@
 0.0.8
+Made get listener in gadgets private.
+Made draw label public.
+Removed unnecessary overrides of drawlabel.
 Added move window to window class.
 Added get monitor count/monitor geom to window class.
 Added loading monitor data to window class.

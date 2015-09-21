@@ -77,9 +77,8 @@ class LFSTK_gadgetClass
 		void initGadget(void);
 
 	protected:
-		listener* LFSTK_getListen(void);
+		listener* getListen(void);
 		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
-		//virtual void drawLabel(int state);
 		void drawBox(geometryStruct* g,int state,bevelType bevel);
 		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
 

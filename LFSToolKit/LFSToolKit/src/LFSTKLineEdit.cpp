@@ -60,7 +60,7 @@ LFSTK_lineEditClass::LFSTK_lineEditClass(LFSTK_windowClass* parentwc,const char*
 	this->listen.function=&LFSTK_lib::LFSTK_gadgetEvent;
 	this->listen.pointer=this;
 	this->listen.type=LINEEDITGADGET;
-	this->wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
+	this->wc->LFSTK_setListener(this->window,this->getListen());
 
 	if(strlen(label)>0)
 		this->cursorPos=strlen(label);

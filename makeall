@@ -2,9 +2,9 @@
 
 action="$@"
 
-find -maxdepth 2 -name configure.ac|while read
+for app in "LFSToolKit" "LFSWManager" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
 	do
-		pushd "$(dirname $REPLY)"
+		pushd $app
 			$action
 		popd
 	done

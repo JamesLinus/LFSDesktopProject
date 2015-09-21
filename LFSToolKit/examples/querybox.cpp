@@ -55,15 +55,13 @@ bool callback(void *p,void* ud)
 
 	if((long)ud==1)
 		{
-	sleep(10);
 			mainloop=false;
 			return(false);
 		}
 	else
-	{
-	sleep(10);
-		return(true);
-	}
+		{
+			return(true);
+		}
 }
 
 int main(int argc, char **argv)

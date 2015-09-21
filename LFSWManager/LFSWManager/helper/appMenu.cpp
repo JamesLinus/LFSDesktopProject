@@ -232,11 +232,19 @@ int main(int argc, char **argv)
 	disp=XOpenDisplay(NULL);
 	if(disp==NULL)
 		exit(1);
-	
-	if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
+
+	if(argc==2)
 		{
-			sx=win_x_return-10;
-			sy=win_y_return-10;
+			if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
+				{
+					sx=win_x_return-10;
+					sy=win_y_return-10;
+				}
+		}
+	else
+		{
+			sx=atoi(argv[2]);
+			sy=atoi(argv[3]);
 		}
 	terminalCommand=argv[1];
 	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);

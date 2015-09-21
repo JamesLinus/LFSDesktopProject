@@ -37,31 +37,6 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
-#if 0
-/**
-* Draw label.
-* \param p Button state.
-* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
-*/
-void LFSTK_menuButtonClass::drawLabel(int p)
-{
-	const char *holdcol=this->fontColourNames[p];
-
-	if(this->autoLabelColour==true)
-		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[p].pixel);
-
-	switch(this->labelOrientation)
-		{
-			case LEFT:
-				this->LFSTK_drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
-				break;
-			default://centre
-				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2),(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
-				break;
-		}
-}
-#endif
-
 /**
 * Clear the gadget window to the appropriate state.
 */
@@ -315,5 +290,5 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->listen.function=&(this->wc->globalLib->LFSTK_gadgetEvent);
 	this->listen.pointer=this;
 	this->listen.type=MENUBUTTONGADGET;
-	wc->LFSTK_setListener(this->window,this->LFSTK_getListen());
+	wc->LFSTK_setListener(this->window,this->getListen());
 }
