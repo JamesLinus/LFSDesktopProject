@@ -33,16 +33,18 @@
 #define _GLOBALS_
 
 //prefs
-extern	char				*terminalCommand;
-extern	int					panelHeight;
-extern	int					panelWidth;
-extern	const monitorStruct	*mons;
-extern	int					onMonitor;
+extern char					*terminalCommand;
+extern int					panelHeight;
+extern int					panelWidth;
+extern const monitorStruct	*mons;
+extern int					onMonitor;
 extern char					*logoutCommand;
 extern char					*restartCommand;
 extern char					*shutdownCommand;
 
 //panel window
-extern	LFSTK_windowClass	*mainwind;
+extern LFSTK_windowClass	*mainwind;
+extern int					rightOffset;
+extern int					leftOffset;
 
 #endif

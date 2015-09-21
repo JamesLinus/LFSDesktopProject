@@ -43,7 +43,6 @@ bool logoutCB(void *p,void* ud)
 				system(shutdownCommand);
 				break;
 		}
-	printf(">>>%p<<<\n",ud);
 	return(true);
 }
 

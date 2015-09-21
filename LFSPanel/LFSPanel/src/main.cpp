@@ -26,6 +26,8 @@
 #include "appmenu.h"
 #include "logout.h"
 
+#define RCNAME "lfspanel-DEV.rc"
+
 bool	mainLoop=true;
 
 args	panelPrefs[]=
@@ -52,7 +54,7 @@ int main(int argc, char **argv)
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs panel",true);
 	mainwind->LFSTK_setDecorated(false);
-	asprintf(&env,"%s/.config/LFS/lfspanel.rc",getenv("HOME"));
+	asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
@@ -64,8 +66,8 @@ int main(int argc, char **argv)
 	mainwind->LFSTK_moveWindow(mons->x,mons->y);
 	mainwind->LFSTK_showWindow(false);
 
-	addAppmenu(mons->x,mons->y);
-	addLogout(mons->w,mons->y);
+	addAppmenu(mons->x+leftOffset,mons->y);
+	addLogout(mons->w-rightOffset,mons->y);
 	mainwind->LFSTK_showWindow(true);
 
 	mainLoop=true;

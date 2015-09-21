@@ -1,8 +1,8 @@
 /*
  *
- * ©K. D. Hedger. Sun 20 Sep 14:41:10 BST 2015 kdhedger68713@gmail.com
+ * ©K. D. Hedger. Mon 21 Sep 13:41:31 BST 2015 kdhedger68713@gmail.com
 
- * This file (globals.cpp) is part of LFSPanel.
+ * This file (clock.h) is part of LFSPanel.
 
  * LFSPanel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,9 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "globals.h"
 
-//prefs
-char				*terminalCommand=NULL;
-int					panelHeight=16;
-int					panelWidth=-1;
-const monitorStruct	*mons=NULL;
-int					onMonitor=1;
-char				*logoutCommand;
-char				*restartCommand;
-char				*shutdownCommand;
+#ifndef _CLOCK_
+#define _CLOCK_
 
-//panel window
-LFSTK_windowClass	*mainwind=NULL;
-int					rightOffset=0;
-int					leftOffset=0;
+
+#endif
