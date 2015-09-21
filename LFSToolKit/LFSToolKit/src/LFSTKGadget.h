@@ -77,8 +77,8 @@ class LFSTK_gadgetClass
 		void initGadget(void);
 
 	protected:
+		void drawString(XftFont* font,int x,int y,int state,const char *s);
 		listener* getListen(void);
-		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
 		void drawBox(geometryStruct* g,int state,bevelType bevel);
 		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
 
@@ -108,7 +108,7 @@ class LFSTK_gadgetClass
 
 		char				*fontString;
 		fontStruct			*font;
-		char				*fontColourNames[MAXCOLOURS];
+		colourStruct		fontColourNames[MAXCOLOURS];
 		colourStruct		colourNames[MAXCOLOURS];
 		bool				inWindow;
 		bool				isActive;

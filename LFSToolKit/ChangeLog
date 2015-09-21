@@ -1,4 +1,5 @@
 0.0.8
+XftColours now created on start.
 Made get listener in gadgets private.
 Made draw label public.
 Removed unnecessary overrides of drawlabel.

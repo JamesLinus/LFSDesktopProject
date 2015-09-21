@@ -20,8 +20,6 @@
 
 #include "logout.h"
 
-#define BWIDTH 64
-
 LFSTK_menuButtonClass	*logoutButton=NULL;
 int						logoutX,logoutY;
 menuItemStruct			*logoutItems;

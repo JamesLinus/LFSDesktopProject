@@ -25,6 +25,7 @@
 #include "globals.h"
 #include "appmenu.h"
 #include "logout.h"
+#include "clock.h"
 
 #define RCNAME "lfspanel-DEV.rc"
 
@@ -52,8 +53,8 @@ int main(int argc, char **argv)
 	restartCommand=strdup("xterm");
 	shutdownCommand=strdup("xterm");
 
-	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs panel",true);
-	mainwind->LFSTK_setDecorated(false);
+	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
+	mainwind->LFSTK_setDecorated(true);
 	asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
@@ -68,7 +69,10 @@ int main(int argc, char **argv)
 
 	addAppmenu(mons->x+leftOffset,mons->y);
 	addLogout(mons->w-rightOffset,mons->y);
-	mainwind->LFSTK_showWindow(true);
+	rightOffset+=(BWIDTH*2);
+	addClock(mons->w-rightOffset,0);
+
+	mainwind->LFSTK_showWindow(false);
 
 	mainLoop=true;
 	while(mainLoop==true)
@@ -84,7 +88,6 @@ int main(int argc, char **argv)
 					break;
 				case Expose:
 					mainwind->LFSTK_setActive(true);
-					//callback(NULL,(void*)APPLY);
 					break;
 				case ConfigureNotify:
 					mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);

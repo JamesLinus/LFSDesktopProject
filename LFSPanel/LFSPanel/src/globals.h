@@ -32,6 +32,8 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
+#define BWIDTH 64
+
 //prefs
 extern char					*terminalCommand;
 extern int					panelHeight;

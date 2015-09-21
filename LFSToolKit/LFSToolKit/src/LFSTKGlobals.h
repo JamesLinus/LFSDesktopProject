@@ -72,6 +72,8 @@ struct colourStruct
 {
 	char		*name;
 	long		pixel;
+	XftColor	xftcol;
+	XftColor	bestxftcol;
 };
 
 #endif

@@ -29,6 +29,15 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 {
 	if(this->label!=NULL)
 		free(this->label);
+	for(int j=NORMALCOLOUR;j<MAXCOLOURS;j++)
+		{
+			if(this->fontColourNames[j].name!=NULL)
+				free(this->fontColourNames[j].name);
+			if(this->colourNames[j].name!=NULL)
+				free(this->colourNames[j].name);
+		}
+	if(this->fontString!=NULL)
+		free(this->fontString);
 	XDestroyWindow(this->display,this->window);
 }
 
@@ -45,7 +54,9 @@ LFSTK_gadgetClass::LFSTK_gadgetClass()
 */
 void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour)
 {
-	this->fontColourNames[p]=strdup(colour);
+	this->fontColourNames[p].name=strdup(colour);
+	XftColorAllocName(this->display,this->visual,this->cm,colour,&(this->fontColourNames[p].xftcol));
+	XftColorAllocName(this->display,this->visual,this->cm,this->wc->globalLib->bestFontColour(this->colourNames[p].pixel),&(this->fontColourNames[p].bestxftcol));
 }
 
 /**
@@ -102,7 +113,7 @@ const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
 void LFSTK_gadgetClass::initGadget(void)
 {
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->fontColourNames[j]=NULL;
+		this->fontColourNames[j].name=NULL;
 
 	for(int j=0;j<MAXCOLOURS;j++)
 		this->colourNames[j].name=NULL;
@@ -110,10 +121,10 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->fontString=NULL;
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
+		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 
 	for(int j=0;j<MAXCOLOURS;j++)
-		this->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+		this->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEFONTCOLOUR));
 
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->LFSTK_setActive(true);
@@ -352,16 +363,15 @@ bool LFSTK_gadgetClass::gotFocus(XEvent *e)
 * \param col Colour.
 * \param s String to draw.
 */
-void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s)
+void LFSTK_gadgetClass::drawString(XftFont* font,int x,int y,int state,const char *s)
 {
-	XftColor colour;
-
-	if (!XftColorAllocName(this->wc->display,this->wc->visual,this->wc->cm,col,&colour))
-		return;
-
 	XftDrawChange(this->wc->draw,this->window);
-	XftDrawStringUtf8(this->wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
+	if(this->autoLabelColour==true)
+		XftDrawStringUtf8(this->wc->draw,&(this->fontColourNames[state].bestxftcol),font,x,y,(XftChar8 *)s,strlen(s));
+	else
+		XftDrawStringUtf8(this->wc->draw,&(this->fontColourNames[state].xftcol),font,x,y,(XftChar8 *)s,strlen(s));
 }
+
 
 /**
 * Draw label.
@@ -370,21 +380,16 @@ void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *c
 */
 void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 {
-	const char *holdcol=this->fontColourNames[state];
-
-	if(this->autoLabelColour==true)
-		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[state].pixel);
-
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				this->LFSTK_drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
 				break;
 			case RIGHT:
-				this->LFSTK_drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
 				break;
 			default://centre
-				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
 				break;
 		}
 }
