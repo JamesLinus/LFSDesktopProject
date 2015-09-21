@@ -34,6 +34,9 @@ args	panelPrefs[]=
 	{"panelwidth",TYPEINT,&panelWidth},
 	{"onmonitor",TYPEINT,&onMonitor},
 	{"termcommand",TYPESTRING,&terminalCommand},
+	{"logoutcommand",TYPESTRING,&logoutCommand},
+	{"restartcommand",TYPESTRING,&restartCommand},
+	{"shutdowncommand",TYPESTRING,&shutdownCommand},
 	{NULL,0,NULL}
 };
 
@@ -43,6 +46,9 @@ int main(int argc, char **argv)
 	XEvent	event;
 
 	terminalCommand=strdup("xterm -e ");
+	logoutCommand=strdup("xterm");
+	restartCommand=strdup("xterm");
+	shutdownCommand=strdup("xterm");
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs panel",true);
 	mainwind->LFSTK_setDecorated(false);

@@ -35,6 +35,7 @@ bool callback(void *p,void* ud)
 {
 	char *path;
 
+	appButton->LFSTK_drawLabel(NORMALCOLOUR);
 	asprintf(&path,"%s \"%s\" %i %i",APPMENUPATH,terminalCommand,appx,appy);
 	system(path);
 	free(path);

@@ -29,6 +29,20 @@ const char				*logoutLabels[]={"Logout","Restart","Shutdown"};
 
 bool logoutCB(void *p,void* ud)
 {
+	int	dowhat=(long)ud-1;
+
+	switch(dowhat)
+		{
+			case LOGOUT:
+				system(logoutCommand);
+				break;
+			case RESTART:
+				system(restartCommand);
+				break;
+			case SHUTDOWN:
+				system(shutdownCommand);
+				break;
+		}
 	printf(">>>%p<<<\n",ud);
 	return(true);
 }
