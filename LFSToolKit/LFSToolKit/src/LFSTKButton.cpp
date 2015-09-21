@@ -82,9 +82,9 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 		}
 
 	if(this->isActive==true)
-		this->drawLabel(NORMALCOLOUR);
+		this->LFSTK_drawLabel(NORMALCOLOUR);
 	else
-		this->drawLabel(INACTIVECOLOUR);
+		this->LFSTK_drawLabel(INACTIVECOLOUR);
 }
 
 /**
@@ -116,7 +116,7 @@ bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
 
-	this->drawLabel(ACTIVECOLOUR);
+	this->LFSTK_drawLabel(ACTIVECOLOUR);
 
 	if(this->callback.pressCallback!=NULL)
 		return(this->callback.pressCallback(this,this->callback.userData));
@@ -205,7 +205,7 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->inWindow=true;
-	this->drawLabel(PRELIGHTCOLOUR);
+	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
 	return(true);
 }
 

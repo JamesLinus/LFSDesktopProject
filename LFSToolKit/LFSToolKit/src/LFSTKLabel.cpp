@@ -47,9 +47,9 @@ void LFSTK_labelClass::LFSTK_clearWindow(void)
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
 	if(this->isActive==true)
-		this->drawLabel(NORMALCOLOUR);
+		this->LFSTK_drawLabel(NORMALCOLOUR);
 	else
-		this->drawLabel(INACTIVECOLOUR);
+		this->LFSTK_drawLabel(INACTIVECOLOUR);
 }
 
 /**
@@ -84,7 +84,7 @@ LFSTK_labelClass::LFSTK_labelClass(LFSTK_windowClass* parentwc,const char* label
 	this->LFSTK_setFontColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
 	this->LFSTK_setColourName(NORMALCOLOUR,this->wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
 }
-
+#if 0
 /**
 * Draw label.
 * \param p Button state.
@@ -107,3 +107,4 @@ void LFSTK_labelClass::drawLabel(int p)
 				break;
 		}
 }
+#endif

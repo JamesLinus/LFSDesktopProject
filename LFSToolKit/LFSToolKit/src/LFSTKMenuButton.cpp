@@ -86,7 +86,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
-	this->drawLabel(NORMALCOLOUR);
+	this->LFSTK_drawLabel(NORMALCOLOUR);
 }
 
 /**
@@ -131,7 +131,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
 
-	this->drawLabel(ACTIVECOLOUR);
+	this->LFSTK_drawLabel(ACTIVECOLOUR);
 
 	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
@@ -269,7 +269,7 @@ bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 		}
 
 	this->inWindow=true;
-	this->drawLabel(PRELIGHTCOLOUR);
+	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
 	return(true);
 }
 

@@ -122,9 +122,9 @@ void LFSTK_toggleButtonClass::drawButton(int state)
 		}
 
 	if(this->isActive==true)
-		this->drawLabel(NORMALCOLOUR);
+		this->LFSTK_drawLabel(NORMALCOLOUR);
 	else
-		this->drawLabel(INACTIVECOLOUR);
+		this->LFSTK_drawLabel(INACTIVECOLOUR);
 
 	delete g;
 }
