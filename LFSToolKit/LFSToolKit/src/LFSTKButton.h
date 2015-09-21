@@ -55,7 +55,7 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		bool mouseDown(XButtonEvent *e);
 		bool mouseUp(XButtonEvent *e);
 
-		virtual void drawLabel(int p);
+		//virtual void drawLabel(int p);
 
 	protected:
 };

@@ -362,13 +362,40 @@ void LFSTK_gadgetClass::LFSTK_drawString(XftFont* font,int x,int y,const char *c
 	XftDrawChange(this->wc->draw,this->window);
 	XftDrawStringUtf8(this->wc->draw,&colour,font,x,y,(XftChar8 *)s,strlen(s));
 }
-
+#if 0
 /**
 * Draw label.
 * \param p Button state.
 * \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
 */
 void LFSTK_gadgetClass::drawLabel(int state)
+{
+	const char *holdcol=this->fontColourNames[state];
+
+	if(this->autoLabelColour==true)
+		holdcol=this->wc->globalLib->bestFontColour(this->colourNames[state].pixel);
+
+	switch(this->labelOrientation)
+		{
+			case LEFT:
+				this->LFSTK_drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				break;
+			case RIGHT:
+				this->LFSTK_drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				break;
+			default://centre
+				this->LFSTK_drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),holdcol,this->label);
+				break;
+		}
+}
+#endif
+
+/**
+* Draw label.
+* \param p Button state.
+* \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
+*/
+void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 {
 	const char *holdcol=this->fontColourNames[state];
 

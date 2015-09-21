@@ -60,7 +60,7 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		bool mouseDown(XButtonEvent *e);
 		bool mouseUp(XButtonEvent *e);
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
-		void drawLabel(int p);
+		//void drawLabel(int p);
 
 	private:
 		void initMenuButton(void);

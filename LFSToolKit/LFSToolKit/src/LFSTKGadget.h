@@ -65,6 +65,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setActive(bool active);
 		void LFSTK_setLabelAutoColour(bool setauto);
 
+		virtual void LFSTK_drawLabel(int state);
 		void LFSTK_setLabel(const char *newlabel);
 		const char *LFSTK_getLabel(void);
 		void LFSTK_setLabelOriention(int orient);
@@ -78,7 +79,7 @@ class LFSTK_gadgetClass
 	protected:
 		listener* LFSTK_getListen(void);
 		void LFSTK_drawString(XftFont* font,int x,int y,const char *col,const char *s);
-		virtual void drawLabel(int state);
+		//virtual void drawLabel(int state);
 		void drawBox(geometryStruct* g,int state,bevelType bevel);
 		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
 

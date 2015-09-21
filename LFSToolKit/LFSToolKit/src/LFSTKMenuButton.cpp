@@ -37,6 +37,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 {
 }
 
+#if 0
 /**
 * Draw label.
 * \param p Button state.
@@ -59,7 +60,7 @@ void LFSTK_menuButtonClass::drawLabel(int p)
 				break;
 		}
 }
-
+#endif
 
 /**
 * Clear the gadget window to the appropriate state.
