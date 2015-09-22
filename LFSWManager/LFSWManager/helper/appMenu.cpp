@@ -52,29 +52,47 @@ bool					makestatic=false;
 LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS];
 
+void freeData(void)
+{
+	delete wc;
+	for(int j=0;j<MAXCATS;j++)
+		{
+			for(int k=0;k<mainMenus[j].maxentrys;k++)
+				{
+					if(mainMenus[j].entry[k].exec!=NULL)
+						free(mainMenus[j].entry[k].exec);
+					if(mainMenus[j].entry[k].name!=NULL)
+						free(mainMenus[j].entry[k].name);
+				}
+			if(bc[j]!=NULL)
+				delete bc[j];
+		}
+}
+
 bool bcb(void *p,void* ud)
 {
 	char			buffer[BUFFERSIZE];
-	menuEntryStruct	*menuitem;
 
-	if((long)ud<0)
+	menuItemStruct	*menuitem;
+	menuEntryStruct	*menuentry;
+	menuitem=(menuItemStruct*)ud;
+
+	if(menuitem==NULL)
 		return(true);
 
-	menuitem=(menuEntryStruct*)ud;
-
-	if(ud>0)
+	if(menuitem->userData==NULL)
+		return(true);
+	menuentry=(menuEntryStruct*)(menuitem->userData);
+	if(menuentry!=NULL)
 		{
-			if(menuitem->inTerm==false)
-				sprintf(buffer,"%s &",menuitem->exec);
+			if(menuentry->inTerm==false)
+				sprintf(buffer,"%s &",menuentry->exec);
 			else
-				sprintf(buffer,"%s %s &",terminalCommand,menuitem->exec);
+				sprintf(buffer,"%s %s &",terminalCommand,menuentry->exec);
 
 			system(buffer);
 
-			delete wc;
-			for(int j=0;j<MAXCATS;j++)
-				if(bc[j]!=NULL)
-					delete bc[j];
+			freeData();
 			exit(0);
 		}
 	return(true);
@@ -277,7 +295,7 @@ int main(int argc, char **argv)
 			if(mainMenus[j].name!=NULL)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
-					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
+					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
 					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 
@@ -289,6 +307,9 @@ int main(int argc, char **argv)
 						{
 							pms->label=mainMenus[j].entry[k].name;
 							pms->userData=(void*)&mainMenus[j].entry[k];
+							pms->bc=NULL;
+							pms->subMenus=NULL;
+							pms->subMenuCnt=0;
 							pms++;
 						}
 					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
@@ -324,9 +345,6 @@ int main(int argc, char **argv)
 				}
 		}
 
-	delete wc;
-	for(int j=0;j<MAXCATS;j++)
-		if(bc[j]!=NULL)
-			delete bc[j];
+	freeData();
 	return 0;
 }
