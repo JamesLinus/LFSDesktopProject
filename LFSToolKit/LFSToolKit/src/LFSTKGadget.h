@@ -93,6 +93,8 @@ class LFSTK_gadgetClass
 
 		int					blackColour;
 		int					whiteColour;
+		XftColor			blackXftColour;
+		XftColor			whiteXftColour;
 
 		Window				window;
 		Display				*display;

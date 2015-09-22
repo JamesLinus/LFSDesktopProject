@@ -1,4 +1,5 @@
 0.0.8
+Line edit class always draws black on white.
 XftColours now created on start.
 Made get listener in gadgets private.
 Made draw label public.

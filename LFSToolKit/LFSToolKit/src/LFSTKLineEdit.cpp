@@ -238,7 +238,9 @@ void LFSTK_lineEditClass::drawLabel(void)
 			curpos=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->buffer.substr(startchar,this->cursorPos).c_str());
 		}
 
-	this->drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),NORMALCOLOUR,this->buffer.substr(startchar,len).c_str());
+//	this->drawString((XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),NORMALCOLOUR,this->buffer.substr(startchar,len).c_str());
+	XftDrawChange(this->wc->draw,this->window);
+	XftDrawStringUtf8(this->wc->draw,&(this->blackXftColour),(XftFont*)(this->font->data),2,(this->h/2)+((this->wc->font->ascent-2)/2),(XftChar8 *)this->buffer.substr(startchar,len).c_str(),len);
 
 	if(this->isFocused==true)
 		{

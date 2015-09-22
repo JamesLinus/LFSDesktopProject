@@ -31,9 +31,11 @@
 
 struct menuItemStruct
 {
-	char				*label;
+	const char			*label;
 	void				*userData;
 	LFSTK_buttonClass	*bc;
+	menuItemStruct		*subMenus;
+	int					subMenuCnt;
 };
 
 

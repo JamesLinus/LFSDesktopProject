@@ -30,14 +30,24 @@ exit $retval
 #define YSPACING		32
 #define BGRAV			NorthWestGravity
 
+#define MAXMAINMENUS	4
+#define MAXSUBMENUS		3
+
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
 LFSTK_buttonClass		*bc=NULL;
 LFSTK_menuButtonClass	*mb=NULL;
+LFSTK_menuButtonClass	*mbwithsubs=NULL;
 LFSTK_toggleButtonClass *tb=NULL;
 LFSTK_toggleButtonClass *tbnormal=NULL;
 LFSTK_lineEditClass		*le=NULL;
 
+menuItemStruct			*mainMenus;
+menuItemStruct			*mainMenusWithSubs;
+menuItemStruct			*subMenus;
+
+const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4"};
+const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
 LFSTK_buttonClass		*quit=NULL;
 
 bool					mainLoop=true;
@@ -52,6 +62,17 @@ bool buttonCB(void *p,void* ud)
 {
 	if(ud!=NULL)
 		printf(">>>%s<<<\n",(const char*)ud);
+	return(true);
+}
+
+bool menuCB(void *p,void* ud)
+{
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
+
+	if(ud==NULL)
+		return(true);
+
+	printf("Selected Menu Label:%s\n",menuitem->label);
 	return(true);
 }
 
@@ -77,7 +98,52 @@ int main(int argc, char **argv)
 	tbnormal->LFSTK_setCallBack(NULL,buttonCB,(void*)tbnormal->LFSTK_getLabel());
 	tbnormal->LFSTK_setToggleStyle(TOGGLENORMAL);
 	sy+=YSPACING;
+
+	mainMenus=new menuItemStruct[MAXMAINMENUS];
+	for(int j=0;j<MAXMAINMENUS;j++)
+		{
+			mainMenus[j].label=mainMenuNames[j];
+			mainMenus[j].userData=(void*)(long)(j+1);
+			mainMenus[j].bc=NULL;
+			mainMenus[j].subMenus=NULL;
+		}
+
+	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
+	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
+	mb->LFSTK_addMenus(mainMenus,MAXMAINMENUS);
+	sy+=YSPACING;
+
+//menu button with sub menu
+	mainMenusWithSubs=new menuItemStruct[MAXMAINMENUS];
+	for(int j=0;j<MAXMAINMENUS;j++)
+		{
+			mainMenusWithSubs[j].label=mainMenuNames[j];
+			mainMenusWithSubs[j].userData=NULL;
+			mainMenusWithSubs[j].bc=NULL;
+			mainMenusWithSubs[j].subMenus=NULL;
+		}
+//sub menus
+	subMenus=new menuItemStruct[MAXSUBMENUS];
+	for(int j=0;j<MAXSUBMENUS;j++)
+		{
+			subMenus[j].label=subMenuNames[j];
+			subMenus[j].userData=NULL;
+			subMenus[j].bc=NULL;
+			subMenus[j].subMenus=NULL;
+		}
+//add sub menus
+	mainMenusWithSubs[3].subMenus=subMenus;
+	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
+
+	mainMenusWithSubs[1].subMenus=subMenus;
+	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
 	
+	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
+	mbwithsubs->LFSTK_setCallBack(NULL,menuCB,NULL);
+	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
+	sy+=YSPACING;
+
+
 	quit=new LFSTK_buttonClass(wc,"Quit",BX,HITE-BHITE-BORDER,BWIDTH,BHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	wc->LFSTK_showWindow();
@@ -108,6 +174,10 @@ int main(int argc, char **argv)
 				}
 		}
 
+	delete bc;
+	delete tb;
+	delete tbnormal;
+	delete mb;
 	delete wc;
 	return 0;
 }

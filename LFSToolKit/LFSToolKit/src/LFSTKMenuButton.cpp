@@ -30,7 +30,6 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
-	delete this->menus;
 }
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass()
@@ -72,18 +71,18 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 */
 bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 {
-	LFSTK_buttonClass	*bc;
-	geometryStruct		*g;
-	LFSTK_windowClass	*subwc;
-	int					maxwid=0;
-	XEvent				event;
-	bool				run=true;
-	int					testwid=0;
-	int					addto;
-	int					sy;
-	fontStruct			*tfont;
-	const char			*itemfont;
-
+	LFSTK_buttonClass		*bc;
+	geometryStruct			*g;
+	LFSTK_windowClass		*subwc;
+	int						maxwid=0;
+	XEvent					event;
+	bool					run=true;
+	int						testwid=0;
+	int						addto;
+	int						sy;
+	fontStruct				*tfont;
+	const char				*itemfont;
+	LFSTK_menuButtonClass	*mb=NULL;
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
@@ -120,22 +119,41 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	addto=tfont->ascent+tfont->descent+8;
 	maxwid+=4;
 	g=this->LFSTK_getGeom();
-	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"",true,false);
+	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"",true,true);
 	sy=0;
 
 	for(int j=0;j<this->menuCount;j++)
 		{
-			bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
-			this->menus[j].bc=bc;
-			bc->LFSTK_setLabelOriention(LEFT);
-			bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,this->menus[j].userData);
-			bc->LFSTK_setStyle(FLATBUTTON);
-			bc->LFSTK_setFontString(itemfont);
-			bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
-			for(int j=0;j<MAXCOLOURS;j++)
+			if(this->menus[j].subMenus==NULL)
 				{
-					bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
-					bc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
+					bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
+					this->menus[j].bc=bc;
+					bc->LFSTK_setLabelOriention(LEFT);
+					bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
+					bc->LFSTK_setStyle(FLATBUTTON);
+					bc->LFSTK_setFontString(itemfont);
+					bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
+					for(int j=0;j<MAXCOLOURS;j++)
+						{
+							bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
+							bc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
+						}
+				}
+			else
+				{
+					mb=new LFSTK_menuButtonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
+					mb->LFSTK_setStyle(FLATBUTTON);
+					mb->LFSTK_setFontString(itemfont);
+					mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
+					for(int k=0;k<MAXCOLOURS;k++)
+						{
+							mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
+							mb->LFSTK_setFontColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEMFONTCOLOUR));
+						}
+					this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
+					mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
+					mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
+					mb->LFSTK_setIgnoreCB(true);
 				}
 			sy+=addto;
 		}
@@ -164,8 +182,13 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					break;
 				}
 		}
+
 	for(int j=0;j<this->menuCount;j++)
-		delete this->menus[j].bc;
+		{
+			if(this->menus[j].bc!=NULL)
+				delete this->menus[j].bc;
+			this->menus[j].bc=NULL;
+		}
 
 	delete subwc;
 	delete g;
@@ -252,7 +275,7 @@ bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 * Add array of menu items to gadget.
 * \param menus Pointer to array of menuItemStruct's.
 * \param cnt Length of array.
-* \note It is up to the caller to set the menuItemStruct and free it when finished.
+* \note It is up to the caller to set the menuItemStruct and free it and any data it contains when finished.
 */
 void LFSTK_menuButtonClass::LFSTK_addMenus(menuItemStruct* menus,int cnt)
 {

@@ -56,7 +56,6 @@ void LFSTK_gadgetClass::LFSTK_setFontColourName(int p,const char* colour)
 {
 	this->fontColourNames[p].name=strdup(colour);
 	XftColorAllocName(this->display,this->visual,this->cm,colour,&(this->fontColourNames[p].xftcol));
-	XftColorAllocName(this->display,this->visual,this->cm,this->wc->globalLib->bestFontColour(this->colourNames[p].pixel),&(this->fontColourNames[p].bestxftcol));
 }
 
 /**
@@ -177,6 +176,8 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
+	XftColorAllocName(this->display,this->visual,this->cm,"black",&(this->blackXftColour));
+	XftColorAllocName(this->display,this->visual,this->cm,"white",&(this->whiteXftColour));
 
 	this->LFSTK_setCallBack(NULL,NULL,(void*)-1);
 }
@@ -367,11 +368,15 @@ void LFSTK_gadgetClass::drawString(XftFont* font,int x,int y,int state,const cha
 {
 	XftDrawChange(this->wc->draw,this->window);
 	if(this->autoLabelColour==true)
-		XftDrawStringUtf8(this->wc->draw,&(this->fontColourNames[state].bestxftcol),font,x,y,(XftChar8 *)s,strlen(s));
+		{
+			if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[state].pixel),"black")==0)
+				XftDrawStringUtf8(this->wc->draw,&(this->blackXftColour),font,x,y,(XftChar8 *)s,strlen(s));
+			else
+				XftDrawStringUtf8(this->wc->draw,&(this->whiteXftColour),font,x,y,(XftChar8 *)s,strlen(s));
+		}
 	else
 		XftDrawStringUtf8(this->wc->draw,&(this->fontColourNames[state].xftcol),font,x,y,(XftChar8 *)s,strlen(s));
 }
-
 
 /**
 * Draw label.
