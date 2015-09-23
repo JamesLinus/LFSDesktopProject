@@ -64,7 +64,7 @@ void addLogout(int x,int y)
 			logoutItems[j].subMenuCnt=0;
 		}
 
-	logoutButton->LFSTK_setStyle(EMBOSSEDBUTTON);
+	logoutButton->LFSTK_setStyle(BEVELOUT);
 	logoutButton->LFSTK_setLabelOriention(CENTRE);
 	logoutButton->LFSTK_setCallBack(NULL,logoutCB,NULL);
 	logoutButton->LFSTK_addMenus(logoutItems,NUMLOGOUTENTRYS);

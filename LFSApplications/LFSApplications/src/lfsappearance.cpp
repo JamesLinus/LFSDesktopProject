@@ -303,7 +303,7 @@ int main(int argc, char **argv)
 	sx=col1;
 	sy+=vspacing;
 	mb=new LFSTK_menuButtonClass(wc,"Load Set",sx,sy,bwidth,24,NorthWestGravity);
-	mb->LFSTK_setStyle(EMBOSSEDBUTTON);
+	mb->LFSTK_setStyle(BEVELOUT);
 	mb->LFSTK_setLabelOriention(CENTRE);
 	groups=new menuItemStruct[maxGroups];
 	mb->LFSTK_setCallBack(NULL,bcb,NULL);

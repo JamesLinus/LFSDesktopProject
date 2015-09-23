@@ -273,7 +273,7 @@ int main(int argc, char **argv)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
-					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
+					bc[menucount]->LFSTK_setStyle(BEVELOUT);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 
 					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
