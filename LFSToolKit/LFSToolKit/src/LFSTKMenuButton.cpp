@@ -39,26 +39,18 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass()
 */
 void LFSTK_menuButtonClass::LFSTK_clearWindow()
 {
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
+	geometryStruct g={0,0,this->w,this->h};
 
 	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
-	else
-		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-	if(this->style==BEVELOUT)
 		{
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+			this->drawBox(&g,NORMALCOLOUR,this->style);
+			this->LFSTK_drawLabel(NORMALCOLOUR);
 		}
-	this->LFSTK_drawLabel(NORMALCOLOUR);
+	else
+		{
+			this->drawBox(&g,INACTIVECOLOUR,this->style);
+			this->LFSTK_drawLabel(INACTIVECOLOUR);
+		}
 }
 
 /**
@@ -81,28 +73,18 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	fontStruct				*tfont;
 	const char				*itemfont;
 	LFSTK_menuButtonClass	*mb=NULL;
+
+	geometryStruct	geom={0,0,this->w,this->h};
+	bevelType		bv=BEVELIN;
+
+
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
 			return(true);
 		}
 
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,this->colourNames[ACTIVECOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-	if(this->style==BEVELOUT)
-		{
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-		}
-
+	this->drawBox(&geom,ACTIVECOLOUR,this->getActiveBevel());
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
 
 	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
@@ -224,12 +206,6 @@ bool LFSTK_menuButtonClass::mouseUp(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
-
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 	return(true);
@@ -242,31 +218,18 @@ bool LFSTK_menuButtonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 {
+	geometryStruct	g={0,0,this->w,this->h};
+	bevelType		bv=BEVELIN;
+
+
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
 			return(true);
 		}
 
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-	if(this->style==BEVELOUT)
-		{
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-		}
-
-	this->inWindow=true;
+	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-	return(true);
 }
 
 /**

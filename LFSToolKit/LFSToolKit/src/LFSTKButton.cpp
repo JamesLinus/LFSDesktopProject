@@ -115,12 +115,6 @@ void* LFSTK_buttonClass::LFSTK_getCallbackUD()
 */
 bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 {
-	if(this->isActive==false)
-		{
-			this->LFSTK_clearWindow();
-			return(true);
-		}
-
 	this->LFSTK_clearWindow();
 	this->inWindow=false;
 	return(true);
@@ -133,30 +127,19 @@ bool LFSTK_buttonClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 {
+	geometryStruct	g={0,0,this->w,this->h};
+	bevelType		bv=BEVELIN;
+
+
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
 			return(true);
 		}
 
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-	if(this->style==BEVELOUT)
-		{
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-		}
-
-	this->inWindow=true;
+	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
+	this->inWindow=true;
 	return(true);
 }
 

@@ -228,14 +228,18 @@ void LFSTK_gadgetClass::LFSTK_setLabelAutoColour(bool setauto)
 */
 void LFSTK_gadgetClass::LFSTK_clearWindow()
 {
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
+	geometryStruct g={0,0,this->w,this->h};
 
 	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
+		{
+			this->drawBox(&g,NORMALCOLOUR,this->style);
+			this->LFSTK_drawLabel(NORMALCOLOUR);
+		}
 	else
-		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+		{
+			this->drawBox(&g,INACTIVECOLOUR,this->style);
+			this->LFSTK_drawLabel(INACTIVECOLOUR);
+		}
 }
 
 /**
@@ -305,18 +309,18 @@ bool LFSTK_gadgetClass::mouseExit(XButtonEvent *e)
 */
 bool LFSTK_gadgetClass::mouseEnter(XButtonEvent *e)
 {
+	geometryStruct	g={0,0,this->w,this->h};
+	bevelType		bv=BEVELIN;
+
+
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
 			return(true);
 		}
 
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
+	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
+	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
 	this->inWindow=true;
 	return(true);
 }
