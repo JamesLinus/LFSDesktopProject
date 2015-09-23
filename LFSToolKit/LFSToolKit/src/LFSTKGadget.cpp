@@ -485,9 +485,10 @@ void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType 
 /**
 * Draw box.
 * \param g Geometry Struture.
-* \param state Button state.
+* \param state Gadget state.
+* \param bevel Bevel type.
 */
-void LFSTK_gadgetClass::drawBox(geometryStruct* g,int state,bevelType bevel)
+void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType bevel)
 {
 	int tlcolour;
 	int brcolour;

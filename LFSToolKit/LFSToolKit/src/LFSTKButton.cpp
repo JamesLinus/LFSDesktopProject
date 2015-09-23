@@ -44,6 +44,8 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
+//	this->drawBox(geometryStruct=0,0,2,3,NORMALCOLOUR,BEVELOUT);
+/*
 	if(this->style==EMBOSSEDBUTTON)
 		{
 			XSetForeground(this->display,this->gc,this->whiteColour);
@@ -53,7 +55,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
 			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
 		}
-
+*/
 	if(this->isActive==true)
 		this->LFSTK_drawLabel(NORMALCOLOUR);
 	else

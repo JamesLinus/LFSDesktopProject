@@ -62,6 +62,7 @@ bool buttonCB(void *p,void* ud)
 {
 	if(ud!=NULL)
 		printf(">>>%s<<<\n",(const char*)ud);
+	printf("Line edit=%s\n",le->LFSTK_getBuffer()->c_str());
 	return(true);
 }
 
@@ -144,7 +145,8 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //line edit
-
+	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
+	
 	quit=new LFSTK_buttonClass(wc,"Quit",BX,HITE-BHITE-BORDER,BWIDTH,BHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 	wc->LFSTK_showWindow();

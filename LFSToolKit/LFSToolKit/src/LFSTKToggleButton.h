@@ -52,7 +52,7 @@ class LFSTK_toggleButtonClass  : public  LFSTK_gadgetClass
 
 	private:
 		drawStyle	boxStyle;
-		void drawButton(int state);
+		void drawButton(gadgetState state);
 
 		bool toggleState;
 };

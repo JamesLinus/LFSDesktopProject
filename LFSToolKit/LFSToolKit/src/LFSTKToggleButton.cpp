@@ -64,7 +64,7 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 /**
 * Draw a togglebox.
 */
-void LFSTK_toggleButtonClass::drawButton(int state)
+void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 {
 	int boxsize;
 	int	boxy;
