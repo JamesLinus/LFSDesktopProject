@@ -22,7 +22,6 @@
 #ifndef _LFSTKGADGET_
 #define _LFSTKGADGET_
 
-#include "LFSTKGlobals.h"
 #include "LFSTKWindow.h"
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};

@@ -22,11 +22,6 @@
 #ifndef _LFSTKMENUBUTTON_
 #define _LFSTKMENUBUTTON_
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#include "LFSTKGlobals.h"
-#include "LFSTKWindow.h"
 #include "LFSTKButton.h"
 
 struct menuItemStruct

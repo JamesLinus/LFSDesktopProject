@@ -22,8 +22,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 #include <X11/Xresource.h>
 #include <X11/Xatom.h>
 #include <X11/extensions/Xinerama.h>
@@ -31,7 +29,6 @@
 #include <string.h>
 
 #include "LFSTKWindow.h"
-#include "LFSTKLib.h"
 
 #define _NET_WM_STATE_REMOVE	0
 #define _NET_WM_STATE_ADD		1

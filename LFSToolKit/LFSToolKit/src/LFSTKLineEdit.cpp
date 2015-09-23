@@ -21,8 +21,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <X11/Xlib.h>
-
 #include "LFSTKLineEdit.h"
 
 LFSTK_lineEditClass::~LFSTK_lineEditClass()

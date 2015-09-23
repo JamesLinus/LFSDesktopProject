@@ -27,9 +27,12 @@ const char				*logoutLabels[]={"Logout","Restart","Shutdown"};
 
 bool logoutCB(void *p,void* ud)
 {
-	int	dowhat=(long)ud-1;
+	menuItemStruct	*menu=(menuItemStruct*)ud;
 
-	switch(dowhat)
+	if(menu==NULL)
+		return(true);;
+
+	switch((long)menu->userData)
 		{
 			case LOGOUT:
 				system(logoutCommand);
@@ -55,8 +58,10 @@ void addLogout(int x,int y)
 	for(int j=LOGOUT;j<NUMLOGOUTENTRYS;j++)
 		{
 			logoutItems[j].label=strdup(logoutLabels[j]);
-			logoutItems[j].userData=(void*)(long)(j+1);
+			logoutItems[j].userData=(void*)(long)j;
 			logoutItems[j].bc=NULL;
+			logoutItems[j].subMenus=NULL;
+			logoutItems[j].subMenuCnt=0;
 		}
 
 	logoutButton->LFSTK_setStyle(EMBOSSEDBUTTON);

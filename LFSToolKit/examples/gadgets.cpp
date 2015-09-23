@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 	for(int j=0;j<MAXMAINMENUS;j++)
 		{
 			mainMenus[j].label=mainMenuNames[j];
-			mainMenus[j].userData=(void*)(long)(j+1);
+			mainMenus[j].userData=NULL;
 			mainMenus[j].bc=NULL;
 			mainMenus[j].subMenus=NULL;
 		}
@@ -143,6 +143,7 @@ int main(int argc, char **argv)
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
 	sy+=YSPACING;
 
+//line edit
 
 	quit=new LFSTK_buttonClass(wc,"Quit",BX,HITE-BHITE-BORDER,BWIDTH,BHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);

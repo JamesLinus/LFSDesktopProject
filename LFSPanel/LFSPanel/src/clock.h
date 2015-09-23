@@ -25,8 +25,7 @@
 #include "globals.h"
 
 extern LFSTK_labelClass	*clockButton;
-extern char clockbuffer[256];
-extern int refreshRate;
+extern int				refreshRate;
 
 void addClock(int x,int y);
 void alarmCallBack(int sig);

@@ -24,10 +24,9 @@
 
 #include <string>
 
-#include "LFSTKGlobals.h"
-#include "LFSTKWindow.h"
-#include "LFSTKGadget.h"
 #include <X11/Xatom.h>
+
+#include "LFSTKGadget.h"
 
 /**
  *

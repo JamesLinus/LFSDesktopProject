@@ -22,11 +22,6 @@
 #ifndef _LFSTKBUTTON_
 #define _LFSTKBUTTON_
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#include "LFSTKGlobals.h"
-#include "LFSTKWindow.h"
 #include "LFSTKGadget.h"
 
 /**

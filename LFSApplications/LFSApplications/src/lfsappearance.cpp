@@ -49,6 +49,8 @@ bool				mainloop=false;
 int					maxGroups=20;
 int					numGroups=0;
 menuItemStruct		*groups;
+char				currentBuffer[256];
+
 #define BIG col2-col1+bwidth
 
 int fileExists(const char *name)
@@ -86,6 +88,12 @@ void setGroup(void)
 			free(command);
 		}
 	free(grp);
+	snprintf(currentBuffer,255,"%s",current->LFSTK_getBuffer()->c_str());
+
+	asprintf(&command,"echo \"%s\" > %s/.config/LFS/lfsappearance.rc",currentBuffer,getenv("HOME"));
+	system(command);
+	free(command);
+
 }
 
 bool callback(void *p,void* ud)
@@ -138,9 +146,10 @@ bool callback(void *p,void* ud)
 			case APPLY:
 				if(strlen(current->LFSTK_getBuffer()->c_str())>0)
 					setGroup();
-				system("lfsdesktop &");
-				system("lfssetwallpaper");
-				system("killall lfswmanager;lfswmanager &");
+				system("nohup lfsdesktop &>/dev/null &");
+				system("lfssetwallpaper &>/dev/null");
+				system("killall lfswmanager;nohup lfswmanager &>/dev/null &");
+				system("killall lfspanel;nohup lfspanel &>/dev/null &");
 				break;
 		}
 
@@ -173,6 +182,8 @@ void loadGroups()
 			groups[j].label=NULL;
 			groups[j].userData=NULL;
 			groups[j].bc=NULL;
+			groups[j].subMenus=NULL;
+			groups[j].subMenuCnt=0;
 		}
 
 	asprintf(&groupfolder,"%s/.config/LFS/lfsgroupsprefs",getenv("HOME"));
@@ -199,7 +210,8 @@ void loadGroups()
 							buffer[strlen(buffer)-1]=0;
 							groups[cnt].label=strdup(buffer);
 							groups[cnt].userData=(void*)(long)(cnt+1);
-							groups[cnt].bc=NULL;
+							if(strcmp(currentBuffer,buffer)==0)
+								current->LFSTK_setBuffer(buffer);
 							cnt++;
 						}
 				}
@@ -212,18 +224,13 @@ void loadGroups()
 
 bool bcb(void *p,void* ud)
 {
-	menuItemStruct	*menuitem;
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
 
-	if(((long)ud<0) || ((long)ud>numGroups))
+	if(menuitem==NULL)
 		return(true);
 
-	menuitem=(menuItemStruct*)ud;
-
-	if((long)ud>0)
-		{
-			current->LFSTK_setBuffer(groups[(long)ud-1].label);
-			current->LFSTK_clearWindow();
-		}
+	current->LFSTK_setBuffer(menuitem->label);
+	current->LFSTK_clearWindow();
 	return(true);
 }
 
@@ -235,6 +242,20 @@ int main(int argc, char **argv)
 	geometryStruct	*geom;
 	int				bhite=24;
 	int				vspacing=bhite+10;
+	FILE*			fp=NULL;
+	char			*command;
+
+	asprintf(&command,"cat %s/.config/LFS/lfsappearance.rc",getenv("HOME"));
+	fp=popen(command,"r");
+	if(fp!=NULL)
+		{
+			currentBuffer[0]=0;
+			fgets(currentBuffer,255,fp);
+			if(strlen(currentBuffer)>0)
+				currentBuffer[strlen(currentBuffer)-1]=0;
+			pclose(fp);
+		}
+	free(command);
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Appearance",false);
 	wc->LFSTK_setDecorated(true);
@@ -282,17 +303,17 @@ int main(int argc, char **argv)
 	sx=col1;
 	sy+=vspacing;
 	mb=new LFSTK_menuButtonClass(wc,"Load Set",sx,sy,bwidth,24,NorthWestGravity);
-	mb->LFSTK_setCallBack(NULL,NULL,NULL);
 	mb->LFSTK_setStyle(EMBOSSEDBUTTON);
 	mb->LFSTK_setLabelOriention(CENTRE);
 	groups=new menuItemStruct[maxGroups];
-	mb->LFSTK_setCallBack(NULL,bcb,groups);
+	mb->LFSTK_setCallBack(NULL,bcb,NULL);
 	
-	loadGroups();
-	mb->LFSTK_addMenus(groups,numGroups);
 
 	sx+=spacing;;
 	current=new LFSTK_lineEditClass(wc,"",sx,sy-1,BIG,24,NorthWestGravity);
+
+	loadGroups();
+	mb->LFSTK_addMenus(groups,numGroups);
 	sy+=vspacing;
 	
 	sx=col1;
@@ -310,7 +331,6 @@ int main(int argc, char **argv)
 	XFlush(wc->display);
 	XSync(wc->display,false);
 
-	current->LFSTK_setBuffer(groups[0].label);
 	mainloop=true;
 	while(mainloop==true)
 		{
@@ -340,6 +360,6 @@ int main(int argc, char **argv)
 			delete guibc[j];
 	for(int j=0;j<maxGroups;j++)
 		if(groups[j].label!=NULL)
-			free(groups[j].label);
+			free((char*)groups[j].label);
 	return(0);
 }

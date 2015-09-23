@@ -27,7 +27,7 @@
 #include "logout.h"
 #include "clock.h"
 
-#define RCNAME "lfspanel-DEV.rc"
+#define RCNAME "lfspanel.rc"
 
 bool	mainLoop=true;
 
@@ -72,8 +72,17 @@ int main(int argc, char **argv)
 	rightOffset+=(BWIDTH*2);
 	addClock(mons->w-rightOffset,0);
 
-	mainwind->LFSTK_showWindow(false);
+	mainwind->LFSTK_showWindow(true);
+	
+//XClientMessageEvent dummyEvent;
+//memset(&dummyEvent, 0, sizeof(XClientMessageEvent));
+//dummyEvent.type = ClientMessage;
+//dummyEvent.window = mainwind->window;
+//dummyEvent.format = 32;
+//	signal(SIGALRM,dummyEventCB);
+//	alarm(1);
 
+//XSendEvent(dpy, interClientCommunicationWindow, 0, 0, (XEvent*)&dummyEvent);
 	mainLoop=true;
 	while(mainLoop==true)
 		{
@@ -90,9 +99,12 @@ int main(int argc, char **argv)
 					mainwind->LFSTK_setActive(true);
 					break;
 				case ConfigureNotify:
+						//printf("here\n");
 					mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
 					break;
 				default:
+					//	printf("here\n");
+
 					break;
 				}
 		}

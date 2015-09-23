@@ -18,49 +18,36 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "clock.h"
 #include <unistd.h>
 #include <signal.h>
-//#include <iostream>
 #include <ctime>
+
+#include "clock.h"
+
 LFSTK_labelClass	*clockButton=NULL;
-int refreshRate=1;
-char clockbuffer[256];
+int					refreshRate=1;
 
 void  alarmCallBack(int sig)
 {
-//printf("----------------\n\n\n");
-	time_t rawtime;
-	struct tm * timeinfo;
+	char		clockbuffer[256];
+	time_t		rawtime;
+	struct tm	*timeinfo;
 
 	time(&rawtime);
 	timeinfo=localtime(&rawtime);
 
-//	strftime(clockbuffer,255,"%d-%m-%Y %I:%M:%S",timeinfo);
 	strftime(clockbuffer,255,"%I:%M:%S",timeinfo);
-  //std::string str(buffer);
-//
- // std::cout << str;
-//printf(">>%s<<\n",clockbuffer);
 	clockButton->LFSTK_setLabel(clockbuffer);
-	//clockButton->LFSTK_clearWindow();
-	//clockButton->LFSTK_setLabel("XXXXXXXXXXXXX");
-//printf("===============\n");
-//	clockButton->LFSTK_drawLabel(NORMALCOLOUR);
-	//
-//printf("===============\n");
 	
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
 	XFlush(mainwind->display);
-	//XSync(mainwind->display,true);
-
 }
 
 void addClock(int x,int y)
 {
-	clockButton=new LFSTK_labelClass(mainwind,"XX:XX:XX",x,y,BWIDTH,panelHeight,NorthWestGravity);
+	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,y,BWIDTH,panelHeight,NorthWestGravity);
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
 }

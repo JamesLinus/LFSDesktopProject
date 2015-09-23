@@ -22,8 +22,6 @@
 #ifndef _LFSTKLABEL_
 #define _LFSTKLABEL_
 
-#include "LFSTKGlobals.h"
-#include "LFSTKWindow.h"
 #include "LFSTKGadget.h"
 
 /**

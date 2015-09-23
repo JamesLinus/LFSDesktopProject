@@ -24,7 +24,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "LFSTKGlobals.h"
 #include "LFSTKLib.h"
 
 struct	monitorStruct
