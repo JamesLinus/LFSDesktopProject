@@ -51,7 +51,10 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 			this->drawBox(&g,INACTIVECOLOUR,this->style);
 			this->LFSTK_drawLabel(INACTIVECOLOUR);
 		}
+	this->drawIndicator(&g,NORMALCOLOUR,DISCLOSURE);
 }
+
+
 
 /**
 * Mouse down callback.
@@ -86,6 +89,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	this->drawBox(&geom,ACTIVECOLOUR,this->getActiveBevel());
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
+	this->drawIndicator(&geom,ACTIVECOLOUR,DISCLOSURE);
 
 	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
@@ -97,7 +101,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		}
 
 	addto=tfont->ascent+tfont->descent+8;
-	maxwid+=4;
+	maxwid+=4+6;
 	g=this->LFSTK_getGeom();
 	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"",true,true);
 	sy=0;
@@ -125,6 +129,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					mb->LFSTK_setStyle(BEVELNONE);
 					mb->LFSTK_setFontString(itemfont);
 					mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
+					mb->LFSTK_setLabelOriention(LEFT);
 					for(int k=0;k<MAXCOLOURS;k++)
 						{
 							mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
@@ -134,6 +139,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
 					mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
 					mb->LFSTK_setIgnoreCB(true);
+					mb->isSubmenu=true;
 				}
 			sy+=addto;
 		}
@@ -230,7 +236,7 @@ bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 
 	this->drawBox(&g,PRELIGHTCOLOUR,this->style);
 	this->LFSTK_drawLabel(PRELIGHTCOLOUR);
-}
+	this->drawIndicator(&g,PRELIGHTCOLOUR,DISCLOSURE);}
 
 /**
 * Add array of menu items to gadget.
@@ -275,4 +281,5 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	this->listen.pointer=this;
 	this->listen.type=MENUBUTTONGADGET;
 	wc->LFSTK_setListener(this->window,this->getListen());
+	this->isSubmenu=false;
 }

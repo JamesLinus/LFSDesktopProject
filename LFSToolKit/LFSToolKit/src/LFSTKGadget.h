@@ -25,7 +25,7 @@
 #include "LFSTKWindow.h"
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
-enum indicatorType {CHECK=0,RADIO,PICTURE,NOINDICATOR};
+enum indicatorType {CHECK=0,RADIO,PICTURE,DISCLOSURE,NOINDICATOR};
 
 /**
  *

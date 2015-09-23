@@ -477,6 +477,7 @@ void LFSTK_gadgetClass::LFSTK_reloadColours(void)
 */
 void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType indic)
 {
+	int sx,sy;
 
 	switch(indic)
 		{
@@ -488,6 +489,19 @@ void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType 
 				XSetForeground(this->display,this->gc,this->whiteColour);
 				XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y+g->h);
 				XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y);
+				break;
+
+			case DISCLOSURE:
+				if(strcmp(this->wc->globalLib->bestFontColour(this->colourNames[state].pixel),"black")==0)
+					XSetForeground(this->display,this->gc,this->blackColour);
+				else
+					XSetForeground(this->display,this->gc,this->whiteColour);
+				sx=g->x+g->w-DISCLOSURESIZE;
+				sy=g->y+(g->h/2)-(DISCLOSURESIZE/2);
+				for(int j=0;j<DISCLOSURESIZE/2;j++)
+					XDrawLine(this->display,this->window,this->gc,sx+j,sy+j,sx+j,sy+DISCLOSURESIZE-j);
+				break;
+			
 		}
 }
 
