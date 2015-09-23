@@ -52,7 +52,7 @@ class LFSTK_gadgetClass
 		virtual bool lostFocus(XEvent *e);
 
 		Window LFSTK_getWindow(void);
-		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
+		void LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity);
 		void LFSTK_setCallBack(bool (*downcb)(void *,void*),bool (*releasecb)(void *,void*),void* ud);
 
 		void LFSTK_setColourName(int p,const char* colour);
@@ -80,10 +80,12 @@ class LFSTK_gadgetClass
 		listener* getListen(void);
 		void drawBox(geometryStruct* g,gadgetState state,bevelType bevel);
 		void drawIndicator(geometryStruct* g,int state,indicatorType indic=NOINDICATOR);
+		bevelType getActiveBevel(void);
 
 		listener			listen;
 
 		char				*label;
+		geometryStruct		geom;
 		int					x;
 		int					y;
 		int					w;
@@ -115,7 +117,7 @@ class LFSTK_gadgetClass
 		bool				isActive;
 		bool				autoLabelColour;
 		int					labelOrientation;
-		int					style;
+		bevelType			style;
 		int					labelOffset;
 };
 

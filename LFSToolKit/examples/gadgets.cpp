@@ -89,6 +89,7 @@ int main(int argc, char **argv)
 
 	bc=new LFSTK_buttonClass(wc,"Button",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
 	bc->LFSTK_setCallBack(NULL,buttonCB,(void*)bc->LFSTK_getLabel());
+	bc->LFSTK_setStyle(BEVELIN);
 	sy+=YSPACING;
 	
 	tb=new LFSTK_toggleButtonClass(wc,"Check",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);

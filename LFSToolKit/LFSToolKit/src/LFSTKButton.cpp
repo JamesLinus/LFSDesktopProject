@@ -35,31 +35,18 @@ LFSTK_buttonClass::LFSTK_buttonClass()
 */
 void LFSTK_buttonClass::LFSTK_clearWindow(void)
 {
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
+	geometryStruct g={0,0,this->w,this->h};
 
 	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,this->colourNames[NORMALCOLOUR].pixel);
-	else
-		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-//	this->drawBox(geometryStruct=0,0,2,3,NORMALCOLOUR,BEVELOUT);
-/*
-	if(this->style==EMBOSSEDBUTTON)
 		{
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
+			this->drawBox(&g,NORMALCOLOUR,this->style);
+			this->LFSTK_drawLabel(NORMALCOLOUR);
 		}
-*/
-	if(this->isActive==true)
-		this->LFSTK_drawLabel(NORMALCOLOUR);
 	else
-		this->LFSTK_drawLabel(INACTIVECOLOUR);
+		{
+			this->drawBox(&g,INACTIVECOLOUR,this->style);
+			this->LFSTK_drawLabel(INACTIVECOLOUR);
+		}
 }
 
 /**
@@ -69,28 +56,17 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 */
 bool LFSTK_buttonClass::mouseDown(XButtonEvent *e)
 {
+	geometryStruct	g={0,0,this->w,this->h};
+	bevelType		bv=BEVELIN;
+
+
 	if(this->isActive==false)
 		{
 			this->LFSTK_clearWindow();
 			return(true);
 		}
 
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-
-	XSetForeground(this->display,this->gc,this->colourNames[ACTIVECOLOUR].pixel);
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
-
-	if(this->style==EMBOSSEDBUTTON)
-		{
-			XSetForeground(this->display,this->gc,this->blackColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
-			XDrawLine(this->display,this->window,this->gc,0,0,this->w-1,0);
-			XSetForeground(this->display,this->gc,this->whiteColour);
-			XDrawLine(this->display,this->window,this->gc,0,this->h-1,this->w-1,this->h-1);
-			XDrawLine(this->display,this->window,this->gc,this->w-1,this->h-1,this->w-1,0);
-		}
-
+	this->drawBox(&g,ACTIVECOLOUR,this->getActiveBevel());
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
 
 	if(this->callback.pressCallback!=NULL)
@@ -169,7 +145,7 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	if(this->style==EMBOSSEDBUTTON)
+	if(this->style==BEVELOUT)
 		{
 			XSetForeground(this->display,this->gc,this->whiteColour);
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
@@ -186,10 +162,9 @@ bool LFSTK_buttonClass::mouseEnter(XButtonEvent *e)
 
 /**
 * Set buton style.
-* \param s.
-* \note s=FLATBUTTON=0,EMBOSSEDBUTTON=1.
+* \param s Button style.
 */
-void LFSTK_buttonClass::LFSTK_setStyle(int s)
+void LFSTK_buttonClass::LFSTK_setStyle(bevelType s)
 {
 	this->style=s;
 }

@@ -126,7 +126,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->LFSTK_setFontString(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEFONT));
 	this->LFSTK_setActive(true);
 	this->LFSTK_setLabelAutoColour(false);
-	this->style=EMBOSSEDBUTTON;
+	this->style=BEVELOUT;
 	this->labelOrientation=CENTRE;
 	this->inWindow=false;
 	this->autoLabelColour=this->wc->autoLabelColour;
@@ -152,7 +152,7 @@ listener* LFSTK_gadgetClass::getListen(void)
 * \param h Height.
 * \param gravity Button gravity.
 */
-void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
+void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* label,int x,int y,unsigned int w,unsigned int h,int gravity)
 {
 	this->wc=parentwc;
 	this->display=this->wc->display;
@@ -162,6 +162,11 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->y=y;
 	this->w=w;
 	this->h=h;
+
+	this->geom.x=x;
+	this->geom.y=y;
+	this->geom.w=w;
+	this->geom.h=h;
 
 	this->screen=this->wc->screen;
 	this->visual=this->wc->visual;
@@ -483,6 +488,24 @@ void LFSTK_gadgetClass::drawIndicator(geometryStruct* g,int state,indicatorType 
 }
 
 /**
+* Get Active bevel.
+* \return bevelType Active bevel.
+*/
+bevelType LFSTK_gadgetClass::getActiveBevel(void)
+{
+	switch(this->style)
+		{
+			case BEVELIN:
+				return(BEVELOUT);
+				break;
+			case BEVELOUT:
+				return(BEVELIN);
+				break;
+		}
+	return(BEVELNONE);
+}
+
+/**
 * Draw box.
 * \param g Geometry Struture.
 * \param state Gadget state.
@@ -518,14 +541,14 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 	XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
 	XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
 
-//draw bootom rite
+//draw bottom rite
 	XSetForeground(this->display,this->gc,brcolour);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h,g->x+g->w,g->y+g->h);
-	XDrawLine(this->display,this->window,this->gc,g->x+g->w,g->y+g->h,g->x+g->w,g->y);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h-1,g->x+g->w-1,g->y+g->h-1);
+	XDrawLine(this->display,this->window,this->gc,g->x+g->w-1,g->y+g->h-1,g->x+g->w-1,g->y);
 
 //draw top left
 	XSetForeground(this->display,this->gc,tlcolour);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w,g->y);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
+	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
 }
 

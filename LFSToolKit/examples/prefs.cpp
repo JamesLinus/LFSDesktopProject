@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 //button font
 	sx=col1;
 	bc[FONTLABEL]=new LFSTK_buttonClass(wc,"Font",sx,sy,bwidth,24,NorthWestGravity);
-	static_cast<LFSTK_buttonClass*>(bc[FONTLABEL])->LFSTK_setStyle(FLATBUTTON);
+	static_cast<LFSTK_buttonClass*>(bc[FONTLABEL])->LFSTK_setStyle(BEVELNONE);
 	bc[FONTLABEL]->LFSTK_setLabelAutoColour(true);
 
 	sx+=spacing;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
 	sx=col1;
 	bc[MENUFONTLABEL]=new LFSTK_buttonClass(wc,"Menu Item Font",sx,sy,bwidth,24,NorthWestGravity);
 	bc[MENUFONTLABEL]->LFSTK_setLabelAutoColour(true);
-	static_cast<LFSTK_buttonClass*>(bc[MENUFONTLABEL])->LFSTK_setStyle(FLATBUTTON);
+	static_cast<LFSTK_buttonClass*>(bc[MENUFONTLABEL])->LFSTK_setStyle(BEVELNONE);
 	sx+=spacing;
 	bc[MENUFONTBOX]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT),sx,sy-1,(bwidth*2)+spacing+20,24,NorthWestGravity);
 	sy+=vspacing;
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 	bc[WNORMAL]=new LFSTK_buttonClass(wc,"Window Colour",sx,sy,bwidth,24,NorthWestGravity);
 	bc[WNORMAL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
 	bc[WNORMAL]->LFSTK_setLabelAutoColour(true);
-	static_cast<LFSTK_buttonClass*>(bc[WNORMAL])->LFSTK_setStyle(FLATBUTTON);
+	static_cast<LFSTK_buttonClass*>(bc[WNORMAL])->LFSTK_setStyle(BEVELNONE);
 
 	sx+=spacing;
 	bc[EWNORMAL]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),sx,sy-1,bwidth,24,NorthWestGravity);
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
 	bc[THEMELABEL]=new LFSTK_buttonClass(wc,"Theme",sx,sy,bwidth,24,NorthWestGravity);
 	bc[THEMELABEL]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
 	bc[THEMELABEL]->LFSTK_setLabelAutoColour(true);
-	static_cast<LFSTK_buttonClass*>(bc[THEMELABEL])->LFSTK_setStyle(FLATBUTTON);
+	static_cast<LFSTK_buttonClass*>(bc[THEMELABEL])->LFSTK_setStyle(BEVELNONE);
 
 	sx+=spacing;
 	bc[THEMEBOX]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPETHEME),sx,sy-1,(bwidth*2)+spacing+20,24,NorthWestGravity);

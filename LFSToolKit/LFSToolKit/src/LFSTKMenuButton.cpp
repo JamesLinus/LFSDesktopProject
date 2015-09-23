@@ -49,7 +49,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	if(this->style==EMBOSSEDBUTTON)
+	if(this->style==BEVELOUT)
 		{
 			XSetForeground(this->display,this->gc,this->whiteColour);
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
@@ -93,7 +93,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	XSetForeground(this->display,this->gc,this->colourNames[ACTIVECOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	if(this->style==EMBOSSEDBUTTON)
+	if(this->style==BEVELOUT)
 		{
 			XSetForeground(this->display,this->gc,this->blackColour);
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
@@ -128,7 +128,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					this->menus[j].bc=bc;
 					bc->LFSTK_setLabelOriention(LEFT);
 					bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-					bc->LFSTK_setStyle(FLATBUTTON);
+					bc->LFSTK_setStyle(BEVELNONE);
 					bc->LFSTK_setFontString(itemfont);
 					bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
 					for(int j=0;j<MAXCOLOURS;j++)
@@ -140,7 +140,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			else
 				{
 					mb=new LFSTK_menuButtonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
-					mb->LFSTK_setStyle(FLATBUTTON);
+					mb->LFSTK_setStyle(BEVELNONE);
 					mb->LFSTK_setFontString(itemfont);
 					mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
 					for(int k=0;k<MAXCOLOURS;k++)
@@ -254,7 +254,7 @@ bool LFSTK_menuButtonClass::mouseEnter(XButtonEvent *e)
 	XSetForeground(this->display,this->gc,this->colourNames[PRELIGHTCOLOUR].pixel);
 	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 
-	if(this->style==EMBOSSEDBUTTON)
+	if(this->style==BEVELOUT)
 		{
 			XSetForeground(this->display,this->gc,this->whiteColour);
 			XDrawLine(this->display,this->window,this->gc,0,this->h-1,0,0);
@@ -305,7 +305,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 
 	this->initMenuButton();
 
-	this->style=EMBOSSEDBUTTON;
+	this->style=BEVELOUT;
 	this->LFSTK_setLabelOriention(CENTRE);
 
 	this->listen.function=&(this->wc->globalLib->LFSTK_gadgetEvent);

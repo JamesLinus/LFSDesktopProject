@@ -40,7 +40,7 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity);
 
 		void *LFSTK_getCallbackUD(void);
-		void LFSTK_setStyle(int s);
+		void LFSTK_setStyle(bevelType s);
 		void LFSTK_setIgnoreCB(bool ignore);
 		bool LFSTK_getIgnoreCB(void);
 
