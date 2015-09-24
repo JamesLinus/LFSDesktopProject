@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 				maxwid=info.width;
 		}
 
-	maxwid+=8;
+	maxwid+=16;
 	sx=0;
 	sy=0;
 
