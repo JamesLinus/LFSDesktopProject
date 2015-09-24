@@ -338,6 +338,22 @@ void LFSTK_windowClass::LFSTK_setSticky(bool set)
 }
 
 /**
+* Set window type.
+* \param type Window type string.
+*/
+void LFSTK_windowClass::LFSTK_setWindowType(const char *type)
+{
+	Atom	xa;
+	Atom	xa_prop[1];
+
+	xa=XInternAtom(display,"_NET_WM_WINDOW_TYPE",False);
+	xa_prop[0]=XInternAtom(display,type,False);
+
+	if(xa!=None)
+		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeReplace,(unsigned char *)&xa_prop,1);
+}
+
+/**
 * Set window keep above.
 * \param set.
 * \note Must be set AFTER window has been mapped.
@@ -486,6 +502,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	if(xa!=None)
 		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,3);
 
+	this->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_NORMAL");
 	this->windowName=strdup(name);
 	XStoreName(this->display,this->window,this->windowName);
 	classHint.res_name=this->windowName;

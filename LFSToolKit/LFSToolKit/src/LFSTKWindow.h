@@ -71,6 +71,7 @@ class LFSTK_windowClass
 		bool LFSTK_getActive(void);
 		void LFSTK_setSticky(bool set);
 		bool LFSTK_getSticky(void);
+		void LFSTK_setWindowType(const char *type);
 
 		int LFSTK_getMonitorCount(void);
 		const monitorStruct* LFSTK_getMonitorData(int monitor);
@@ -96,6 +97,8 @@ class LFSTK_windowClass
 		LFSTK_lib		*globalLib;
 
 		fontStruct		*font;
+
+		Window			parentWindow;
 
 	private:
 		void initWindow(bool loadvars);

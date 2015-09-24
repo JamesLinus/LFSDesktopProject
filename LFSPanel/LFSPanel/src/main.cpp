@@ -54,7 +54,6 @@ int main(int argc, char **argv)
 	shutdownCommand=strdup("xterm");
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
-	mainwind->LFSTK_setDecorated(true);
 	asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 

@@ -55,7 +55,7 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 }
 
 
-
+//void LFSTK_windowClass::LFSTK_setAsMenu(bool set)
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -103,7 +103,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	addto=tfont->ascent+tfont->descent+8;
 	maxwid+=4+6;
 	g=this->LFSTK_getGeom();
-	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"",true,true);
+	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"menu window",true,true);
+	subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	sy=0;
 
 	for(int j=0;j<this->menuCount;j++)
@@ -143,8 +144,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 				}
 			sy+=addto;
 		}
-	XMapWindow(subwc->display,subwc->window);
-	XMapSubwindows(subwc->display,subwc->window);
+
+	subwc->LFSTK_showWindow(true);
 
 	while (run==true)
 		{
