@@ -1,4 +1,6 @@
 0.0.3
+Desktop prefs now uses check box for show/hide suffix.
+Window placement selection in wmprefs now uses drop down.
 Current set saved at exit.
 Current set now set in edit box.
 Redone lfstk dialog.

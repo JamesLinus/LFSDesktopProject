@@ -29,18 +29,21 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
+#define BWIDTH 104
+
 enum {BACTIVEFRAME=0,BACTIVEFILL,BINACTIVEFRAME,BINACTIVEFILL,BWIDGETCOLOUR,NOMOREBUTTONS};
 enum {EACTIVEFRAME=0,EACTIVEFILL,EINACTIVEFRAME,EINACTIVEFILL,EWIDGETCOLOUR,ETHEMEPATH,ETERMCOMMAND,ETITLEFONT,EPLACEMENT,ENUMDESKS,ELIVEUPDATE,NOMOREEDITS};
 enum {ACTIVEFRAME=0,ACTIVEFRAMEFILL,INACTIVEFRAME,INACTIVEFRAMEFILL,TEXTCOLOUR};
-enum {EXIT=0,APPLY,PRINT,RESTARTWM,NOMORE};
+enum {EXIT=0,APPLY,PRINT,RESTARTWM,PLACEMENT,NOMORE};
 enum {THEMELABEL=0,TERMLABEL,FONTLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,NOMORELABELS};
+enum places {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR,NOMOREPLACES};
 
 const char			*buttonnames[]= {"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
-const char			*labelnames[]= {"Theme Path","Term Command","Font","Placement","Desktops", "Update"};
+const char			*labelnames[]= {"Theme Path","Term Command","Font"," Place Windows","Desktops", "Update"};
+const char			*placeNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
 
-enum {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR};
 //prefs
-char				*placement=NULL;
+int					placement=0;
 char				*titleFont=NULL;
 char				*numberOfDesktops=NULL;
 char				*liveUpdate=NULL;
@@ -53,6 +56,8 @@ int					doswapdesk=-1;
 char				*fontName;
 int					fontSize;
 
+menuItemStruct		*placeMenu;
+
 args				wmPrefs[]=
 {
 	{"wmactive_frame",TYPESTRING,&fontColours[ACTIVEFRAME]},
@@ -60,7 +65,7 @@ args				wmPrefs[]=
 	{"wminactive_frame",TYPESTRING,&fontColours[INACTIVEFRAME]},
 	{"wminactive_fill",TYPESTRING,&fontColours[INACTIVEFRAMEFILL]},
 	{"widgetcolour",TYPESTRING,&fontColours[TEXTCOLOUR]},
-	{"placement",TYPESTRING,&placement},
+	{"placement",TYPEINT,&placement},
 	{"titlefont",TYPESTRING,&titleFont},
 	{"desktops",TYPESTRING,&numberOfDesktops},
 	{"liveupdate",TYPESTRING,&liveUpdate},
@@ -69,14 +74,22 @@ args				wmPrefs[]=
 	{NULL,0,NULL}
 };
 
+bool					mainloop=false;
+LFSTK_windowClass		*wc;
+LFSTK_buttonClass		*bc[NOMOREBUTTONS]= {NULL,};
+LFSTK_buttonClass		*guibc[NOMORE]= {NULL,};
+LFSTK_lineEditClass		*le[NOMOREEDITS]= {NULL,};
+LFSTK_labelClass		*lb[NOMORELABELS]= {NULL,};
+LFSTK_menuButtonClass	*mb=NULL;
 
-bool				mainloop=false;
-LFSTK_windowClass	*wc;
-LFSTK_buttonClass	*bc[NOMOREBUTTONS]= {NULL,};
-LFSTK_buttonClass	*guibc[NOMORE]= {NULL,};
-LFSTK_lineEditClass	*le[NOMOREEDITS]= {NULL,};
-LFSTK_labelClass	*lb[NOMORELABELS]= {NULL,};
-char				*env;
+char					*env;
+
+void placeToString(long place)
+{
+
+	le[EPLACEMENT]->LFSTK_setBuffer(placeNames[place]);
+	le[EPLACEMENT]->LFSTK_clearWindow();
+}
 
 void setVars(void)
 {
@@ -97,9 +110,7 @@ void setVars(void)
 	for(int j=THEMELABEL; j<NOMORELABELS; j++)
 		if(lb[j]!=NULL)
 			lb[j]->LFSTK_clearWindow();
-	if(placement!=NULL)
-		free(placement);
-	placement=strdup(static_cast<const char*>(le[EPLACEMENT]->LFSTK_getBuffer()->c_str()));
+
 	if(titleFont!=NULL)
 		free(titleFont);
 	titleFont=strdup(static_cast<const char*>(le[ETITLEFONT]->LFSTK_getBuffer()->c_str()));
@@ -117,8 +128,21 @@ void setVars(void)
 	terminalCommand=strdup(static_cast<const char*>(le[ETERMCOMMAND]->LFSTK_getBuffer()->c_str()));
 }
 
+bool menuCB(void *p,void* ud)
+{
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
+
+	if(menuitem==NULL)
+		return(true);
+	placement=(int)(long)menuitem->userData;
+	placeToString((long)menuitem->userData);
+
+	return(true);
+}
+
 bool callback(void *p,void* ud)
 {
+
 	if((long)ud==EXIT)
 		{
 			wc->LFSTK_clearWindow();
@@ -146,6 +170,7 @@ bool callback(void *p,void* ud)
 			sleep(1);
 			system("lfswmanager &");
 			break;
+			break;
 		}
 	return(true);
 }
@@ -156,7 +181,7 @@ int main(int argc, char **argv)
 	int				sx=0;
 	int				sy=0;
 	geometryStruct	*geom;
-	int				bwidth=96;
+	int				bwidth=BWIDTH;
 	int				bhite=24;
 	int				spacing=bwidth+10;
 	int				vspacing=bhite+10;
@@ -181,7 +206,7 @@ int main(int argc, char **argv)
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
 	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	sx=col1;
 	sy=10;
@@ -201,18 +226,36 @@ int main(int argc, char **argv)
 
 	sx=col1;
 	state=0;
-	for(int j=THEMELABEL; j<PLACELABEL; j++)
+	for(int j=THEMELABEL; j<=FONTLABEL; j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
 			sx+=spacing;
-			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,col2-col1+bwidth,24,NorthWestGravity);
+			le[ETHEMEPATH+j]=new LFSTK_lineEditClass(wc,labelnames[j],sx,sy-1,col2-col1,24,NorthWestGravity);
 			sy+=vspacing;
 			sx=col1;
 			state++;
 		}
 
-	for(int j=PLACELABEL; j<NOMORELABELS; j++)
+	placeMenu=new menuItemStruct[NOMOREPLACES];
+	for(int j=0;j<NOMOREPLACES;j++)
+		{
+			placeMenu[j].label=placeNames[j];
+			placeMenu[j].userData=(void*)(long)j;
+			placeMenu[j].bc=NULL;
+			placeMenu[j].subMenus=NULL;
+			placeMenu[j].subMenuCnt=0;
+		}
+
+	mb=new LFSTK_menuButtonClass(wc,labelnames[PLACELABEL],sx,sy,bwidth,24,NorthWestGravity);
+	mb->LFSTK_addMenus(placeMenu,NOMOREPLACES);
+	le[EPLACEMENT]=new LFSTK_lineEditClass(wc,"",sx+spacing,sy-1,col2-col1,24,NorthWestGravity);
+	placeToString(placement);
+	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
+
+	sy+=vspacing;
+
+	for(int j=DESKLABEL; j<NOMORELABELS; j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
@@ -223,7 +266,6 @@ int main(int argc, char **argv)
 			state++;
 		}
 
-	le[EPLACEMENT]->LFSTK_setBuffer(placement);
 	le[ETITLEFONT]->LFSTK_setBuffer(titleFont);
 	le[ENUMDESKS]->LFSTK_setBuffer(numberOfDesktops);
 	le[ELIVEUPDATE]->LFSTK_setBuffer(liveUpdate);
@@ -232,7 +274,8 @@ int main(int argc, char **argv)
 	sy-=vspacing;
 
 	sy+=(vspacing*2);
-	wc->LFSTK_resizeWindow(col3-10,sy);
+	wc->LFSTK_resizeWindow(col3-10-bwidth,sy);
+//	wc->LFSTK_clearWindow();
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
@@ -253,6 +296,7 @@ int main(int argc, char **argv)
 				{
 					break;
 				case Expose:
+					wc->LFSTK_clearWindow();
 					wc->LFSTK_setActive(true);
 					//callback(NULL,(void*)APPLY);
 					break;

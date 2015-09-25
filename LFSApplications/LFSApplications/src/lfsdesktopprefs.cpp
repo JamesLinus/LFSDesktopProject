@@ -27,25 +27,30 @@
 #include <LFSTKMenuButton.h>
 #include <LFSTKLineEdit.h>
 #include <LFSTKLabel.h>
+#include <LFSTKToggleButton.h>
 #include <LFSTKLib.h>
 
-enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
+//enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
+enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
 enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 
-LFSTK_windowClass	*wc;
-LFSTK_lineEditClass	*le[NUMPREFS]={NULL,};
-LFSTK_labelClass	*lb[NUMPREFS]={NULL,};
-LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
+LFSTK_windowClass		*wc;
+LFSTK_lineEditClass		*le[NUMPREFS]={NULL,};
+LFSTK_labelClass		*lb[NUMPREFS]={NULL,};
+LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
+LFSTK_toggleButtonClass	*showExt=NULL;
 
-int					bwidth=96;
-int					spacing=bwidth+10;
-int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+int						bwidth=96;
+int						spacing=bwidth+10;
+int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+int						showSuffix;
 
-#define BIG col2-col1+bwidth
+#define BIG col2-col1
 
 char				*prefs[NUMPREFS]={NULL,};
-const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Show Ext","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
-int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
+//const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Show Ext","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
+const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
+int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
 
 args				desktopPrefs[]=
 {
@@ -55,7 +60,7 @@ args				desktopPrefs[]=
 	{"gridborder",TYPESTRING,&prefs[GRIDBORDER]},
 	{"refreshrate",TYPESTRING,&prefs[REFRESHRATE]},
 	{"termcommand",TYPESTRING,&prefs[TERMCOMMAND]},
-	{"showextension",TYPESTRING,&prefs[SHOWSUFFIX]},
+	{"showextension",TYPEBOOL,&showSuffix},
 	{"fontface",TYPESTRING,&prefs[FONTFACE]},
 	{"labelforeground",TYPESTRING,&prefs[FORECOLOUR]},
 	{"labelbackground",TYPESTRING,&prefs[BACKCOLOUR]},
@@ -81,6 +86,7 @@ void setVars(void)
 					prefs[j]=strdup(le[j]->LFSTK_getBuffer()->c_str());
 				}
 		}
+	showSuffix=showExt->LFSTK_getValue();
 }
 
 bool callback(void *p,void* ud)
@@ -114,6 +120,17 @@ bool callback(void *p,void* ud)
 	return(true);
 }
 
+bool setShowExt(void *p,void* ud)
+{
+	if(showExt->LFSTK_getValue()==true)
+		showExt->LFSTK_setLabel("Show Suffix");
+	else
+		showExt->LFSTK_setLabel("Hide Suffix");
+
+	showExt->LFSTK_clearWindow();
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -129,7 +146,7 @@ int main(int argc, char **argv)
 	prefs[GRIDBORDER]=strdup("32");
 	prefs[REFRESHRATE]=strdup("2");
 	prefs[TERMCOMMAND]=strdup("xterm -e ");
-	prefs[SHOWSUFFIX]=strdup("0");
+	showSuffix=false;
 	prefs[FONTFACE]=strdup("Sans;0;0;10");
 	prefs[FORECOLOUR]=strdup("#ffffff");
 	prefs[BACKCOLOUR]=strdup("#000000");
@@ -149,12 +166,12 @@ int main(int argc, char **argv)
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(bwidth/2),geom->h-32,64,24,SouthGravity);
+	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
 	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	sx=col1;
 	sy=10;
 
-	for(int j=ICONTHEME;j<NUMPREFS;j++)
+	for(int j=ICONTHEME;j<TERMCOMMAND;j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
@@ -165,8 +182,27 @@ int main(int argc, char **argv)
 			sy+=vspacing;
 			sx=col1;
 		}
+
+	showExt=new LFSTK_toggleButtonClass(wc,"Show Suffix",col1+bwidth+10,sy,bwidth,24,NorthWestGravity);
+	showExt->LFSTK_setValue(showSuffix);
+	showExt->LFSTK_setCallBack(NULL,setShowExt,NULL);
+	setShowExt(NULL,NULL);
+
 	sy+=vspacing;
-	wc->LFSTK_resizeWindow(col3-10,sy);
+	for(int j=TERMCOMMAND;j<NUMPREFS;j++)
+		{
+			lb[j]=new LFSTK_labelClass(wc,labelNames[j],sx,sy,bwidth,24,NorthWestGravity);
+			lb[j]->LFSTK_setLabelAutoColour(true);
+			lb[j]->LFSTK_setActive(false);
+			lb[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->windowColourNames[NORMALCOLOUR].name);
+			sx+=spacing;
+			le[j]=new LFSTK_lineEditClass(wc,prefs[j],sx,sy-1,editSize[j],24,NorthWestGravity);
+			sy+=vspacing;
+			sx=col1;
+		}
+
+	sy+=vspacing;
+	wc->LFSTK_resizeWindow(col2+BIG-bwidth-10,sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
@@ -197,7 +233,8 @@ int main(int argc, char **argv)
 				}
 		}
 
-	delete wc;
+	delete showExt;
+
 	for(int j=0;j<NOMOREBUTTONS;j++)
 		if(guibc[j]!=NULL)
 			delete guibc[j];
@@ -209,6 +246,8 @@ int main(int argc, char **argv)
 	for(int j=ICONTHEME;j<NUMPREFS;j++)
 		if(prefs[j]!=NULL)
 			free(prefs[j]);
+
+	delete wc;
 	free(env);
 	return(0);
 };
