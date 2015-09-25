@@ -18,7 +18,12 @@ lfsappearance_SOURCES = ../src/lfsappearance.cpp
 lfsappearance_CFLAGS = -O3
 lfsappearance_CXXFLAGS = -O3
 
+lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
+lfsbackdropprefs_CFLAGS = -O3
+lfsbackdropprefs_CXXFLAGS = -O3
+
+
 man1_MANS = ../resources/man/lfsapplications.1
 
-bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance
+bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance lfsbackdropprefs
 

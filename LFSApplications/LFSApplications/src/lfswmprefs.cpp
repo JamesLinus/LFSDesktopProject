@@ -275,7 +275,6 @@ int main(int argc, char **argv)
 
 	sy+=(vspacing*2);
 	wc->LFSTK_resizeWindow(col3-10-bwidth,sy);
-//	wc->LFSTK_clearWindow();
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 
@@ -296,9 +295,8 @@ int main(int argc, char **argv)
 				{
 					break;
 				case Expose:
-					wc->LFSTK_clearWindow();
 					wc->LFSTK_setActive(true);
-					//callback(NULL,(void*)APPLY);
+					wc->LFSTK_clearWindow();
 					break;
 				case ConfigureNotify:
 					wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);

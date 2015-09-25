@@ -1,4 +1,5 @@
 0.0.3
+Added wallpaper prefs.
 Desktop prefs now uses check box for show/hide suffix.
 Window placement selection in wmprefs now uses drop down.
 Current set saved at exit.
