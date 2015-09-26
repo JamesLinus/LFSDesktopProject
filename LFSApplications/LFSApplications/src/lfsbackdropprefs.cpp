@@ -32,13 +32,18 @@
 
 enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,NOMORELABELS};
 enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
+enum {STRETCHMODE=0,TILEMODE,CENTREMODE,NOMOREMODES};
+
+const char				*labelNames[]={"Main Backdrop","Root Colour","Monitor Backdrop"};
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_lineEditClass		*backdropPath=NULL;
-LFSTK_toggleButtonClass	*mult=NULL;
+LFSTK_toggleButtonClass	*multi=NULL;
 LFSTK_menuButtonClass	*mainMode=NULL;
+LFSTK_lineEditClass		*mainModeEdit=NULL;
 LFSTK_lineEditClass		*mainColourEdit=NULL;
 LFSTK_buttonClass		*guiButtons[NOMOREGUIS]={NULL,};
+LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 
 bool					mainLoop=true;
 int						bwidth=96;
@@ -54,6 +59,9 @@ int						backdropMode;
 char					*mainColour;
 bool					multiMode;
 
+menuItemStruct			*modeMenus;
+const char				*modeName[]={"Stretch","Tile","Centre"};
+
 args					prefs[]=
 {
 	{"backdrop",TYPESTRING,&wallpaperPath},
@@ -62,6 +70,8 @@ args					prefs[]=
 	{"multimode",TYPEBOOL,&multiMode},
 	{NULL,0,NULL}
 };
+
+#define BIG col3-col1
 
 bool callback(void *p,void* ud)
 {
@@ -124,9 +134,55 @@ int main(int argc, char **argv)
 	guiButtons[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
 	guiButtons[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 
-	//wc->LFSTK_resizeWindow(col3-10,sy);
+	sx=col1;
+	sy=10;
+	labels[BACKDROP]=new LFSTK_labelClass(wc,labelNames[BACKDROP],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	backdropPath=new LFSTK_lineEditClass(wc,wallpaperPath,sx,sy,BIG,24,NorthWestGravity);
+
+	sx=col1;
+	sy+=vspacing;
+	labels[MAINCOLOUR]=new LFSTK_labelClass(wc,labelNames[MAINCOLOUR],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	mainColourEdit=new LFSTK_lineEditClass(wc,mainColour,sx,sy,bwidth,24,NorthWestGravity);
+
+	sx=col1;
+	sy+=vspacing;
+	modeMenus=new menuItemStruct[NOMOREMODES];
+	for(int j=0;j<NOMOREMODES;j++)
+		{
+			modeMenus[j].label=modeName[j];
+			modeMenus[j].userData=(void*)(long)j;
+			modeMenus[j].bc=NULL;
+			modeMenus[j].subMenus=NULL;
+			modeMenus[j].subMenuCnt=0;
+		}
+
+	mainMode=new LFSTK_menuButtonClass(wc,"xxx",sx,sy,bwidth,24,NorthWestGravity);
+	mainMode->LFSTK_addMenus(modeMenus,NOMOREMODES);
+	sx+=spacing;
+	mainModeEdit=new LFSTK_lineEditClass(wc,"XXX",sx,sy,bwidth,24,NorthWestGravity);
+
+	sy+=vspacing;
+	sx=col1;
+	multi=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",col1+spacing,sy,bwidth*2,24,NorthWestGravity);
+
+
+
+
+
+
+
+
+//////////////////////
+
+
+
+	sy+=vspacing;
+	sy+=vspacing;
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
+	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy);
 
 	XFlush(wc->display);
 
