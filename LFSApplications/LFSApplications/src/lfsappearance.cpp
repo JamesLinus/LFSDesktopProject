@@ -108,7 +108,7 @@ bool callback(void *p,void* ud)
 		{
 			case LAUNCHWALLPAPER:
 				wc->LFSTK_hideWindow();
-				system("lfswallpaperprefs");
+				system("lfsbackdropprefs");
 				wc->LFSTK_showWindow(false);
 				break;
 			case LAUNCHTOOLKIT:
@@ -146,7 +146,7 @@ bool callback(void *p,void* ud)
 			case APPLY:
 				if(strlen(current->LFSTK_getBuffer()->c_str())>0)
 					setGroup();
-				system("nohup lfsdesktop &>/dev/null &");
+				system("lfsdesktop &>/dev/null &");
 				system("lfssetwallpaper &>/dev/null");
 				system("killall lfswmanager;nohup lfswmanager &>/dev/null &");
 				system("killall lfspanel;nohup lfspanel &>/dev/null &");
@@ -274,7 +274,6 @@ int main(int argc, char **argv)
 	sy=10;
 //wallpaper
 	launch[WALLPAPER]=new LFSTK_buttonClass(wc,"Wallpaper Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
-	launch[WALLPAPER]->LFSTK_setActive(false);
 	launch[WALLPAPER]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHWALLPAPER);
 	sx+=spacing+32;
 	label[WALLPAPER]=new LFSTK_labelClass(wc,"Launch Wallpaper Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);

@@ -86,7 +86,6 @@ char					*env;
 
 void placeToString(long place)
 {
-
 	le[EPLACEMENT]->LFSTK_setBuffer(placeNames[place]);
 	le[EPLACEMENT]->LFSTK_clearWindow();
 }
