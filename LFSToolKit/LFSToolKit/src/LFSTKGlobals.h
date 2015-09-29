@@ -23,7 +23,7 @@
 
 #include <X11/Xft/Xft.h>
 
-#define DEFAULTFONT "sans-serif:size=10"
+#define DEFAULTFONT "sans:size=10"
 #define DISCLOSURESIZE 6
 
 enum {LEFT=0,CENTRE,RIGHT};

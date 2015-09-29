@@ -98,6 +98,7 @@ LFSTK_windowClass::~LFSTK_windowClass()
 		free(this->windowName);
 
 	delete this->globalLib;
+	free(this->monitors);
 
 	XFreeGC(this->display,this->gc);
 	XDeleteContext(this->display,this->window,this->listeners);
@@ -413,7 +414,7 @@ void LFSTK_windowClass::loadMonitorData(void)
 		{
 			if(cnt>0)
 				{
-					this->monitors=(monitorStruct*)malloc(sizeof(monitorStruct)*cnt);
+					this->monitors=(monitorStruct*)calloc(sizeof(monitorStruct),cnt);
 					this->monitorCount=cnt;
 
 					for (int j=0;j<cnt;j++)
@@ -424,7 +425,7 @@ void LFSTK_windowClass::loadMonitorData(void)
 							monitors[j].h=p[j].height;
 						}
 				}
-			free(p);
+			XFree(p);
 		}
 }	
 

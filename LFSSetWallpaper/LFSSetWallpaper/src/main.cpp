@@ -214,12 +214,16 @@ void loadMonitorData(void)
 				{
 					buffer[0]=0;
 					fgets(buffer,2048,fd);
-					buffer[strlen(buffer)-1]=0;
-					monitorData[monnum].monMode=atoi(buffer);
-					fgets(buffer,2048,fd);
-					buffer[strlen(buffer)-1]=0;
-					monitorData[monnum].monitorPath=strdup(buffer);
-					monnum++;
+					if(buffer[0]!=0)
+						{
+							buffer[strlen(buffer)-1]=0;
+							monitorData[monnum].monMode=atoi(buffer);
+							buffer[0]=0;
+							fgets(buffer,2048,fd);
+							buffer[strlen(buffer)-1]=0;
+							monitorData[monnum].monitorPath=strdup(buffer);
+							monnum++;
+						}
 				}
 			fclose(fd);
 		}

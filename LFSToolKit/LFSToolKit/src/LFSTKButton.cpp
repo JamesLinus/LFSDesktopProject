@@ -183,7 +183,6 @@ bool LFSTK_buttonClass::LFSTK_getIgnoreCB(void)
 LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* label,int x,int y,int w,int h,int gravity)
 {
 	XSetWindowAttributes	wa;
-
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
 	wa.win_gravity=gravity;

@@ -36,6 +36,8 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 		}
 	if(this->fontString!=NULL)
 		free(this->fontString);
+	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
+	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
 	XDestroyWindow(this->display,this->window);
 }
 
@@ -106,6 +108,7 @@ const char* LFSTK_gadgetClass::LFSTK_getColourName(int p)
 {
 	return(this->colourNames[p].name);
 }
+
 //needs re vamping
 void LFSTK_gadgetClass::initGadget(void)
 {
@@ -174,7 +177,6 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->cm=this->wc->cm;
 
 	this->label=strdup(label);
-
 	this->gc=this->wc->gc;
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);

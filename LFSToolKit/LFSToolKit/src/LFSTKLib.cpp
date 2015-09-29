@@ -148,9 +148,7 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 					ptr=defaultFontString;
 				break;
 		}
-
-	if(ptr!=NULL)
-		return(ptr);
+	return(ptr);
 }
 
 LFSTK_lib::LFSTK_lib(bool loadvars)
@@ -385,12 +383,15 @@ int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
 */
 fontStruct* LFSTK_lib::LFSTK_loadFont(Display *disp,int scr,const char *name)
 {
-	XftFont  *font=NULL;
-	if (name != NULL)
+	XftFont	*font=NULL;
+
+	if (name!=NULL)
 		{
 			font=XftFontOpenXlfd(disp,scr,name);
+
 			if (font==NULL)
 				font=XftFontOpenName(disp,scr,name);
+
 			if (font==NULL)
 				fprintf(stderr,"cannot not load font %s",name);
 		}

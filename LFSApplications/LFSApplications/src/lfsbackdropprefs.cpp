@@ -135,14 +135,13 @@ bool callback(void *p,void* ud)
 	switch((long)ud)
 		{
 			case EXIT:
-				
-			wc->LFSTK_clearWindow();
-			setVars();
-			wc->globalLib->LFSTK_saveVarsToFile("-",prefs);
-			printf("\n");
-			mainLoop=false;
-			return(false);
-			break;
+				wc->LFSTK_clearWindow();
+				setVars();
+				wc->globalLib->LFSTK_saveVarsToFile("-",prefs);
+				printf("\n");
+				mainLoop=false;
+				return(false);
+				break;
 
 			case PRINT:
 				wc->LFSTK_clearWindow();
@@ -224,12 +223,16 @@ void loadMonitorData(void)
 				{
 					buffer[0]=0;
 					fgets(buffer,2048,fd);
-					buffer[strlen(buffer)-1]=0;
-					monitorData[monnum].monMode=atoi(buffer);
-					fgets(buffer,2048,fd);
-					buffer[strlen(buffer)-1]=0;
-					monitorData[monnum].monitorPath=strdup(buffer);
-					monnum++;
+					if(buffer[0]!=0)
+						{
+							buffer[strlen(buffer)-1]=0;
+							monitorData[monnum].monMode=atoi(buffer);
+							buffer[0]=0;
+							fgets(buffer,2048,fd);
+							buffer[strlen(buffer)-1]=0;
+							monitorData[monnum].monitorPath=strdup(buffer);
+							monnum++;
+						}
 				}
 			fclose(fd);
 		}
@@ -249,12 +252,11 @@ int main(int argc, char **argv)
 	asprintf(&prefsPath,"%s/.config/LFS/lfssetwallpaper.rc",getenv("HOME"));
 	asprintf(&monitorRCPath,"%s/.config/LFS/lfsmonitors.rc",getenv("HOME"));
 
-	wc=new LFSTK_windowClass(0,0,800,600,"Wallpaper Prefs",false);
+	wc=new LFSTK_windowClass(sx,sy,800,600,"Wallpaper Prefs",false);
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
 
 	wc->globalLib->LFSTK_loadVarsFromFile(prefsPath,prefs);
-
 	monitorData=(monitors*)calloc(sizeof(monitors),wc->LFSTK_getMonitorCount());
 	loadMonitorData();
 
@@ -297,7 +299,6 @@ int main(int argc, char **argv)
 
 	sx+=spacing;
 	mainModeEdit=new LFSTK_lineEditClass(wc,modeName[backdropMode],sx,sy,bwidth,24,NorthWestGravity);
-
 	sy+=vspacing;
 	sx=col1;
 	multi=new LFSTK_toggleButtonClass(wc,"Multiple Monitors",col1+spacing,sy,bwidth*2,24,NorthWestGravity);
@@ -336,7 +337,6 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 
 	sy+=vspacing;
-	sy+=vspacing;
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
 	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy);
@@ -366,6 +366,7 @@ int main(int argc, char **argv)
 				}
 		}
 
+	wc->LFSTK_hideWindow();
 	for(int j=EXIT;j<NOMOREGUIS;j++)
 		delete guiButtons[j];
 
@@ -390,6 +391,7 @@ int main(int argc, char **argv)
 
 	delete monitorMenus;
 	delete modeMenus;
+	delete geom;
 	delete wc;
 	free(prefsPath);
 	free(monitorRCPath);
