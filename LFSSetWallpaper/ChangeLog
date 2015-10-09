@@ -1,4 +1,6 @@
 0.0.5
+Added 'Scaled' (3) to modes.
+Fixed tiling overrun problem.
 Fixed buffer overrin error
 Changed name to LFSSetWallpaper.
 
