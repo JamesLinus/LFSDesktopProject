@@ -1,4 +1,5 @@
 0.0.12
+Updated man page.
 Added '--back-alpha' or '-A' option to command line.
 Colour specs now the same as the wm and tool kit ie use #RGB insatead of 0xRGBA.
 Added 'labelalpha' to prefs to set alpha of label indepenent of colour.

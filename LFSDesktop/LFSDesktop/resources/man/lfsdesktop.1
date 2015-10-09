@@ -1,6 +1,6 @@
-.TH "LFSDESKTOP" "1" "June 2015" "lfsdesktop 0.0.11" "User Commands"
+.TH "LFSDESKTOP" "1" "October 2015" "lfsdesktop 0.0.12" "User Commands"
 .SH "NAME"
-lfsdesktop - manual page for lfsdesktop 0.0.9
+\fBlfsdesktop\fR - manual page for lfsdesktop 0.0.12
 .br
 
 .SH "SYNOPSIS"
@@ -11,67 +11,72 @@ lfsdesktop - manual page for lfsdesktop 0.0.9
 LFSDesktop - 0.0.9
 .br
 
-\fB-c\fR,--clean
+\fB-c,--clean\fR
 .br
 	Clean disk info/desktop cache data
 .br
 
-\fB-t\fR,--tidy
+\fB-t,--tidy\fR
 .br
 	Tidy disk info/desktop cache data preserving existing
 .br
 
-\fB-a\fR,--theme
+\fB-a,--theme\fR
 .br
 	Set theme
 .br
 
-\fB-x\fR,--term-command
+\fB-x,--term-command\fR
 .br
-	Set terminal command ( default xterm \fB-e \fR)
-.br
-
-\fB-s\fR,--show-extension
-.br
-	Set terminal command ( default xterm \fB-e \fR)
+	Set terminal command ( default xterm -e )
 .br
 
-\fB-f\fR,--font
+\fB-s,--show-extension\fR
+.br
+	Set terminal command ( default xterm -e )
+.br
+
+\fB-f,--font\fR
 .br
 	Font face ( Sans;0;0;10 - Fontname;Weight(0/1);Slant(0/1/2);Fontsize )
 .br
 
-\fB-4\fR,--fore-colour
+\fB-4,--fore-colour\fR
 .br
-	Fore colour for label in RGBA hex notation ( default 0xffffffff )
-.br
-
-\fB-b\fR,--back-colour
-.br
-	Back colour for label in RGBA hex notation ( default 0x0 )
+	Fore colour for label in RGB # notation ( default #ffffff )
 .br
 
-\fB-i\fR,--ignore
+\fB-b,--back-colour\fR
+.br
+	Back colour for label in RGB # notation ( default #000000 )
+.br
+
+\fB-A,--back-alpha\fR
+.br
+	Alpha for label in # notation ( default #ff )
+.br
+
+\fB-i,--ignore\fR
 .br
 	List of ';' seperated disk labels to NOT show on desktop
 .br
 
-\fB-m\fR,--appmenu
+\fB-m,--appmenu\fR
 .br
 	Show the application menu when right clicking on desktop
 .br
 
-\fB-d\fR,--debug
+\fB-d,--debug\fR
 .br
 	Debug
 .br
 
-\fB-v\fR,--version
+\fB-v,--version\fR
 .br
 	output version information and exit
 .br
 
-\fB-h\fR,-?,--help
+\fB-h,-?,--help\fR
 .br
 	print this help
 .br
@@ -80,21 +85,29 @@ LFSDesktop - 0.0.9
 A Sample prefs file is below this should be placed in ~/.config/LFS/lfsdesktop.rc, configure to suit yourself.
 .br
 
-icontheme nouveGnomeSteel
+icontheme OldBrownWoodIcons
 .br
 iconsize 32
+.br
+gridsize 64
 .br
 gridborder 32
 .br
 refreshrate 2
 .br
-fontface Sans;1;0;10
+termcommand xterm -e 
 .br
-labelforeground 0xffffffff
+showextension 0
 .br
-labelbackground 0x10101060
+fontface sans-serif;1;0;10
 .br
-noshow PQSERVICE;DATA;SYSTEM_RESERVED;
+labelforeground white
+.br
+labelbackground grey60
+.br
+labelalpha 0.4
+.br
+noshow PQSERVICE;DATA;SYSTEM_RESERVED
 .br
 .SH "REPORTING BUGS"
 Report bugs to kdhedger68713@gmail.com
