@@ -23,6 +23,7 @@
 #include <ctime>
 
 #include "clock.h"
+#include "disks.h"
 
 LFSTK_labelClass	*clockButton=NULL;
 int					refreshRate=1;
@@ -38,7 +39,10 @@ void  alarmCallBack(int sig)
 
 	strftime(clockbuffer,255,"%I:%M:%S",timeinfo);
 	clockButton->LFSTK_setLabel(clockbuffer);
-	
+
+	updateDiskStats();
+	diskButton->LFSTK_setLabel(diskStatBuffer);
+
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);

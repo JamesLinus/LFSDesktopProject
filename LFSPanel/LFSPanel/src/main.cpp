@@ -26,6 +26,7 @@
 #include "appmenu.h"
 #include "logout.h"
 #include "clock.h"
+#include "disks.h"
 
 #define RCNAME "lfspanel.rc"
 
@@ -70,9 +71,14 @@ int main(int argc, char **argv)
 	addLogout(mons->w-rightOffset,mons->y);
 	rightOffset+=(BWIDTH*2);
 	addClock(mons->w-rightOffset,0);
+	rightOffset+=(BWIDTH*2);
+
+	addDiskData(mons->w-rightOffset,0);
+	rightOffset+=(BWIDTH*2);
 
 	mainwind->LFSTK_showWindow(true);
-	
+	mainwind->LFSTK_setKeepAbove(true);
+
 //XClientMessageEvent dummyEvent;
 //memset(&dummyEvent, 0, sizeof(XClientMessageEvent));
 //dummyEvent.type = ClientMessage;
