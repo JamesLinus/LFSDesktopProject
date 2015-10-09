@@ -32,7 +32,7 @@
 
 enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,NOMORELABELS};
 enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
-enum {STRETCHMODE=0,TILEMODE,CENTREMODE,NOMOREMODES};
+enum {STRETCHMODE=0,TILEMODE,CENTREMODE,SCALEDMODE,ZOOMEDMODE,NOMOREMODES};
 
 const char				*labelNames[]={"Main Backdrop","Root Colour","Monitor Backdrop"};
 
@@ -66,7 +66,7 @@ bool					multiMode;
 //monitors
 menuItemStruct			*modeMenus=NULL;
 menuItemStruct			*monitorMenus=NULL;
-const char				*modeName[]={"Stretch","Tile","Centre"};
+const char				*modeName[]={"Stretch","Tile","Centre","Scale","Zoom"};
 int						currentMonitor=0;
 
 args					prefs[]=

@@ -30,7 +30,6 @@
 #include <LFSTKToggleButton.h>
 #include <LFSTKLib.h>
 
-//enum {ICONTHEME,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,SHOWSUFFIX,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
 enum {ICONTHEME=0,ICONSIZE,GRIDSIZE,GRIDBORDER,REFRESHRATE,FORECOLOUR,BACKCOLOUR,ALPHA,TERMCOMMAND,FONTFACE,IGNORES,NUMPREFS};
 enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 
@@ -48,7 +47,6 @@ int						showSuffix;
 #define BIG col2-col1
 
 char				*prefs[NUMPREFS]={NULL,};
-//const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Show Ext","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
 const char			*labelNames[]={"Icon Theme","Icon Size","Grid Size","Border","Refresh","Text Colour","Label Colour","Label Alpha","Term Command","Font","Ignore"};
 int					editSize[]={BIG,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,bwidth,BIG,BIG,BIG};
 
