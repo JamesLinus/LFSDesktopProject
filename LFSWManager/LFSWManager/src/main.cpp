@@ -185,11 +185,11 @@ void usage(FILE *f)
 	        "-b	colour		Inactive fill colour\n"
 	        "-F	colour		Active frame colour\n"
 	        "-f	colour		Inactive frame colour\n"
-			"-X colour		Button and title colour\n"
+			"-X	colour		Button and title colour\n"
 	        "-p	placement	New window placement (0=Smart( Screen ), 1=Under mouse ,2=Centre on monitor with mouse( default ), 3=Screen centre, 4=Smart( Monitor with mouse ) )\n"
 			"-l	updates		Live update of window when resizing ( >0=Live ( default=5 - slowest=1, faster/less updates >1 ), 0=Update window on relase of mouse button - fastest\n"
 			"-T	theme		Name of installed theme to use\n"
-			"-x command		Set terminal command ( default xterm -e )\n"
+			"-x	command		Set terminal command ( default xterm -e )\n"
 			"-w	outfile		After setting prefs from default, prefsfile and command line write out a prefsfile and quit ( MUST be last option ).\n"
 	        ,PACKAGE_STRING,progname);
 }
