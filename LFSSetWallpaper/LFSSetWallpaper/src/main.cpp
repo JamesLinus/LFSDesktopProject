@@ -110,7 +110,7 @@ void printhelp(void)
 	       "Set the desktop wallpaper for LFSDesktop\n"
 	       " -w,--wallpaper	/path/to/wallpaper ARG\n"
 	       " -c,--colour		Background colour N (decimal or hex)\n"
-	       " -a,--mainmode		Main Mode (Stretch=0,Tile=1,Centre=2) N\n"
+	       " -a,--mainmode		Main Mode (Stretch=0,Tile=1,Centre=2,Scaled=3,Zoomed=4) N\n"
 	       " -o,--monitormode	Mode for individual monitors (as above) N\n"
 	       " -m,--monitor		Monitor number N\n"
 	       " -y,--multimode		Multi monitor image mode 0=Single image,1=Multi image N\n"
