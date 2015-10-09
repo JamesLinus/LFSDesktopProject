@@ -1,4 +1,5 @@
 0.0.5
+Added 'Zoomed' (4) to modes.
 Added 'Scaled' (3) to modes.
 Fixed tiling overrun problem.
 Fixed buffer overrin error

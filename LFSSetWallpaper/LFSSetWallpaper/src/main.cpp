@@ -35,7 +35,7 @@
 
 #define UNKNOWNARG -100
 
-enum IMAGEMODE {STRETCH=0,TILE,CENTRE,SCALED};
+enum imageMode {STRETCH=0,TILE,CENTRE,SCALED,ZOOMED};
 enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 struct args
@@ -238,6 +238,7 @@ void blitToMonitorPos(int mode,char* path,int x,int y,int w,int h)
 	float		ratio=1.0;
 	int			finalw,finalh;
 	int			maxdim;
+	float		wratio,hratio;
 
 	imlib_context_set_blend(1);
 
@@ -252,6 +253,7 @@ void blitToMonitorPos(int mode,char* path,int x,int y,int w,int h)
 		{
 		case STRETCH:
 			imlib_context_set_image(buffer);
+			imlib_context_set_cliprect(x,y,w,h);
 			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x,y,w,h);
 			break;
 
@@ -295,6 +297,23 @@ void blitToMonitorPos(int mode,char* path,int x,int y,int w,int h)
 					xoffset=(w/2)-(finalw/2);
 					yoffset=0;
 				}
+			imlib_context_set_image(buffer);
+			imlib_context_set_cliprect(x,y,w,h);
+			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x+xoffset,y+yoffset,finalw,finalh);
+			break;
+
+		case ZOOMED:
+			wratio=((float)w/imagew);
+			hratio=((float)h/imageh);
+			if(wratio>hratio)
+				ratio=wratio;
+			else
+				ratio=hratio;
+			finalh=imageh*ratio;
+			finalw=imagew*ratio;
+
+			xoffset=(w/2)-(finalw/2);
+			yoffset=(h/2)-(finalh/2);
 			imlib_context_set_image(buffer);
 			imlib_context_set_cliprect(x,y,w,h);
 			imlib_blend_image_onto_image(image,0,0,0,imagew,imageh,x+xoffset,y+yoffset,finalw,finalh);
