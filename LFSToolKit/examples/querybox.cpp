@@ -2,10 +2,10 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
+g++ -g -O0 "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
-rm ./a.out
+#rm ./a.out
 exit $retval
 
 #endif
