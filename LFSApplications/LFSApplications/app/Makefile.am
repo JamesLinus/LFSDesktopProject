@@ -19,8 +19,10 @@ lfsappearance_CFLAGS = -O3
 lfsappearance_CXXFLAGS = -O3
 
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
-lfsbackdropprefs_CFLAGS = -O3
-lfsbackdropprefs_CXXFLAGS = -O3
+#lfsbackdropprefs_CFLAGS = -O3 
+#lfsbackdropprefs_CXXFLAGS = -O3
+lfsbackdropprefs_CFLAGS = -O0 -ggdb 
+lfsbackdropprefs_CXXFLAGS = -O0 -ggdb
 
 
 man1_MANS = ../resources/man/lfsapplications.1

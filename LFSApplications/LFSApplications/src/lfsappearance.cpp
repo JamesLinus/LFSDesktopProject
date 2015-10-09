@@ -148,8 +148,8 @@ bool callback(void *p,void* ud)
 					setGroup();
 				system("lfsdesktop &>/dev/null &");
 				system("lfssetwallpaper &>/dev/null");
-				system("killall lfswmanager;nohup lfswmanager &>/dev/null &");
-				system("killall lfspanel;nohup lfspanel &>/dev/null &");
+				system("killall lfswmanager;sleep 1;nohup lfswmanager &>/dev/null &");
+				system("killall lfspanel;sleep 1;nohup lfspanel &>/dev/null &");
 				break;
 		}
 
@@ -258,6 +258,7 @@ int main(int argc, char **argv)
 	free(command);
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Appearance",false);
+	//wc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_DIALOG");
 	wc->LFSTK_setDecorated(true);
 	wc->autoLabelColour=true;
 	geom=wc->LFSTK_getGeom();
@@ -353,12 +354,14 @@ int main(int argc, char **argv)
 				}
 		}
 
-	delete wc;
+	wc->LFSTK_hideWindow();
 	for(int j=0;j<NOMOREBUTTONS;j++)
 		if(guibc[j]!=NULL)
 			delete guibc[j];
 	for(int j=0;j<maxGroups;j++)
 		if(groups[j].label!=NULL)
 			free((char*)groups[j].label);
+
+	delete wc;
 	return(0);
 }
