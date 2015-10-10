@@ -1,5 +1,7 @@
 0.0.2
+Added disk i/o stats.
 Panel now stays above all other windows.
+Added clock.
 Updated for new toolkit/.
 Added logout commands to prefs.
 Added logout menu.
