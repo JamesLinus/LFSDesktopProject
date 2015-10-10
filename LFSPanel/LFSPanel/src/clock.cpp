@@ -41,7 +41,6 @@ void  alarmCallBack(int sig)
 	clockButton->LFSTK_setLabel(clockbuffer);
 
 	updateDiskStats();
-	diskButton->LFSTK_setLabel(diskStatBuffer);
 
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
