@@ -27,6 +27,7 @@
 #include "logout.h"
 #include "clock.h"
 #include "disks.h"
+#include "cpu.h"
 
 #define RCNAME "lfspanel.rc"
 
@@ -74,20 +75,13 @@ int main(int argc, char **argv)
 	rightOffset+=(BWIDTH*2);
 
 	addDiskData(mons->w-rightOffset,0);
-	rightOffset+=(BWIDTH*2);
+	rightOffset+=(BWIDTH);
+
+	addCpuData(mons->w-rightOffset,0);
 
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);
 
-//XClientMessageEvent dummyEvent;
-//memset(&dummyEvent, 0, sizeof(XClientMessageEvent));
-//dummyEvent.type = ClientMessage;
-//dummyEvent.window = mainwind->window;
-//dummyEvent.format = 32;
-//	signal(SIGALRM,dummyEventCB);
-//	alarm(1);
-
-//XSendEvent(dpy, interClientCommunicationWindow, 0, 0, (XEvent*)&dummyEvent);
 	mainLoop=true;
 	while(mainLoop==true)
 		{

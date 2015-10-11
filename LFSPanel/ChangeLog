@@ -1,4 +1,5 @@
 0.0.2
+Added cpu stats.
 Added disk i/o stats.
 Panel now stays above all other windows.
 Added clock.

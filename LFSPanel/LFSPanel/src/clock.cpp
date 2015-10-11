@@ -24,6 +24,7 @@
 
 #include "clock.h"
 #include "disks.h"
+#include "cpu.h"
 
 LFSTK_labelClass	*clockButton=NULL;
 int					refreshRate=1;
@@ -41,6 +42,7 @@ void  alarmCallBack(int sig)
 	clockButton->LFSTK_setLabel(clockbuffer);
 
 	updateDiskStats();
+	updateCpuStats();
 
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
