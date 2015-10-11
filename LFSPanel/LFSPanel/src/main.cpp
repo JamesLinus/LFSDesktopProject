@@ -29,7 +29,7 @@
 #include "disks.h"
 #include "cpu.h"
 
-#define RCNAME "lfspanel.rc"
+#define RCNAME "lfspanel-DEV.rc"
 
 bool	mainLoop=true;
 
@@ -42,8 +42,27 @@ args	panelPrefs[]=
 	{"logoutcommand",TYPESTRING,&logoutCommand},
 	{"restartcommand",TYPESTRING,&restartCommand},
 	{"shutdowncommand",TYPESTRING,&shutdownCommand},
+	{"gadgetsright",TYPESTRING,&rightGadgets},
+	{"gadgetsleft",TYPESTRING,&leftGadgets},
 	{NULL,0,NULL}
 };
+
+void addLeftGadgets(void)
+{
+	for(int j=0;j<strlen(leftGadgets);j++)
+		{
+			switch(leftGadgets[j])
+				{
+					case 'A':
+						addAppmenu(mons->x+leftOffset,mons->y);
+						break;
+				}
+		}
+}
+
+void addRightGadgets(void)
+{
+}
 
 int main(int argc, char **argv)
 {
@@ -54,6 +73,8 @@ int main(int argc, char **argv)
 	logoutCommand=strdup("xterm");
 	restartCommand=strdup("xterm");
 	shutdownCommand=strdup("xterm");
+	leftGadgets=strdup("");
+	rightGadgets=strdup("");
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
 	asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),RCNAME);
@@ -68,16 +89,22 @@ int main(int argc, char **argv)
 	mainwind->LFSTK_moveWindow(mons->x,mons->y);
 	mainwind->LFSTK_showWindow(false);
 
-	addAppmenu(mons->x+leftOffset,mons->y);
-	addLogout(mons->w-rightOffset,mons->y);
-	rightOffset+=(BWIDTH*2);
-	addClock(mons->w-rightOffset,0);
-	rightOffset+=(BWIDTH*2);
+	rightOffset=0;
+	leftOffset=0;
 
-	addDiskData(mons->w-rightOffset,0);
-	rightOffset+=(BWIDTH);
+	addLeftGadgets();
+//	addRightGadgets();
 
-	addCpuData(mons->w-rightOffset,0);
+//	addAppmenu(mons->x+leftOffset,mons->y);
+//	addLogout(mons->w-rightOffset,mons->y);
+//	rightOffset+=(BWIDTH*2);
+//	addClock(mons->w-rightOffset,0);
+//	rightOffset+=(BWIDTH*2);
+//
+//	addDiskData(mons->w-rightOffset,0);
+//	rightOffset+=(BWIDTH);
+//
+//	addCpuData(mons->w-rightOffset,0);
 
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);

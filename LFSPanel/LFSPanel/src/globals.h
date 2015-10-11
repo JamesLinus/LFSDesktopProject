@@ -43,6 +43,8 @@ extern int					onMonitor;
 extern char					*logoutCommand;
 extern char					*restartCommand;
 extern char					*shutdownCommand;
+extern char					*rightGadgets;
+extern char					*leftGadgets;
 
 //panel window
 extern LFSTK_windowClass	*mainwind;

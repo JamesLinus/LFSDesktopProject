@@ -54,4 +54,5 @@ void addAppmenu(int x,int y)
 	appButton=new LFSTK_buttonClass(mainwind,"LFS",0,0,32,panelHeight,NorthWestGravity);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(callback,NULL,NULL);
+	rightOffset+=BWIDTH;
 }
