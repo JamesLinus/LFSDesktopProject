@@ -35,6 +35,9 @@
 #define BWIDTH 64
 #define SPACING 10
 
+enum PANELPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
+enum PANELSIZE {PANELFULL=-1,PANELSHRINK=-2};
+
 //prefs
 extern char					*terminalCommand;
 extern int					panelHeight;
@@ -46,6 +49,7 @@ extern char					*restartCommand;
 extern char					*shutdownCommand;
 extern char					*rightGadgets;
 extern char					*leftGadgets;
+extern int					panelXPos;
 
 //panel window
 extern LFSTK_windowClass	*mainwind;

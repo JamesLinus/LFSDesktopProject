@@ -26,6 +26,6 @@
 
 enum logoutEntrys {LOGOUT=0,RESTART,SHUTDOWN,NUMLOGOUTENTRYS};
 
-int addLogout(int x,int y);
+int addLogout(int x,int y,int grav);
 
 #endif

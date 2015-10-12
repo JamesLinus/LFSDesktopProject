@@ -46,9 +46,9 @@ bool logoutCB(void *p,void* ud)
 	return(true);
 }
 
-int  addLogout(int x,int y)
+int  addLogout(int x,int y,int grav)
 {
-	logoutButton=new LFSTK_menuButtonClass(mainwind,"Logout",x,0,BWIDTH,panelHeight,NorthWestGravity);
+	logoutButton=new LFSTK_menuButtonClass(mainwind,"Logout",x,0,BWIDTH,panelHeight,grav);
 	logoutButton->LFSTK_setCallBack(logoutCB,NULL,NULL);
 	logoutItems=new menuItemStruct[NUMLOGOUTENTRYS];
 	

@@ -26,7 +26,7 @@
 
 extern LFSTK_labelClass	*diskButton;
 
-int addDiskData(int x,int y);
+int addDiskData(int x,int y,int grav);
 void updateDiskStats(void);
 
 #endif

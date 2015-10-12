@@ -44,6 +44,7 @@ args	panelPrefs[]=
 	{"shutdowncommand",TYPESTRING,&shutdownCommand},
 	{"gadgetsright",TYPESTRING,&rightGadgets},
 	{"gadgetsleft",TYPESTRING,&leftGadgets},
+	{"panelxpos",TYPEINT,&panelXPos},
 	{NULL,0,NULL}
 };
 
@@ -56,19 +57,19 @@ void addLeftGadgets(void)
 			switch(leftGadgets[j])
 				{
 					case 'A':
-						offset+=addAppmenu(offset,mons->y);
+						offset+=addAppmenu(offset,mons->y,NorthWestGravity);
 						break;
 					case 'L':
-						offset+=addLogout(offset,mons->y);
+						offset+=addLogout(offset,mons->y,NorthWestGravity);
 						break;
 					case 'C':
-						offset+=addClock(offset,mons->y);
+						offset+=addClock(offset,mons->y,NorthWestGravity);
 						break;
 					case 'D':
-						offset+=addDiskData(offset,mons->y);
+						offset+=addDiskData(offset,mons->y,NorthWestGravity);
 						break;
 					case 'M':
-						offset+=addCpuData(offset,mons->y);
+						offset+=addCpuData(offset,mons->y,NorthWestGravity);
 						break;
 				}
 		}
@@ -77,25 +78,27 @@ void addLeftGadgets(void)
 
 void addRightGadgets(void)
 {
-	int	offset=mons->w-rightOffset;
+	geometryStruct *geom=mainwind->LFSTK_getGeom();
+	//int	offset=mons->w-rightOffset;
+	int	offset=geom->w-rightOffset;
 	for(int j=0;j<strlen(rightGadgets);j++)
 		{
 			switch(rightGadgets[j])
 				{
 					case 'A':
-						offset-=addAppmenu(offset,mons->y);
+						offset-=addAppmenu(offset,mons->y,NorthEastGravity);
 						break;
 					case 'L':
-						offset-=addLogout(offset,mons->y);
+						offset-=addLogout(offset,mons->y,NorthEastGravity);
 						break;
 					case 'C':
-						offset-=addClock(offset,mons->y);
+						offset-=addClock(offset,mons->y,NorthEastGravity);
 						break;
 					case 'D':
-						offset-=addDiskData(offset-BWIDTH,mons->y);
+						offset-=addDiskData(offset-BWIDTH,mons->y,NorthEastGravity);
 						break;
 					case 'M':
-						offset-=addCpuData(offset,mons->y);
+						offset-=addCpuData(offset,mons->y,NorthEastGravity);
 						break;
 				}
 		}
@@ -104,8 +107,9 @@ void addRightGadgets(void)
 
 int main(int argc, char **argv)
 {
-	char	*env;
-	XEvent	event;
+	char			*env;
+	XEvent			event;
+	geometryStruct	*geom;
 
 	terminalCommand=strdup("xterm -e ");
 	logoutCommand=strdup("xterm");
@@ -113,8 +117,11 @@ int main(int argc, char **argv)
 	shutdownCommand=strdup("xterm");
 	leftGadgets=strdup("");
 	rightGadgets=strdup("");
+	panelXPos=PANELCENTRE;
 
+//	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
+//	mainwind->LFSTK_setDecorated(true);
 	if(argc>1)
 		asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,argv[1]);
 	else	
@@ -122,22 +129,58 @@ int main(int argc, char **argv)
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
-	if(panelWidth==-1)
-		mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
-	else
-		mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
 
-	mainwind->LFSTK_moveWindow(mons->x,mons->y);
-	mainwind->LFSTK_showWindow(false);
+//	if(panelWidth<0)
+//		mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
+//	else
+//		mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
+printf(">>riteof=%i<<<\n",rightOffset);
+//	mainwind->LFSTK_showWindow(false);
 
 	rightOffset=BWIDTH;
 	leftOffset=0;
 
 	addLeftGadgets();
 	addRightGadgets();
+printf(">>riteof=%i<<<\n",rightOffset);
+//	mainwind->LFSTK_showWindow(false);
+
+	switch(panelWidth)
+		{
+			case PANELFULL:
+				panelXPos=mons->x;
+				mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
+				break;
+			case PANELSHRINK:
+				//mainwind->LFSTK_resizeWindow(mons->w-rightOffset,panelHeight);
+				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset),panelHeight);
+				break;
+			default:
+				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
+		}
+
+//	if(panelWidth==-2)
+///		mainwind->LFSTK_resizeWindow(mons->w-rightOffset,panelHeight);
+
+	geom=mainwind->LFSTK_getGeom();
+	switch(panelXPos)
+		{
+			case PANELLEFT:
+				mainwind->LFSTK_moveWindow(mons->x,mons->y,true);
+				break;
+			case PANELCENTRE:
+				mainwind->LFSTK_moveWindow((mons->w/2)-((geom->w)/2),mons->y,true);
+				break;
+			case PANELRIGHT:
+				mainwind->LFSTK_moveWindow(mons->w-(geom->w),mons->y,true);
+				break;
+			default:
+				mainwind->LFSTK_moveWindow(panelXPos,mons->y,true);
+		}
 
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);
+	delete geom;
 
 	mainLoop=true;
 	while(mainLoop==true)

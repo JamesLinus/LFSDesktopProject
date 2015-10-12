@@ -31,6 +31,7 @@ char				*restartCommand=NULL;
 char				*shutdownCommand=NULL;
 char				*rightGadgets=NULL;
 char				*leftGadgets=NULL;
+int					panelXPos=PANELCENTRE;
 
 //panel window
 LFSTK_windowClass	*mainwind=NULL;

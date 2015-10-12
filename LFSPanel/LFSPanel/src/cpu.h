@@ -26,7 +26,7 @@
 
 extern LFSTK_labelClass	*cpuButton;
 
-int addCpuData(int x,int y);
+int addCpuData(int x,int y,int grav);
 void updateCpuStats(void);
 
 #endif

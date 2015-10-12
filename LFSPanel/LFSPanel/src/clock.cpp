@@ -52,9 +52,9 @@ void  alarmCallBack(int sig)
 	XFlush(mainwind->display);
 }
 
-int addClock(int x,int y)
+int addClock(int x,int y,int grav)
 {
-	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,0,BWIDTH,panelHeight,NorthWestGravity);
+	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,0,BWIDTH,panelHeight,grav);
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
 	return(BWIDTH+SPACING);

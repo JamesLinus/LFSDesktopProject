@@ -24,7 +24,7 @@
 
 #include "globals.h"
 
-int addClock(int x,int y);
+int addClock(int x,int y,int grav);
 void alarmCallBack(int sig);
 
 #endif
