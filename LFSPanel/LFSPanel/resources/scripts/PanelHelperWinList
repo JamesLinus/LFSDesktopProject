@@ -4,7 +4,8 @@
 xprop -root|grep ^_NET_CLIENT_LIST|sed -n 's/, /\n/gp'|sed -n '/^0x.*/p'|sort -u|while read
 	do
 		if [ X"$(xprop -id $REPLY|grep '_NET_WM_WINDOW_TYPE_NORMAL')" != "X" ];then
-			echo -n "$REPLY - "
+			echo "$REPLY"
 			xprop -id $REPLY|grep "^WM_NAME"|awk -F" = " '{print $2}'
+			xprop -id $REPLY |grep "_NET_WM_DESKTOP"|head -n1|awk -F" = " '{print $2}'
 		fi
 	done
