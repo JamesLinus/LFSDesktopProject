@@ -26,6 +26,6 @@
 extern LFSTK_buttonClass	*appButton;
 extern int					appx,appy;
 
-void addAppmenu(int x,int y);
+int addAppmenu(int x,int y);
 
 #endif

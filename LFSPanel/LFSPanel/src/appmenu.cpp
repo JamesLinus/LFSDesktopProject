@@ -42,7 +42,7 @@ bool callback(void *p,void* ud)
 	return(true);
 }
 
-void addAppmenu(int x,int y)
+int addAppmenu(int x,int y)
 {
 	int addto=mainwind->font->ascent+mainwind->font->descent+8;
 	int maxwid=0;
@@ -51,8 +51,8 @@ void addAppmenu(int x,int y)
 	appx=x;
 	appy=y+panelHeight;
 
-	appButton=new LFSTK_buttonClass(mainwind,"LFS",0,0,32,panelHeight,NorthWestGravity);
+	appButton=new LFSTK_buttonClass(mainwind,"LFS Apps",x,0,BWIDTH,panelHeight,NorthWestGravity);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(callback,NULL,NULL);
-	rightOffset+=BWIDTH;
+	return(BWIDTH+SPACING);
 }

@@ -33,6 +33,7 @@
 #define _GLOBALS_
 
 #define BWIDTH 64
+#define SPACING 10
 
 //prefs
 extern char					*terminalCommand;

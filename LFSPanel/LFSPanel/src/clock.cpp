@@ -41,8 +41,10 @@ void  alarmCallBack(int sig)
 	strftime(clockbuffer,255,"%I:%M:%S",timeinfo);
 	clockButton->LFSTK_setLabel(clockbuffer);
 
-	updateDiskStats();
-	updateCpuStats();
+	if(diskButton!=NULL)
+		updateDiskStats();
+	if(cpuButton!=NULL)
+		updateCpuStats();
 
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
@@ -50,9 +52,10 @@ void  alarmCallBack(int sig)
 	XFlush(mainwind->display);
 }
 
-void addClock(int x,int y)
+int addClock(int x,int y)
 {
-	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,y,BWIDTH,panelHeight,NorthWestGravity);
+	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,0,BWIDTH,panelHeight,NorthWestGravity);
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
+	return(BWIDTH+SPACING);
 }

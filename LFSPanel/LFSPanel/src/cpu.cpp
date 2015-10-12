@@ -45,11 +45,12 @@ void setNewData(void)
 		}
 }
 
-void addCpuData(int x,int y)
+int addCpuData(int x,int y)
 {
 	setNewData();
-	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",x,y,BWIDTH,panelHeight,NorthWestGravity);
+	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",x,0,BWIDTH,panelHeight,NorthWestGravity);
 	cpuButton->LFSTK_setLabelOriention(LEFT);
+	return(BWIDTH+SPACING);
 }
 
 void updateCpuStats(void)

@@ -70,10 +70,11 @@ void updateDiskStats(void)
 	diskButton->LFSTK_setLabel(diskStatBuffer);
 }
 
-void addDiskData(int x,int y)
+int addDiskData(int x,int y)
 {
 	oldRead=getReadStats();
 	oldWrite=getWriteStats();
-	diskButton=new LFSTK_labelClass(mainwind,"R=0Mb/s W=0Mb/s",x,y,BWIDTH*2,panelHeight,NorthWestGravity);
+	diskButton=new LFSTK_labelClass(mainwind,"R=0Mb/s W=0Mb/s",x,0,BWIDTH*2,panelHeight,NorthWestGravity);
 	diskButton->LFSTK_setLabelOriention(LEFT);
+	return(BWIDTH*2+SPACING);
 }

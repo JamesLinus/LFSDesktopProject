@@ -29,7 +29,7 @@
 #include "disks.h"
 #include "cpu.h"
 
-#define RCNAME "lfspanel-DEV.rc"
+#define RCNAME "lfspanel"
 
 bool	mainLoop=true;
 
@@ -49,19 +49,57 @@ args	panelPrefs[]=
 
 void addLeftGadgets(void)
 {
+	int	offset=mons->x+leftOffset;
+
 	for(int j=0;j<strlen(leftGadgets);j++)
 		{
 			switch(leftGadgets[j])
 				{
 					case 'A':
-						addAppmenu(mons->x+leftOffset,mons->y);
+						offset+=addAppmenu(offset,mons->y);
+						break;
+					case 'L':
+						offset+=addLogout(offset,mons->y);
+						break;
+					case 'C':
+						offset+=addClock(offset,mons->y);
+						break;
+					case 'D':
+						offset+=addDiskData(offset,mons->y);
+						break;
+					case 'M':
+						offset+=addCpuData(offset,mons->y);
 						break;
 				}
 		}
+	leftOffset=offset;
 }
 
 void addRightGadgets(void)
 {
+	int	offset=mons->w-rightOffset;
+	for(int j=0;j<strlen(rightGadgets);j++)
+		{
+			switch(rightGadgets[j])
+				{
+					case 'A':
+						offset-=addAppmenu(offset,mons->y);
+						break;
+					case 'L':
+						offset-=addLogout(offset,mons->y);
+						break;
+					case 'C':
+						offset-=addClock(offset,mons->y);
+						break;
+					case 'D':
+						offset-=addDiskData(offset-BWIDTH,mons->y);
+						break;
+					case 'M':
+						offset-=addCpuData(offset,mons->y);
+						break;
+				}
+		}
+	rightOffset=offset;
 }
 
 int main(int argc, char **argv)
@@ -77,7 +115,10 @@ int main(int argc, char **argv)
 	rightGadgets=strdup("");
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
-	asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),RCNAME);
+	if(argc>1)
+		asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,argv[1]);
+	else	
+		asprintf(&env,"%s/.config/LFS/%s.rc",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
@@ -89,22 +130,11 @@ int main(int argc, char **argv)
 	mainwind->LFSTK_moveWindow(mons->x,mons->y);
 	mainwind->LFSTK_showWindow(false);
 
-	rightOffset=0;
+	rightOffset=BWIDTH;
 	leftOffset=0;
 
 	addLeftGadgets();
-//	addRightGadgets();
-
-//	addAppmenu(mons->x+leftOffset,mons->y);
-//	addLogout(mons->w-rightOffset,mons->y);
-//	rightOffset+=(BWIDTH*2);
-//	addClock(mons->w-rightOffset,0);
-//	rightOffset+=(BWIDTH*2);
-//
-//	addDiskData(mons->w-rightOffset,0);
-//	rightOffset+=(BWIDTH);
-//
-//	addCpuData(mons->w-rightOffset,0);
+	addRightGadgets();
 
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);

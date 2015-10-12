@@ -25,9 +25,8 @@
 #include "globals.h"
 
 extern LFSTK_labelClass	*diskButton;
-extern char				diskStatBuffer[256];
 
-void addDiskData(int x,int y);
+int addDiskData(int x,int y);
 void updateDiskStats(void);
 
 #endif

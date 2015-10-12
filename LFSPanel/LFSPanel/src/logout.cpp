@@ -21,7 +21,6 @@
 #include "logout.h"
 
 LFSTK_menuButtonClass	*logoutButton=NULL;
-int						logoutX,logoutY;
 menuItemStruct			*logoutItems;
 const char				*logoutLabels[]={"Logout","Restart","Shutdown"};
 
@@ -47,11 +46,9 @@ bool logoutCB(void *p,void* ud)
 	return(true);
 }
 
-void addLogout(int x,int y)
+int  addLogout(int x,int y)
 {
-	logoutX=x-BWIDTH;
-
-	logoutButton=new LFSTK_menuButtonClass(mainwind,"Logout",logoutX,0,BWIDTH,panelHeight,NorthWestGravity);
+	logoutButton=new LFSTK_menuButtonClass(mainwind,"Logout",x,0,BWIDTH,panelHeight,NorthWestGravity);
 	logoutButton->LFSTK_setCallBack(logoutCB,NULL,NULL);
 	logoutItems=new menuItemStruct[NUMLOGOUTENTRYS];
 	
@@ -68,4 +65,6 @@ void addLogout(int x,int y)
 	logoutButton->LFSTK_setLabelOriention(CENTRE);
 	logoutButton->LFSTK_setCallBack(NULL,logoutCB,NULL);
 	logoutButton->LFSTK_addMenus(logoutItems,NUMLOGOUTENTRYS);
+
+	return(BWIDTH+SPACING);
 }

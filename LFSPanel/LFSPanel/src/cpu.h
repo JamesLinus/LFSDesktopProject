@@ -24,7 +24,9 @@
 
 #include "globals.h"
 
-void addCpuData(int x,int y);
+extern LFSTK_labelClass	*cpuButton;
+
+int addCpuData(int x,int y);
 void updateCpuStats(void);
 
 #endif
