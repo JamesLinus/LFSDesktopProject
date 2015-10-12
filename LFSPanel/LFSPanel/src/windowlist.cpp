@@ -18,12 +18,14 @@
  * along with LFSPanel.  If not, see <http://www.gnu.org/licenses/>.
  */
  
- #include "windowList.h"
+ #include "windowlist.h"
  
 LFSTK_menuButtonClass	*windowMenu=NULL;
 
 int addWindowMenu(int x,int y,int grav)
 {
+	windowMenu=new LFSTK_menuButtonClass("Windows",x,0,BWIDTH,panelHeight,grav);
+	return(BWIDTH+SPACING);
 }
 
 void updateWindowMenu(void)

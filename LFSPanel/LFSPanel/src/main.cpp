@@ -28,6 +28,7 @@
 #include "clock.h"
 #include "disks.h"
 #include "cpu.h"
+#include "windowlist.h"
 
 #define RCNAME "lfspanel"
 
@@ -59,6 +60,9 @@ void addLeftGadgets(void)
 					case 'A':
 						offset+=addAppmenu(offset,mons->y,NorthWestGravity);
 						break;
+					case 'W':
+						offset+=addWindowMenu(offset,mons->y,NorthWestGravity);
+						break;
 					case 'L':
 						offset+=addLogout(offset,mons->y,NorthWestGravity);
 						break;
@@ -85,6 +89,9 @@ void addRightGadgets(void)
 				{
 					case 'A':
 						offset-=addAppmenu(offset,mons->y,NorthEastGravity);
+						break;
+					case 'W':
+						offset-=addWindowMenu(offset,mons->y,NorthWestGravity);
 						break;
 					case 'L':
 						offset-=addLogout(offset,mons->y,NorthEastGravity);
