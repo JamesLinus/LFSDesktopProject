@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#©keithhedger Mon 12 Oct 15:43:03 BST 2015 kdhedger68713@gmail.com
+xprop -root|grep ^_NET_CLIENT_LIST|sed -n 's/, /\n/gp'|sed -n '/^0x.*/p'|sort -u|while read
+	do
+		if [ X"$(xprop -id $REPLY|grep '_NET_WM_WINDOW_TYPE_NORMAL')" != "X" ];then
+			echo -n "$REPLY - "
+			xprop -id $REPLY|grep "^WM_NAME"|awk -F" = " '{print $2}'
+		fi
+	done

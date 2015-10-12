@@ -78,8 +78,6 @@ void addLeftGadgets(void)
 
 void addRightGadgets(void)
 {
-	geometryStruct *geom=mainwind->LFSTK_getGeom();
-//	int	offset=geom->w-rightOffset;
 	int	offset=-rightOffset;
 	for(int j=0;j<strlen(rightGadgets);j++)
 		{
@@ -184,19 +182,23 @@ int main(int argc, char **argv)
 					mainwind->LFSTK_setActive(true);
 					break;
 				case ConfigureNotify:
-						//printf("here\n");
 					mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-					break;
-				default:
-					//	printf("here\n");
-
 					break;
 				}
 		}
 
 	free(env);
 	free(terminalCommand);
+	if(appButton!=NULL)
+		delete appButton;
+	if(logoutButton!=NULL)
+		delete logoutButton;
+	if(clockButton!=NULL)
+		delete clockButton;
+	if(diskButton!=NULL)
+		delete diskButton;
+	if(cpuButton!=NULL)
+		delete cpuButton;
 	delete mainwind;
-	delete appButton;
 	return 0;
 }
