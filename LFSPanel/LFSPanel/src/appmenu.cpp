@@ -33,12 +33,14 @@ int					appx,appy;
 
 bool callback(void *p,void* ud)
 {
-	char *path;
+	char			*path;
+	geometryStruct	*geom=mainwind->LFSTK_getGeom();
 
 	XFlush(mainwind->display);
-	asprintf(&path,"%s \"%s\" %i %i",APPMENUPATH,terminalCommand,appx,appy);
+	asprintf(&path,"%s \"%s\" %i %i",APPMENUPATH,terminalCommand,geom->x,geom->y+geom->h);
 	system(path);
 	free(path);
+	delete geom;
 	return(true);
 }
 

@@ -79,8 +79,8 @@ void addLeftGadgets(void)
 void addRightGadgets(void)
 {
 	geometryStruct *geom=mainwind->LFSTK_getGeom();
-	//int	offset=mons->w-rightOffset;
-	int	offset=geom->w-rightOffset;
+//	int	offset=geom->w-rightOffset;
+	int	offset=-rightOffset;
 	for(int j=0;j<strlen(rightGadgets);j++)
 		{
 			switch(rightGadgets[j])
@@ -119,9 +119,8 @@ int main(int argc, char **argv)
 	rightGadgets=strdup("");
 	panelXPos=PANELCENTRE;
 
-//	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
-//	mainwind->LFSTK_setDecorated(true);
+
 	if(argc>1)
 		asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,argv[1]);
 	else	
@@ -130,20 +129,11 @@ int main(int argc, char **argv)
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
 
-//	if(panelWidth<0)
-//		mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
-//	else
-//		mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
-printf(">>riteof=%i<<<\n",rightOffset);
-//	mainwind->LFSTK_showWindow(false);
-
 	rightOffset=BWIDTH;
 	leftOffset=0;
 
 	addLeftGadgets();
 	addRightGadgets();
-printf(">>riteof=%i<<<\n",rightOffset);
-//	mainwind->LFSTK_showWindow(false);
 
 	switch(panelWidth)
 		{
@@ -152,15 +142,11 @@ printf(">>riteof=%i<<<\n",rightOffset);
 				mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
 				break;
 			case PANELSHRINK:
-				//mainwind->LFSTK_resizeWindow(mons->w-rightOffset,panelHeight);
-				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset),panelHeight);
+				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset)-BWIDTH,panelHeight);
 				break;
 			default:
 				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
 		}
-
-//	if(panelWidth==-2)
-///		mainwind->LFSTK_resizeWindow(mons->w-rightOffset,panelHeight);
 
 	geom=mainwind->LFSTK_getGeom();
 	switch(panelXPos)
