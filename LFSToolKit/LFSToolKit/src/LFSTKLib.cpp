@@ -504,3 +504,4 @@ void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
 {
 	this->autoLabelColour=toset;
 }
+

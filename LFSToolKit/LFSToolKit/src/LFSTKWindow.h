@@ -77,6 +77,7 @@ class LFSTK_windowClass
 		const monitorStruct* LFSTK_getMonitorData(int monitor);
 	
 		void LFSTK_reloadGlobals(void);
+		void LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
 
 		geometryStruct	*LFSTK_getGeom(void);
 

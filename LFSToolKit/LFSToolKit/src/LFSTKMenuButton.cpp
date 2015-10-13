@@ -103,6 +103,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	addto=tfont->ascent+tfont->descent+8;
 	maxwid+=4+6;
 	g=this->LFSTK_getGeom();
+//	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"menu window",true,true);
 	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"menu window",true,true);
 	subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	sy=0;
@@ -268,7 +269,7 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 
 	this->LFSTK_setCommon(parentwc,label,x,y,w,h,gravity);
 
-	wa.win_gravity=NorthWestGravity;
+	wa.win_gravity=gravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
 	XSelectInput(this->display,this->window,Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);

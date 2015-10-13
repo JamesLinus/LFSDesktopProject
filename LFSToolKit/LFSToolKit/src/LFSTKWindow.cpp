@@ -541,5 +541,17 @@ void LFSTK_windowClass::LFSTK_hideWindow(void)
 	XSync(this->display,true);
 }
 
+/**
+* Set XWindow property.
+* \param property Property to set.
+* \param type Type of Atom(s).
+* \param format Format of Atom(s).
+* \param dataptr Pointer to the data.
+* \param propcnt Number of elements in array.
+*/
+void LFSTK_windowClass::LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt)
+{
+	XChangeProperty(this->display,this->window,property,type,format,PropModeReplace,(const unsigned char*)dataptr,propcnt);
+}
 
 

@@ -32,8 +32,8 @@
 #ifndef _GLOBALS_
 #define _GLOBALS_
 
-//#define WINHELPER DATADIR "/scripts/PanelHelperWinList"
-#define WINHELPER "/media/LinuxData/Development/Projects/LFSDesktopProject/LFSPanel/LFSPanel/resources/scripts/PanelHelperWinList"
+#define WINHELPER DATADIR "/scripts/PanelHelperWinList"
+//#define WINHELPER "/media/LinuxData/Development/Projects/LFSDesktopProject/LFSPanel/LFSPanel/resources/scripts/PanelHelperWinList"
 #define BWIDTH 64
 #define SPACING 10
 #define WINDOWREFRESH 4
