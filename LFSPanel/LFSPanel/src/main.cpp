@@ -206,6 +206,9 @@ int main(int argc, char **argv)
 		delete diskButton;
 	if(cpuButton!=NULL)
 		delete cpuButton;
+	if(windowMenu!=NULL)
+		delete windowMenu;
+
 	delete mainwind;
 	return 0;
 }

@@ -25,9 +25,11 @@
 #include "clock.h"
 #include "disks.h"
 #include "cpu.h"
+#include "windowlist.h"
 
 LFSTK_labelClass	*clockButton=NULL;
 int					refreshRate=1;
+int					updateWindowCnt=0;
 
 void  alarmCallBack(int sig)
 {
@@ -45,6 +47,16 @@ void  alarmCallBack(int sig)
 		updateDiskStats();
 	if(cpuButton!=NULL)
 		updateCpuStats();
+
+	if(windowMenu!=NULL)
+		{
+			updateWindowCnt++;
+			if(updateWindowCnt==WINDOWREFRESH)
+				{
+					updateWindowCnt=0;
+					updateWindowMenu();
+				}
+		}
 
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);

@@ -36,6 +36,7 @@
 #define WINHELPER "/media/LinuxData/Development/Projects/LFSDesktopProject/LFSPanel/LFSPanel/resources/scripts/PanelHelperWinList"
 #define BWIDTH 64
 #define SPACING 10
+#define WINDOWREFRESH 4
 
 enum PANELPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
 enum PANELSIZE {PANELFULL=-1,PANELSHRINK=-2};

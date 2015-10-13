@@ -24,9 +24,12 @@
 
 #include "globals.h"
 
+#define MAXWINDOWSINLIST 512
+
 extern LFSTK_menuButtonClass	*windowMenu;
 
 int addWindowMenu(int x,int y,int grav);
 void updateWindowMenu(void);
+void resetMenus(void);
 
 #endif

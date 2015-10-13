@@ -1,4 +1,5 @@
 0.0.3
+Added Window list gadget.
 Added panel positions left/right/centre and fixed.
 Added panel modes shrink and fixed size.
 Added multiple panels, use 'lfspanel-1.rc' for panel 1 and call with 'lfspanel 1' etc, lfspanel.rc is main panel call with 'lfspanel'.

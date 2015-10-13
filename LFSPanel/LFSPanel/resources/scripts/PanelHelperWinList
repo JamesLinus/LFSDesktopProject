@@ -1,11 +1,24 @@
 #!/bin/bash
 
 #©keithhedger Mon 12 Oct 15:43:03 BST 2015 kdhedger68713@gmail.com
+
+cnt=0
+
+while read
+	do
+		if [ X"$(xprop -id $REPLY|grep '_NET_WM_WINDOW_TYPE_NORMAL\|_NET_WM_WINDOW_TYPE_DIALOG')" != "X" ];then
+			((cnt++))
+		fi
+	done< <(xprop -root|grep ^_NET_CLIENT_LIST|sed -n 's/, /\n/gp'|sed -n '/^0x.*/p'|sort -u)
+
+echo $cnt
+
 xprop -root|grep ^_NET_CLIENT_LIST|sed -n 's/, /\n/gp'|sed -n '/^0x.*/p'|sort -u|while read
 	do
-		if [ X"$(xprop -id $REPLY|grep '_NET_WM_WINDOW_TYPE_NORMAL')" != "X" ];then
+		if [ X"$(xprop -id $REPLY|grep '_NET_WM_WINDOW_TYPE_NORMAL\|_NET_WM_WINDOW_TYPE_DIALOG')" != "X" ];then
 			echo "$REPLY"
 			xprop -id $REPLY|grep "^WM_NAME"|awk -F" = " '{print $2}'
+			#|sed 's/^"//;s/"$//'
 			xprop -id $REPLY |grep "_NET_WM_DESKTOP"|head -n1|awk -F" = " '{print $2}'
 		fi
 	done
