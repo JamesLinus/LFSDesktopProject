@@ -1,19 +1,81 @@
-.\" lfsapplications
-.TH "lfsapplications" "1" "0.0.0" "K.D.Hedger" "User Commands"
+.TH "lfspanel" "1" "0.0.3" "K.D.Hedger" "User Commands"
 .SH "NAME"
-lfsapplications \- manual page for lfsapplications 0.0.0
+\fBlfspanel\fR - Manual page for lfsapplications 0.0.3
+.br
 .SH "SYNOPSIS"
-.B lfsapplications
+\fBlfspanel\fR PANELNUM
+.br
+
 .SH "DESCRIPTION"
-A CLI programme.
+Part of the LFS Desktop  project here:
+.br
 
+http://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914
+.br
 
+This provides basic panel functionality, logout, shutdown, app menu, window menu etc etc.
+.br
 .SH "EXAMPLES"
-.LP 
-	does somithing
-.IP 
-lfsapplications
-.LP 
+Start new main panel using config file ~/.config/LFS/lfspanel.rc 
+.br
+	lfspanel
+.br
 
+Start new panel using config file ~/.config/LFS/lfspanel-0.rc 
+.br
+	lfspanel 0
+.br
+
+Start new panel using config file ~/.config/LFS/lfspanel-DEV.rc 
+.br
+	lfspanel DEV
+.br
+
+.SH "FILES"
+Sample rc file:
+.br
+
+panelheight 16
+.br
+panelwidth -1
+.br
+panelxpos -2
+.br
+onmonitor 0
+.br
+termcommand xfce4-terminal -x 
+.br
+logoutcommand kill -9 $(cat /tmp/lfssession.pid)
+.br
+restartcommand sudo reboot
+.br
+shutdowncommand sudo shutdown -h now
+.br
+gadgetsright "LCDM"
+.br
+gadgetsleft	"AW"
+.br
+
+panelheight - Height of panel.
+.br
+panelwidth - Can be -1 for full width of monitor, -2 shrink to fit or >0 for absolute size.
+.br
+panelxpos - Can be -1 for left position, -2 for centre position, -3 for right position or >0 for absolute position.
+.br
+onmonitor - Monitor for this panel.
+.br
+termcommand - Command to use when launching app in terminal, defaults to "xterm -e".
+.br
+logoutcommand
+.br
+restartcommand
+.br
+shutdowncommand - Set to your prefs.
+.br
+gadgetsright
+.br
+gadgetsleft - Position of gadgets in panel in order L=logout menu, C=clock, D=disk usage, M=cpu load, A=applications menu, W=window selector.
+.br
 .SH "REPORTING BUGS"
-Report bugs to kdhedger@yahoo.co.uk
+Report bugs to keithhedger@keithhedger.darktech.org
+.br
