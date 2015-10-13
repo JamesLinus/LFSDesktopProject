@@ -184,13 +184,12 @@ int main(int argc, char **argv)
 			XNextEvent(mainwind->display,&event);
 			switch(event.type)
 				{
-					break;
-				case Expose:
-					mainwind->LFSTK_setActive(true);
-					break;
-				case ConfigureNotify:
-					mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-					break;
+					case Expose:
+						mainwind->LFSTK_setActive(true);
+						break;
+					case ConfigureNotify:
+						mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+						break;
 				}
 		}
 
