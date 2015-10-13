@@ -1,4 +1,4 @@
-.TH "LFSWMANAGER" "1" "0.0.15" "K. D. Hedger" ""
+.TH "lfswmanager" "1" "0.0.15" "K. D. Hedger" "User Commands"
 .SH "NAME"
 \fBlfswmanager\fR - window manager
 .br
@@ -7,6 +7,15 @@
 \fBlfswmanager\fR [ OPTION ] ...  [ display ]
 .br
 .SH "DESCRIPTION"
+Part of the LFS Desktop  project here:
+.br
+
+http://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914
+.br
+
+This provides the window manager.
+.br
+
 \fBLFSWManager\fR is a window manager for the X Window System.  It supports virtual desktops, Xft font rendering, and is pretty standards compliant, the code base is from the 'wind' window manager available here:
 .br
 
@@ -14,8 +23,8 @@ http://sourceforge.net/projects/windwm/?source=navbar
 .br
 Thanks to Johan Veenhuizen for the original code.
 .br
-
-A \fIdisplay\fR argument may be specified to manage a display other than the default.
+.SH "OPTIONS"
+A display argument may be specified to manage a display other than the default.
 .br
 
 The following options are recognized:
@@ -99,7 +108,7 @@ Window focus
 
 Moving a window
 .br
-	Drag the window by its title bar to the desired location.  Alternatively, hold down the \fBAlt \fRkey and grab the window from anywhere inside its frame.
+	Drag the window by its title bar to the desired location.  Alternatively, hold down the Alt key and grab the window from anywhere inside its frame.
 .br
 	Dragging a window off of the left/right edge of the screen will now flip the desktop.
 .br
@@ -111,12 +120,12 @@ Resizing a window
 
 Deleting a window
 .br
-	Push the \fB× \fRbutton in the upper right corner of the frame to ask the window to delete itself.
+	Push the × button in the upper right corner of the frame to ask the window to delete itself.
 .br
 
 Virtual desktops
 .br
-	\fIWind\fR supports virtual desktops as defined by the Extended Window Manager Hints specification.  The first twelve desktops are addressable using the \fBAlt-F\fR\fIn\fR key bindings.  An external pager is needed to address more than twelve desktops.
+	Wind supports virtual desktops as defined by the Extended Window Manager Hints specification.  The first twelve desktops are addressable using the Alt-Fn key bindings.  An external pager is needed to address more than twelve desktops.
 .br
 
 The following key bindings are provided:
@@ -147,19 +156,19 @@ The following key bindings are provided:
 	Toggle stickiness of the focused window.  A sticky window is visible on all desktops.  This property is indicated by an underlined window title.
 .br
 
-\fBAlt-F\fR\fIn\fR
+\fBAlt-Fn\fR
 .br
-	Switch to the \fIn\fR-th virtual desktop.
-.br
-
-\fBShift-Alt-F\fR\fIn\fR
-.br
-	Change number of virtual desktops to \fIn\fR, and switch to the last one.  Windows beyond desktop \fIn\fR are moved to \fIn\fR.  
-.br
-	\fBShift-Alt-F1 \fRis particularly useful when logging out.
+	Switch to the n-th virtual desktop.
 .br
 
-\fBLFSWManager\fR terminates gracefully upon receipt of any of the SIGHUP, SIGINT, and SIGTERM signals.
+\fBShift-Alt-Fn\fR
+.br
+	Change number of virtual desktops to n, and switch to the last one.  Windows beyond desktop n are moved to n.  
+.br
+	Shift-Alt-F1 is particularly useful when logging out.
+.br
+
+LFSWManager terminates gracefully upon receipt of any of the SIGHUP, SIGINT, and SIGTERM signals.
 .br
 
 .SH "FILES"
@@ -197,7 +206,7 @@ N.B.
 Prefs file MUST end in newline.
 .br
 .SH "AUTHOR"
-K. D. Hedger, \fIkdhedger68713@gmail.com\fR
+K. D. Hedger, \fIhttp://keithhedger.darktech.org\fR
 .br
 
 Original code:
@@ -205,15 +214,10 @@ Original code:
 Johan Veenhuizen, \fIveenhuizen@users.sourceforge.net\fR
 .br
 .SH "BUGS"
-Report bugs to:
-.br
-       \fIkdhedger68713@gmail.com\fR
+Report bugs to \fIkeithhedger@keithhedger.darktech.org\fR
 .br
 .SH "SEE ALSO"
 startx(1), xdm(1), X(7)
-.br
-
-\fIhttp://www.linuxquestions.org/questions/linux-from-scratch-13/the-linux-from-scratch-desktop-project-4175542914\fR
 .br
 
 \fIhttp://windwm.sourceforge.net\fR
