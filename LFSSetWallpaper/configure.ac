@@ -1,6 +1,6 @@
 #
 #
-AC_INIT([SetLFSWalpaper],[0.0.5],[LFSSetWallpaper],[LFSSetWallpaper])
+AC_INIT([SetLFSWalpaper],[0.0.6],[LFSSetWallpaper],[LFSSetWallpaper])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
