@@ -25,6 +25,8 @@ LFSTK_menuButtonClass	*windowMenu=NULL;
 menuItemStruct			windowList[MAXWINDOWSINLIST];
 char					windowBuffer[512];
 int						windowListCnt=0;
+int						updateWindowCnt=0;
+const char				*possibleError="Unknown";
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -57,10 +59,10 @@ bool windowMenuCB(void *p,void* ud)
 
 	winid=(Window)(menu->userData);
 	desktop=(unsigned long)menu->subMenuCnt;
-
+	possibleError="Can't switch desktop";
 	sendClientMessage(mainwind->rootWindow,"_NET_CURRENT_DESKTOP",desktop,0,0,0,0);
+	possibleError="Can't activate window";
 	sendClientMessage(winid,"_NET_ACTIVE_WINDOW",0,0,0,0,0);
-	XMapRaised(mainwind->display,winid);
 	return(true);
 }
 
@@ -78,6 +80,12 @@ void resetMenus(void)
 void updateWindowMenu(void)
 {
 	FILE	*fp=NULL;
+
+	updateWindowCnt++;
+	if(updateWindowCnt>=WINDOWREFRESH)
+		updateWindowCnt=0;
+	else
+		return;
 
 	alarm(0);
 	if(windowListCnt>-1)
@@ -125,6 +133,7 @@ int addWindowMenu(int x,int y,int grav)
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowListCnt=-1;
+	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
 	return(BWIDTH+SPACING);
 }

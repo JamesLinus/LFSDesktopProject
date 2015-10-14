@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 
 #include "globals.h"
 #include "appmenu.h"
@@ -110,6 +111,16 @@ void addRightGadgets(void)
 	rightOffset=offset;
 }
 
+int errHandler(Display *dpy,XErrorEvent *e)
+{
+	char buf[128];
+
+	buf[0]=0;
+	XGetErrorText(dpy,e->error_code,buf,sizeof buf);
+	fprintf(stderr,"Xlib Error: %s - %s\n",buf,possibleError);
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	char			*env;
@@ -123,6 +134,8 @@ int main(int argc, char **argv)
 	leftGadgets=strdup("");
 	rightGadgets=strdup("");
 	panelXPos=PANELCENTRE;
+
+	XSetErrorHandler(errHandler);
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
 
@@ -139,6 +152,8 @@ int main(int argc, char **argv)
 
 	addLeftGadgets();
 	addRightGadgets();
+
+	signal(SIGALRM,alarmCallBack);
 
 	switch(panelWidth)
 		{

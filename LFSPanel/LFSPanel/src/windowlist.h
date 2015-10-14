@@ -27,6 +27,7 @@
 #define MAXWINDOWSINLIST 512
 
 extern LFSTK_menuButtonClass	*windowMenu;
+extern const char				*possibleError;
 
 int addWindowMenu(int x,int y,int grav);
 void updateWindowMenu(void);

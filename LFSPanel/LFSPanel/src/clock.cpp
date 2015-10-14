@@ -29,7 +29,6 @@
 
 LFSTK_labelClass	*clockButton=NULL;
 int					refreshRate=1;
-int					updateWindowCnt=0;
 
 void  alarmCallBack(int sig)
 {
@@ -49,14 +48,7 @@ void  alarmCallBack(int sig)
 		updateCpuStats();
 
 	if(windowMenu!=NULL)
-		{
-			updateWindowCnt++;
-			if(updateWindowCnt==WINDOWREFRESH)
-				{
-					updateWindowCnt=0;
-					updateWindowMenu();
-				}
-		}
+		updateWindowMenu();
 
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
@@ -67,7 +59,6 @@ void  alarmCallBack(int sig)
 int addClock(int x,int y,int grav)
 {
 	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,0,BWIDTH,panelHeight,grav);
-	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
 	return(BWIDTH+SPACING);
 }
