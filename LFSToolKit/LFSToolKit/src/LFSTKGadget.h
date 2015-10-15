@@ -22,6 +22,9 @@
 #ifndef _LFSTKGADGET_
 #define _LFSTKGADGET_
 
+#include <X11/Xlib.h>
+#include <Imlib2.h>
+
 #include "LFSTKWindow.h"
 
 enum bevelType {BEVELIN=0,BEVELOUT,BEVELNONE};
@@ -68,6 +71,10 @@ class LFSTK_gadgetClass
 		void LFSTK_setLabel(const char *newlabel);
 		const char *LFSTK_getLabel(void);
 		void LFSTK_setLabelOriention(int orient);
+
+		void LFSTK_setIconFromPath(const char *file);
+		void LFSTK_setIcon(Pixmap image,Pixmap mask);
+
 		geometryStruct *LFSTK_getGeom(void);
 
 		LFSTK_windowClass	*wc;
@@ -119,6 +126,10 @@ class LFSTK_gadgetClass
 		int					labelOrientation;
 		bevelType			style;
 		int					labelOffset;
+		Pixmap				icon[2];
+		bool				gotIcon;
+		unsigned int		iconSize;
+		bool				freeOnDelete;
 };
 
 #endif

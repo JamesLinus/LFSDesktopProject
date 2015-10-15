@@ -31,6 +31,8 @@ struct menuItemStruct
 	LFSTK_buttonClass	*bc;
 	menuItemStruct		*subMenus;
 	int					subMenuCnt;
+	bool				useIcon;
+	Pixmap				icon[2];
 };
 
 

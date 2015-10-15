@@ -36,6 +36,10 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 		}
 	if(this->fontString!=NULL)
 		free(this->fontString);
+
+	if(this->freeOnDelete==true)
+		imlib_free_pixmap_and_mask(this->icon[0]);
+
 	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
 	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
 	XDestroyWindow(this->display,this->window);
@@ -134,6 +138,9 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->inWindow=false;
 	this->autoLabelColour=this->wc->autoLabelColour;
 	this->labelOffset=0;
+	this->gotIcon=false;
+	this->iconSize=16;
+	this->freeOnDelete=false;
 }
 
 /**
@@ -397,6 +404,7 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
+			//printf(">>>loff=%i<<<\n",this->labelOffset);
 				this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
 				break;
 			case RIGHT:
@@ -405,6 +413,14 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 			default://centre
 				this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
 				break;
+		}
+
+	if(this->gotIcon==true)
+		{
+			XSetClipMask(this->display,this->gc,this->icon[1]);
+			XSetClipOrigin(this->display,this->gc,4,(this->h/2)-(this->iconSize/2));
+			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->h/2)-(this->iconSize/2));
+			XSetClipMask(this->display,this->gc,None);
 		}
 }
 
@@ -572,3 +588,41 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
 }
 
+/**
+* Set Icon.
+* \param image Pixmap.
+* \param mask Pixmap mask.
+* \note Pixmap and mask are owned by caller.
+*/
+void LFSTK_gadgetClass::LFSTK_setIcon(Pixmap image,Pixmap mask)
+{
+	this->icon[0]=image;
+	this->icon[1]=mask;
+	this->gotIcon=true;
+	this->labelOffset=this->iconSize+4;
+	this->freeOnDelete=true;
+}
+
+/**
+* Set Icon.
+* \param file Path to image file.
+*/
+void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file)
+{
+	Imlib_Image	image=NULL;
+
+	image=imlib_load_image(file);
+	if(image!=NULL)
+		{
+			imlib_context_set_display(this->wc->display);
+			imlib_context_set_visual(this->wc->visual);
+			imlib_context_set_colormap(this->wc->cm);
+			imlib_context_set_drawable(this->window);
+			imlib_context_set_image(image);
+			imlib_render_pixmaps_for_whole_image_at_size(&this->icon[0],&this->icon[1],this->iconSize,this->iconSize);
+			imlib_free_image();
+			this->gotIcon=true;
+			this->labelOffset=this->iconSize/2;
+			this->freeOnDelete=true;
+		}
+}

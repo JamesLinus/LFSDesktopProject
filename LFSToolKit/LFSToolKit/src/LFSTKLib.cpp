@@ -505,3 +505,30 @@ void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
 	this->autoLabelColour=toset;
 }
 
+/**
+* Set Icon.
+* \param display Xlib display.
+* \param visual Xlib visual.
+* \param cm Xlib colormap.
+* \param w Xlib window.
+* \param file Path to image file.
+* \param image Return address for image pixmap.
+* \param mask Return address for image mask.
+* \param size Destination size.
+*/
+void LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size)
+{
+	Imlib_Image	data=NULL;
+
+	data=imlib_load_image(file);
+	if(image!=NULL)
+		{
+			imlib_context_set_display(display);
+			imlib_context_set_visual(visual);
+			imlib_context_set_colormap(cm);
+			imlib_context_set_drawable(w);
+			imlib_context_set_image(data);
+			imlib_render_pixmaps_for_whole_image_at_size(image,mask,size,size);
+			imlib_free_image();
+		}
+}

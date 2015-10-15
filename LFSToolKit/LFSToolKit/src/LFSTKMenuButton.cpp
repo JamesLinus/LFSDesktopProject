@@ -96,6 +96,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	for(int j=0;j<this->menuCount;j++)
 		{
 			testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
+			if(this->menus[j].useIcon==true)
+				testwid+=16;
 			if(testwid>maxwid)
 				maxwid=testwid;
 		}
@@ -107,6 +109,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"menu window",true,true);
 	subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	sy=0;
+	subwc->LFSTK_showWindow(false);
 
 	for(int j=0;j<this->menuCount;j++)
 		{
@@ -119,6 +122,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					bc->LFSTK_setStyle(BEVELNONE);
 					bc->LFSTK_setFontString(itemfont);
 					bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
+					if(this->menus[j].useIcon==true)
+						bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1]);
 					for(int j=0;j<MAXCOLOURS;j++)
 						{
 							bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));

@@ -29,7 +29,7 @@ LFSTK_buttonClass::~LFSTK_buttonClass()
 LFSTK_buttonClass::LFSTK_buttonClass()
 {
 }
-
+#if 0
 /**
 * Clear the gadget window to the appropriate state.
 */
@@ -48,7 +48,7 @@ void LFSTK_buttonClass::LFSTK_clearWindow(void)
 			this->LFSTK_drawLabel(INACTIVECOLOUR);
 		}
 }
-
+#endif
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.

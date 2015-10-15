@@ -44,7 +44,7 @@ class LFSTK_buttonClass : public LFSTK_gadgetClass
 		void LFSTK_setIgnoreCB(bool ignore);
 		bool LFSTK_getIgnoreCB(void);
 
-		void LFSTK_clearWindow(void);		
+		//void LFSTK_clearWindow(void);		
 		bool mouseEnter(XButtonEvent *e);
 		bool mouseExit(XButtonEvent *e);
 		bool mouseDown(XButtonEvent *e);

@@ -5,7 +5,7 @@ m4_define([LFSTOOLKIT_MAJ_N],[0])
 m4_define([LFSTOOLKIT_MIN_N],[0])
 m4_define([LFSTOOLKIT_REV_N],[4])
 
-AC_INIT([LFSToolKit],[0.0.8],[PROJ],[LFSToolKit])
+AC_INIT([LFSToolKit],[0.0.9],[PROJ],[LFSToolKit])
 
 AC_CONFIG_HEADER([config.h])
 AC_PROG_CXX
@@ -45,6 +45,11 @@ if test -z "$DOXYGEN";
 fi
 AM_CONDITIONAL([HAVE_DOXYGEN],
 [test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/Doxyfile])])
+
+IMLIB_MODULES="imlib2 >= 1.4.6"
+PKG_CHECK_MODULES(IMLIB, $IMLIB_MODULES)
+AC_SUBST(IMLIB_LIBS)
+AC_SUBST(IMLIB_CFLAGS)
 
 AC_OUTPUT(Makefile LFSToolKit/app/Makefile  docs/Makefile)
 

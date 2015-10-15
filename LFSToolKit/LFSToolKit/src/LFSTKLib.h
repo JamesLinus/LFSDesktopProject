@@ -51,6 +51,8 @@ class LFSTK_lib
 		fontStruct* LFSTK_loadFont(Display *disp,int scr,const char *name);
 		static bool LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
+		void LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
+
 	private:
 		args	*lfsToolKitGlobals;
 //window stirngs

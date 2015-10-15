@@ -2,7 +2,7 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft) -llfstoolkit||exit 1
+g++ "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft ) -llfstoolkit -lImlib2||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -41,6 +41,7 @@ LFSTK_menuButtonClass	*mbwithsubs=NULL;
 LFSTK_toggleButtonClass *tb=NULL;
 LFSTK_toggleButtonClass *tbnormal=NULL;
 LFSTK_lineEditClass		*le=NULL;
+LFSTK_buttonClass		*iconButton=NULL;
 
 menuItemStruct			*mainMenus;
 menuItemStruct			*mainMenusWithSubs;
@@ -81,37 +82,51 @@ int main(int argc, char **argv)
 {
 	XEvent	event;
 	int		sy=BORDER;
+	Pixmap	ic[2];
 	
 	wc=new LFSTK_windowClass(0,0,WIDTH,HITE,"Gadgets",false);
 
 	label=new LFSTK_labelClass(wc,"Available Gadgets",BORDER,sy,WIDTH-(BORDER*2),BHITE,BGRAV);
 	sy+=(BORDER*2);
 
+//button
 	bc=new LFSTK_buttonClass(wc,"Button",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
 	bc->LFSTK_setCallBack(NULL,buttonCB,(void*)bc->LFSTK_getLabel());
 	//bc->LFSTK_setStyle(BEVELIN);
 	//bc->LFSTK_setActive(true);
 	sy+=YSPACING;
-	
+
+//check button	
 	tb=new LFSTK_toggleButtonClass(wc,"Check",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
 	tb->LFSTK_setCallBack(NULL,buttonCB,(void*)tb->LFSTK_getLabel());
 	sy+=YSPACING;
-	
+
+//toggle button	
 	tbnormal=new LFSTK_toggleButtonClass(wc,"Toggle",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
 	tbnormal->LFSTK_setCallBack(NULL,buttonCB,(void*)tbnormal->LFSTK_getLabel());
 	tbnormal->LFSTK_setToggleStyle(TOGGLENORMAL);
+	tbnormal->LFSTK_setIconFromPath("./api.png");
 	sy+=YSPACING;
 
+//menu button
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/computer.png",&ic[0],&ic[1],16);
 	mainMenus=new menuItemStruct[MAXMAINMENUS];
+
 	for(int j=0;j<MAXMAINMENUS;j++)
 		{
 			mainMenus[j].label=mainMenuNames[j];
 			mainMenus[j].userData=NULL;
 			mainMenus[j].bc=NULL;
 			mainMenus[j].subMenus=NULL;
+			mainMenus[j].useIcon=true;
+			mainMenus[j].icon[0]=ic[0];
+			mainMenus[j].icon[1]=ic[1];
 		}
 
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./ROOTKKEdit.png",&mainMenus[2].icon[0],&mainMenus[2].icon[1],16);
+
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
+	mb->LFSTK_setIconFromPath("./BookMark.png");
 	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mb->LFSTK_addMenus(mainMenus,MAXMAINMENUS);
 	sy+=YSPACING;
@@ -124,6 +139,7 @@ int main(int argc, char **argv)
 			mainMenusWithSubs[j].userData=NULL;
 			mainMenusWithSubs[j].bc=NULL;
 			mainMenusWithSubs[j].subMenus=NULL;
+			mainMenusWithSubs[j].useIcon=false;
 		}
 //sub menus
 	subMenus=new menuItemStruct[MAXSUBMENUS];
@@ -133,7 +149,11 @@ int main(int argc, char **argv)
 			subMenus[j].userData=NULL;
 			subMenus[j].bc=NULL;
 			subMenus[j].subMenus=NULL;
+			subMenus[j].useIcon=true;
+			subMenus[j].icon[0]=ic[0];
+			subMenus[j].icon[1]=ic[1];
 		}
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
 //add sub menus
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
@@ -142,8 +162,15 @@ int main(int argc, char **argv)
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
 	
 	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
+	mbwithsubs->LFSTK_setIconFromPath("./ManPageEditor.png");
 	mbwithsubs->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
+	sy+=YSPACING;
+
+//icon button
+	iconButton=new LFSTK_buttonClass(wc,"Icon Button",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
+	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
+	iconButton->LFSTK_setIconFromPath("./lfstux.png");
 	sy+=YSPACING;
 
 //line edit
