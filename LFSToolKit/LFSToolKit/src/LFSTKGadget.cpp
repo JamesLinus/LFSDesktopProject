@@ -607,13 +607,14 @@ void LFSTK_gadgetClass::LFSTK_setIcon(Pixmap image,Pixmap mask)
 * Set Icon.
 * \param file Path to image file.
 */
-void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file)
+void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 {
 	Imlib_Image	image=NULL;
 
 	image=imlib_load_image(file);
 	if(image!=NULL)
 		{
+			this->iconSize=size;
 			imlib_context_set_display(this->wc->display);
 			imlib_context_set_visual(this->wc->visual);
 			imlib_context_set_colormap(this->wc->cm);

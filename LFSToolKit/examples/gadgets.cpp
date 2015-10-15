@@ -168,10 +168,10 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //icon button
-	iconButton=new LFSTK_buttonClass(wc,"Icon Button",BORDER,sy,BWIDTH,BHITE,NorthWestGravity);
+	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
-	iconButton->LFSTK_setIconFromPath("./lfstux.png");
-	sy+=YSPACING;
+	iconButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",64);
+	sy+=68;
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);
