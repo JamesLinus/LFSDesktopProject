@@ -59,6 +59,7 @@ int  addLogout(int x,int y,int grav)
 			logoutItems[j].bc=NULL;
 			logoutItems[j].subMenus=NULL;
 			logoutItems[j].subMenuCnt=0;
+			logoutItems[j].useIcon=false;
 		}
 
 	logoutButton->LFSTK_setStyle(BEVELOUT);

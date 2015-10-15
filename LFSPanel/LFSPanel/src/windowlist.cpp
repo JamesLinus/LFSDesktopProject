@@ -122,19 +122,21 @@ void updateWindowMenu(void)
 					windowList[j].subMenuCnt=atoi(windowBuffer);
 				}
 			pclose(fp);
-			windowMenu->LFSTK_addMenus(windowList,windowListCnt);
+			windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
+			//windowMenu->LFSTK_addMenus(windowList,windowListCnt);
 		}
 	alarm(refreshRate);
 }
 
 int addWindowMenu(int x,int y,int grav)
 {
-	windowMenu=new LFSTK_menuButtonClass(mainwind,"Windows",x,0,BWIDTH,panelHeight,grav);
+	windowMenu=new LFSTK_menuButtonClass(mainwind,"",x,0,panelHeight+6,panelHeight,grav);
+	windowMenu->LFSTK_setIconFromPath("/usr/share/icons/gnome/48x48/apps/preferences-system-windows.png",panelHeight-6);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
-	return(BWIDTH+SPACING);
+	return(panelHeight+2+SPACING);
 }
 

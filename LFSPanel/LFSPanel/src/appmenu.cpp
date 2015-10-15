@@ -53,8 +53,9 @@ int addAppmenu(int x,int y,int grav)
 	appx=x;
 	appy=y+panelHeight;
 
-	appButton=new LFSTK_buttonClass(mainwind,"LFS Apps",x,0,BWIDTH,panelHeight,grav);
+	appButton=new LFSTK_buttonClass(mainwind,"",x,0,panelHeight+2,panelHeight,grav);
+	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-6);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(callback,NULL,NULL);
-	return(BWIDTH+SPACING);
+	return(panelHeight+2+SPACING);
 }
