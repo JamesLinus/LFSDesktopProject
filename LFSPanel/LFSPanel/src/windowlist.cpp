@@ -131,7 +131,7 @@ void updateWindowMenu(void)
 int addWindowMenu(int x,int y,int grav)
 {
 	windowMenu=new LFSTK_menuButtonClass(mainwind,"",x,0,panelHeight+6,panelHeight,grav);
-	windowMenu->LFSTK_setIconFromPath("/usr/share/icons/gnome/48x48/apps/preferences-system-windows.png",panelHeight-6);
+	windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowListCnt=-1;
