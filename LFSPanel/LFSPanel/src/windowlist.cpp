@@ -130,13 +130,23 @@ void updateWindowMenu(void)
 
 int addWindowMenu(int x,int y,int grav)
 {
-	windowMenu=new LFSTK_menuButtonClass(mainwind,"",x,0,panelHeight+6,panelHeight,grav);
+	int	xpos=0;
+	int width=panelHeight+2;
+	int	retval=width;
+
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
+//printf("xpos=%i\n",xpos);
+	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
 	windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
-	return(panelHeight+2+SPACING);
+	return(retval);
 }
 

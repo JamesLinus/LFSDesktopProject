@@ -59,12 +59,15 @@ class LFSTK_menuButtonClass : public LFSTK_buttonClass
 		bool mouseDown(XButtonEvent *e);
 		bool mouseUp(XButtonEvent *e);
 		void LFSTK_addMenus(menuItemStruct* menus,int cnt);
+		void LFSTK_updateMenus(menuItemStruct* menus,int cnt);
 
 		bool				isSubmenu;
 	private:
 		void initMenuButton(void);
 		menuItemStruct		*menus;
 		int					menuCount;
+		LFSTK_windowClass	*subwc;
+		bool				builtMenu;
 };
 
 #endif

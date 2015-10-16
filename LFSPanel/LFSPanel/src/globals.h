@@ -54,9 +54,13 @@ extern char					*rightGadgets;
 extern char					*leftGadgets;
 extern int					panelXPos;
 
+extern int					refreshRate;
+
 //panel window
 extern LFSTK_windowClass	*mainwind;
 extern int					rightOffset;
 extern int					leftOffset;
+
+void printError(const char *err);
 
 #endif

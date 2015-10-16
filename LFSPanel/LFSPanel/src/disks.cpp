@@ -72,9 +72,23 @@ void updateDiskStats(void)
 
 int addDiskData(int x,int y,int grav)
 {
+	int	xpos=0;
+	int width=BWIDTH*2;
+	int	retval=width;
+
+	if(diskButton!=NULL)
+		{
+			printError("Duplicate disk stats");
+			return(0);
+		}
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
 	oldRead=getReadStats();
 	oldWrite=getWriteStats();
-	diskButton=new LFSTK_labelClass(mainwind,"R=0Mb/s W=0Mb/s",x,0,BWIDTH*2,panelHeight,grav);
+	diskButton=new LFSTK_labelClass(mainwind,"R=0Mb/s W=0Mb/s",xpos,0,width,panelHeight,grav);
 	diskButton->LFSTK_setLabelOriention(LEFT);
-	return(BWIDTH*2+SPACING);
+	return(retval);
 }

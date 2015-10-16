@@ -56,6 +56,7 @@ void addLeftGadgets(void)
 
 	for(int j=0;j<strlen(leftGadgets);j++)
 		{
+		//printf(">>>left offset=%i j=%i<<<\n",offset,j);
 			switch(leftGadgets[j])
 				{
 					case 'A':
@@ -76,6 +77,9 @@ void addLeftGadgets(void)
 					case 'M':
 						offset+=addCpuData(offset,mons->y,NorthWestGravity);
 						break;
+					case 'S':
+						offset+=SPACING;
+						break;
 				}
 		}
 	leftOffset=offset;
@@ -83,16 +87,17 @@ void addLeftGadgets(void)
 
 void addRightGadgets(void)
 {
-	int	offset=-rightOffset;
-	for(int j=0;j<strlen(rightGadgets);j++)
+	int	offset=rightOffset;
+	for(int j=strlen(rightGadgets)-1;j>=0;j--)
 		{
+		//printf("---rite offset=%i j=%i len=%i str=%s---\n",offset,j,strlen(rightGadgets),rightGadgets);
 			switch(rightGadgets[j])
 				{
 					case 'A':
 						offset-=addAppmenu(offset,mons->y,NorthEastGravity);
 						break;
 					case 'W':
-						offset-=addWindowMenu(offset,mons->y,NorthWestGravity);
+						offset-=addWindowMenu(offset,mons->y,NorthEastGravity);
 						break;
 					case 'L':
 						offset-=addLogout(offset,mons->y,NorthEastGravity);
@@ -101,10 +106,13 @@ void addRightGadgets(void)
 						offset-=addClock(offset,mons->y,NorthEastGravity);
 						break;
 					case 'D':
-						offset-=addDiskData(offset-BWIDTH,mons->y,NorthEastGravity);
+						offset-=addDiskData(offset,mons->y,NorthEastGravity);
 						break;
 					case 'M':
 						offset-=addCpuData(offset,mons->y,NorthEastGravity);
+						break;
+					case 'S':
+						offset-=SPACING;
 						break;
 				}
 		}
@@ -119,6 +127,31 @@ int errHandler(Display *dpy,XErrorEvent *e)
 	XGetErrorText(dpy,e->error_code,buf,sizeof buf);
 	fprintf(stderr,"Xlib Error: %s - %s\n",buf,possibleError);
 	return 0;
+}
+
+void printError(const char *err)
+{
+	fprintf(stderr,">>>%s<<<\n",err);
+}
+
+void  alarmCallBack(int sig)
+{
+	if(clockButton!=NULL)
+		updateClock();
+
+	if(diskButton!=NULL)
+		updateDiskStats();
+
+	if(cpuButton!=NULL)
+		updateCpuStats();
+
+	if(windowMenu!=NULL)
+		updateWindowMenu();
+
+	signal(SIGALRM,SIG_IGN);
+	signal(SIGALRM,alarmCallBack);
+	alarm(refreshRate);
+	XFlush(mainwind->display);
 }
 
 int main(int argc, char **argv)
@@ -147,13 +180,15 @@ int main(int argc, char **argv)
 
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
 
-	rightOffset=BWIDTH;
+	rightOffset=0;
 	leftOffset=0;
 
 	addLeftGadgets();
 	addRightGadgets();
+	//printf(">>>lo=%i ro=%i<<<\n",leftOffset,rightOffset);
 
 	signal(SIGALRM,alarmCallBack);
+	alarm(refreshRate);
 
 	switch(panelWidth)
 		{
@@ -162,7 +197,7 @@ int main(int argc, char **argv)
 				mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
 				break;
 			case PANELSHRINK:
-				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset)-BWIDTH,panelHeight);
+				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset),panelHeight);
 				break;
 			default:
 				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);

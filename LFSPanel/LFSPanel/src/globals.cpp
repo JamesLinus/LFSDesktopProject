@@ -33,6 +33,8 @@ char				*rightGadgets=NULL;
 char				*leftGadgets=NULL;
 int					panelXPos=PANELCENTRE;
 
+int					refreshRate=1;
+
 //panel window
 LFSTK_windowClass	*mainwind=NULL;
 int					rightOffset=0;

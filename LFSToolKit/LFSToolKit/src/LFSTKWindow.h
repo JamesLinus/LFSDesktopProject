@@ -80,6 +80,7 @@ class LFSTK_windowClass
 		void LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
 
 		geometryStruct	*LFSTK_getGeom(void);
+		int LFSTK_windowOnMonitor(void);
 
 		Display			*display;
 		Window			window;
@@ -100,6 +101,7 @@ class LFSTK_windowClass
 		fontStruct		*font;
 
 		Window			parentWindow;
+//		int				inMonitorNumber;
 
 	private:
 		void initWindow(bool loadvars);

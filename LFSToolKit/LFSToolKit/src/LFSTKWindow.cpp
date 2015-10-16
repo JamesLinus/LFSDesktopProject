@@ -452,6 +452,30 @@ const monitorStruct* LFSTK_windowClass::LFSTK_getMonitorData(int monitor)
 }
 
 /**
+* Get window monitor.
+* \return unsigned Monitor that window top left is on;
+*/
+
+int LFSTK_windowClass::LFSTK_windowOnMonitor(void)
+{
+	int thisx=this->x;
+	int thisy=this->y;
+
+	if(thisx<0)
+		thisx=0;
+	if(thisy<0)
+		thisy=0;
+
+	for(int j=0;j<this->monitorCount;j++)
+		{
+			if((thisx>=monitors[j].x) && (thisx<(monitors[j].x+monitors[j].w)) && (thisy>=monitors[j].y) && (thisy<(monitors[j].y+monitors[j].h)))
+				return(j);
+		}
+	return(-1);
+}
+
+
+/**
 * Main window constructor.
 * \param x X pos.
 * \param y Y pos.
@@ -517,6 +541,8 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 
 	this->LFSTK_setDecorated(true);
 	this->initWindow(loadvars);
+
+	//inMonitorNumber=this->LFSTK_windowOnMonitor();
 }
 
 /**

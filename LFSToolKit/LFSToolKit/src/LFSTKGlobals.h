@@ -66,6 +66,7 @@ struct geometryStruct
 {
 	int			x,y;
 	unsigned	w,h;
+	unsigned	monitor;
 };
 
 struct colourStruct

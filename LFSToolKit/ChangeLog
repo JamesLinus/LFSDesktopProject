@@ -1,3 +1,12 @@
+0.0.9
+Stopped menu going off screen to top/bottom.
+Stopped menu going off screen to left/right.
+Speed and resource improvements to menu button class.
+Menu winow created in menuButton constructor.
+Cached menuitem lists.
+Added create pixmaps from file to lib class.
+Added icons to buttons.
+
 0.0.8
 Fixed gravity bug in LFSLabelClass.
 Code clean.

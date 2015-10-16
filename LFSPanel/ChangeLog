@@ -1,3 +1,12 @@
+0.0.4
+Updated manpage.
+Added spacer gadget 'S' ( multiple spacers ARE allowed ).
+Duplicate gadgets disallowed.
+Right gadgets now ordered left to right as expected from config string.
+Fixed segfault when not displaying clock.
+Removed forced extra spacing.
+Added Icons to panel buttons.
+
 0.0.3
 Trapped X errors.
 Added Window list gadget.

@@ -1,4 +1,4 @@
-.TH "lfspanel" "1" "0.0.3" "K.D.Hedger" "User Commands"
+.TH "lfspanel" "1" "0.0.4" "K.D.Hedger" "User Commands"
 .SH "NAME"
 \fBlfspanel\fR - Manual page for lfsapplications 0.0.3
 .br
@@ -51,9 +51,9 @@ restartcommand sudo reboot
 .br
 shutdowncommand sudo shutdown -h now
 .br
-gadgetsright "LCDM"
+gadgetsright LCDM
 .br
-gadgetsleft	"AW"
+gadgetsleft	AWSS
 .br
 
 panelheight - Height of panel.
@@ -74,7 +74,10 @@ shutdowncommand - Set to your prefs.
 .br
 gadgetsright
 .br
-gadgetsleft - Position of gadgets in panel in order L=logout menu, C=clock, D=disk usage, M=cpu load, A=applications menu, W=window selector.
+gadgetsleft - Position of gadgets in panel in order L=logout menu, C=clock, D=disk usage, M=cpu load, A=applications menu, W=window selector, S=spacer.
+.br
+
+For an empty gadget string for gadgetsright/gadgetsleft use "", else "'s are not needed. Only one gadget of each type is allowed except for spacers which can be used multiple times.
 .br
 .SH "REPORTING BUGS"
 Report bugs to keithhedger@keithhedger.darktech.org

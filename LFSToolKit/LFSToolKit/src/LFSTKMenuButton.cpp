@@ -24,10 +24,23 @@
 
 void LFSTK_menuButtonClass::initMenuButton(void)
 {
+	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true);
+	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
+	this->builtMenu=false;
 }
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
 {
+	if(this->builtMenu==true)
+		{
+			for(int j=0;j<this->menuCount;j++)
+				{
+					if(this->menus[j].bc!=NULL)
+						delete this->menus[j].bc;
+					this->menus[j].bc=NULL;
+				}
+		}
+	delete subwc;
 }
 
 LFSTK_menuButtonClass::LFSTK_menuButtonClass()
@@ -66,7 +79,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 {
 	LFSTK_buttonClass		*bc;
 	geometryStruct			*g;
-	LFSTK_windowClass		*subwc;
 	int						maxwid=0;
 	XEvent					event;
 	bool					run=true;
@@ -76,10 +88,12 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	fontStruct				*tfont;
 	const char				*itemfont;
 	LFSTK_menuButtonClass	*mb=NULL;
+	const monitorStruct 	*mons;
+	int 					xpos;
+	int 					ypos;
 
 	geometryStruct	geom={0,0,this->w,this->h};
 	bevelType		bv=BEVELIN;
-
 
 	if(this->isActive==false)
 		{
@@ -90,67 +104,87 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	this->drawBox(&geom,ACTIVECOLOUR,this->getActiveBevel());
 	this->LFSTK_drawLabel(ACTIVECOLOUR);
 	this->drawIndicator(&geom,ACTIVECOLOUR,DISCLOSURE);
-
-	itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
-	tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
-	for(int j=0;j<this->menuCount;j++)
-		{
-			testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
-			if(this->menus[j].useIcon==true)
-				testwid+=16;
-			if(testwid>maxwid)
-				maxwid=testwid;
-		}
-
-	addto=tfont->ascent+tfont->descent+8;
-	maxwid+=4+6;
 	g=this->LFSTK_getGeom();
-//	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"menu window",true,true);
-	subwc=new LFSTK_windowClass(g->x,g->y+this->h,maxwid,this->menuCount*addto,"menu window",true,true);
-	subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
-	sy=0;
-	subwc->LFSTK_showWindow(false);
 
-	for(int j=0;j<this->menuCount;j++)
+	if(this->builtMenu==false)
 		{
-			if(this->menus[j].subMenus==NULL)
+			itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+			tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
+			for(int j=0;j<this->menuCount;j++)
 				{
-					bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
-					this->menus[j].bc=bc;
-					bc->LFSTK_setLabelOriention(LEFT);
-					bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-					bc->LFSTK_setStyle(BEVELNONE);
-					bc->LFSTK_setFontString(itemfont);
-					bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
+					testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
 					if(this->menus[j].useIcon==true)
-						bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1]);
-					for(int j=0;j<MAXCOLOURS;j++)
-						{
-							bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
-							bc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
-						}
+						testwid+=16;
+					if(testwid>maxwid)
+						maxwid=testwid;
 				}
-			else
+
+			addto=tfont->ascent+tfont->descent+8;
+			maxwid+=4+6;
+			subwc->LFSTK_resizeWindow(maxwid,this->menuCount*addto,true);
+			sy=0;
+
+			for(int j=0;j<this->menuCount;j++)
 				{
-					mb=new LFSTK_menuButtonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
-					mb->LFSTK_setStyle(BEVELNONE);
-					mb->LFSTK_setFontString(itemfont);
-					mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
-					mb->LFSTK_setLabelOriention(LEFT);
-					for(int k=0;k<MAXCOLOURS;k++)
+					if(this->menus[j].subMenus==NULL)
 						{
-							mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
-							mb->LFSTK_setFontColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEMFONTCOLOUR));
+							bc=new LFSTK_buttonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
+							this->menus[j].bc=bc;
+							bc->LFSTK_setLabelOriention(LEFT);
+							bc->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
+							bc->LFSTK_setStyle(BEVELNONE);
+							bc->LFSTK_setFontString(itemfont);
+							bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
+							if(this->menus[j].useIcon==true)
+								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1]);
+							for(int j=0;j<MAXCOLOURS;j++)
+								{
+									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
+									bc->LFSTK_setFontColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEMFONTCOLOUR));
+								}
 						}
-					this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
-					mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
-					mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-					mb->LFSTK_setIgnoreCB(true);
-					mb->isSubmenu=true;
+					else
+						{
+							mb=new LFSTK_menuButtonClass(subwc,this->menus[j].label,0,sy,maxwid,addto,0);
+							mb->LFSTK_setStyle(BEVELNONE);
+							mb->LFSTK_setFontString(itemfont);
+							mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
+							mb->LFSTK_setLabelOriention(LEFT);
+							for(int k=0;k<MAXCOLOURS;k++)
+								{
+									mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
+									mb->LFSTK_setFontColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEMFONTCOLOUR));
+								}
+							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
+							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
+							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
+							mb->LFSTK_setIgnoreCB(true);
+							mb->isSubmenu=true;
+						}
+					sy+=addto;
 				}
-			sy+=addto;
+			this->builtMenu=true;
 		}
 
+	xpos=g->x;
+	ypos=g->y+this->h;
+	subwc->LFSTK_moveWindow(xpos,ypos,true);
+
+	mons=this->wc->LFSTK_getMonitorData(subwc->LFSTK_windowOnMonitor());
+	geometryStruct *subwcg=subwc->LFSTK_getGeom();
+
+	if(xpos+subwcg->w>mons->x+mons->w)
+		xpos=(mons->x+mons->w)-subwcg->w;
+
+	if(xpos<mons->x)
+		xpos=mons->x;
+
+	if(ypos+subwcg->h>mons->y+mons->h)
+		ypos=(mons->y+mons->h)-subwcg->h;
+
+	subwc->LFSTK_moveWindow(xpos,ypos,true);
+	subwc->LFSTK_showWindow(true);
+	subwc->LFSTK_hideWindow();
 	subwc->LFSTK_showWindow(true);
 
 	while (run==true)
@@ -176,15 +210,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 				}
 		}
 
-	for(int j=0;j<this->menuCount;j++)
-		{
-			if(this->menus[j].bc!=NULL)
-				delete this->menus[j].bc;
-			this->menus[j].bc=NULL;
-		}
-
-	delete subwc;
+	subwc->LFSTK_hideWindow();
 	delete g;
+	delete subwcg;
 	return(true);
 }
 	
@@ -290,3 +318,24 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	wc->LFSTK_setListener(this->window,this->getListen());
 	this->isSubmenu=false;
 }
+
+/**
+* Force an update of menu's for dynamic menu.
+* \note It is up to the caller to set the menuItemStruct and free it and any data it contains when finished.
+*/
+void LFSTK_menuButtonClass::LFSTK_updateMenus(menuItemStruct* menus,int cnt)
+{
+	if(this->builtMenu==true)
+		{
+			for(int j=0;j<this->menuCount;j++)
+				{
+					if(this->menus[j].bc!=NULL)
+						delete this->menus[j].bc;
+					this->menus[j].bc=NULL;
+				}
+		}
+	this->builtMenu=false;
+	this->menus=menus;
+	this->menuCount=cnt;
+}
+

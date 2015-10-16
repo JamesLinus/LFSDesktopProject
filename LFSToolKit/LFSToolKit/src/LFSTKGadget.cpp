@@ -404,7 +404,6 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-			//printf(">>>loff=%i<<<\n",this->labelOffset);
 				this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
 				break;
 			case RIGHT:

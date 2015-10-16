@@ -28,9 +28,8 @@
 #include "windowlist.h"
 
 LFSTK_labelClass	*clockButton=NULL;
-int					refreshRate=1;
 
-void  alarmCallBack(int sig)
+void updateClock(void)
 {
 	char		clockbuffer[256];
 	time_t		rawtime;
@@ -41,24 +40,24 @@ void  alarmCallBack(int sig)
 
 	strftime(clockbuffer,255,"%I:%M:%S",timeinfo);
 	clockButton->LFSTK_setLabel(clockbuffer);
-
-	if(diskButton!=NULL)
-		updateDiskStats();
-	if(cpuButton!=NULL)
-		updateCpuStats();
-
-	if(windowMenu!=NULL)
-		updateWindowMenu();
-
-	signal(SIGALRM,SIG_IGN);
-	signal(SIGALRM,alarmCallBack);
-	alarm(refreshRate);
-	XFlush(mainwind->display);
 }
 
 int addClock(int x,int y,int grav)
 {
-	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",x,0,BWIDTH,panelHeight,grav);
-	alarm(refreshRate);
-	return(BWIDTH+SPACING);
+	int	xpos=0;
+	int width=BWIDTH;
+	int	retval=width;
+
+	if(clockButton!=NULL)
+		{
+			printError("Duplicate clock");
+			return(0);
+		}
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
+	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",xpos,0,width,panelHeight,grav);
+	return(retval);
 }

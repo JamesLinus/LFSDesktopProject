@@ -29,12 +29,12 @@
 #include "appmenu.h"
 
 LFSTK_buttonClass	*appButton=NULL;
-int					appx,appy;
+//int					appx,appy;
 
 bool callback(void *p,void* ud)
 {
 	char			*path;
-	geometryStruct	*geom=mainwind->LFSTK_getGeom();
+	geometryStruct	*geom=appButton->LFSTK_getGeom();
 
 	XFlush(mainwind->display);
 	asprintf(&path,"%s \"%s\" %i %i",APPMENUPATH,terminalCommand,geom->x,geom->y+geom->h);
@@ -49,13 +49,24 @@ int addAppmenu(int x,int y,int grav)
 	int addto=mainwind->font->ascent+mainwind->font->descent+8;
 	int maxwid=0;
 	int	catnum=0;
+	int	xpos=0;
+	int width=panelHeight+2;
+	int	retval=width;
 
-	appx=x;
-	appy=y+panelHeight;
+	if(appButton!=NULL)
+		{
+			printError("Duplicate app menu");
+			return(0);
+		}
 
-	appButton=new LFSTK_buttonClass(mainwind,"",x,0,panelHeight+2,panelHeight,grav);
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
+	appButton=new LFSTK_buttonClass(mainwind,"",xpos,0,panelHeight+2,panelHeight,grav);
 	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-6);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(callback,NULL,NULL);
-	return(panelHeight+2+SPACING);
+	return(retval);
 }

@@ -104,10 +104,10 @@ class LFSTK_gadgetClass
 		XftColor			blackXftColour;
 		XftColor			whiteXftColour;
 
-		Window				window;
 		Display				*display;
 		Window				parent;
 		GC					gc;
+		Window				window;
 
 		int					screen;
 		Visual				*visual;

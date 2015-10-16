@@ -1,12 +1,32 @@
 #if 0
 
 #©keithhedger Mon 20 Jul 14:09:10 BST 2015 kdhedger68713@gmail.com
-g++ "$0" -I../LFSToolKit/src -L../LFSToolKit/app/.libs -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
+g++ "$0"  -O3 -I../LFSToolKit/src -L../LFSToolKit/app/.libs -llfstoolkit -lXm $(pkg-config --cflags --libs xt xext ice sm x11 xft) -lXm -lXaw3d -lXt -lXext -lICE -lSM -lX11||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
 exit $retval
 #endif
+
+/*
+ *
+ * ©K. D. Hedger. Fri 31 Jul 17:35:44 BST 2015 kdhedger68713@gmail.com
+
+ * This file (appMenu.cpp) is part of LFSWManager.
+
+ * LFSWManager is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * at your option) any later version.
+
+ * LFSWManager is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with LFSWManager.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -14,8 +34,7 @@ exit $retval
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
-#include "LFSTKMenuButton.h"
-#include "LFSTKLineEdit.h"
+#include <LFSTKMenuButton.h>
 
 #define BUFFERSIZE 2048
 #define MAXCATS 14
@@ -43,59 +62,50 @@ bool					makestatic=false;
 LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS];
 
-bool inWindow(void)
+void freeData(void)
 {
-	Window			root_return;
-	Window			child_return;
-	int				root_x_return;
-	int				root_y_return;
-	int				win_x_return;
-	int				win_y_return;
-	unsigned int	mask_return;
-
-	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+	delete wc;
+	for(int j=0;j<MAXCATS;j++)
 		{
-			geometryStruct *g=wc->LFSTK_getGeom();
-			if((root_x_return>g->x) && (root_x_return<(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(g->y+g->h)))
-				return(true);
+			for(int k=0;k<mainMenus[j].maxentrys;k++)
+				{
+					if(mainMenus[j].entry[k].exec!=NULL)
+						free(mainMenus[j].entry[k].exec);
+					if(mainMenus[j].entry[k].name!=NULL)
+						free(mainMenus[j].entry[k].name);
+				}
+			if(bc[j]!=NULL)
+				delete bc[j];
 		}
-	return(false);
-}
-
-bool lecb(void *p,void* ud)
-{
-	mainloop=false;
-	exit(0);
-	printf("le callback\n");
-	return(false);
 }
 
 bool bcb(void *p,void* ud)
 {
 	char			buffer[BUFFERSIZE];
-	menuEntryStruct	*menuitem;
 
-	if((long)ud<0)
+	menuItemStruct	*menuitem;
+	menuEntryStruct	*menuentry;
+	menuitem=(menuItemStruct*)ud;
+
+	if(menuitem==NULL)
 		return(true);
 
-	menuitem=(menuEntryStruct*)ud;
-
-	if(ud>0)
+	if(menuitem->userData==NULL)
+		return(true);
+	menuentry=(menuEntryStruct*)(menuitem->userData);
+	if(menuentry!=NULL)
 		{
-			if(menuitem->inTerm==false)
-				sprintf(buffer,"%s &",menuitem->exec);
+			if(menuentry->inTerm==false)
+				sprintf(buffer,"%s &",menuentry->exec);
 			else
-				sprintf(buffer,"%s %s &",terminalCommand,menuitem->exec);
+				sprintf(buffer,"%s %s &",terminalCommand,menuentry->exec);
 
 			system(buffer);
 
-			delete wc;
-			for(int j=0;j<MAXCATS;j++)
-				if(bc[j]!=NULL)
-					delete bc[j];
+			freeData();
 			exit(0);
 		}
-	return(false);
+	return(true);
 }
 
 void setCatagories(void)
@@ -211,6 +221,25 @@ void setCatagories(void)
 		}
 }
 
+bool inWindow(void)
+{
+	Window			root_return;
+	Window			child_return;
+	int				root_x_return;
+	int				root_y_return;
+	int				win_x_return;
+	int				win_y_return;
+	unsigned int	mask_return;
+
+	if(XQueryPointer(wc->display,wc->rootWindow,&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
+		{
+			geometryStruct *g=wc->LFSTK_getGeom();
+			if((root_x_return>g->x) && (root_x_return<(int)(g->x+g->w)) && (root_y_return>g->y) && (root_y_return<(int)(g->y+g->h)))
+				return(true);
+		}
+	return(false);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -231,70 +260,54 @@ int main(int argc, char **argv)
 	disp=XOpenDisplay(NULL);
 	if(disp==NULL)
 		exit(1);
-	
-	if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
-		{
-			sx=win_x_return-10;
-			sy=win_y_return-10;
-			//makestatic=false;
-		}
-//	terminalCommand=argv[1];
 
-	//wc=new LFSTK_windowClass(sx,sy,800,400,true,"rgb:00/00/00","rgb:80/80/80");
-	char *white=strdup("white");
+	if(argc==2)
+		{
+			if(XQueryPointer(disp,DefaultRootWindow(disp),&dumpwind,&dumpwind,&dumpint,&dumpint,&win_x_return,&win_y_return,&mask_return)==true)
+				{
+					sx=win_x_return-10;
+					sy=win_y_return-10;
+				}
+		}
+	else
+		{
+			sx=atoi(argv[2]);
+			sy=atoi(argv[3]);
+		}
+	terminalCommand=argv[1];
 	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
 	wc->LFSTK_setDecorated(true);
-//	wc->LFSTK_setFontColourName(NORMALCOLOUR,"white");
-//	wc->LFSTK_setFontColourName(NORMALCOLOUR,white);
-//	wc->LFSTK_setFontColourName(PRELIGHTCOLOUR,"black");
-//	wc->LFSTK_setFontColourName(ACTIVECOLOUR,"white");
-//
-//	wc->LFSTK_loadGlobalColours("/home/keithhedger/.config/LFS/lfstoolkit.rc");
-//printf(">>>descent= %i<<<\n",wc->font->ascent);
-//	wc->LFSTK_setFontString("PF Tempesta Five:size=18");
 
-	//wc->LFSTK_setFontString("Bloody:size=20");
 	sx=0;
 	sy=0;
 
 	int addto=wc->font->ascent+wc->font->descent+8;
-	//int addto=24;
 	int maxwid=0;
 
-
-//	for(int j=0;j<MAXCATS;j++)
 	while(myCats[sx]!=NULL)
 		{
 			XftFont *font=(XftFont*)wc->font->data;
 			XGlyphInfo info;
 			
-			//printf(">>>%s<<<\n",myCats[sx]);
 			XftTextExtentsUtf8(wc->display,font,(XftChar8 *)myCats[sx],strlen(myCats[sx]),&info);
 			sx++;
 			if((info.width-info.x)>maxwid)
 				maxwid=info.width;
-//			return info.width-info.x;
-
-			//if(ftTextWidth_Utf8(wc,mainMenus[j].name)>maxwid)
-			//	maxwid=ftTextWidth_Utf8(wc,mainMenus[j].name)>maxwid);
 		}
 
-	maxwid+=8;
+	maxwid+=16;
 	sx=0;
 	sy=0;
-#if 1
+
 	for(int j=0; j<MAXCATS; j++)
 		{
 			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
-					bc[menucount]->LFSTK_setCallBack(NULL,bcb,(void*)(long)(0-(j+1)));
-					bc[menucount]->LFSTK_setStyle(EMBOSSEDBUTTON);
+					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
+					bc[menucount]->LFSTK_setStyle(BEVELOUT);
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
-				//	bc[menucount]->LFSTK_setLabelAutoColour(true);
-				//	bc[menucount]->LFSTK_setColourName(NORMALCOLOUR,"pink");
-					//bc[menucount]->LFSTK_setColoursFromGlobals();
 
 					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
 					sy+=addto;
@@ -304,39 +317,20 @@ int main(int argc, char **argv)
 						{
 							pms->label=mainMenus[j].entry[k].name;
 							pms->userData=(void*)&mainMenus[j].entry[k];
+							pms->bc=NULL;
+							pms->subMenus=NULL;
+							pms->subMenuCnt=0;
+							pms->useIcon=false;
 							pms++;
 						}
 					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
 					menucount++;
 				}
 		}
-	//
-#endif
-//	XMapWindow(wc->display,wc->window);
-#if 0
-	LFSTK_buttonClass *bc1=new LFSTK_buttonClass(wc,"exit",0,sy,maxwid,addto,0);
-	bc1->LFSTK_setStyle(EMBOSSEDBUTTON);
-	bc1->LFSTK_setLabelOriention(CENTRE);
-	bc1->LFSTK_setFontString("Bloody:size=10");
-	bc1->LFSTK_setColoursFromGlobals();
-	XMapWindow(wc->display,bc1->LFSTK_getWindow());
-	sy+=addto;
-bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
-
-	LFSTK_lineEditClass *le=new LFSTK_lineEditClass(wc,"line edit",0,sy,maxwid,addto,0);
-	//le->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
-	//bc1->LFSTK_setColoursFromGlobals();
-	XMapWindow(wc->display,le->LFSTK_getWindow());
-	sy+=addto;
-#endif
-//maxwid=100;
-//sy=100;
-
 	XResizeWindow(wc->display,wc->window,maxwid,sy);
 	wc->LFSTK_resizeWindow(maxwid,sy);
 	wc->LFSTK_clearWindow();
 	XMapWindow(wc->display,wc->window);
-//	wc->LFSTK_setFontString("ani:size=10");
 
 	mainloop=true;
 	while(mainloop==true)
@@ -356,16 +350,12 @@ bc1->LFSTK_setCallBack(NULL,lecb,(void*)(long)(12345));
 						wc->LFSTK_clearWindow();
 						break;
 					case ConfigureNotify:
-					printf("configureWindow\n");
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height);
 						wc->LFSTK_clearWindow();
 						break;
 				}
 		}
 
-	delete wc;
-	for(int j=0;j<MAXCATS;j++)
-		if(bc[j]!=NULL)
-			delete bc[j];
+	freeData();
 	return 0;
 }

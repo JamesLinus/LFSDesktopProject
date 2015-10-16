@@ -47,10 +47,24 @@ void setNewData(void)
 
 int addCpuData(int x,int y,int grav)
 {
+	int	xpos=0;
+	int width=BWIDTH;
+	int	retval=width;
+
+	if(cpuButton!=NULL)
+		{
+			printError("Duplicate cpu stats");
+			return(0);
+		}
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
 	setNewData();
-	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",x,0,BWIDTH,panelHeight,grav);
+	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",xpos,0,width,panelHeight,grav);
 	cpuButton->LFSTK_setLabelOriention(LEFT);
-	return(BWIDTH+SPACING);
+	return(retval);
 }
 
 void updateCpuStats(void)

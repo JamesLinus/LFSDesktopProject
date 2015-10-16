@@ -310,6 +310,7 @@ int main(int argc, char **argv)
 							pms->bc=NULL;
 							pms->subMenus=NULL;
 							pms->subMenuCnt=0;
+							pms->useIcon=false;
 							pms++;
 						}
 					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);

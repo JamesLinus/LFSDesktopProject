@@ -24,7 +24,7 @@
 #include "globals.h"
 
 extern LFSTK_buttonClass	*appButton;
-extern int					appx,appy;
+//extern int					appx,appy;
 
 int addAppmenu(int x,int y,int grav);
 

@@ -23,6 +23,8 @@
 LFSTK_menuButtonClass	*logoutButton=NULL;
 menuItemStruct			*logoutItems;
 const char				*logoutLabels[]={"Logout","Restart","Shutdown"};
+const char				*logoutImages[]={DATADIR "/pixmaps/logout.png",DATADIR "/pixmaps/reboot.png",DATADIR "/pixmaps/shutdown.png"};
+Pixmap					pix[3][2];
 
 bool logoutCB(void *p,void* ud)
 {
@@ -48,7 +50,22 @@ bool logoutCB(void *p,void* ud)
 
 int  addLogout(int x,int y,int grav)
 {
-	logoutButton=new LFSTK_menuButtonClass(mainwind,"Logout",x,0,BWIDTH,panelHeight,grav);
+	int	xpos=0;
+	int width=panelHeight+6;
+	int	retval=width;
+
+	if(logoutButton!=NULL)
+		{
+			printError("Duplicate logout");
+			return(0);
+		}
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
+	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+6,panelHeight,grav);
+	logoutButton->LFSTK_setIconFromPath(DATADIR "/pixmaps/exit.png",panelHeight-6);
 	logoutButton->LFSTK_setCallBack(logoutCB,NULL,NULL);
 	logoutItems=new menuItemStruct[NUMLOGOUTENTRYS];
 	
@@ -59,7 +76,8 @@ int  addLogout(int x,int y,int grav)
 			logoutItems[j].bc=NULL;
 			logoutItems[j].subMenus=NULL;
 			logoutItems[j].subMenuCnt=0;
-			logoutItems[j].useIcon=false;
+			logoutItems[j].useIcon=true;
+			mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
 		}
 
 	logoutButton->LFSTK_setStyle(BEVELOUT);
@@ -67,5 +85,5 @@ int  addLogout(int x,int y,int grav)
 	logoutButton->LFSTK_setCallBack(NULL,logoutCB,NULL);
 	logoutButton->LFSTK_addMenus(logoutItems,NUMLOGOUTENTRYS);
 
-	return(BWIDTH+SPACING);
+	return(retval);
 }
