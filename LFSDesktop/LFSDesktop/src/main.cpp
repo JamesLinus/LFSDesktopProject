@@ -76,11 +76,12 @@ struct option		long_options[] =
 };
 
 bool				needsRefresh=true;
-bool				loop=true;
+bool				popupLoop=true;
 bool				retVal=false;
 int					width=320;
 int					hite=60;
 LFSTK_windowClass	*wc;
+Pixmap				pm[10][2];
 
 void printhelp(void)
 {
@@ -252,7 +253,7 @@ void pushedButton(Widget w,XtPointer data,XtPointer  garbage)
 		}
 
 	needsRefresh=true;
-	loop=false;
+	popupLoop=false;
 }
 
 bool inWindow(void)
@@ -295,83 +296,29 @@ bool pushedButtonCB(void *p,void* ud)
 		}
 
 	needsRefresh=true;
-	loop=false;
+	popupLoop=false;
 	return(false);
 }
 
-const char	*mountMenuData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
-
 void doPopUp(int x,int y)
 {
-	LFSTK_buttonClass	*bc[6]={NULL,};
-	int					sx=x-10,sy=y-10;
-	XEvent				event;
+	XEvent	event;
+	LFSTK_windowClass *wc;
 
 	if(findIcon(x,y)==false)
 		return;
 
-	wc=new LFSTK_windowClass(sx,sy,64,400,"appmenu",true);
-
-	sx=0;
-	sy=0;
-
-	int addto=wc->font->ascent+wc->font->descent+8;
-	int maxwid=0;
-	
-	while(mountMenuData[sx]!=NULL)
-		{
-			XftFont *font=(XftFont*)wc->font->data;
-			XGlyphInfo info;
-			XftTextExtentsUtf8(wc->display,font,(XftChar8 *)mountMenuData[sx],strlen(mountMenuData[sx]),&info);
-			sx++;
-			if((info.width-info.x)>maxwid)
-				maxwid=info.width;
-		}
-
-	maxwid+=8;
-	sx=0;
-	sy=0;
+	popupLoop=true;
 	if(isDisk==true)
-		{
-
-			bc[0]=new LFSTK_buttonClass(wc,mountMenuData[0],sx,sy,maxwid,24,NorthWestGravity);
-			bc[0]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONMOUNT);
-			XMapWindow(wc->display,bc[0]->LFSTK_getWindow());
-			sy+=addto;
-			bc[1]=new LFSTK_buttonClass(wc,mountMenuData[1],sx,sy,maxwid,24,NorthWestGravity);
-			bc[1]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONUNMOUNT);
-			XMapWindow(wc->display,bc[1]->LFSTK_getWindow());
-			sy+=addto;
-			bc[2]=new LFSTK_buttonClass(wc,mountMenuData[2],sx,sy,maxwid,24,NorthWestGravity);
-			bc[2]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONEJECT);
-			XMapWindow(wc->display,bc[2]->LFSTK_getWindow());
-			sy+=addto;
-		}
+		wc=diskWindow;
 	else
-		{
-			bc[3]=new LFSTK_buttonClass(wc,mountMenuData[3],sx,sy,maxwid,24,NorthWestGravity);
-			bc[3]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONOPEN);
-			XMapWindow(wc->display,bc[3]->LFSTK_getWindow());
-			sy+=addto;
-		}
+		wc=fileWindow;
 
-	bc[4]=new LFSTK_buttonClass(wc,mountMenuData[4],sx,sy,maxwid,24,NorthWestGravity);
-	bc[4]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONADDICON);
-	XMapWindow(wc->display,bc[4]->LFSTK_getWindow());
-	sy+=addto;
-
-	bc[5]=new LFSTK_buttonClass(wc,mountMenuData[5],sx,sy,maxwid,24,NorthWestGravity);
-	bc[5]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)BUTTONREMOVEICON);
-	XMapWindow(wc->display,bc[5]->LFSTK_getWindow());
-	sy+=addto;
-
-	XResizeWindow(wc->display,wc->window,maxwid,sy);
-	wc->LFSTK_resizeWindow(maxwid,sy);
+	wc->LFSTK_moveWindow(x-10,y-10,true);
+	wc->LFSTK_showWindow(true);
 	wc->LFSTK_clearWindow();
-	XMapWindow(wc->display,wc->window);
 
-	loop=true;
-	while(loop==true)
+	while(popupLoop==true)
 		{
 			listener *l=wc->LFSTK_getListener(event.xany.window);
 
@@ -382,7 +329,8 @@ void doPopUp(int x,int y)
 			switch(event.type)
 				{
 					case LeaveNotify:
-						loop=inWindow();
+						if(event.xany.window==wc->window)
+							popupLoop=false;
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
@@ -393,11 +341,7 @@ void doPopUp(int x,int y)
 						break;
 				}
 		}
-
-	for(int j=0;j<6;j++)
-		if(bc[j]!=NULL)
-			delete bc[j];
-	delete wc;
+	wc->LFSTK_hideWindow();
 }
 
 void setFontEtc(void)
@@ -448,36 +392,44 @@ void setFontEtc(void)
 
 int main(int argc,char **argv)
 {
-	int				c;
-	XEvent			ev;
-	char			*command;
-	FILE			*fw;
-	char			*path;
-	char			buffer[MAXBUFFER];
-	pid_t			pid=getpid();
-	bool			done=true;
-	Time			time=0;
-	bool			firstClick=false;
-	bool			foundIcon=false;
-	pollfd			pollstruct;
-	int				fd;
-	pollfd			polldisks;
-	int				fhfordisks;
-	long			numRead=0;
-	int				oldx=-1,oldy=-1;
-	bool			buttonDown=false;
-	int				oldboxx=-1,oldboxy=-1;
-	bool			dragging=false;
-	FILE			*fp;
-	Window			root_return;
-	Window			child_return;
-	int				root_x_return;
-	int				root_y_return;
-	int				win_x_return;
-	int				win_y_return;
-	unsigned int	mask_return;
-	bool			dotidy=false;
-	bool			doShowAppmenu=false;
+	int					c;
+	XEvent				ev;
+	char				*command;
+	FILE				*fw;
+	char				*path;
+	char				buffer[MAXBUFFER];
+	pid_t				pid=getpid();
+	bool				done=true;
+	Time				time=0;
+	bool				firstClick=false;
+	bool				foundIcon=false;
+	pollfd				pollstruct;
+	int					fd;
+	pollfd				polldisks;
+	int					fhfordisks;
+	long				numRead=0;
+	int					oldx=-1,oldy=-1;
+	bool				buttonDown=false;
+	int					oldboxx=-1,oldboxy=-1;
+	bool				dragging=false;
+	FILE				*fp;
+	Window				root_return;
+	Window				child_return;
+	int					root_x_return;
+	int					root_y_return;
+	int					win_x_return;
+	int					win_y_return;
+	unsigned int		mask_return;
+	bool				dotidy=false;
+	bool				doShowAppmenu=false;
+	const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
+	const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
+	char				*diskIconData[BUTTONREMOVEICON];
+	LFSTK_buttonClass	*diskButtons[BUTTONREMOVEICON];
+	LFSTK_buttonClass	*fileButtons[3];
+	int					buttoncnt=0,sy=0;
+	int					addto=0;
+	int					maxwid=0;
 
 	asprintf(&path,"%s/.config/LFS/pidfile",getenv("HOME"));
 	fw=fopen(path,"r");
@@ -640,6 +592,71 @@ int main(int argc,char **argv)
 	cm=DefaultColormap(display,screen);
 
 	createDesktopWindow();
+
+	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
+		diskIconData[j-1]=pathToIcon((char*)diskThemeIconData[j-1],"actions");
+
+//disks
+	diskWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
+	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
+
+	while(diskLabelData[buttoncnt]!=NULL)
+		{
+			XftFont *font=(XftFont*)diskWindow->font->data;
+			XGlyphInfo info;
+			XftTextExtentsUtf8(diskWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
+			buttoncnt++;
+			if((info.width-info.x)>maxwid)
+				maxwid=info.width;
+		}
+	maxwid+=24+4;
+
+	buttoncnt=0;
+	while(diskLabelData[buttoncnt]!=NULL)
+		{
+			if(buttoncnt!=BUTTONOPEN-1)
+				{
+					diskButtons[buttoncnt]=new LFSTK_buttonClass(diskWindow,diskLabelData[buttoncnt],0,sy,maxwid,24,NorthWestGravity);
+					diskButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
+					diskButtons[buttoncnt]->LFSTK_setIconFromPath(diskIconData[buttoncnt],24-4);
+					diskButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+					sy+=addto;
+				}
+			buttoncnt++;
+		}
+	diskWindow->LFSTK_resizeWindow(maxwid,sy,true);
+	diskWindow->LFSTK_showWindow(true);
+	diskWindow->LFSTK_hideWindow();
+
+//files
+	fileWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
+	addto=fileWindow->font->ascent+fileWindow->font->descent+8;
+	buttoncnt=3;
+	sy=0;
+	while(diskLabelData[buttoncnt]!=NULL)
+		{
+			XftFont *font=(XftFont*)fileWindow->font->data;
+			XGlyphInfo info;
+			XftTextExtentsUtf8(fileWindow->display,font,(XftChar8 *)diskLabelData[buttoncnt],strlen(diskLabelData[buttoncnt]),&info);
+			buttoncnt++;
+			if((info.width-info.x)>maxwid)
+				maxwid=info.width;
+		}
+	maxwid+=24+4;
+
+	buttoncnt=3;
+	while(diskLabelData[buttoncnt]!=NULL)
+		{
+			fileButtons[buttoncnt]=new LFSTK_buttonClass(fileWindow,diskLabelData[buttoncnt],0,sy,maxwid,24,NorthWestGravity);
+			fileButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
+			fileButtons[buttoncnt]->LFSTK_setIconFromPath(diskIconData[buttoncnt],24-4);
+			fileButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+			buttoncnt++;
+			sy+=addto;
+		}
+	fileWindow->LFSTK_resizeWindow(maxwid,sy,true);
+	fileWindow->LFSTK_showWindow(true);
+	fileWindow->LFSTK_hideWindow();
 
 	sfc=cairo_xlib_surface_create(display,drawOnThis,visual,displayWidth,displayHeight);
 	cairo_xlib_surface_set_size(sfc,displayWidth,displayHeight);

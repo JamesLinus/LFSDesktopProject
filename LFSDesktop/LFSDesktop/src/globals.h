@@ -29,10 +29,13 @@
 #define MAXBUFFER 512
 
 #include <LFSTKGlobals.h>
+#include <LFSTKWindow.h>
+#include <LFSTKButton.h>
+#include "LFSTKLineEdit.h"
 
 enum {CACHEFOLDER,DISKFOLDER};
 enum {HOMEDATA=0,ROOTDATA};
-enum {BUTTONMOUNT=1,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREMOVEICON};
+enum diskButtonID {BUTTONMOUNT=1,BUTTONUNMOUNT,BUTTONEJECT,BUTTONOPEN,BUTTONADDICON,BUTTONREMOVEICON};
 
 struct deskIcons
 {
@@ -66,6 +69,9 @@ extern const char	*errFunc;
 
 extern bool shapeset;
 
+//dialogs
+extern LFSTK_windowClass	*diskWindow;
+extern LFSTK_windowClass	*fileWindow;
 
 
 //save/load file
@@ -89,5 +95,6 @@ extern int		xCnt;
 extern int		yCnt;
 
 extern char		*rootDev;
+extern const char	*possibleError;
 
 #endif

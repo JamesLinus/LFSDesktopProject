@@ -65,7 +65,7 @@ char* getMimeType(char *filepath)
 	return(returnstr);
 }
 
-void findIcon(char *theme,const char *name,const char *catagory)
+void findThemedIcon(char *theme,const char *name,const char *catagory)
 {
 	FILE	*fp;
 
@@ -88,7 +88,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"text")!=NULL)
 		{
 			defaultname="text-plain";
-			findIcon(theme,defaultname,catagory);
+			findThemedIcon(theme,defaultname,catagory);
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -98,7 +98,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"shellscript")!=NULL)
 		{
 			defaultname="text-x-script";
-			findIcon(theme,defaultname,catagory);
+			findThemedIcon(theme,defaultname,catagory);
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -108,7 +108,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"empty")!=NULL)
 		{
 			defaultname="empty";
-			findIcon(theme,defaultname,"mimetype");
+			findThemedIcon(theme,defaultname,"mimetype");
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -118,7 +118,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"audio")!=NULL)
 		{
 			defaultname="audio-x-generic";
-			findIcon(theme,defaultname,catagory);
+			findThemedIcon(theme,defaultname,catagory);
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -128,7 +128,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"image")!=NULL)
 		{
 			defaultname="image-x-generic";
-			findIcon(theme,defaultname,catagory);
+			findThemedIcon(theme,defaultname,catagory);
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -137,7 +137,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"harddisk")!=NULL)
 		{
 			defaultname="harddisk";
-			findIcon(theme,defaultname,"devices");
+			findThemedIcon(theme,defaultname,"devices");
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -148,7 +148,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"harddisk-usb")!=NULL)
 		{
 			defaultname="media-usb";
-			findIcon(theme,defaultname,"devices");
+			findThemedIcon(theme,defaultname,"devices");
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -158,7 +158,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"flash")!=NULL)
 		{
 			defaultname="media-flash";
-			findIcon(theme,defaultname,"devices");
+			findThemedIcon(theme,defaultname,"devices");
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else
@@ -168,7 +168,7 @@ char* defaultIcon(char *theme,char *name,const char *catagory)
 	if(strstr(name,"zip")!=NULL)
 		{
 			defaultname="x-archive";
-			findIcon(theme,defaultname,"mimetypes");
+			findThemedIcon(theme,defaultname,"mimetypes");
 			if(strlen(findbuffer)>0)
 				return(strdup(findbuffer));
 			else

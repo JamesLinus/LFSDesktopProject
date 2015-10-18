@@ -1,3 +1,9 @@
+0.0.13
+Made popbutton icons themed.
+Added icons to popup buttons.
+No longer creates/deletes popup windows every time.
+Construct popups at start up.
+
 0.0.12
 Updated man page.
 Added '--back-alpha' or '-A' option to command line.

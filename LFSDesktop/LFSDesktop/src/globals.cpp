@@ -48,6 +48,10 @@ bool		debugDeskFlag=false;
 int			xCnt;
 int			yCnt;
 
+//dialogs
+LFSTK_windowClass	*diskWindow=NULL;
+LFSTK_windowClass	*fileWindow=NULL;
+
 args		globalFileData[]=
 {
 	{"label",TYPESTRING,&fileDiskLabel},
@@ -71,3 +75,4 @@ int			deskIconsMaxCnt=30;
 deskIcons	*deskIconsArray;
 
 char		*rootDev=NULL;
+const char	*possibleError="Unknown";
