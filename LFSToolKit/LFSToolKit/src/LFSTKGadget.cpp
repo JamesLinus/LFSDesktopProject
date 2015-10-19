@@ -182,9 +182,9 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->visual=this->wc->visual;
 	this->rootWindow=this->wc->rootWindow;
 	this->cm=this->wc->cm;
+	this->gc=this->wc->gc;
 
 	this->label=strdup(label);
-	this->gc=this->wc->gc;
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
@@ -599,7 +599,7 @@ void LFSTK_gadgetClass::LFSTK_setIcon(Pixmap image,Pixmap mask)
 	this->icon[1]=mask;
 	this->gotIcon=true;
 	this->labelOffset=this->iconSize+4;
-	this->freeOnDelete=true;
+	this->freeOnDelete=false;
 }
 
 /**
@@ -610,19 +610,25 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 {
 	Imlib_Image	image=NULL;
 
-	image=imlib_load_image(file);
+	image=imlib_load_image_immediately_without_cache(file);
 	if(image!=NULL)
 		{
 			this->iconSize=size;
 			imlib_context_set_display(this->wc->display);
 			imlib_context_set_visual(this->wc->visual);
 			imlib_context_set_colormap(this->wc->cm);
-			imlib_context_set_drawable(this->window);
+			imlib_context_set_drawable(this->wc->window);
 			imlib_context_set_image(image);
 			imlib_render_pixmaps_for_whole_image_at_size(&this->icon[0],&this->icon[1],this->iconSize,this->iconSize);
 			imlib_free_image();
 			this->gotIcon=true;
-			this->labelOffset=this->iconSize/2;
+			//this->labelOffset=this->iconSize/2;
+			this->labelOffset=this->iconSize+4;
 			this->freeOnDelete=true;
+		}
+	else
+		{
+			this->gotIcon=false;
+			this->freeOnDelete=false;
 		}
 }

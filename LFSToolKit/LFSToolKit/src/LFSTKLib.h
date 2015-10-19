@@ -24,6 +24,7 @@
 #include "LFSTKGlobals.h"
 
 #define	MAXVARS 100
+#define MAXBUFFER 512
 enum	{TYPEWINDOW=0,TYPEBUTTON,TYPEMENUITEM,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT};
 
 /**
@@ -52,6 +53,8 @@ class LFSTK_lib
 		static bool LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
 		void LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
+		char* LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
+		char* LFSTK_oneLiner(const char* fmt,...);
 
 	private:
 		args	*lfsToolKitGlobals;

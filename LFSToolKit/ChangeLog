@@ -1,4 +1,6 @@
 0.0.9
+Added executre one line command to lib class.
+Added find themed icon to lib class.
 Stopped menu going off screen to top/bottom.
 Stopped menu going off screen to left/right.
 Speed and resource improvements to menu button class.

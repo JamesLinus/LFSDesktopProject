@@ -532,3 +532,105 @@ void LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colorma
 			imlib_free_image();
 		}
 }
+
+/**
+* Get path to themed icon.
+* \param theme Theme name ( case sensitive ).
+* \param icon Icon name ( case insensitive ).
+* \param catagory Catagory or "" NOT NULL ( case insensitive ).
+* \return char* Allocated string caller should free.
+* \note returned string is set to NULL on error.
+*/
+
+char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
+{
+	char	*command;
+	char	*retstr=NULL;
+
+	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,icon,catagory);
+	retstr=this->LFSTK_oneLiner("%s",command);
+
+	if((retstr==NULL) || (strlen(retstr)==0))
+		{
+			free(command);
+			asprintf(&command,"find \"/usr/share/pixmaps\"  \"/usr/share/icons/hicolor\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",icon,catagory);
+			retstr=this->LFSTK_oneLiner("%s",command);
+		}
+
+	if((retstr==NULL) || (strlen(retstr)==0))
+		{
+			if(retstr!=NULL)
+				free(retstr);
+		//TODO
+		//	retstr=defaultIcon(iconTheme,name,catagory);
+			retstr=NULL;
+		}
+	free(command);
+	return(retstr);
+}
+
+//synchronous only
+/**
+* Execute and return stout from string.
+* \return char* Allocated string caller should free.
+*/
+char* LFSTK_lib::LFSTK_oneLiner(const char* fmt,...)
+{
+	FILE	*fp;
+	va_list	ap;
+	char	*buffer,*subbuffer;
+
+	buffer=(char*)alloca(MAXBUFFER);
+	subbuffer=(char*)alloca(MAXBUFFER);
+
+	buffer[0]=0;
+	subbuffer[0]=0;
+	va_start(ap, fmt);
+	while (*fmt)
+		{
+			subbuffer[0]=0;
+			if(fmt[0]=='%')
+				{
+					fmt++;
+					switch(*fmt)
+						{
+							case 's':
+								sprintf(subbuffer,"%s",va_arg(ap,char*));
+								break;
+							case 'i':
+								sprintf(subbuffer,"%i",va_arg(ap,int));
+								break;
+							default:
+								sprintf(subbuffer,"%c",fmt[0]);
+								break;
+						}
+				}
+			else
+				sprintf(subbuffer,"%c",fmt[0]);
+			strcat(buffer,subbuffer);
+			fmt++;
+		}
+	va_end(ap);
+
+//debugfunc("%s",buffer);
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			buffer[0]=0;
+			fgets(buffer,MAXBUFFER,fp);
+			if(strlen(buffer)>0)
+				{
+					if(buffer[strlen(buffer)-1] =='\n')
+						buffer[strlen(buffer)-1]=0;
+				}
+			pclose(fp);
+			return(strdup(buffer));
+		}
+	return(NULL);
+}
+
+
+
+
+
+

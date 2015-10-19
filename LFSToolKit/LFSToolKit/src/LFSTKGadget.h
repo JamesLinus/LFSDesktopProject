@@ -79,6 +79,15 @@ class LFSTK_gadgetClass
 
 		LFSTK_windowClass	*wc;
 
+		Display				*display;
+		Window				parent;
+		GC					gc;
+		Window				window;
+
+		int					screen;
+		Visual				*visual;
+		Window				rootWindow;		
+		Colormap			cm;
 	private:
 		void initGadget(void);
 
@@ -104,15 +113,6 @@ class LFSTK_gadgetClass
 		XftColor			blackXftColour;
 		XftColor			whiteXftColour;
 
-		Display				*display;
-		Window				parent;
-		GC					gc;
-		Window				window;
-
-		int					screen;
-		Visual				*visual;
-		Window				rootWindow;		
-		Colormap			cm;
 
 		buttonCB			callback;
 
@@ -126,10 +126,10 @@ class LFSTK_gadgetClass
 		int					labelOrientation;
 		bevelType			style;
 		int					labelOffset;
-		Pixmap				icon[2];
-		bool				gotIcon;
 		unsigned int		iconSize;
+		bool				gotIcon;
 		bool				freeOnDelete;
+		Pixmap				icon[2];
 };
 
 #endif
