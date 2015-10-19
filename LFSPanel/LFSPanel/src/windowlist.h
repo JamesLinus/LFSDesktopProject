@@ -28,6 +28,7 @@
 
 extern LFSTK_menuButtonClass	*windowMenu;
 extern const char				*possibleError;
+extern char						*windowListIcon;
 
 int addWindowMenu(int x,int y,int grav);
 void updateWindowMenu(void);

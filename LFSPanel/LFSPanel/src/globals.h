@@ -53,6 +53,7 @@ extern char					*shutdownCommand;
 extern char					*rightGadgets;
 extern char					*leftGadgets;
 extern int					panelXPos;
+extern char					*desktopTheme;
 
 extern int					refreshRate;
 

@@ -1,4 +1,5 @@
 0.0.4
+Icons use icons from desktop theme if possible.
 Refuse to run an empty panel.
 Updated manpage.
 Added spacer gadget 'S' ( multiple spacers ARE allowed ).

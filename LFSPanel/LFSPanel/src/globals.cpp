@@ -32,6 +32,7 @@ char				*shutdownCommand=NULL;
 char				*rightGadgets=NULL;
 char				*leftGadgets=NULL;
 int					panelXPos=PANELCENTRE;
+char				*desktopTheme=NULL;
 
 int					refreshRate=1;
 

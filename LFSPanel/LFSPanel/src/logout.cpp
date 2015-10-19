@@ -24,7 +24,11 @@ LFSTK_menuButtonClass	*logoutButton=NULL;
 menuItemStruct			*logoutItems;
 const char				*logoutLabels[]={"Logout","Restart","Shutdown"};
 const char				*logoutImages[]={DATADIR "/pixmaps/logout.png",DATADIR "/pixmaps/reboot.png",DATADIR "/pixmaps/shutdown.png"};
+const char				*logoutIconNames[]={"system-log-out","system-restart","system-shutdown","application-exit"};
+
 Pixmap					pix[3][2];
+char					*logoutIcons[NUMLOGOUTENTRYS+1];
+char					*logoutListIcon=NULL;
 
 bool logoutCB(void *p,void* ud)
 {
@@ -53,6 +57,7 @@ int  addLogout(int x,int y,int grav)
 	int	xpos=0;
 	int width=panelHeight+6;
 	int	retval=width;
+	char	*themedicon=NULL;
 
 	if(logoutButton!=NULL)
 		{
@@ -65,7 +70,12 @@ int  addLogout(int x,int y,int grav)
 		xpos=x-width;
 
 	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+6,panelHeight,grav);
-	logoutButton->LFSTK_setIconFromPath(DATADIR "/pixmaps/exit.png",panelHeight-6);
+	logoutListIcon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
+	if(logoutListIcon!=NULL)
+		logoutButton->LFSTK_setIconFromPath(logoutListIcon,panelHeight-6);
+	else
+		logoutButton->LFSTK_setIconFromPath(DATADIR "/pixmaps/exit.png",panelHeight-6);
+
 	logoutButton->LFSTK_setCallBack(logoutCB,NULL,NULL);
 	logoutItems=new menuItemStruct[NUMLOGOUTENTRYS];
 	
@@ -77,7 +87,15 @@ int  addLogout(int x,int y,int grav)
 			logoutItems[j].subMenus=NULL;
 			logoutItems[j].subMenuCnt=0;
 			logoutItems[j].useIcon=true;
-			mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
+
+			themedicon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[j],"");
+			if(themedicon!=NULL)
+				{
+					mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,themedicon,&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
+					free(themedicon);
+				}
+			else
+				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
 		}
 
 	logoutButton->LFSTK_setStyle(BEVELOUT);

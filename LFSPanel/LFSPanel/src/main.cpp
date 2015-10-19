@@ -176,6 +176,7 @@ int main(int argc, char **argv)
 		asprintf(&env,"%s/.config/LFS/%s.rc",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 
+	desktopTheme=mainwind->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
 	mons=mainwind->LFSTK_getMonitorData(onMonitor);
 
 	rightOffset=0;
@@ -251,7 +252,10 @@ int main(int argc, char **argv)
 	if(appButton!=NULL)
 		delete appButton;
 	if(logoutButton!=NULL)
-		delete logoutButton;
+		{
+			free(logoutListIcon);
+			delete logoutButton;
+		}
 	if(clockButton!=NULL)
 		delete clockButton;
 	if(diskButton!=NULL)
@@ -259,7 +263,13 @@ int main(int argc, char **argv)
 	if(cpuButton!=NULL)
 		delete cpuButton;
 	if(windowMenu!=NULL)
-		delete windowMenu;
+		{
+			delete windowMenu;
+			free(windowListIcon);
+		}
+
+	if(desktopTheme!=NULL)
+		free(desktopTheme);
 
 	delete mainwind;
 	return 0;
