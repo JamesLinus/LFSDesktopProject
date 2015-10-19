@@ -593,12 +593,12 @@ int main(int argc,char **argv)
 
 	createDesktopWindow();
 
-	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
-		diskIconData[j-1]=pathToIcon((char*)diskThemeIconData[j-1],"actions");
-
 //disks
 	diskWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
 	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
+
+	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
+		diskIconData[j-1]=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j-1],"");
 
 	while(diskLabelData[buttoncnt]!=NULL)
 		{
@@ -618,8 +618,16 @@ int main(int argc,char **argv)
 				{
 					diskButtons[buttoncnt]=new LFSTK_buttonClass(diskWindow,diskLabelData[buttoncnt],0,sy,maxwid,24,NorthWestGravity);
 					diskButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
-					diskButtons[buttoncnt]->LFSTK_setIconFromPath(diskIconData[buttoncnt],24-4);
-					diskButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+					if(diskIconData[buttoncnt]==NULL)
+						{
+							diskButtons[buttoncnt]->LFSTK_setLabelOriention(CENTRE);
+						}
+					else
+						{
+							diskButtons[buttoncnt]->LFSTK_setIconFromPath(diskIconData[buttoncnt],24-4);
+							diskButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+						}
+						
 					sy+=addto;
 				}
 			buttoncnt++;
@@ -649,8 +657,15 @@ int main(int argc,char **argv)
 		{
 			fileButtons[buttoncnt]=new LFSTK_buttonClass(fileWindow,diskLabelData[buttoncnt],0,sy,maxwid,24,NorthWestGravity);
 			fileButtons[buttoncnt]->LFSTK_setCallBack(NULL,pushedButtonCB,(void*)(long)(buttoncnt+1));
-			fileButtons[buttoncnt]->LFSTK_setIconFromPath(diskIconData[buttoncnt],24-4);
-			fileButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+			if(diskIconData[buttoncnt]==NULL)
+				{
+					fileButtons[buttoncnt]->LFSTK_setLabelOriention(CENTRE);
+				}
+			else
+				{
+					fileButtons[buttoncnt]->LFSTK_setIconFromPath(diskIconData[buttoncnt],24-4);
+					fileButtons[buttoncnt]->LFSTK_setLabelOriention(LEFT);
+				}
 			buttoncnt++;
 			sy+=addto;
 		}

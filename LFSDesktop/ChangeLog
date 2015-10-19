@@ -1,5 +1,7 @@
 0.0.13
-Made popbutton icons themed.
+Label is centred in popups if no icon available.
+Get themed icons for popups from lib class.
+Made popup button icons themed.
 Added icons to popup buttons.
 No longer creates/deletes popup windows every time.
 Construct popups at start up.
