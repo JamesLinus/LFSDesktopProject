@@ -29,7 +29,6 @@
 #include "appmenu.h"
 
 LFSTK_buttonClass	*appButton=NULL;
-//int					appx,appy;
 
 bool callback(void *p,void* ud)
 {

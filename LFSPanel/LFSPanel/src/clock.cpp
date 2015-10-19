@@ -23,9 +23,6 @@
 #include <ctime>
 
 #include "clock.h"
-#include "disks.h"
-#include "cpu.h"
-#include "windowlist.h"
 
 LFSTK_labelClass	*clockButton=NULL;
 

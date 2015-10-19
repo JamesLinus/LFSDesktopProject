@@ -56,7 +56,6 @@ void addLeftGadgets(void)
 
 	for(int j=0;j<strlen(leftGadgets);j++)
 		{
-		//printf(">>>left offset=%i j=%i<<<\n",offset,j);
 			switch(leftGadgets[j])
 				{
 					case 'A':
@@ -90,7 +89,6 @@ void addRightGadgets(void)
 	int	offset=rightOffset;
 	for(int j=strlen(rightGadgets)-1;j>=0;j--)
 		{
-		//printf("---rite offset=%i j=%i len=%i str=%s---\n",offset,j,strlen(rightGadgets),rightGadgets);
 			switch(rightGadgets[j])
 				{
 					case 'A':
@@ -164,8 +162,8 @@ int main(int argc, char **argv)
 	logoutCommand=strdup("xterm");
 	restartCommand=strdup("xterm");
 	shutdownCommand=strdup("xterm");
-	leftGadgets=strdup("");
-	rightGadgets=strdup("");
+	leftGadgets=strdup("A");
+	rightGadgets=strdup("L");
 	panelXPos=PANELCENTRE;
 
 	XSetErrorHandler(errHandler);
@@ -185,7 +183,12 @@ int main(int argc, char **argv)
 
 	addLeftGadgets();
 	addRightGadgets();
-	//printf(">>>lo=%i ro=%i<<<\n",leftOffset,rightOffset);
+
+	if((leftOffset==0) && (rightOffset==0))
+		{
+			fprintf(stderr,"Not using empty panel ...\n");
+			exit(0);
+		}
 
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);

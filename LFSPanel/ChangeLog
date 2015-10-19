@@ -1,4 +1,5 @@
 0.0.4
+Refuse to run an empty panel.
 Updated manpage.
 Added spacer gadget 'S' ( multiple spacers ARE allowed ).
 Duplicate gadgets disallowed.

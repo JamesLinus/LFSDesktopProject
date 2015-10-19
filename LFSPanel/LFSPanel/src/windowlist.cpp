@@ -19,7 +19,6 @@
  */
 
 #include "windowlist.h"
-#include "clock.h"
 
 LFSTK_menuButtonClass	*windowMenu=NULL;
 menuItemStruct			windowList[MAXWINDOWSINLIST];
@@ -123,7 +122,6 @@ void updateWindowMenu(void)
 				}
 			pclose(fp);
 			windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
-			//windowMenu->LFSTK_addMenus(windowList,windowListCnt);
 		}
 	alarm(refreshRate);
 }
@@ -131,7 +129,7 @@ void updateWindowMenu(void)
 int addWindowMenu(int x,int y,int grav)
 {
 	int	xpos=0;
-	int width=panelHeight+2;
+	int width=panelHeight+6;
 	int	retval=width;
 
 	if(grav==NorthWestGravity)
@@ -139,7 +137,6 @@ int addWindowMenu(int x,int y,int grav)
 	else
 		xpos=x-width;
 
-//printf("xpos=%i\n",xpos);
 	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
 	windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
