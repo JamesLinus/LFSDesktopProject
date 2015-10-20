@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ftw.h>
+#include <fnmatch.h>
 
 #include "LFSTKGadget.h"
 
@@ -32,6 +34,8 @@ const char *defaultFontColourStrings[]={"white","black","white","grey80"};
 const char *defaultFontString="sans-serif:size=10";
 const char *defaultThemePath="/usr/share/themes/Crux/xfwm4";
 const char *defaultFrameStrings[]={"black","#00ffff","black","white","white"};
+char		filterBuffer[256];
+char		retBuffer[512];
 
 LFSTK_lib::~LFSTK_lib()
 {
@@ -533,40 +537,57 @@ void LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colorma
 		}
 }
 
+
+int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
+{
+	if(typeflag!=FTW_F)
+		return(0);
+
+	if (fnmatch(filterBuffer,fpath,FNM_CASEFOLD)==0)
+		{
+			sprintf(retBuffer,"%s",fpath);
+			return 1;
+		}
+	return 0;
+}
+
 /**
 * Get path to themed icon.
 * \param theme Theme name ( case sensitive ).
 * \param icon Icon name ( case insensitive ).
 * \param catagory Catagory or "" NOT NULL ( case insensitive ).
-* \return char* Allocated string caller should free.
+* \return char* Static string caller should NOT free.
 * \note returned string is set to NULL on error.
 */
-
-char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
+const char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
 {
-	char	*command;
-	char	*retstr=NULL;
 
-	asprintf(&command,"find \"/usr/share/icons/%s\" \"%s/.icons/%s\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",theme,getenv("HOME"),theme,icon,catagory);
-	retstr=this->LFSTK_oneLiner("%s",command);
+	char	dirbuffer[1024];
 
-	if((retstr==NULL) || (strlen(retstr)==0))
-		{
-			free(command);
-			asprintf(&command,"find \"/usr/share/pixmaps\"  \"/usr/share/icons/hicolor\" -iname \"*%s.png\"  2>/dev/null|grep -i \"%s\"|sort -nr -t \"x\"  -k 2.1|head -n1",icon,catagory);
-			retstr=this->LFSTK_oneLiner("%s",command);
-		}
+	sprintf(dirbuffer,"/usr/share/icons/%s",theme);
+	sprintf(filterBuffer,"*%s*%s.png",catagory,icon);
+	retBuffer[0]=0;
+	ftw(dirbuffer,this->callback,16);
+	if(retBuffer[0]!=0)
+		return(retBuffer);
 
-	if((retstr==NULL) || (strlen(retstr)==0))
-		{
-			if(retstr!=NULL)
-				free(retstr);
-		//TODO
-		//	retstr=defaultIcon(iconTheme,name,catagory);
-			retstr=NULL;
-		}
-	free(command);
-	return(retstr);
+	sprintf(dirbuffer,"%s/.icons/%s",getenv("HOME"),theme);
+	ftw(dirbuffer,this->callback,16);
+	if(retBuffer[0]!=0)
+		return(retBuffer);
+
+	sprintf(dirbuffer,"/usr/share/icons/hicolor");
+	ftw(dirbuffer,this->callback,16);
+	if(retBuffer[0]!=0)
+		return(retBuffer);
+
+	sprintf(dirbuffer,"/usr/share/pixmaps");
+	sprintf(filterBuffer,"*%s.png",icon);
+	ftw(dirbuffer,this->callback,16);
+	if(retBuffer[0]!=0)
+		return(retBuffer);
+
+	return(NULL);
 }
 
 //synchronous only

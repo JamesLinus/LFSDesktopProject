@@ -1,4 +1,5 @@
 0.0.9
+Massive speed up looking up themed icon in libclass.
 Added execute one line command to lib class.
 Added find themed icon to lib class.
 Stopped menu going off screen to top/bottom.

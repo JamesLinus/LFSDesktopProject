@@ -598,7 +598,7 @@ int main(int argc,char **argv)
 	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
 
 	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
-		diskIconData[j-1]=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j-1],"");
+		diskIconData[j-1]=strdup(diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j-1],""));
 
 	while(diskLabelData[buttoncnt]!=NULL)
 		{

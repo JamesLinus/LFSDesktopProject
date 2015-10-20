@@ -252,10 +252,7 @@ int main(int argc, char **argv)
 	if(appButton!=NULL)
 		delete appButton;
 	if(logoutButton!=NULL)
-		{
-			free(logoutListIcon);
-			delete logoutButton;
-		}
+		delete logoutButton;
 	if(clockButton!=NULL)
 		delete clockButton;
 	if(diskButton!=NULL)
@@ -263,10 +260,7 @@ int main(int argc, char **argv)
 	if(cpuButton!=NULL)
 		delete cpuButton;
 	if(windowMenu!=NULL)
-		{
-			delete windowMenu;
-			free(windowListIcon);
-		}
+		delete windowMenu;
 
 	if(desktopTheme!=NULL)
 		free(desktopTheme);

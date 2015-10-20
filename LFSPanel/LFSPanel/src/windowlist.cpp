@@ -26,7 +26,6 @@ char					windowBuffer[512];
 int						windowListCnt=0;
 int						updateWindowCnt=0;
 const char				*possibleError="Unknown";
-char					*windowListIcon=NULL;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -129,9 +128,10 @@ void updateWindowMenu(void)
 
 int addWindowMenu(int x,int y,int grav)
 {
-	int	xpos=0;
-	int width=panelHeight+6;
-	int	retval=width;
+	int			xpos=0;
+	int			width=panelHeight+6;
+	int			retval=width;
+	const char	*icon=NULL;
 
 	if(grav==NorthWestGravity)
 		xpos=x;
@@ -139,9 +139,9 @@ int addWindowMenu(int x,int y,int grav)
 		xpos=x-width;
 
 	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
-	windowListIcon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
-	if(windowListIcon!=NULL)
-		windowMenu->LFSTK_setIconFromPath(windowListIcon,panelHeight-6);
+	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
+	if(icon!=NULL)
+		windowMenu->LFSTK_setIconFromPath(icon,panelHeight-6);
 	else
 		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);

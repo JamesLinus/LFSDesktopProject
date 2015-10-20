@@ -28,7 +28,6 @@ const char				*logoutIconNames[]={"system-log-out","system-restart","system-shut
 
 Pixmap					pix[3][2];
 char					*logoutIcons[NUMLOGOUTENTRYS+1];
-char					*logoutListIcon=NULL;
 
 bool logoutCB(void *p,void* ud)
 {
@@ -57,7 +56,8 @@ int  addLogout(int x,int y,int grav)
 	int	xpos=0;
 	int width=panelHeight+6;
 	int	retval=width;
-	char	*themedicon=NULL;
+	const char	*themedicon=NULL;
+	const char	*icon=NULL;
 
 	if(logoutButton!=NULL)
 		{
@@ -70,9 +70,9 @@ int  addLogout(int x,int y,int grav)
 		xpos=x-width;
 
 	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+6,panelHeight,grav);
-	logoutListIcon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
-	if(logoutListIcon!=NULL)
-		logoutButton->LFSTK_setIconFromPath(logoutListIcon,panelHeight-6);
+	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
+	if(icon!=NULL)
+		logoutButton->LFSTK_setIconFromPath(icon,panelHeight-6);
 	else
 		logoutButton->LFSTK_setIconFromPath(DATADIR "/pixmaps/exit.png",panelHeight-6);
 
@@ -90,10 +90,7 @@ int  addLogout(int x,int y,int grav)
 
 			themedicon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[j],"");
 			if(themedicon!=NULL)
-				{
-					mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,themedicon,&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
-					free(themedicon);
-				}
+				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,themedicon,&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
 			else
 				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
 		}

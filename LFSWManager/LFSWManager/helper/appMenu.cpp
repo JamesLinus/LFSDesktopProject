@@ -35,6 +35,9 @@ struct menuEntryStruct
 	char				*name;
 	char				*exec;
 	bool				inTerm;
+	Pixmap				pm[2];
+	bool				gotIcon;
+	
 };
 
 struct appMenuStruct
@@ -45,16 +48,19 @@ struct appMenuStruct
 };
 
 const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
+const char				*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-multimedia","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
+
 const char				*terminalCommand="xterm -e ";
 appMenuStruct			mainMenus[MAXCATS];
 bool					mainloop=false;
 bool					makestatic=false;
 LFSTK_windowClass		*wc;
-LFSTK_menuButtonClass	*bc[MAXCATS];
+LFSTK_menuButtonClass	*bc[MAXCATS]={NULL,};
+char					*desktopTheme=NULL;
+LFSTK_windowClass		*twc;
 
 void freeData(void)
 {
-	delete wc;
 	for(int j=0;j<MAXCATS;j++)
 		{
 			for(int k=0;k<mainMenus[j].maxentrys;k++)
@@ -67,6 +73,8 @@ void freeData(void)
 			if(bc[j]!=NULL)
 				delete bc[j];
 		}
+	delete wc;
+	delete twc;
 }
 
 bool bcb(void *p,void* ud)
@@ -109,6 +117,7 @@ void setCatagories(void)
 	int		foundcatmatch=-1;
 	char	foundnamebuffer[BUFFERSIZE];
 	char	foundexecbuffer[BUFFERSIZE];
+	char	foundiconbuffer[BUFFERSIZE];
 	bool	overridefound=false;
 	bool	interm=false;
 
@@ -168,6 +177,11 @@ void setCatagories(void)
 													splitstr=strtok(NULL,"=");
 													sprintf(foundnamebuffer,"%s",splitstr);
 												}
+											if(strcmp(splitstr,"Icon")==0)
+												{
+													splitstr=strtok(NULL,"=");
+													sprintf(foundiconbuffer,"%s",splitstr);
+												}
 											if(strcmp(splitstr,"Exec")==0)
 												{
 													splitstr=strtok(NULL,"=");
@@ -202,6 +216,16 @@ void setCatagories(void)
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].name=strdup(foundnamebuffer);
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].exec=strdup(foundexecbuffer);
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].inTerm=interm;
+									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=false;
+
+									const char *imagefile=twc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
+									if(imagefile!=NULL)
+										{
+											twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
+											mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=true;
+											//free(imagefile);
+										}
+
 									mainMenus[foundcatmatch].maxentrys++;
 								}
 							fclose(filedata);
@@ -244,6 +268,9 @@ int main(int argc, char **argv)
 	unsigned int	mask_return;
 	Display			*disp;
 
+	twc=new LFSTK_windowClass(0,0,800,400,"appmenu",true);
+	desktopTheme=twc->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
+
 	setCatagories();
 	makestatic=true;
 
@@ -265,6 +292,8 @@ int main(int argc, char **argv)
 			sy=atoi(argv[3]);
 		}
 	terminalCommand=argv[1];
+	delete wc;
+	
 	wc=new LFSTK_windowClass(sx,sy,800,400,"appmenu",true);
 	wc->LFSTK_setDecorated(true);
 
@@ -285,19 +314,26 @@ int main(int argc, char **argv)
 				maxwid=info.width;
 		}
 
-	maxwid+=16;
+	maxwid+=8+addto;
 	sx=0;
 	sy=0;
 
+	const char	*themeicon=NULL;
 	for(int j=0; j<MAXCATS; j++)
 		{
 			bc[j]=NULL;
 			if(mainMenus[j].name!=NULL)
 				{
 					bc[menucount]=new LFSTK_menuButtonClass(wc,(char*)mainMenus[j].name,sx,sy,maxwid,addto,0);
+					themeicon=wc->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[j],"categories");
+					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
+					if(themeicon!=NULL)
+						{
+							bc[menucount]->LFSTK_setIconFromPath(themeicon,addto-2);
+							bc[menucount]->LFSTK_setLabelOriention(LEFT);
+						}
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
 					bc[menucount]->LFSTK_setStyle(BEVELOUT);
-					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 
 					XMapWindow(wc->display,bc[menucount]->LFSTK_getWindow());
 					sy+=addto;
@@ -310,7 +346,9 @@ int main(int argc, char **argv)
 							pms->bc=NULL;
 							pms->subMenus=NULL;
 							pms->subMenuCnt=0;
-							pms->useIcon=false;
+							pms->useIcon=mainMenus[j].entry[k].gotIcon;
+							pms->icon[0]=mainMenus[j].entry[k].pm[0];
+							pms->icon[1]=mainMenus[j].entry[k].pm[1];
 							pms++;
 						}
 					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);
@@ -345,6 +383,9 @@ int main(int argc, char **argv)
 						break;
 				}
 		}
+
+	if(desktopTheme!=NULL)
+		free(desktopTheme);
 
 	freeData();
 	return 0;
