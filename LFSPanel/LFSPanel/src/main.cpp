@@ -64,6 +64,9 @@ void addLeftGadgets(void)
 					case 'W':
 						offset+=addWindowMenu(offset,mons->y,NorthWestGravity);
 						break;
+					case 'w':
+						offset+=addWindowDeskMenu(offset,mons->y,NorthWestGravity);
+						break;
 					case 'L':
 						offset+=addLogout(offset,mons->y,NorthWestGravity);
 						break;
@@ -96,6 +99,9 @@ void addRightGadgets(void)
 						break;
 					case 'W':
 						offset-=addWindowMenu(offset,mons->y,NorthEastGravity);
+						break;
+					case 'w':
+						offset-=addWindowDeskMenu(offset,mons->y,NorthEastGravity);
 						break;
 					case 'L':
 						offset-=addLogout(offset,mons->y,NorthEastGravity);

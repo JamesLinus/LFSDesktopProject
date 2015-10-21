@@ -21,11 +21,15 @@
 #include "windowlist.h"
 
 LFSTK_menuButtonClass	*windowMenu=NULL;
+LFSTK_menuButtonClass	*windowDeskMenu=NULL;
 menuItemStruct			windowList[MAXWINDOWSINLIST];
+menuItemStruct			windowDeskList[MAXWINDOWSINLIST];
 char					windowBuffer[512];
+int						windowDeskListCnt=0;
 int						windowListCnt=0;
 int						updateWindowCnt=0;
 const char				*possibleError="Unknown";
+int						currentDesktop;
 
 void sendClientMessage(Window win,const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
 {
@@ -76,6 +80,20 @@ void resetMenus(void)
 	windowListCnt=-1;
 }
 
+int getCurrentDesktop(void)
+{
+	char	*desknum=NULL;
+
+	desknum=mainwind->globalLib->LFSTK_oneLiner("%s","xprop -root |grep '_NET_CURRENT_DESKTOP(CARDINAL)'|head -n1|awk -F' = ' '{print $2}'");
+	if(desknum!=NULL)
+		{
+			currentDesktop=atoi(desknum);
+			free(desknum);
+		}
+	else
+		currentDesktop=1;
+}
+
 void updateWindowMenu(void)
 {
 	FILE	*fp=NULL;
@@ -90,6 +108,7 @@ void updateWindowMenu(void)
 	if(windowListCnt>-1)
 		resetMenus();
 
+	getCurrentDesktop();
 	windowListCnt=0;
 	fp=popen(WINHELPER,"r");
 	if(fp!=NULL)
@@ -101,29 +120,90 @@ void updateWindowMenu(void)
 			if(windowListCnt>MAXWINDOWSINLIST)
 				windowListCnt=MAXWINDOWSINLIST;
 
+			windowDeskListCnt=0;
+
 			for(int j=0; j<windowListCnt; j++)
 				{
+//full window
 					windowBuffer[0]=0;
 					fgets(windowBuffer,511,fp);//id
 					windowBuffer[strlen(windowBuffer)-1]=0;
 					windowList[j].userData=(void*)strtol(windowBuffer,NULL,16);
+//this desk
+					windowDeskList[windowDeskListCnt].userData=(void*)strtol(windowBuffer,NULL,16);
 
+//full window
 					windowBuffer[0]=0;
 					fgets(windowBuffer,511,fp);//name
 					windowBuffer[strlen(windowBuffer)-1]=0;
 					windowList[j].label=strdup(windowBuffer);
+//this desk
+					windowDeskList[windowDeskListCnt].label=strdup(windowBuffer);
 
+//full window
 					windowBuffer[0]=0;
 					fgets(windowBuffer,511,fp);//desktop -- TODO
 					windowBuffer[strlen(windowBuffer)-1]=0;
 					windowList[j].bc=NULL;
 					windowList[j].subMenus=NULL;
 					windowList[j].subMenuCnt=atoi(windowBuffer);
+//this desk
+					if(atoi(windowBuffer)==currentDesktop)
+						{
+							windowDeskList[windowDeskListCnt].bc=NULL;
+							windowDeskList[windowDeskListCnt].subMenus=NULL;
+							windowDeskList[windowDeskListCnt].subMenuCnt=atoi(windowBuffer);
+							windowDeskListCnt++;
+						}
+					else
+						{
+							if(windowDeskList[windowDeskListCnt].label!=NULL)
+								free((char*)windowDeskList[windowDeskListCnt].label);
+								windowDeskList[windowDeskListCnt].label=NULL;
+						}
 				}
 			pclose(fp);
-			windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
+			if(windowMenu!=NULL)
+				windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
+			if(windowDeskMenu!=NULL)
+				{
+					if(windowDeskListCnt>0)
+						{
+							windowDeskMenu->LFSTK_updateMenus(windowDeskList,windowDeskListCnt);
+							windowDeskMenu->LFSTK_setActive(true);
+						}
+					else
+						windowDeskMenu->LFSTK_setActive(false);
+					windowDeskMenu->LFSTK_clearWindow();
+				}
 		}
 	alarm(refreshRate);
+}
+
+int addWindowDeskMenu(int x,int y,int grav)
+{
+	int			xpos=0;
+	int			width=panelHeight+6;
+	int			retval=width;
+	const char	*icon=NULL;
+
+	if(grav==NorthWestGravity)
+		xpos=x;
+	else
+		xpos=x-width;
+
+	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
+	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"desktop","");
+	if(icon!=NULL)
+		windowDeskMenu->LFSTK_setIconFromPath(icon,panelHeight-6);
+	else
+		windowDeskMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
+	windowDeskMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
+
+	windowDeskListCnt=-1;
+	updateWindowCnt=WINDOWREFRESH;
+	updateWindowMenu();
+	return(retval);
 }
 
 int addWindowMenu(int x,int y,int grav)
