@@ -146,7 +146,6 @@ void restack(void)
 void cmap(struct client *c)
 {
 	CHECKPOINT
-	//assert(c->desk==curdesk || c->desk==DESK_ALL);
 
 	// Prevent premature mapping
 	if (!c->initialized)
@@ -168,9 +167,12 @@ void cmap(struct client *c)
 					XMapWindow(dpy,f);
 				}
 			else
-				XMapWindow(dpy,c->window);
+				{
+					XMapWindow(dpy,c->window);
+				}
 			c->ismapped=True;
 		}
+	setprop(c->window,NET_WM_DESKTOP,XA_CARDINAL,32,(void*)&c->desk,1);
 }
 
 bool shuffleDesktop(void)
