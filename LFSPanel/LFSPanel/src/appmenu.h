@@ -23,7 +23,6 @@
 
 #include "globals.h"
 
-#define BUFFERSIZE 2048
 #define MAXCATS 14
 #define MAXENTRYS 500
 

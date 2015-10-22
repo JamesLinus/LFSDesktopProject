@@ -21,6 +21,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <ftw.h>
+#include <fnmatch.h>
 
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
@@ -48,17 +50,9 @@ bool callback(void *p,void* ud)
 		return(true);;
 
 	menu=(menuEntryStruct*)((menuItemStruct*)ud)->userData;
+	if(menu==NULL)
+		return(true);;
 
-/*
-	char			*path;
-	geometryStruct	*geom=appButton->LFSTK_getGeom();
-
-	XFlush(mainwind->display);
-	asprintf(&path,"%s \"%s\" %i %i",APPMENUPATH,terminalCommand,geom->x,geom->y+geom->h);
-	system(path);
-	free(path);
-	delete geom;
-*/
 	if(menu->inTerm==false)
 		asprintf(&command,"%s &",menu->exec);
 	else
@@ -68,40 +62,6 @@ bool callback(void *p,void* ud)
 	free(command);
 	return(true);
 }
-/*
-//menu button with sub menu
-	mainMenusWithSubs=new menuItemStruct[MAXMAINMENUS];
-	for(int j=0;j<MAXMAINMENUS;j++)
-		{
-			mainMenusWithSubs[j].label=mainMenuNames[j];
-			mainMenusWithSubs[j].userData=NULL;
-			mainMenusWithSubs[j].bc=NULL;
-			mainMenusWithSubs[j].subMenus=NULL;
-			mainMenusWithSubs[j].useIcon=false;
-		}
-//sub menus
-	subMenus=new menuItemStruct[MAXSUBMENUS];
-	for(int j=0;j<MAXSUBMENUS;j++)
-		{
-			subMenus[j].label=subMenuNames[j];
-			subMenus[j].userData=NULL;
-			subMenus[j].bc=NULL;
-			subMenus[j].subMenus=NULL;
-			subMenus[j].useIcon=true;
-			subMenus[j].icon[0]=ic[0];
-			subMenus[j].icon[1]=ic[1];
-		}
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
-//add sub menus
-	mainMenusWithSubs[3].subMenus=subMenus;
-	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
-
-	mainMenusWithSubs[1].subMenus=subMenus;
-	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
-	
-*/
-#include <ftw.h>
-#include <fnmatch.h>
 
 int	catagoryCnt=0;
 int		catcnt=0;
@@ -213,28 +173,6 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 
 			pclose(fp);
 		}
-	//free(tbuffer);
-/*
-
-	char	*tbuffer=NULL;
-	int retval=0;
-	if(typeflag!=FTW_F)
-		return(0);
-
-//	printf("----sed -n '/categories.*%s/Ip' %s---\n",myCats[catcnt],fpath);
-	tbuffer=mainwind->globalLib->LFSTK_oneLiner("sed -n '/categories.*%s/Ip' %s",myCats[catcnt],fpath);
-	if(tbuffer!=NULL)
-		{
-		printf(">>>%s - %s<<<\n",tbuffer,fpath);
-		if(strlen(tbuffer)>0)
-			{
-			free(tbuffer);
-			retval=1;
-			}
-			
-		}
-	return retval;
-*/
 	return(0);
 }
 
@@ -245,7 +183,6 @@ void addEntries(void)
 			subMenusCnt[j]=0;
 			for(int k=0;k<MAXENTRYS;k++)
 				{
-			//catagorySubMenus[j]=new menuItemStruct[MAXENTRYS];
 					catagorySubMenus[j][k].label=NULL;
 					catagorySubMenus[j][k].userData=NULL;
 					catagorySubMenus[j][k].bc=NULL;
@@ -264,13 +201,13 @@ void addEntries(void)
 void addCatagories(void)
 {
 	char	*tbuffer=NULL;
+	const char	*iconpath=NULL;
 
 	catagoryCnt=0;
 	catcnt=0;
 	catagoryMenus=new menuItemStruct[MAXCATS];
 	while(myCats[catcnt]!=NULL)
 		{
-			//if(ftw("/usr/share/applications",ftwCallback,16)==1);
 			tbuffer=mainwind->globalLib->LFSTK_oneLiner("find /usr/share/applications -follow -type f -print0 |xargs -0 sed -n '/categories.*%s/Ip'",myCats[catcnt]);
 			if(tbuffer!=NULL)
 				{
@@ -282,8 +219,16 @@ void addCatagories(void)
 							catagoryMenus[catagoryCnt].bc=NULL;
 							catagoryMenus[catagoryCnt].subMenus=NULL;
 							catagoryMenus[catagoryCnt].subMenuCnt=0;
-							catagoryMenus[catagoryCnt].useIcon=false;
+							catagoryMenus[catagoryCnt].useIcon=true;
 							catPtr[catcnt]=catagoryCnt;
+							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
+							if(iconpath!=NULL)
+								{
+								printf(">>>%s<<<\n",iconpath);
+									catagoryMenus[catagoryCnt].useIcon=true;	
+									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),16);
+								}
+
 							catagoryCnt++;
 						}
 					free(tbuffer);
