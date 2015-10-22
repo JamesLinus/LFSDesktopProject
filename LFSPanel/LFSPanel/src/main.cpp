@@ -154,8 +154,8 @@ void  alarmCallBack(int sig)
 
 	signal(SIGALRM,SIG_IGN);
 	signal(SIGALRM,alarmCallBack);
-	alarm(refreshRate);
 	XFlush(mainwind->display);
+	alarm(refreshRate);
 }
 
 int main(int argc, char **argv)

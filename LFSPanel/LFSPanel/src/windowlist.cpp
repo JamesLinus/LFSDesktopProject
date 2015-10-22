@@ -187,6 +187,13 @@ int addWindowDeskMenu(int x,int y,int grav)
 	int			retval=width;
 	const char	*icon=NULL;
 
+	if(windowDeskMenu!=NULL)
+		{
+			printError("Duplicate current desktop window selector");
+			return(0);
+		}
+
+
 	if(grav==NorthWestGravity)
 		xpos=x;
 	else
@@ -212,6 +219,12 @@ int addWindowMenu(int x,int y,int grav)
 	int			width=panelHeight+6;
 	int			retval=width;
 	const char	*icon=NULL;
+
+	if(windowMenu!=NULL)
+		{
+			printError("Duplicate window selector");
+			return(0);
+		}
 
 	if(grav==NorthWestGravity)
 		xpos=x;

@@ -67,5 +67,6 @@ int addAppmenu(int x,int y,int grav)
 	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-6);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(callback,NULL,NULL);
+	appButton->LFSTK_clearWindow();
 	return(retval);
 }
