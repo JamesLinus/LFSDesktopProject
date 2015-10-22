@@ -23,7 +23,18 @@
 
 #include "globals.h"
 
-extern LFSTK_buttonClass	*appButton;
+#define BUFFERSIZE 2048
+#define MAXCATS 14
+#define MAXENTRYS 500
+
+struct menuEntryStruct
+{
+	char				*name;
+	char				*exec;
+	bool				inTerm;
+};
+
+extern LFSTK_menuButtonClass	*appButton;
 
 int addAppmenu(int x,int y,int grav);
 
