@@ -187,64 +187,27 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 
 void sortEntries(void)
 {
-	bool	flag=true;
-	//int		cnt=0;//subMenusCnt[0];
-	menuItemStruct			thold;	
-	//int		catagory=0;
-
+	bool			flag=true;
+	menuItemStruct	thold;	
 
 	for(int catagory=0;catagory<catagoryCnt;catagory++)
-	{
-	flag=true;
-	while(flag==true)
 		{
-			flag=false;
-			for(int cnt=0;cnt<subMenusCnt[catagory]-1;cnt++)
-			{
-			
-			//flag=false;
-			if(strcmp(catagorySubMenus[catagory][cnt].label,catagorySubMenus[catagory][cnt+1].label)>0)
+			flag=true;
+			while(flag==true)
 				{
-				//printf(">>cat cnt=%i cat=%i s1=%s s2=%s<<\n",catagoryCnt,catagory,catagorySubMenus[catagory][cnt].label,catagorySubMenus[catagory][cnt+1].label);
-					flag=true;
-					thold=catagorySubMenus[catagory][cnt+1];
-					catagorySubMenus[catagory][cnt+1]=catagorySubMenus[catagory][cnt];
-					catagorySubMenus[catagory][cnt]=thold;
-//					thold.label=catagorySubMenus[catagory][cnt+1].label;
-//					thold.userData=catagorySubMenus[catagory][cnt+1].userData;
-//					thold.bc=catagorySubMenus[catagory][cnt+1].bc;
-//					thold.subMenus=catagorySubMenus[catagory][cnt+1].subMenus;
-//					thold.subMenuCnt=catagorySubMenus[catagory][cnt+1].subMenuCnt;
-//					thold.useIcon=catagorySubMenus[catagory][cnt+1].useIcon;
-//					thold.icon[0]=catagorySubMenus[catagory][cnt+1].icon[0];
-//					thold.icon[1]=catagorySubMenus[catagory][cnt+1].icon[1];
-//
-//
-//					catagorySubMenus[catagory][cnt+1].label=catagorySubMenus[catagory][cnt].label;
-//					catagorySubMenus[catagory][cnt+1].userData=catagorySubMenus[catagory][cnt].userData;
-//					catagorySubMenus[catagory][cnt+1].bc=catagorySubMenus[catagory][cnt].bc;
-//					catagorySubMenus[catagory][cnt+1].subMenus=catagorySubMenus[catagory][cnt].subMenus;
-//					catagorySubMenus[catagory][cnt+1].subMenuCnt=catagorySubMenus[catagory][cnt].subMenuCnt;
-//					catagorySubMenus[catagory][cnt+1].useIcon=catagorySubMenus[catagory][cnt].useIcon;
-//					catagorySubMenus[catagory][cnt+1].icon[0]=catagorySubMenus[catagory][cnt].icon[0];
-//					catagorySubMenus[catagory][cnt+1].icon[1]=catagorySubMenus[catagory][cnt].icon[1];
-//					
-//
-//					catagorySubMenus[catagory][cnt].label=thold.label;
-//					catagorySubMenus[catagory][cnt].userData=thold.userData;
-//					catagorySubMenus[catagory][cnt].bc=thold.bc;
-//					catagorySubMenus[catagory][cnt].subMenus=thold.subMenus;
-//					catagorySubMenus[catagory][cnt].subMenuCnt=thold.subMenuCnt;
-//					catagorySubMenus[catagory][cnt].useIcon=thold.useIcon;
-//					catagorySubMenus[catagory][cnt].icon[0]=thold.icon[0];
-//					catagorySubMenus[catagory][cnt].icon[1]=thold.icon[1];
-					break;
+					flag=false;
+					for(int cnt=0;cnt<subMenusCnt[catagory]-1;cnt++)
+						{
+							if(strcmp(catagorySubMenus[catagory][cnt].label,catagorySubMenus[catagory][cnt+1].label)>0)
+								{
+									flag=true;
+									thold=catagorySubMenus[catagory][cnt+1];
+									catagorySubMenus[catagory][cnt+1]=catagorySubMenus[catagory][cnt];
+									catagorySubMenus[catagory][cnt]=thold;
+									break;
+								}
+						}
 				}
-			//cnt++;
-			//if(cnt==subMenusCnt[0]-1)
-			//	cnt=0;
-			}
-		}
 		}
 }
 
