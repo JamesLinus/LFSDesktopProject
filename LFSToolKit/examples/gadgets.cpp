@@ -129,6 +129,7 @@ int main(int argc, char **argv)
 	mb->LFSTK_setIconFromPath("./BookMark.png");
 	mb->LFSTK_setCallBack(NULL,menuCB,NULL);
 	mb->LFSTK_addMenus(mainMenus,MAXMAINMENUS);
+	mb->LFSTK_setLabelOriention(LEFT);
 	sy+=YSPACING;
 
 //menu button with sub menu
@@ -158,12 +159,20 @@ int main(int argc, char **argv)
 	mainMenusWithSubs[3].subMenus=subMenus;
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
 
+	mainMenusWithSubs[0].useIcon=true;
+	mainMenusWithSubs[0].icon[0]=ic[0];
+	mainMenusWithSubs[0].icon[1]=ic[1];
+	mainMenusWithSubs[1].useIcon=true;
+	mainMenusWithSubs[1].icon[0]=ic[0];
+	mainMenusWithSubs[1].icon[1]=ic[1];
+
 	mainMenusWithSubs[1].subMenus=subMenus;
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
 	
 	mbwithsubs=new LFSTK_menuButtonClass(wc,"Sub Menus",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	mbwithsubs->LFSTK_setIconFromPath("./ManPageEditor.png");
 	mbwithsubs->LFSTK_setCallBack(NULL,menuCB,NULL);
+	mbwithsubs->LFSTK_setLabelOriention(LEFT);
 	mbwithsubs->LFSTK_addMenus(mainMenusWithSubs,MAXMAINMENUS);
 	sy+=YSPACING;
 

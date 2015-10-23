@@ -159,6 +159,9 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
 							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
 							mb->LFSTK_setIgnoreCB(true);
+							if(this->menus[j].useIcon==true)
+								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1]);
+
 							mb->isSubmenu=true;
 						}
 					sy+=addto;
