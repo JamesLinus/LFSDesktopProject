@@ -1,4 +1,6 @@
 0.0.4
+Added icons to submenus.
+Added icons to catagorys.
 Redone appmenu to build window at startup.
 Added window list on current desktop, 'w' in prefs gadget string.
 Removed unnecessary strdups.
