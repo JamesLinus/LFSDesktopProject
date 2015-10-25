@@ -73,7 +73,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setLabelOriention(int orient);
 
 		void LFSTK_setIconFromPath(const char *file,int size=16);
-		void LFSTK_setIcon(Pixmap image,Pixmap mask);
+		void LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
 
 		geometryStruct *LFSTK_getGeom(void);
 

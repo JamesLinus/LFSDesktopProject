@@ -136,7 +136,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							bc->LFSTK_setFontString(itemfont);
 							bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
 							if(this->menus[j].useIcon==true)
-								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1]);
+								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 							for(int j=0;j<MAXCOLOURS;j++)
 								{
 									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
@@ -160,7 +160,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
 							mb->LFSTK_setIgnoreCB(true);
 							if(this->menus[j].useIcon==true)
-								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1]);
+								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 
 							mb->isSubmenu=true;
 						}

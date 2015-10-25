@@ -384,6 +384,7 @@ int LFSTK_lib::LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str)
 * \param scr Screen.
 * \param name* Font name.
 * \return fontStruct* Font structure.
+* \note Return structure shopuld be freed.
 */
 fontStruct* LFSTK_lib::LFSTK_loadFont(Display *disp,int scr,const char *name)
 {
@@ -577,6 +578,11 @@ const char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,c
 		return(retBuffer);
 
 	sprintf(dirbuffer,"/usr/share/icons/hicolor");
+	ftw(dirbuffer,this->callback,16);
+	if(retBuffer[0]!=0)
+		return(retBuffer);
+
+	sprintf(dirbuffer,"/usr/share/icons/gnome");
 	ftw(dirbuffer,this->callback,16);
 	if(retBuffer[0]!=0)
 		return(retBuffer);

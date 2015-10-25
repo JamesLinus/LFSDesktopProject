@@ -33,6 +33,7 @@ struct menuItemStruct
 	int					subMenuCnt;
 	bool				useIcon;
 	Pixmap				icon[2];
+	int					iconSize;
 };
 
 

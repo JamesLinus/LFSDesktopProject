@@ -1,4 +1,6 @@
 0.0.9
+Adde icon size to menuitemstruct - must be set if adding icon.
+Added search in /usr/share/icons/gnome when searching for themed icon.
 Fixed menu button with sub menus not showing icon.
 Massive speed up looking up themed icon in libclass.
 Added execute one line command to lib class.
