@@ -598,7 +598,14 @@ int main(int argc,char **argv)
 	addto=diskWindow->font->ascent+diskWindow->font->descent+8;
 
 	for(int j=BUTTONMOUNT;j<=BUTTONREMOVEICON;j++)
-		diskIconData[j-1]=strdup(diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j-1],""));
+		{
+			const char *iconpath=NULL;
+			iconpath=diskWindow->globalLib->LFSTK_findThemedIcon(iconTheme,diskThemeIconData[j-1],"");
+			if(iconpath!=NULL)
+				diskIconData[j-1]=strdup(iconpath);
+			else
+				diskIconData[j-1]=NULL;
+		}
 
 	while(diskLabelData[buttoncnt]!=NULL)
 		{
@@ -635,8 +642,9 @@ int main(int argc,char **argv)
 	diskWindow->LFSTK_resizeWindow(maxwid,sy,true);
 	diskWindow->LFSTK_showWindow(true);
 	diskWindow->LFSTK_hideWindow();
-
 //files
+	maxwid=0;
+
 	fileWindow=new LFSTK_windowClass(0,0,64,128,"xxx",true,true);
 	addto=fileWindow->font->ascent+fileWindow->font->descent+8;
 	buttoncnt=3;
