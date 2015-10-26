@@ -56,7 +56,7 @@ void motionnotify(struct dragger *d,XMotionEvent *e)
 		d->dragnotify(d->arg,e->x_root-d->x,e->y_root-d->y,d->counter++,e->time);
 }
 
-void draggerevent(void *self,XEvent *e)
+bool draggerevent(void *self,XEvent *e,int type)
 {
 	CHECKPOINT
 	switch (e->type)
@@ -79,6 +79,7 @@ void draggerevent(void *self,XEvent *e)
 			buttonpress((dragger*)self,&e->xbutton);
 			break;
 		}
+	return(true);
 }
 
 struct dragger *dcreate(Window parent,int x,int y,int width,int height,int gravity,Cursor cursor,void (*dragnotify)(void *,int,int,unsigned long,Time),void *arg)

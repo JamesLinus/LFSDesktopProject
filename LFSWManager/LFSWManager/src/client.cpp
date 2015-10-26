@@ -1171,7 +1171,7 @@ void csetgeom(struct client *c,struct geometry g)
 	c->geometry=g;
 }
 
-void clientevent(void *self,XEvent *e)
+bool clientevent(void *self,XEvent *e,int type)
 {
 	CHECKPOINT
 	switch (e->type)
@@ -1222,6 +1222,7 @@ void clientevent(void *self,XEvent *e)
 //printf("expose event\n");
 			break;
 		}
+	return(true);
 }
 
 /*

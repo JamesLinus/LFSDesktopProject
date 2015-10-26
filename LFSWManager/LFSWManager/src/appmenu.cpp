@@ -35,14 +35,18 @@
 const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Office","Shell","Game","System",NULL};
 const char				*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
 
-LFSTK_menuButtonClass	*appButton=NULL;
+LFSTK_windowClass		*appWindow=NULL;
 menuItemStruct			*catagoryMenus;
 menuItemStruct			*catagorySubMenus[MAXCATS];
 int						subMenusCnt[MAXCATS];
 int						catPtr[MAXCATS];
+int						iconSize=16;
+char					*desktopTheme=NULL;
+LFSTK_menuButtonClass	*catButtons[MAXCATS];
 
 bool callback(void *p,void* ud)
 {
+#if 0
 	menuEntryStruct	*menu;
 	char			*command;
 
@@ -60,6 +64,7 @@ bool callback(void *p,void* ud)
 
 	system(command);
 	free(command);
+#endif
 	return(true);
 }
 
@@ -68,6 +73,7 @@ int	catcnt=0;
 
 int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 {
+#if 0
 	char	command[512];
 	char	*splitstr=NULL;
 	FILE	*fp=NULL;
@@ -183,6 +189,7 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 
 			pclose(fp);
 		}
+#endif
 	return(0);
 }
 
@@ -214,6 +221,7 @@ void sortEntries(void)
 
 void addEntries(void)
 {
+#if 0
 	for(int j=0;j<catagoryCnt;j++)
 		{
 			subMenusCnt[j]=0;
@@ -234,38 +242,44 @@ void addEntries(void)
 		}
 
 	sortEntries();
+#endif
 }
 
 void addCatagories(void)
 {
-	char	*tbuffer=NULL;
+	char		*tbuffer=NULL;
 	const char	*iconpath=NULL;
+	int			sy=0;
 
 	catagoryCnt=0;
 	catcnt=0;
 	catagoryMenus=new menuItemStruct[MAXCATS];
 	while(myCats[catcnt]!=NULL)
 		{
-			tbuffer=mainwind->globalLib->LFSTK_oneLiner("find /usr/share/applications -follow -type f -print0 |xargs -0 sed -n '/categories.*%s/Ip'",myCats[catcnt]);
+			tbuffer=appWindow->globalLib->LFSTK_oneLiner("find /usr/share/applications -follow -type f -print0 |xargs -0 sed -n '/categories.*%s/Ip'",myCats[catcnt]);
 			if(tbuffer!=NULL)
 				{
 					if(strlen(tbuffer)>0)
 						{
-							catagorySubMenus[catagoryCnt]=new menuItemStruct[MAXENTRYS];
-							catagoryMenus[catagoryCnt].label=myCats[catcnt];
-							catagoryMenus[catagoryCnt].userData=NULL;
-							catagoryMenus[catagoryCnt].bc=NULL;
-							catagoryMenus[catagoryCnt].subMenus=NULL;
-							catagoryMenus[catagoryCnt].subMenuCnt=0;
-							catagoryMenus[catagoryCnt].useIcon=true;
-							catagoryMenus[catagoryCnt].iconSize=iconSize;
+						//	catagorySubMenus[catagoryCnt]=new menuItemStruct[MAXENTRYS];
+						//	catagoryMenus[catagoryCnt].label=myCats[catcnt];
+						//	catagoryMenus[catagoryCnt].userData=NULL;
+						//	catagoryMenus[catagoryCnt].bc=NULL;
+						//	catagoryMenus[catagoryCnt].subMenus=NULL;
+						//	catagoryMenus[catagoryCnt].subMenuCnt=0;
+						//	catagoryMenus[catagoryCnt].useIcon=true;
+						//	catagoryMenus[catagoryCnt].iconSize=iconSize;
 							catPtr[catcnt]=catagoryCnt;
-							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
-							if(iconpath!=NULL)
-								{
-									catagoryMenus[catagoryCnt].useIcon=true;	
-									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
-								}
+							catButtons[catagoryCnt]=new LFSTK_menuButtonClass(appWindow,myCats[catcnt],0,sy,128,24,NorthWestGravity);
+							sy+=24;
+							printf(">>>%s<<<\n",myCats[catcnt]);
+							
+						//	iconpath=appWindow->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
+						//	if(iconpath!=NULL)
+						//		{
+						//			catagoryMenus[catagoryCnt].useIcon=true;	
+						//			appWindow->globalLib->LFSTK_setPixmapsFromPath(appWindow->display,appWindow->visual,appWindow->cm,appWindow->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
+						//		}
 
 							catagoryCnt++;
 						}
@@ -275,33 +289,37 @@ void addCatagories(void)
 		}
 }
 
-int addAppmenu(int x,int y,int grav)
+void refreshMenu(void)
+{
+	for(int j=0;j<catagoryCnt;j++)
+		catButtons[j]->LFSTK_clearWindow();
+}
+
+void addAppmenu(void)
 {
 //	int addto=mainwind->font->ascent+mainwind->font->descent+8;
 	int maxwid=0;
 	int	catnum=0;
 	int	xpos=0;
-	int width=panelHeight+2;
-	int	retval=width;
+	//int width=panelHeight+2;
+	//int	retval=width;
+	fontStruct		*tfont;
+	const char		*itemfont;
 
-	if(appButton!=NULL)
-		{
-			printError("Duplicate app menu");
-			return(0);
-		}
 
-	if(grav==NorthWestGravity)
-		xpos=x;
-	else
-		xpos=x-width;
+	appWindow=new LFSTK_windowClass(0,0,800,600,"xxxx",false,true);
 
-	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+2,panelHeight,grav);
-	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-4);
+	itemfont=appWindow->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+	tfont=appWindow->globalLib->LFSTK_loadFont(appWindow->display,appWindow->screen,itemfont);
+	iconSize=tfont->size;
+	free(tfont);
+	desktopTheme=appWindow->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
+
 	addCatagories();
-	addEntries();
-	appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);
-	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
-	appButton->LFSTK_setCallBack(NULL,callback,NULL);
-	appButton->LFSTK_clearWindow();
-	return(retval);
+//	addEntries();
+	//appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);
+//	XMapWindow(appWindow->display,appWindow->window);
+	//appButton->LFSTK_setCallBack(NULL,callback,NULL);
+	//appButton->LFSTK_clearWindow();
+	//return(retval);
 }

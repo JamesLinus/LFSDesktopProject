@@ -18,6 +18,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <LFSTKWindow.h>
 
 #include "config.h"
 /*
@@ -75,11 +76,11 @@ struct extents
 	int right;
 };
 
-struct listener
-{
-	void (*function)(void *,XEvent *);
-	void *pointer;
-};
+//struct listener
+//{
+//	void (*function)(void *,XEvent *);
+//	void *pointer;
+//};
 
 struct bitmap
 {

@@ -874,7 +874,7 @@ void expose(struct frame *f,XExposeEvent *e)
 		repaint(f);
 }
 
-void frameevent(void *self,XEvent *e)
+bool frameevent(void *self,XEvent *e,int type)
 {
 	CHECKPOINT
 //printf("frame event\n");
@@ -902,6 +902,7 @@ void frameevent(void *self,XEvent *e)
 			maprequest((frame*)self,&e->xmaprequest);
 			break;
 		}
+	return(true);
 }
 
 void adjustDraggers(struct frame *f)

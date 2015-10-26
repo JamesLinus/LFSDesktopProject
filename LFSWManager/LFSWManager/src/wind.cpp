@@ -109,6 +109,6 @@ int redirect(XEvent *e,Window w)
 	if (l==NULL)
 		return -1;
 
-	l->function(l->pointer,e);
+	l->function(l->pointer,e,0);
 	return 0;
 }

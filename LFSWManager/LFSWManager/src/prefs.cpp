@@ -13,7 +13,7 @@
 #include "prefs.h"
 #include "wind.h"
 
-enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
+//enum {TYPEINT=1,TYPESTRING,TYPEBOOL};
 
 args	wmPrefs[]=
 {

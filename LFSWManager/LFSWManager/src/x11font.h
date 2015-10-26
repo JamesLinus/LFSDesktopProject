@@ -13,7 +13,7 @@
 #ifndef _X11FONT_
 #define _X11FONT_
 
-#define DEFAULTFONT "sans-serif:size=10"
+//#define DEFAULTFONT "sans-serif:size=10"
 
 struct fontcolor *ftloadcolor(const char *,const char *fallback);
 void ftfreecolor(struct fontcolor *);

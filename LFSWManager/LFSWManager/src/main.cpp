@@ -60,6 +60,7 @@
 #include "prefs.h"
 #include "button.h"
 #include "atoms.h"
+#include "appmenu.h"
 
 #include "deleven.xbm"
 #include "delodd.xbm"
@@ -606,6 +607,8 @@ int main(int argc,char *argv[])
 
 	runlevel=RL_NORMAL;
 
+	//addAppmenu();
+
 	CHECKPOINT
 	Window			root_return;
 	Window			child_return;
@@ -629,6 +632,97 @@ int main(int argc,char *argv[])
 							{
 								if(child_return==0)
 									{
+#if 0
+									if (redirect(&e,e.xany.window)==-1)
+													{
+														if (e.type==ClientMessage)
+															redirect(&e,root);
+													}
+									bool popupLoop=true;
+									XEvent	evente;
+
+									printf(">>>>here\n");
+										//appWindow->LFSTK_moveWindow(root_x_return,root_y_return,true);
+										appWindow->LFSTK_moveWindow(100,100,true);
+										appWindow->LFSTK_resizeWindow(800,600,true);
+										appWindow->LFSTK_clearWindow();
+										appWindow->LFSTK_showWindow(true);
+										appWindow->LFSTK_hideWindow();
+										appWindow->LFSTK_showWindow(true);
+										refreshMenu();
+										while(popupLoop==true)
+											{
+											
+
+												XNextEvent(dpy,&evente);
+												printf("----------\n");
+			//	{
+					/*
+					 * EWMH specifies some root window client
+					 * messages with a non-root event window,
+					 * so we need to redirect those manually.
+					 */
+
+			//		
+			//	}
+//												listener *l=appWindow->LFSTK_getListener(evente.xany.window);
+//
+//												if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+//													l->function(l->pointer,&evente,l->type);
+
+			if((evente.xany.window==appWindow->window) ||(evente.xany.window==catButtons[0]->LFSTK_getWindow()))
+			//if(redirect(&evente,evente.xany.window)==-1)
+		//	{
+		//												if (evente.type==ClientMessage)
+		//													redirect(&evente,root);
+		//	}
+		//	else
+			{
+printf(">>winid=%p<<\n",evente.xany.window);
+
+												listener *l=appWindow->LFSTK_getListener(evente.xany.window);
+
+												if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+													l->function(l->pointer,&evente,l->type);
+												switch(evente.type)
+													{
+														case ClientMessage:
+														appWindow->LFSTK_clearWindow();
+															//appWindow->LFSTK_showWindow(true);
+															refreshMenu();
+														//	if (redirect(&evente,evente.xany.window)==-1)
+														//		redirect(&evente,root);
+															break;
+														case LeaveNotify:
+															//if(evente.xany.window==appWindow->window)
+															//	popupLoop=false;
+															break;
+														case Expose:
+														printf("expose\n");
+															appWindow->LFSTK_clearWindow();
+															//appWindow->LFSTK_showWindow(true);
+															refreshMenu();
+															break;
+														case ConfigureNotify:
+														printf("config\n");
+															appWindow->LFSTK_resizeWindow(evente.xconfigurerequest.width,evente.xconfigurerequest.height);
+															appWindow->LFSTK_clearWindow();
+															//appWindow->LFSTK_showWindow(true);
+															refreshMenu();
+															break;
+													}
+													}
+													else
+													{
+												if (redirect(&evente,evente.xany.window)==-1)
+													{
+														if (evente.type==ClientMessage)
+															redirect(&evente,evente.xany.window);
+													}
+}
+											}
+										appWindow->LFSTK_hideWindow();
+#endif
 										sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
 										system(buffer);
 									}

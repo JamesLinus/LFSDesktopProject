@@ -21,20 +21,25 @@
 #ifndef _APPMENU_
 #define _APPMENU_
 
-#include "globals.h"
+#include <LFSTKWindow.h>
+#include <LFSTKButton.h>
+#include <LFSTKMenuButton.h>
+
+//#include "globals.h"
 
 #define MAXCATS 14
 #define MAXENTRYS 500
 
 struct menuEntryStruct
 {
-	char				*name;
-	char				*exec;
-	bool				inTerm;
+	char					*name;
+	char					*exec;
+	bool					inTerm;
 };
 
-extern LFSTK_menuButtonClass	*appButton;
-
-int addAppmenu(int x,int y,int grav);
+extern LFSTK_windowClass	*appWindow;
+extern LFSTK_menuButtonClass	*catButtons[MAXCATS];
+void addAppmenu(void);
+void refreshMenu(void);
 
 #endif

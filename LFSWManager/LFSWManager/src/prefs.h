@@ -14,12 +14,13 @@
 #include <X11/Intrinsic.h>
 #include <X11/extensions/Xdbe.h>
 
-struct args
-{
-	const char*	name;
-	int			type;
-	void*		data;
-};
+#include "wind.h"
+//struct args
+//{
+//	const char*	name;
+//	int			type;
+//	void*		data;
+//};
 
 extern args				wmPrefs[];
 extern args				themeRC[];

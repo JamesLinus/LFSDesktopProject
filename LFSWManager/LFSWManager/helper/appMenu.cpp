@@ -58,6 +58,7 @@ LFSTK_windowClass		*wc;
 LFSTK_menuButtonClass	*bc[MAXCATS]={NULL,};
 char					*desktopTheme=NULL;
 LFSTK_windowClass		*twc;
+int						iconSize=16;
 
 void freeData(void)
 {
@@ -272,9 +273,16 @@ int main(int argc, char **argv)
 	int				win_y_return;
 	unsigned int	mask_return;
 	Display			*disp;
+	fontStruct		*tfont;
+	const char		*itemfont;
 
 	twc=new LFSTK_windowClass(0,0,800,400,"appmenu",true);
 	desktopTheme=twc->globalLib->LFSTK_oneLiner("cat %s/.config/LFS/lfsdesktop.rc|grep icontheme|awk '{print $2}'",getenv("HOME"));
+
+	itemfont=twc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+	tfont=twc->globalLib->LFSTK_loadFont(twc->display,twc->screen,itemfont);
+	iconSize=tfont->size;
+	free(tfont);
 
 	setCatagories();
 	makestatic=true;
@@ -334,7 +342,8 @@ int main(int argc, char **argv)
 					bc[menucount]->LFSTK_setLabelOriention(CENTRE);
 					if(themeicon!=NULL)
 						{
-							bc[menucount]->LFSTK_setIconFromPath(themeicon,addto-2);
+							//bc[menucount]->LFSTK_setIconFromPath(themeicon,addto-2);
+							bc[menucount]->LFSTK_setIconFromPath(themeicon,iconSize);
 							bc[menucount]->LFSTK_setLabelOriention(LEFT);
 						}
 					bc[menucount]->LFSTK_setCallBack(NULL,bcb,NULL);
@@ -354,6 +363,7 @@ int main(int argc, char **argv)
 							pms->useIcon=mainMenus[j].entry[k].gotIcon;
 							pms->icon[0]=mainMenus[j].entry[k].pm[0];
 							pms->icon[1]=mainMenus[j].entry[k].pm[1];
+							pms->iconSize=iconSize;
 							pms++;
 						}
 					bc[menucount]->LFSTK_addMenus(ms,mainMenus[j].maxentrys);

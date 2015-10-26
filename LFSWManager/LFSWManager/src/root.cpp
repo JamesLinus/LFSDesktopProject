@@ -180,7 +180,7 @@ void clientmessage(XClientMessageEvent *e)
 	ewmh_rootclientmessage(e);
 }
 
-void event(void *self,XEvent *e)
+bool event(void *self,XEvent *e,int type)
 {
 	CHECKPOINT
 	switch (e->type)
@@ -240,6 +240,7 @@ void event(void *self,XEvent *e)
 			gotodesk(doswapdesk);
 			doswapdesk=-1;
 		}
+	return(true);
 }
 
 listener listener=

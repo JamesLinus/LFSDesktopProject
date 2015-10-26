@@ -178,7 +178,7 @@ void expose(struct button *b,XExposeEvent *e)
 		XCopyArea(dpy,b->pixmap,b->window,activeGC,e->x,e->y,e->width,e->height,e->x,e->y);
 }
 
-void buttonevent(void *self,XEvent *e)
+bool buttonevent(void *self,XEvent *e,int type)
 {
 	CHECKPOINT
 	switch (e->type)
@@ -202,6 +202,7 @@ void buttonevent(void *self,XEvent *e)
 			unmapnotify((button*)self,&e->xunmap);
 			break;
 		}
+	return(true);
 }
 
 struct button *bcreate(void (*function)(void *,Time),void *arg,struct bitmap *bitmap,Window parent,int x,int y,int width,int height,int gravity,int buttonnum,struct frame *f)
