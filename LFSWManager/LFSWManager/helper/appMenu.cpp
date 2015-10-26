@@ -120,6 +120,7 @@ void setCatagories(void)
 	char	foundiconbuffer[BUFFERSIZE];
 	bool	overridefound=false;
 	bool	interm=false;
+	bool	foundicon=false;
 
 	for(int j=0; j<MAXCATS; j++)
 		{
@@ -147,6 +148,7 @@ void setCatagories(void)
 							foundmatch=false;
 							overridefound=false;
 							interm=false;
+							foundicon=false;
 							while(fgets(buffer,BUFFERSIZE,filedata))
 								{
 									if(buffer[strlen(buffer)-1]=='\n')
@@ -179,6 +181,7 @@ void setCatagories(void)
 												}
 											if(strcmp(splitstr,"Icon")==0)
 												{
+													foundicon=true;
 													splitstr=strtok(NULL,"=");
 													sprintf(foundiconbuffer,"%s",splitstr);
 												}
@@ -218,12 +221,14 @@ void setCatagories(void)
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].inTerm=interm;
 									mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=false;
 
-									const char *imagefile=twc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
-									if(imagefile!=NULL)
+									if(foundicon==true)
 										{
-											twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
-											mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=true;
-											//free(imagefile);
+											const char *imagefile=twc->globalLib->LFSTK_findThemedIcon(desktopTheme,foundiconbuffer,"");
+											if(imagefile!=NULL)
+												{
+													twc->globalLib->LFSTK_setPixmapsFromPath(twc->display,twc->visual,twc->cm,twc->window,imagefile,&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[0],&mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].pm[1],16);
+													mainMenus[foundcatmatch].entry[mainMenus[foundcatmatch].maxentrys].gotIcon=true;
+												}
 										}
 
 									mainMenus[foundcatmatch].maxentrys++;

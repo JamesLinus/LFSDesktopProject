@@ -1,4 +1,5 @@
 0.0.15
+Appmenu correctly determines if .desktop file holds 'icon= ... ' line.
 Sets _NET_WM_DESKTOP correctly when moving window.
 Updated appmenu.
 Updated manpage.
