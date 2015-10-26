@@ -203,11 +203,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 					if(event.xany.window==subwc->window)
 						run=false;
 					break;
-				case Expose:
-				break;
-				case ButtonRelease:
-					run=false;
-					break;
 				default:
 					break;
 				}

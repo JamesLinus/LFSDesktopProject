@@ -52,6 +52,7 @@ const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 
 LFSTK_buttonClass		*quit=NULL;
 
 bool					mainLoop=true;
+int						iconSize=16;
 
 bool doQuit(void *p,void* ud)
 {
@@ -109,7 +110,7 @@ int main(int argc, char **argv)
 	sy+=YSPACING;
 
 //menu button
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/computer.png",&ic[0],&ic[1],16);
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/computer.png",&ic[0],&ic[1],iconSize);
 	mainMenus=new menuItemStruct[MAXMAINMENUS];
 
 	for(int j=0;j<MAXMAINMENUS;j++)
@@ -121,6 +122,7 @@ int main(int argc, char **argv)
 			mainMenus[j].useIcon=true;
 			mainMenus[j].icon[0]=ic[0];
 			mainMenus[j].icon[1]=ic[1];
+			mainMenus[j].iconSize=iconSize;
 		}
 
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./ROOTKKEdit.png",&mainMenus[2].icon[0],&mainMenus[2].icon[1],16);
@@ -153,6 +155,7 @@ int main(int argc, char **argv)
 			subMenus[j].useIcon=true;
 			subMenus[j].icon[0]=ic[0];
 			subMenus[j].icon[1]=ic[1];
+			subMenus[j].iconSize=iconSize;
 		}
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
 //add sub menus
@@ -162,9 +165,11 @@ int main(int argc, char **argv)
 	mainMenusWithSubs[0].useIcon=true;
 	mainMenusWithSubs[0].icon[0]=ic[0];
 	mainMenusWithSubs[0].icon[1]=ic[1];
+	mainMenusWithSubs[0].iconSize=iconSize;
 	mainMenusWithSubs[1].useIcon=true;
 	mainMenusWithSubs[1].icon[0]=ic[0];
 	mainMenusWithSubs[1].icon[1]=ic[1];
+	mainMenusWithSubs[1].iconSize=iconSize;
 
 	mainMenusWithSubs[1].subMenus=subMenus;
 	mainMenusWithSubs[1].subMenuCnt=MAXSUBMENUS;
