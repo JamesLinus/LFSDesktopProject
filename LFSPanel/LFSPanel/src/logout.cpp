@@ -102,11 +102,7 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 				
 				break;
 		}
-//	if(grav==NorthWestGravity)
-//		xpos=x;
-//	else
-//		xpos=x-width;
-printf("---w=%i - h=%i---\n",width,height);
+
 	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
 	if(icon!=NULL)
