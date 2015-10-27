@@ -72,6 +72,8 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 			case PANELNORTH:
 			case PANELSOUTH:
 				ypos=0;
+				width=panelHeight;
+				height=panelHeight;
 				if(fromleft==true)
 					{
 						thisgrav=NorthWestGravity;
