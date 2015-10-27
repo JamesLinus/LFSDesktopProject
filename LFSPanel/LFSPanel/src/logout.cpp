@@ -51,25 +51,63 @@ bool logoutCB(void *p,void* ud)
 	return(true);
 }
 
-int  addLogout(int x,int y,int grav)
+int  addLogout(int x,int y,int grav,bool fromleft)
 {
 	int	xpos=0;
+	int ypos=0;
 	int width=panelHeight+6;
 	int	retval=width;
 	const char	*themedicon=NULL;
 	const char	*icon=NULL;
-
+	int	thisgrav;
+	int	height;
 	if(logoutButton!=NULL)
 		{
 			printError("Duplicate logout");
 			return(0);
 		}
-	if(grav==NorthWestGravity)
-		xpos=x;
-	else
-		xpos=x-width;
 
-	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+6,panelHeight,grav);
+	switch(grav)
+		{
+			case PANELNORTH:
+			case PANELSOUTH:
+				ypos=0;
+				if(fromleft==true)
+					{
+						thisgrav=NorthWestGravity;
+						xpos=x;
+					}
+				else
+					{
+						thisgrav=NorthEastGravity;
+						xpos=x-width;
+					}
+				
+				break;
+			case PANELEAST:
+			case PANELWEST:
+				xpos=0;
+				width=panelHeight;
+				height=panelHeight;
+				if(fromleft==true)
+					{
+						thisgrav=NorthWestGravity;
+						ypos=x;
+					}
+				else
+					{
+						thisgrav=SouthWestGravity;
+						ypos=x-height+1;
+					}
+				
+				break;
+		}
+//	if(grav==NorthWestGravity)
+//		xpos=x;
+//	else
+//		xpos=x-width;
+printf("---w=%i - h=%i---\n",width,height);
+	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
 	if(icon!=NULL)
 		logoutButton->LFSTK_setIconFromPath(icon,panelHeight-6);

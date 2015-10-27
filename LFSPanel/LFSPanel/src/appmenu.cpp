@@ -277,7 +277,6 @@ void addCatagories(void)
 
 int addAppmenu(int x,int y,int grav)
 {
-//	int addto=mainwind->font->ascent+mainwind->font->descent+8;
 	int maxwid=0;
 	int	catnum=0;
 	int	xpos=0;

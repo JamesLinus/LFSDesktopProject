@@ -31,7 +31,8 @@ char				*restartCommand=NULL;
 char				*shutdownCommand=NULL;
 char				*rightGadgets=NULL;
 char				*leftGadgets=NULL;
-int					panelXPos=PANELCENTRE;
+int					panelPos=PANELCENTRE;
+int					panelGravity=PANELNORTH;
 char				*desktopTheme=NULL;
 
 int					refreshRate=1;

@@ -46,7 +46,8 @@ args	panelPrefs[]=
 	{"shutdowncommand",TYPESTRING,&shutdownCommand},
 	{"gadgetsright",TYPESTRING,&rightGadgets},
 	{"gadgetsleft",TYPESTRING,&leftGadgets},
-	{"panelxpos",TYPEINT,&panelXPos},
+	{"panelpos",TYPEINT,&panelPos},
+	{"panelgrav",TYPEINT,&panelGravity},
 	{NULL,0,NULL}
 };
 
@@ -68,7 +69,8 @@ void addLeftGadgets(void)
 						offset+=addWindowDeskMenu(offset,mons->y,NorthWestGravity);
 						break;
 					case 'L':
-						offset+=addLogout(offset,mons->y,NorthWestGravity);
+						//offset+=addLogout(offset,mons->y,NorthWestGravity);
+						offset+=addLogout(offset,mons->y,panelGravity,true);
 						break;
 					case 'C':
 						offset+=addClock(offset,mons->y,NorthWestGravity);
@@ -104,7 +106,8 @@ void addRightGadgets(void)
 						offset-=addWindowDeskMenu(offset,mons->y,NorthEastGravity);
 						break;
 					case 'L':
-						offset-=addLogout(offset,mons->y,NorthEastGravity);
+					//	offset-=addLogout(offset,mons->y,NorthEastGravity);
+						offset-=addLogout(offset,mons->y,panelGravity,false);
 						break;
 					case 'C':
 						offset-=addClock(offset,mons->y,NorthEastGravity);
@@ -172,7 +175,7 @@ int main(int argc, char **argv)
 	shutdownCommand=strdup("xterm");
 	leftGadgets=strdup("A");
 	rightGadgets=strdup("L");
-	panelXPos=PANELCENTRE;
+	panelPos=PANELCENTRE;
 
 	XSetErrorHandler(errHandler);
 
@@ -197,44 +200,163 @@ int main(int argc, char **argv)
 
 	addLeftGadgets();
 	addRightGadgets();
-
-	if((leftOffset==0) && (rightOffset==0))
-		{
-			fprintf(stderr,"Not using empty panel ...\n");
-			exit(0);
-		}
+//
+//
+//	if((leftOffset==0) && (rightOffset==0))
+//		{
+//			fprintf(stderr,"Not using empty panel ...\n");
+//			exit(0);
+//		}
 
 	signal(SIGALRM,alarmCallBack);
 	alarm(refreshRate);
 
-	switch(panelWidth)
+
+	int psize=leftOffset+abs(rightOffset);
+
+	printf(">>psize %i<<\n",psize);
+	printf(">>panelWidth %i<<\n",panelWidth);
+	printf(">>panelHeight %i<<\n",panelHeight);
+	printf(">>panelGravity %i<<\n",panelGravity);
+
+	int thold;
+	int px=mons->x,py=mons->y;
+	switch(panelGravity)
 		{
-			case PANELFULL:
-				panelXPos=mons->x;
-				mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
+			case PANELSOUTH:
+				py=mons->y+mons->h-panelHeight;
+			case PANELNORTH:
+				switch(panelWidth)
+					{
+						case PANELFULL:
+							panelWidth=mons->w;
+							panelPos=PANELLEFT;
+							break;
+						case PANELSHRINK:
+							panelWidth=psize;
+							break;
+					}
+				switch(panelPos)
+					{
+						case PANELLEFT:
+							px=mons->x;
+							break;
+						case PANELCENTRE:
+							px=((mons->w/2)-(psize/2))+mons->x;
+							break;
+						case PANELRIGHT:
+							px=mons->x+mons->w-psize;
+							break;
+					}
 				break;
-			case PANELSHRINK:
-				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset),panelHeight);
+
+			case PANELEAST:
+				px=mons->x+mons->w-panelHeight;
+			case PANELWEST:
+				switch(panelWidth)
+					{
+						case PANELFULL:
+							panelWidth=panelHeight;
+							panelHeight=mons->h;
+							panelPos=PANELLEFT;
+							break;
+						case PANELSHRINK:
+							panelWidth=panelHeight;
+							panelHeight=psize;
+							break;
+					}
+				switch(panelPos)
+					{
+						case PANELLEFT:
+							py=mons->y;
+							break;
+						case PANELCENTRE:
+							py=((mons->h/2)-(psize/2))+mons->y;
+							break;
+						case PANELRIGHT:
+							py=mons->y+mons->h-psize;
+							break;
+					}
 				break;
-			default:
-				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
 		}
 
-	geom=mainwind->LFSTK_getGeom();
-	switch(panelXPos)
-		{
-			case PANELLEFT:
-				mainwind->LFSTK_moveWindow(mons->x,mons->y,true);
-				break;
-			case PANELCENTRE:
-				mainwind->LFSTK_moveWindow((mons->w/2)-((geom->w)/2),mons->y,true);
-				break;
-			case PANELRIGHT:
-				mainwind->LFSTK_moveWindow(mons->w-(geom->w),mons->y,true);
-				break;
-			default:
-				mainwind->LFSTK_moveWindow(panelXPos,mons->y,true);
-		}
+	printf("-------\n");
+	printf(">>psize %i<<\n",psize);
+	printf(">>panelWidth %i<<\n",panelWidth);
+	printf(">>panelHeight %i<<\n",panelHeight);
+	printf(">>panelGravity %i<<\n",panelGravity);
+	printf(">>px %i py %i<<\n",px,py);
+
+	mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
+	mainwind->LFSTK_moveWindow(px,py,true);
+//exit(0);
+//	switch(panelWidth)
+//		{
+//			case PANELFULL:
+//				panelPos=mons->x;
+//				mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
+//				break;
+//			case PANELSHRINK:
+//				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset),panelHeight);
+//				break;
+//			default:
+//				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
+//		}
+//printf(">>>%i<<<\n",panelHeight);
+//printf(">>>%i<<<\n",panelWidth);
+//	geom=mainwind->LFSTK_getGeom();
+//	int px,py;
+//	int thold;
+//	int oldw=panelWidth;
+//	switch(panelGravity)
+//		{
+//			case PANELNORTH:
+//				py=mons->y;
+//				px=mons->x;
+//				break;
+//			case PANELEAST:
+//				py=mons->y;
+//				px=mons->x;
+//				break;
+//			case PANELSOUTH:
+//				py=mons->y+mons->h-panelHeight;
+//				px=mons->x;
+//				break;
+//			case PANELWEST:
+//				thold=panelHeight;
+//				panelHeight=panelWidth;
+//				panelWidth=thold;
+//				py=mons->y;
+//				px=mons->x;
+//				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
+//				break;
+//		}
+//	switch(panelHeight)
+//		{
+//			case PANELFULL:
+//				mainwind->LFSTK_resizeWindow(panelWidth,mons->h);
+//				break;
+//			case PANELSHRINK:
+//				mainwind->LFSTK_resizeWindow(panelWidth,oldw,true);
+//				break;
+//		//	default:
+//		//		mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
+//		}
+//
+//	switch(panelPos)
+//		{
+//			case PANELLEFT:
+//				mainwind->LFSTK_moveWindow(px,py,true);
+//				break;
+//			case PANELCENTRE:
+//				mainwind->LFSTK_moveWindow((mons->w/2)-((geom->w)/2),py,true);
+//				break;
+//			case PANELRIGHT:
+//				mainwind->LFSTK_moveWindow(mons->w-(geom->w),py,true);
+//				break;
+//			default:
+//				mainwind->LFSTK_moveWindow(panelPos,py,true);
+//		}
 
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);

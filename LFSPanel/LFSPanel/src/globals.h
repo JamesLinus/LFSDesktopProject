@@ -38,8 +38,10 @@
 #define SPACING 10
 #define WINDOWREFRESH 2
 
-enum PANELPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
+enum PANELXPOS {PANELLEFT=-1,PANELCENTRE=-2,PANELRIGHT=-3};
+enum PANELYPOS {PANELTOP=-1,PANELBOTTOM=-3};
 enum PANELSIZE {PANELFULL=-1,PANELSHRINK=-2};
+enum PANELGRAVITY {PANELABS=0,PANELNORTH,PANELEAST,PANELSOUTH,PANELWEST};
 
 //prefs
 extern char					*terminalCommand;
@@ -52,7 +54,8 @@ extern char					*restartCommand;
 extern char					*shutdownCommand;
 extern char					*rightGadgets;
 extern char					*leftGadgets;
-extern int					panelXPos;
+extern int					panelPos;
+extern int					panelGravity;
 extern char					*desktopTheme;
 
 extern int					refreshRate;
