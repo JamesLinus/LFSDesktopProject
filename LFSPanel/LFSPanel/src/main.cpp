@@ -163,6 +163,8 @@ int main(int argc, char **argv)
 	char			*env;
 	XEvent			event;
 	geometryStruct	*geom;
+	fontStruct		*tfont;
+	const char		*itemfont;
 
 	terminalCommand=strdup("xterm -e ");
 	logoutCommand=strdup("xterm");
@@ -175,6 +177,11 @@ int main(int argc, char **argv)
 	XSetErrorHandler(errHandler);
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
+
+	itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
+	tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
+	iconSize=tfont->size;
+	free(tfont);
 
 	if(argc>1)
 		asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,argv[1]);

@@ -168,7 +168,8 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 							if(iconpath!=NULL)
 								{
 									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useIcon=true;
-									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].icon[0],&catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].icon[1],16);
+									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].icon[0],&catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].icon[1],iconSize);
+									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].iconSize=iconSize;
 								}
 						}
 					if(holdexec!=NULL)
@@ -257,12 +258,13 @@ void addCatagories(void)
 							catagoryMenus[catagoryCnt].subMenus=NULL;
 							catagoryMenus[catagoryCnt].subMenuCnt=0;
 							catagoryMenus[catagoryCnt].useIcon=true;
+							catagoryMenus[catagoryCnt].iconSize=iconSize;
 							catPtr[catcnt]=catagoryCnt;
 							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
 							if(iconpath!=NULL)
 								{
 									catagoryMenus[catagoryCnt].useIcon=true;	
-									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),16);
+									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
 								}
 
 							catagoryCnt++;
@@ -275,7 +277,7 @@ void addCatagories(void)
 
 int addAppmenu(int x,int y,int grav)
 {
-	int addto=mainwind->font->ascent+mainwind->font->descent+8;
+//	int addto=mainwind->font->ascent+mainwind->font->descent+8;
 	int maxwid=0;
 	int	catnum=0;
 	int	xpos=0;
@@ -294,7 +296,7 @@ int addAppmenu(int x,int y,int grav)
 		xpos=x-width;
 
 	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+2,panelHeight,grav);
-	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-6);
+	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-4);
 	addCatagories();
 	addEntries();
 	appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);

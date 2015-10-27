@@ -87,12 +87,13 @@ int  addLogout(int x,int y,int grav)
 			logoutItems[j].subMenus=NULL;
 			logoutItems[j].subMenuCnt=0;
 			logoutItems[j].useIcon=true;
+			logoutItems[j].iconSize=iconSize;
 
 			themedicon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[j],"");
 			if(themedicon!=NULL)
-				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,themedicon,&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
+				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,themedicon,&logoutItems[j].icon[0],&logoutItems[j].icon[1],iconSize);
 			else
-				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],16);
+				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],iconSize);
 		}
 
 	logoutButton->LFSTK_setStyle(BEVELOUT);

@@ -56,6 +56,7 @@ extern int					panelXPos;
 extern char					*desktopTheme;
 
 extern int					refreshRate;
+extern int					iconSize;
 
 //panel window
 extern LFSTK_windowClass	*mainwind;

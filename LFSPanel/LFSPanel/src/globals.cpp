@@ -35,6 +35,7 @@ int					panelXPos=PANELCENTRE;
 char				*desktopTheme=NULL;
 
 int					refreshRate=1;
+int					iconSize=16;
 
 //panel window
 LFSTK_windowClass	*mainwind=NULL;

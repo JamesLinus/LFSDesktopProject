@@ -200,7 +200,7 @@ int addWindowDeskMenu(int x,int y,int grav)
 		xpos=x-width;
 
 	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
-	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"desktop","");
+	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
 		windowDeskMenu->LFSTK_setIconFromPath(icon,panelHeight-6);
 	else
