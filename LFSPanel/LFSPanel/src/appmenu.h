@@ -35,6 +35,6 @@ struct menuEntryStruct
 
 extern LFSTK_menuButtonClass	*appButton;
 
-int addAppmenu(int x,int y,int grav);
+int addAppmenu(int x,int y,int grav,bool fromleft);
 
 #endif

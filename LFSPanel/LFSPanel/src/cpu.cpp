@@ -51,6 +51,13 @@ int addCpuData(int x,int y,int grav)
 	int width=BWIDTH;
 	int	retval=width;
 
+	if((panelGravity==PANELEAST) || (panelGravity==PANELWEST))
+		{
+			printError("CPU stats not allowed with this panel's orientation.");
+			return(0);
+		}
+
+
 	if(cpuButton!=NULL)
 		{
 			printError("Duplicate cpu stats");

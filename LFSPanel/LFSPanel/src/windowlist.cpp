@@ -180,12 +180,16 @@ void updateWindowMenu(void)
 	alarm(refreshRate);
 }
 
-int addWindowDeskMenu(int x,int y,int grav)
+int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 {
-	int			xpos=0;
-	int			width=panelHeight+6;
-	int			retval=width;
 	const char	*icon=NULL;
+	int			xpos=x;
+	int			ypos=y;
+	int			width=0;
+	int			height=0;
+	int			thisgrav=grav;
+	int			iconsize=16;
+
 
 	if(windowDeskMenu!=NULL)
 		{
@@ -193,32 +197,32 @@ int addWindowDeskMenu(int x,int y,int grav)
 			return(0);
 		}
 
+	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
-	if(grav==NorthWestGravity)
-		xpos=x;
-	else
-		xpos=x-width;
-
-	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
+	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
-		windowDeskMenu->LFSTK_setIconFromPath(icon,panelHeight-6);
+		windowDeskMenu->LFSTK_setIconFromPath(icon,iconsize);
 	else
-		windowDeskMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
+		windowDeskMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
 	windowDeskMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
 	windowDeskListCnt=-1;
+	windowListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
-	return(retval);
+	return(width);
 }
 
-int addWindowMenu(int x,int y,int grav)
+int addWindowMenu(int x,int y,int grav,bool fromleft)
 {
-	int			xpos=0;
-	int			width=panelHeight+6;
-	int			retval=width;
 	const char	*icon=NULL;
+	int			xpos=x;
+	int			ypos=y;
+	int			width=0;
+	int			height=0;
+	int			thisgrav=grav;
+	int			iconsize=16;
 
 	if(windowMenu!=NULL)
 		{
@@ -226,22 +230,20 @@ int addWindowMenu(int x,int y,int grav)
 			return(0);
 		}
 
-	if(grav==NorthWestGravity)
-		xpos=x;
-	else
-		xpos=x-width;
+	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
-	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,0,width,panelHeight,grav);
+	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
 	if(icon!=NULL)
-		windowMenu->LFSTK_setIconFromPath(icon,panelHeight-6);
+		windowMenu->LFSTK_setIconFromPath(icon,iconsize);
 	else
-		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",panelHeight-6);
+		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
 
+	windowDeskListCnt=-1;
 	windowListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
-	return(retval);
+	return(width);
 }
 

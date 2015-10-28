@@ -42,3 +42,44 @@ int					iconSize=16;
 LFSTK_windowClass	*mainwind=NULL;
 int					rightOffset=0;
 int					leftOffset=0;
+
+void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
+{
+	
+	*w=panelHeight;
+	*h=panelHeight;
+	*size=(*w)-12;
+
+	switch(*grav)
+		{
+			case PANELNORTH:
+			case PANELSOUTH:
+				if(fromleft==true)
+					{
+						*grav=NorthWestGravity;
+						*x=*x;
+					}
+				else
+					{
+						*grav=NorthEastGravity;
+						*x=*x-*w+1;
+					}
+				*y=0;
+				break;
+
+			case PANELEAST:
+			case PANELWEST:
+				if(fromleft==true)
+					{
+						*grav=NorthWestGravity;
+						*y=*x;
+					}
+				else
+					{
+						*grav=SouthWestGravity;
+						*y=*x-*h+1;
+					}
+				*x=0;
+				break;
+		}
+}

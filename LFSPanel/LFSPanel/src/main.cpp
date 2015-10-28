@@ -60,16 +60,15 @@ void addLeftGadgets(void)
 			switch(leftGadgets[j])
 				{
 					case 'A':
-						offset+=addAppmenu(offset,mons->y,NorthWestGravity);
+						offset+=addAppmenu(offset,mons->y,panelGravity,true);
 						break;
 					case 'W':
-						offset+=addWindowMenu(offset,mons->y,NorthWestGravity);
+						offset+=addWindowMenu(offset,mons->y,panelGravity,true);
 						break;
 					case 'w':
-						offset+=addWindowDeskMenu(offset,mons->y,NorthWestGravity);
+						offset+=addWindowDeskMenu(offset,mons->y,panelGravity,true);
 						break;
 					case 'L':
-						//offset+=addLogout(offset,mons->y,NorthWestGravity);
 						offset+=addLogout(offset,mons->y,panelGravity,true);
 						break;
 					case 'C':
@@ -97,16 +96,15 @@ void addRightGadgets(void)
 			switch(rightGadgets[j])
 				{
 					case 'A':
-						offset-=addAppmenu(offset,mons->y,NorthEastGravity);
+						offset-=addAppmenu(offset,mons->y,panelGravity,false);
 						break;
 					case 'W':
-						offset-=addWindowMenu(offset,mons->y,NorthEastGravity);
+						offset-=addWindowMenu(offset,mons->y,panelGravity,false);
 						break;
 					case 'w':
-						offset-=addWindowDeskMenu(offset,mons->y,NorthEastGravity);
+						offset-=addWindowDeskMenu(offset,mons->y,panelGravity,false);
 						break;
 					case 'L':
-					//	offset-=addLogout(offset,mons->y,NorthEastGravity);
 						offset-=addLogout(offset,mons->y,panelGravity,false);
 						break;
 					case 'C':
@@ -152,7 +150,7 @@ void  alarmCallBack(int sig)
 	if(cpuButton!=NULL)
 		updateCpuStats();
 
-	if(windowMenu!=NULL)
+	if((windowMenu!=NULL) || (windowDeskMenu!=NULL))
 		updateWindowMenu();
 
 	signal(SIGALRM,SIG_IGN);
@@ -168,6 +166,9 @@ int main(int argc, char **argv)
 	geometryStruct	*geom;
 	fontStruct		*tfont;
 	const char		*itemfont;
+	int				psize;
+	int				thold;
+	int				px,py;
 
 	terminalCommand=strdup("xterm -e ");
 	logoutCommand=strdup("xterm");
@@ -198,29 +199,28 @@ int main(int argc, char **argv)
 	rightOffset=0;
 	leftOffset=0;
 
+	signal(SIGALRM,alarmCallBack);
 	addLeftGadgets();
 	addRightGadgets();
-//
-//
-//	if((leftOffset==0) && (rightOffset==0))
-//		{
-//			fprintf(stderr,"Not using empty panel ...\n");
-//			exit(0);
-//		}
 
-	signal(SIGALRM,alarmCallBack);
+
+	if((leftOffset==0) && (rightOffset==0))
+		{
+			fprintf(stderr,"Not using empty panel ...\n");
+			exit(0);
+		}
+
 	alarm(refreshRate);
 
+	psize=leftOffset+abs(rightOffset);
 
-	int psize=leftOffset+abs(rightOffset);
+//	printf(">>psize %i<<\n",psize);
+//	printf(">>panelWidth %i<<\n",panelWidth);
+//	printf(">>panelHeight %i<<\n",panelHeight);
+//	printf(">>panelGravity %i<<\n",panelGravity);
 
-	printf(">>psize %i<<\n",psize);
-	printf(">>panelWidth %i<<\n",panelWidth);
-	printf(">>panelHeight %i<<\n",panelHeight);
-	printf(">>panelGravity %i<<\n",panelGravity);
-
-	int thold;
-	int px=mons->x,py=mons->y;
+	px=mons->x;
+	py=mons->y;
 	switch(panelGravity)
 		{
 			case PANELSOUTH:
@@ -264,6 +264,11 @@ int main(int argc, char **argv)
 							panelWidth=panelHeight;
 							panelHeight=psize;
 							break;
+						default:
+							thold=panelWidth;
+							panelWidth=panelHeight;
+							panelHeight=thold;
+							break;
 					}
 				switch(panelPos)
 					{
@@ -271,93 +276,24 @@ int main(int argc, char **argv)
 							py=mons->y;
 							break;
 						case PANELCENTRE:
-							py=((mons->h/2)-(psize/2))+mons->y;
+							py=((mons->h/2)-(panelHeight/2))+mons->y;
 							break;
 						case PANELRIGHT:
-							py=mons->y+mons->h-psize;
+							py=mons->y+mons->h-panelHeight;
 							break;
 					}
 				break;
 		}
 
-	printf("-------\n");
-	printf(">>psize %i<<\n",psize);
-	printf(">>panelWidth %i<<\n",panelWidth);
-	printf(">>panelHeight %i<<\n",panelHeight);
-	printf(">>panelGravity %i<<\n",panelGravity);
-	printf(">>px %i py %i<<\n",px,py);
+//	printf("-------\n");
+//	printf(">>psize %i<<\n",psize);
+//	printf(">>panelWidth %i<<\n",panelWidth);
+//	printf(">>panelHeight %i<<\n",panelHeight);
+//	printf(">>panelGravity %i<<\n",panelGravity);
+//	printf(">>px %i py %i<<\n",px,py);
 
 	mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
 	mainwind->LFSTK_moveWindow(px,py,true);
-//exit(0);
-//	switch(panelWidth)
-//		{
-//			case PANELFULL:
-//				panelPos=mons->x;
-//				mainwind->LFSTK_resizeWindow(mons->w,panelHeight);
-//				break;
-//			case PANELSHRINK:
-//				mainwind->LFSTK_resizeWindow(leftOffset+abs(rightOffset),panelHeight);
-//				break;
-//			default:
-//				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
-//		}
-//printf(">>>%i<<<\n",panelHeight);
-//printf(">>>%i<<<\n",panelWidth);
-//	geom=mainwind->LFSTK_getGeom();
-//	int px,py;
-//	int thold;
-//	int oldw=panelWidth;
-//	switch(panelGravity)
-//		{
-//			case PANELNORTH:
-//				py=mons->y;
-//				px=mons->x;
-//				break;
-//			case PANELEAST:
-//				py=mons->y;
-//				px=mons->x;
-//				break;
-//			case PANELSOUTH:
-//				py=mons->y+mons->h-panelHeight;
-//				px=mons->x;
-//				break;
-//			case PANELWEST:
-//				thold=panelHeight;
-//				panelHeight=panelWidth;
-//				panelWidth=thold;
-//				py=mons->y;
-//				px=mons->x;
-//				mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
-//				break;
-//		}
-//	switch(panelHeight)
-//		{
-//			case PANELFULL:
-//				mainwind->LFSTK_resizeWindow(panelWidth,mons->h);
-//				break;
-//			case PANELSHRINK:
-//				mainwind->LFSTK_resizeWindow(panelWidth,oldw,true);
-//				break;
-//		//	default:
-//		//		mainwind->LFSTK_resizeWindow(panelWidth,panelHeight);
-//		}
-//
-//	switch(panelPos)
-//		{
-//			case PANELLEFT:
-//				mainwind->LFSTK_moveWindow(px,py,true);
-//				break;
-//			case PANELCENTRE:
-//				mainwind->LFSTK_moveWindow((mons->w/2)-((geom->w)/2),py,true);
-//				break;
-//			case PANELRIGHT:
-//				mainwind->LFSTK_moveWindow(mons->w-(geom->w),py,true);
-//				break;
-//			default:
-//				mainwind->LFSTK_moveWindow(panelPos,py,true);
-//		}
-
 	mainwind->LFSTK_showWindow(true);
 	mainwind->LFSTK_setKeepAbove(true);
 	delete geom;
@@ -396,6 +332,8 @@ int main(int argc, char **argv)
 		delete cpuButton;
 	if(windowMenu!=NULL)
 		delete windowMenu;
+	if(windowDeskMenu!=NULL)
+		delete windowDeskMenu;
 
 	if(desktopTheme!=NULL)
 		free(desktopTheme);

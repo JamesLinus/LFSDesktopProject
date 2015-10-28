@@ -30,8 +30,8 @@ extern LFSTK_menuButtonClass	*windowMenu;
 extern LFSTK_menuButtonClass	*windowDeskMenu;
 extern const char				*possibleError;
 
-int addWindowDeskMenu(int x,int y,int grav);
-int addWindowMenu(int x,int y,int grav);
+int addWindowDeskMenu(int x,int y,int grav,bool fromleft);
+int addWindowMenu(int x,int y,int grav,bool fromleft);
 void updateWindowMenu(void);
 void resetMenus(void);
 

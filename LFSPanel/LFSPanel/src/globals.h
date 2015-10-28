@@ -67,5 +67,6 @@ extern int					rightOffset;
 extern int					leftOffset;
 
 void printError(const char *err);
+void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
 
 #endif

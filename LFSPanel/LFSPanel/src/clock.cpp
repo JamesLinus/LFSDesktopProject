@@ -45,6 +45,12 @@ int addClock(int x,int y,int grav)
 	int width=BWIDTH;
 	int	retval=width;
 
+	if((panelGravity==PANELEAST) || (panelGravity==PANELWEST))
+		{
+			printError("Clock not allowed with this panel's orientation.");
+			return(0);
+		}
+
 	if(clockButton!=NULL)
 		{
 			printError("Duplicate clock");

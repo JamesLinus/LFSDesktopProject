@@ -641,24 +641,32 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 
 int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 {
-	int thisx;
-	int thisy;
+	int	tx=this->x;
+	int	ty=this->y;
 
 	geometryStruct	*g=this->wc->LFSTK_getGeom();
-	thisx=this->x+g->x;
-	thisy=this->y+g->y;
+
+	if(tx>=0)
+		tx=(g->x)+this->x;
+	else
+		tx=(g->w+g->x)-abs(this->x);
+
+	if(ty>=0)
+		ty=(g->y)+this->y;
+	else
+		ty=(g->h+g->y)-abs(this->y);
 	free(g);
 
-	if(thisx<0)
-		thisx=0;
-	if(thisy<0)
-		thisy=0;
+	if(tx<0)
+		tx=0;
+	if(ty<0)
+		ty=0;
 
 	const monitorStruct* monitors=this->wc->LFSTK_getMonitors();
 
 	for(int j=0;j<this->wc->LFSTK_getMonitorCount();j++)
 		{
-			if((thisx>=monitors[j].x) && (thisx<(monitors[j].x+monitors[j].w)) && (thisy>=monitors[j].y) && (thisy<(monitors[j].y+monitors[j].h)))
+			if((tx>=monitors[j].x) && (tx<(monitors[j].x+monitors[j].w)) && (ty>=monitors[j].y) && (ty<(monitors[j].y+monitors[j].h)))
 				return(j);
 		}
 	return(-1);

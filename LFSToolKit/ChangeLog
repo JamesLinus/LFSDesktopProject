@@ -1,4 +1,6 @@
 0.0.9
+Fixed menu button popups appearing on wrong monitor.
+Added LFSTK_gadgetOnMonitor to gadget class.
 Improved themed icon search.
 Adde icon size to menuitemstruct - must be set if adding icon.
 Added search in /usr/share/icons/gnome when searching for themed icon.

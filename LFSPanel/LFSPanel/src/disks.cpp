@@ -76,6 +76,12 @@ int addDiskData(int x,int y,int grav)
 	int width=BWIDTH*2;
 	int	retval=width;
 
+	if((panelGravity==PANELEAST) || (panelGravity==PANELWEST))
+		{
+			printError("Disk stats not allowed with this panel's orientation.");
+			return(0);
+		}
+
 	if(diskButton!=NULL)
 		{
 			printError("Duplicate disk stats");

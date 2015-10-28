@@ -173,7 +173,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	ypos=g->y+this->h;
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 
-	//mons=this->wc->LFSTK_getMonitorData(subwc->LFSTK_windowOnMonitor());
 	mons=this->wc->LFSTK_getMonitorData(this->LFSTK_gadgetOnMonitor());
 	geometryStruct *subwcg=subwc->LFSTK_getGeom();
 

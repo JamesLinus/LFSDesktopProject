@@ -164,14 +164,22 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 
 					if(holdicon!=NULL)
 						{
-							const char *iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,holdicon,"");
+							const char *iconpath=NULL;
+							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,holdicon,"");
+							free(holdicon);
+							holdicon=NULL;
 							if(iconpath!=NULL)
 								{
 									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useIcon=true;
 									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].icon[0],&catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].icon[1],iconSize);
 									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].iconSize=iconSize;
 								}
+							else
+								{
+									catagorySubMenus[catPtr[mycatcnt]][subMenusCnt[catPtr[mycatcnt]]].useIcon=false;
+								}
 						}
+
 					if(holdexec!=NULL)
 						ms->exec=holdexec;
 					if(interm==true)
@@ -224,15 +232,16 @@ void addEntries(void)
 					catagorySubMenus[j][k].bc=NULL;
 					catagorySubMenus[j][k].subMenus=NULL;
 					catagorySubMenus[j][k].useIcon=false;
+					catagorySubMenus[j][k].iconSize=16;
 				}
 		}
+
 	ftw("/usr/share/applications",ftwCallback,16);
 	for(int j=0;j<MAXCATS;j++)
 		{
 			catagoryMenus[j].subMenus=catagorySubMenus[j];
 			catagoryMenus[j].subMenuCnt=subMenusCnt[j];
 		}
-
 	sortEntries();
 }
 
@@ -275,13 +284,17 @@ void addCatagories(void)
 		}
 }
 
-int addAppmenu(int x,int y,int grav)
+int addAppmenu(int x,int y,int grav,bool fromleft)
 {
 	int maxwid=0;
 	int	catnum=0;
-	int	xpos=0;
-	int width=panelHeight+2;
-	int	retval=width;
+	int	retval;
+	int	xpos=x;
+	int	ypos=y;
+	int	width=0;
+	int	height=0;
+	int	thisgrav=grav;
+	int	iconsize=16;
 
 	if(appButton!=NULL)
 		{
@@ -289,18 +302,15 @@ int addAppmenu(int x,int y,int grav)
 			return(0);
 		}
 
-	if(grav==NorthWestGravity)
-		xpos=x;
-	else
-		xpos=x-width;
+	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
-	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,0,panelHeight+2,panelHeight,grav);
-	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",panelHeight-4);
+	appButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
+	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",iconsize);
 	addCatagories();
 	addEntries();
 	appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(NULL,callback,NULL);
 	appButton->LFSTK_clearWindow();
-	return(retval);
+	return(width);
 }
