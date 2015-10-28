@@ -1,4 +1,5 @@
 0.0.9
+Improved themed icon search.
 Adde icon size to menuitemstruct - must be set if adding icon.
 Added search in /usr/share/icons/gnome when searching for themed icon.
 Fixed menu button with sub menus not showing icon.
