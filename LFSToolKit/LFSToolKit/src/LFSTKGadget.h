@@ -75,6 +75,8 @@ class LFSTK_gadgetClass
 		void LFSTK_setIconFromPath(const char *file,int size=16);
 		void LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
 
+		int LFSTK_gadgetOnMonitor(void);
+
 		geometryStruct *LFSTK_getGeom(void);
 
 		LFSTK_windowClass	*wc;

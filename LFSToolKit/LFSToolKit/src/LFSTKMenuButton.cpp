@@ -173,7 +173,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	ypos=g->y+this->h;
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 
-	mons=this->wc->LFSTK_getMonitorData(subwc->LFSTK_windowOnMonitor());
+	//mons=this->wc->LFSTK_getMonitorData(subwc->LFSTK_windowOnMonitor());
+	mons=this->wc->LFSTK_getMonitorData(this->LFSTK_gadgetOnMonitor());
 	geometryStruct *subwcg=subwc->LFSTK_getGeom();
 
 	if(xpos+subwcg->w>mons->x+mons->w)
@@ -202,6 +203,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 				case LeaveNotify:
 					if(event.xany.window==subwc->window)
 						run=false;
+					break;
+				case Expose:
+				break;
+				case ButtonRelease:
+					run=false;
 					break;
 				default:
 					break;

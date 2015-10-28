@@ -580,4 +580,13 @@ void LFSTK_windowClass::LFSTK_setXProperty(Atom property,Atom type,int format,vo
 	XChangeProperty(this->display,this->window,property,type,format,PropModeReplace,(const unsigned char*)dataptr,propcnt);
 }
 
+/**
+* Get monitors array.
+* \return Const pointer to monitor array.
+* \note Do not free returned structure.
+*/
+const monitorStruct* LFSTK_windowClass::LFSTK_getMonitors(void)
+{
+	return(this->monitors);
+}
 

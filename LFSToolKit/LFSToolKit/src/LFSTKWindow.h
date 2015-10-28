@@ -75,6 +75,7 @@ class LFSTK_windowClass
 
 		int LFSTK_getMonitorCount(void);
 		const monitorStruct* LFSTK_getMonitorData(int monitor);
+		const monitorStruct* LFSTK_getMonitors(void);
 	
 		void LFSTK_reloadGlobals(void);
 		void LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);

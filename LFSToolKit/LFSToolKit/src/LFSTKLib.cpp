@@ -544,9 +544,10 @@ int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
 	if(typeflag!=FTW_F)
 		return(0);
 
+//	retBuffer[0]=0;
 	if (fnmatch(filterBuffer,fpath,FNM_CASEFOLD)==0)
 		{
-			sprintf(retBuffer,"%s",fpath);
+			snprintf(retBuffer,511,"%s",fpath);
 			return 1;
 		}
 	return 0;
@@ -563,34 +564,29 @@ int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
 const char* LFSTK_lib::LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory)
 {
 
-	char	dirbuffer[1024];
+	char	dirbuffer[2048];
 
 	sprintf(dirbuffer,"/usr/share/icons/%s",theme);
 	sprintf(filterBuffer,"*%s*%s.png",catagory,icon);
 	retBuffer[0]=0;
-	ftw(dirbuffer,this->callback,16);
-	if(retBuffer[0]!=0)
+	if(ftw(dirbuffer,this->callback,16)==1)
 		return(retBuffer);
 
 	sprintf(dirbuffer,"%s/.icons/%s",getenv("HOME"),theme);
-	ftw(dirbuffer,this->callback,16);
-	if(retBuffer[0]!=0)
+	if(ftw(dirbuffer,this->callback,16)==1)
 		return(retBuffer);
 
 	sprintf(dirbuffer,"/usr/share/icons/hicolor");
-	ftw(dirbuffer,this->callback,16);
-	if(retBuffer[0]!=0)
+	if(ftw(dirbuffer,this->callback,16)==1)
 		return(retBuffer);
 
 	sprintf(dirbuffer,"/usr/share/icons/gnome");
-	ftw(dirbuffer,this->callback,16);
-	if(retBuffer[0]!=0)
+	if(ftw(dirbuffer,this->callback,16)==1)
 		return(retBuffer);
 
 	sprintf(dirbuffer,"/usr/share/pixmaps");
 	sprintf(filterBuffer,"*%s.png",icon);
-	ftw(dirbuffer,this->callback,16);
-	if(retBuffer[0]!=0)
+	if(ftw(dirbuffer,this->callback,16)==1)
 		return(retBuffer);
 
 	return(NULL);
