@@ -34,6 +34,7 @@ char				*leftGadgets=NULL;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
 char				*desktopTheme=NULL;
+const char			*panelID="";
 
 int					refreshRate=1;
 int					iconSize=16;

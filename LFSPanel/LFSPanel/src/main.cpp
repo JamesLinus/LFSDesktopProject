@@ -30,6 +30,7 @@
 #include "disks.h"
 #include "cpu.h"
 #include "windowlist.h"
+#include "launchers.h"
 
 #define RCNAME "lfspanel"
 
@@ -188,7 +189,10 @@ int main(int argc, char **argv)
 	free(tfont);
 
 	if(argc>1)
-		asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,argv[1]);
+		{
+			panelID=argv[1];
+			asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,panelID);
+		}
 	else	
 		asprintf(&env,"%s/.config/LFS/%s.rc",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);

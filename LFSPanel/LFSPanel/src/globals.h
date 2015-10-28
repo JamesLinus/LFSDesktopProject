@@ -57,6 +57,7 @@ extern char					*leftGadgets;
 extern int					panelPos;
 extern int					panelGravity;
 extern char					*desktopTheme;
+extern const char			*panelID;
 
 extern int					refreshRate;
 extern int					iconSize;
