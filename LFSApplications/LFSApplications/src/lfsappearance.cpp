@@ -31,8 +31,8 @@
 #include <LFSTKLib.h>
 
 enum {EXIT=0,APPLY,NEWGROUP,UPDATEGROUP,NOMOREBUTTONS};
-enum {WALLPAPER=0,TOOLKIT,DESKTOP,WMANAGER,NOMORELAUNCHERS};
-enum {LAUNCHWALLPAPER=100,LAUNCHTOOLKIT,LAUNCHDESKTOP,LAUNCHWMANAGER};
+enum {WALLPAPER=0,TOOLKIT,DESKTOP,WMANAGER,PANELPREFS,NOMORELAUNCHERS};
+enum {LAUNCHWALLPAPER=100,LAUNCHTOOLKIT,LAUNCHDESKTOP,LAUNCHWMANAGER,LAUNCHPANEL};
 LFSTK_windowClass	*wc;
 LFSTK_lineEditClass	*current=NULL;
 LFSTK_lineEditClass	*newgroup=NULL;
@@ -124,6 +124,12 @@ bool callback(void *p,void* ud)
 			case LAUNCHWMANAGER:
 				wc->LFSTK_hideWindow();
 				system("lfswmprefs");
+				wc->LFSTK_showWindow(false);
+				break;
+
+			case LAUNCHPANEL:
+				wc->LFSTK_hideWindow();
+				system("lfspanelprefs");
 				wc->LFSTK_showWindow(false);
 				break;
 
@@ -258,7 +264,6 @@ int main(int argc, char **argv)
 	free(command);
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS Appearance",false);
-	//wc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_DIALOG");
 	wc->LFSTK_setDecorated(true);
 	wc->autoLabelColour=true;
 	geom=wc->LFSTK_getGeom();
@@ -299,6 +304,13 @@ int main(int argc, char **argv)
 	launch[WMANAGER]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHWMANAGER);
 	sx+=spacing+32;
 	label[WMANAGER]=new LFSTK_labelClass(wc,"Launch Window Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
+//panel prefs
+	sx=col1;
+	sy+=vspacing;
+	launch[PANELPREFS]=new LFSTK_buttonClass(wc,"Panel Prefs",sx,sy,bigbwidth,24,NorthWestGravity);
+	launch[PANELPREFS]->LFSTK_setCallBack(NULL,callback,(void*)LAUNCHPANEL);
+	sx+=spacing+32;
+	label[PANELPREFS]=new LFSTK_labelClass(wc,"Launch Panel Prefs Dialog",sx,sy,BIG,24,NorthWestGravity);
 
 	sx=col1;
 	sy+=vspacing;

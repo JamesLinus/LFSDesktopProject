@@ -1,4 +1,5 @@
 0.0.4
+Fixed backdrop prefs window not centering.
 Added lfspanelprefs.
 Fixed icon entries in .desktop files.
 

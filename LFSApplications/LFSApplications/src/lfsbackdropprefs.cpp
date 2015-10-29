@@ -252,7 +252,7 @@ int main(int argc, char **argv)
 	asprintf(&prefsPath,"%s/.config/LFS/lfssetwallpaper.rc",getenv("HOME"));
 	asprintf(&monitorRCPath,"%s/.config/LFS/lfsmonitors.rc",getenv("HOME"));
 
-	wc=new LFSTK_windowClass(sx,sy,800,600,"Wallpaper Prefs",false);
+	wc=new LFSTK_windowClass(sx,sy,1,1,"Wallpaper Prefs",false);
 	wc->LFSTK_setDecorated(true);
 	geom=wc->LFSTK_getGeom();
 
@@ -337,9 +337,9 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 
 	sy+=vspacing;
+	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
-	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy);
 
 	XFlush(wc->display);
 
