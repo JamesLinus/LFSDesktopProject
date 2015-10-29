@@ -155,14 +155,14 @@ int main(int argc, char **argv)
 	for(int j=0;j<WIDTHCNT;j++)
 		{
 			panelWidth[j].label=panelOptionString[PANELWIDTH][j];
-			//panelWidth[j].userData=(void*)(long)j;
 			panelWidth[j].subMenus=NULL;
 			panelWidth[j].useIcon=false;
 			panelWidth[j].bc=NULL;
 		}
-			panelWidth[0].userData=(void*)-1;
-			panelWidth[1].userData=(void*)-2;
-			panelWidth[2].userData=(void*)0;
+	panelWidth[0].userData=(void*)-1;
+	panelWidth[1].userData=(void*)-2;
+	panelWidth[2].userData=(void*)0;
+
 	sx=col1;
 	panelOptionsMenus[PANELWIDTH]=new LFSTK_menuButtonClass(wc,"Panel Width",sx,sy,bwidth,24,NorthWestGravity);
 	panelOptionsMenus[PANELWIDTH]->LFSTK_addMenus(panelWidth,WIDTHCNT);
