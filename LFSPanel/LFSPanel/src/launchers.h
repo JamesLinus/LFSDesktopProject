@@ -32,6 +32,7 @@ struct launcherList
 	menuEntryStruct		entry;
 };
 
+extern launcherList		*ll;
 
 int addLaunchers(int x,int y,int grav,bool fromleft);
 

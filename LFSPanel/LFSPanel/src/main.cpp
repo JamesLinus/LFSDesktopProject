@@ -348,6 +348,21 @@ int main(int argc, char **argv)
 	if(desktopTheme!=NULL)
 		free(desktopTheme);
 
+	launcherList	*freell;
+	while(ll!=NULL)
+		{
+			freell=ll;
+			delete ll->bc;
+			if(ll->icon!=NULL)
+				free(ll->icon);
+			if(ll->entry.name!=NULL)
+				free(ll->entry.name);
+			if(ll->entry.exec!=NULL)
+				free(ll->entry.exec);
+			ll=ll->next;
+			delete freell;
+		}
+
 	delete mainwind;
 	return 0;
 }
