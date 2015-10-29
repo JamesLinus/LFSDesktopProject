@@ -1,3 +1,7 @@
+0.0.4
+Added lfspanelprefs.
+Fixed icon entries in .desktop files.
+
 0.0.3
 Added extra modes to wallpaperprefs.
 Fixxed memory alloc segfault.
