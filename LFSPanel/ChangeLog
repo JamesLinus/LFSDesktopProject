@@ -1,4 +1,6 @@
 0.0.5
+Added default icon for missing icon from .desktop files in launcher gadget.
+Updated manpage.
 Removed %U,%f etc in desktop file exec entry as not used.
 Added launchers to panel's follows
 
