@@ -1,4 +1,6 @@
 0.0.5
+Removed %U,%f etc in desktop file exec entry as not used.
+Added launchers to panel's follows
 
 0.0.4
 Panels can now be on any edge - 'panelgrav' in prefs PANELNORTH=1,PANELEAST=2,PANELSOUTH=3,PANELWEST=4.

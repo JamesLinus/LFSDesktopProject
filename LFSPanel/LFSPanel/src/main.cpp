@@ -84,6 +84,9 @@ void addLeftGadgets(void)
 					case 'S':
 						offset+=SPACING;
 						break;
+					case 'l':
+						offset+=addLaunchers(offset,mons->y,panelGravity,true);
+						break;
 				}
 		}
 	leftOffset=offset;
@@ -119,6 +122,9 @@ void addRightGadgets(void)
 						break;
 					case 'S':
 						offset-=SPACING;
+						break;
+					case 'l':
+						offset+=addLaunchers(offset,mons->y,panelGravity,true);
 						break;
 				}
 		}

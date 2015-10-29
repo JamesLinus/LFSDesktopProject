@@ -81,6 +81,7 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 	char	*holdicon=NULL;
 	char	*holdexec=NULL;
 	bool	nodisplay=false;
+	char	*testpercent=NULL;
 
 	if(typeflag!=FTW_F)
 		return(0);
@@ -132,6 +133,9 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 							if(strcmp(splitstr,"Exec")==0)
 								{
 									splitstr=strtok(NULL,"=");
+									testpercent=strchr(splitstr,'%');
+									if(testpercent!=NULL)
+										*testpercent=0;
 									holdexec=strdup(splitstr);
 								}
 							if(strcmp(splitstr,"NoDisplay")==0)

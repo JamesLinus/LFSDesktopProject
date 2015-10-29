@@ -22,7 +22,17 @@
 #define _LAUNCHERS_
 
 #include "globals.h"
+#include "appmenu.h"
 
-void addLaunchers(void);
+struct launcherList
+{
+	launcherList		*next;
+	LFSTK_buttonClass	*bc;
+	char				*icon;
+	menuEntryStruct		entry;
+};
+
+
+int addLaunchers(int x,int y,int grav,bool fromleft);
 
 #endif
