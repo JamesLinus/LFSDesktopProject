@@ -34,9 +34,9 @@
 
 enum {EXIT=0,APPLY,NOMOREBUTTONS};
 enum {PANELWIDTH=0,PANELPOS,PANELGRAV,OPTIONSCNT};
-enum {WIDTHFILL=-1,WIDTHSHRINK=-2};
-enum {LEFTPOS=-1,CENTREPOS=-2,RIGHTPOS=-3};
-enum {NORTHGRAV=1,EASTGRAV,SOUTHGRAV,WESTGRAV};
+enum {WIDTHFILL=-1,WIDTHSHRINK=-2,WIDTHCNT=3};
+enum {LEFTPOS=-1,CENTREPOS=-2,RIGHTPOS=-3,POSCNT=4};
+enum {NORTHGRAV=1,EASTGRAV=2,SOUTHGRAV=3,WESTGRAV=4,GRAVCNT=4};
 
 LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
 LFSTK_windowClass		*wc;
@@ -47,6 +47,9 @@ LFSTK_lineEditClass		*panelOptionsEdit[OPTIONSCNT]={NULL,};
 const char				*panelOptionString[OPTIONSCNT][4]={{"Fill","Shrink","Custom",""},{"Left","Centre","Right","Custom"},{"North","East","South","West"}};
 
 menuItemStruct			*panels;
+menuItemStruct			panelWidth[3];
+menuItemStruct			panelPos[4];
+menuItemStruct			panelgrav[4];
 
 int					bwidth=96;
 int					bigbwidth=128;
@@ -77,6 +80,20 @@ bool bcb(void *p,void* ud)
 	currentPanel->LFSTK_clearWindow();
 	return(true);
 }
+
+bool setWidthCB(void *p,void* ud)
+{
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
+	char			buffer[16];
+	if(menuitem==NULL)
+		return(true);
+
+	snprintf(buffer,16,"%i",(long)menuitem->userData);
+	panelOptionsEdit[PANELWIDTH]->LFSTK_setBuffer(buffer);
+	panelOptionsEdit[PANELWIDTH]->LFSTK_clearWindow();
+	return(true);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -132,6 +149,26 @@ int main(int argc, char **argv)
 		}
 
 	panelSelect->LFSTK_addMenus(panels,cnt);
+	sy+=vspacing;
+
+//panel width
+	for(int j=0;j<WIDTHCNT;j++)
+		{
+			panelWidth[j].label=panelOptionString[PANELWIDTH][j];
+			//panelWidth[j].userData=(void*)(long)j;
+			panelWidth[j].subMenus=NULL;
+			panelWidth[j].useIcon=false;
+			panelWidth[j].bc=NULL;
+		}
+			panelWidth[0].userData=(void*)-1;
+			panelWidth[1].userData=(void*)-2;
+			panelWidth[2].userData=(void*)0;
+	sx=col1;
+	panelOptionsMenus[PANELWIDTH]=new LFSTK_menuButtonClass(wc,"Panel Width",sx,sy,bwidth,24,NorthWestGravity);
+	panelOptionsMenus[PANELWIDTH]->LFSTK_addMenus(panelWidth,WIDTHCNT);
+	panelOptionsMenus[PANELWIDTH]->LFSTK_setCallBack(NULL,setWidthCB,NULL);
+	sx+=spacing;
+	panelOptionsEdit[PANELWIDTH]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
 	sy+=vspacing;
 
 	sy+=vspacing;
