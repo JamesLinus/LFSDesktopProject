@@ -29,18 +29,31 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
-enum {EXIT=0,APPLY,NOMOREBUTTONS};
+#define BIG col2-col1+bwidth
+#define MAXPANELS 20
 
-LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
-LFSTK_windowClass	*wc;
+enum {EXIT=0,APPLY,NOMOREBUTTONS};
+enum {PANELWIDTH=0,PANELPOS,PANELGRAV,OPTIONSCNT};
+enum {WIDTHFILL=-1,WIDTHSHRINK=-2};
+enum {LEFTPOS=-1,CENTREPOS=-2,RIGHTPOS=-3};
+enum {NORTHGRAV=1,EASTGRAV,SOUTHGRAV,WESTGRAV};
+
+LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
+LFSTK_windowClass		*wc;
+LFSTK_lineEditClass		*currentPanel=NULL;
+LFSTK_menuButtonClass	*panelSelect=NULL;
+LFSTK_menuButtonClass	*panelOptionsMenus[OPTIONSCNT]={NULL,};
+LFSTK_lineEditClass		*panelOptionsEdit[OPTIONSCNT]={NULL,};
+const char				*panelOptionString[OPTIONSCNT][4]={{"Fill","Shrink","Custom",""},{"Left","Centre","Right","Custom"},{"North","East","South","West"}};
+
+menuItemStruct			*panels;
+
 int					bwidth=96;
 int					bigbwidth=128;
 int					spacing=bwidth+10;
 int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 bool				mainloop=false;
-int					maxGroups=20;
 int					numGroups=0;
-menuItemStruct		*groups;
 char				currentBuffer[256];
 
 bool callback(void *p,void* ud)
@@ -53,6 +66,18 @@ bool callback(void *p,void* ud)
 		}
 }
 
+bool bcb(void *p,void* ud)
+{
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
+
+	if(menuitem==NULL)
+		return(true);
+
+	currentPanel->LFSTK_setBuffer(menuitem->label);
+	currentPanel->LFSTK_clearWindow();
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -63,6 +88,8 @@ int main(int argc, char **argv)
 	int				vspacing=bhite+10;
 	FILE*			fp=NULL;
 	char			*command;
+	char			*lfspanels;
+	char			buffer[512];
 
 	wc=new LFSTK_windowClass(sx,sy,1,1,"LFSPanel Prefs",false);
 	wc->LFSTK_setDecorated(true);
@@ -73,6 +100,39 @@ int main(int argc, char **argv)
 
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
+
+//select panel
+	sx=col1;
+	sy=16;
+	panelSelect=new LFSTK_menuButtonClass(wc,"Panel Config",sx,sy,bwidth,24,NorthWestGravity);
+	panelSelect->LFSTK_setStyle(BEVELOUT);
+	panelSelect->LFSTK_setLabelOriention(CENTRE);
+	panels=new menuItemStruct[MAXPANELS];
+	panelSelect->LFSTK_setCallBack(NULL,bcb,NULL);
+	
+	sx+=spacing;;
+	currentPanel=new LFSTK_lineEditClass(wc,"lfspanel.rc",sx,sy-1,BIG,24,NorthWestGravity);
+
+	int		cnt=0;
+	snprintf(buffer,512,"find %s/.config/LFS -maxdepth 1 -mindepth 1 -type f -name \"lfspanel*.rc\"",getenv("HOME"));
+	fp=popen(buffer,"r");
+	if(fp!=NULL)
+		{
+			while(fgets(buffer,512,fp))
+				{
+					buffer[strlen(buffer)-1]=0;
+					panels[cnt].label=strdup(basename(buffer));
+					panels[cnt].userData=(void*)(long)cnt;
+					panels[cnt].subMenus=NULL;
+					panels[cnt].useIcon=false;
+					panels[cnt].bc=NULL;
+					cnt++;
+				}
+			pclose(fp);
+		}
+
+	panelSelect->LFSTK_addMenus(panels,cnt);
+	sy+=vspacing;
 
 	sy+=vspacing;
 	sy+=vspacing;
@@ -110,6 +170,9 @@ int main(int argc, char **argv)
 	for(int j=0;j<NOMOREBUTTONS;j++)
 		if(guibc[j]!=NULL)
 			delete guibc[j];
+
+	delete currentPanel;
+	delete panelSelect;
 
 	delete wc;
 	return(0);

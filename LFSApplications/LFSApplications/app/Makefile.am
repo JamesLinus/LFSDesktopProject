@@ -26,7 +26,6 @@ lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
 lfspanelprefs_CFLAGS = -O3 
 lfspanelprefs_CXXFLAGS = -O3
 
-
 man1_MANS = ../resources/man/lfsapplications.1
 
 bin_PROGRAMS = lfstkprefs lfswmprefs lfsdesktopprefs lfsappearance lfsbackdropprefs lfspanelprefs

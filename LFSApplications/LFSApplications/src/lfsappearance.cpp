@@ -320,7 +320,6 @@ int main(int argc, char **argv)
 	groups=new menuItemStruct[maxGroups];
 	mb->LFSTK_setCallBack(NULL,bcb,NULL);
 	
-
 	sx+=spacing;;
 	current=new LFSTK_lineEditClass(wc,"",sx,sy-1,BIG,24,NorthWestGravity);
 
