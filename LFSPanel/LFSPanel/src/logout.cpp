@@ -79,7 +79,7 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 
 	logoutButton->LFSTK_setCallBack(logoutCB,NULL,NULL);
 	logoutItems=new menuItemStruct[NUMLOGOUTENTRYS];
-	
+
 	for(int j=LOGOUT;j<NUMLOGOUTENTRYS;j++)
 		{
 			logoutItems[j].label=strdup(logoutLabels[j]);

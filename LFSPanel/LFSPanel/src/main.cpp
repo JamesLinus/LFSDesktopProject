@@ -148,7 +148,6 @@ void printError(const char *err)
 
 void  alarmCallBack(int sig)
 {
-printf("XXX\n");
 	if(clockButton!=NULL)
 		updateClock();
 
@@ -201,7 +200,7 @@ int main(int argc, char **argv)
 			panelID=argv[1];
 			asprintf(&env,"%s/.config/LFS/%s-%s.rc",getenv("HOME"),RCNAME,panelID);
 		}
-	else	
+	else
 		asprintf(&env,"%s/.config/LFS/%s.rc",getenv("HOME"),RCNAME);
 	mainwind->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
 

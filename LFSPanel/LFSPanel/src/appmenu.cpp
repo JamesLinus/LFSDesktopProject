@@ -201,7 +201,7 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 void sortEntries(void)
 {
 	bool			flag=true;
-	menuItemStruct	thold;	
+	menuItemStruct	thold;
 
 	for(int catagory=0;catagory<catagoryCnt;catagory++)
 		{
@@ -276,7 +276,7 @@ void addCatagories(void)
 							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
 							if(iconpath!=NULL)
 								{
-									catagoryMenus[catagoryCnt].useIcon=true;	
+									catagoryMenus[catagoryCnt].useIcon=true;
 									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
 								}
 

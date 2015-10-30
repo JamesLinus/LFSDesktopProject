@@ -1,5 +1,5 @@
 0.0.5
-Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+Added intermediate file so no just do ./configure instead of ./autogen.s
 Stopped alarm being triggered if not needed.
 Added default icon for missing icon from .desktop files in launcher gadget.
 Updated manpage.

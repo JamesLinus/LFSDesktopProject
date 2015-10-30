@@ -28,7 +28,7 @@ int getReadStats(void)
 {
 	FILE			*fp=NULL;
 	unsigned long	cnt=0;
-	
+
 	fp=popen("cat /proc/diskstats|awk '{print $6}'","r");
 	if(fp!=NULL)
 		{
@@ -43,7 +43,7 @@ int getWriteStats(void)
 {
 	FILE			*fp=NULL;
 	unsigned long	cnt=0;
-	
+
 	fp=popen("cat /proc/diskstats|awk '{print $10}'","r");
 	if(fp!=NULL)
 		{
@@ -65,7 +65,7 @@ void updateDiskStats(void)
 	newWrite=getWriteStats();
 	wdiff=(newWrite-oldWrite)*512/1024/1024;
 	oldWrite=getWriteStats();
-	
+
 	sprintf(diskStatBuffer,"R=%iMb/s W=%iMb/s",rdiff,wdiff);
 	diskButton->LFSTK_setLabel(diskStatBuffer);
 }

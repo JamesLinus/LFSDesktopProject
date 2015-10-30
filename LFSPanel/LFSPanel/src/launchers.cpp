@@ -59,7 +59,6 @@ int launcherCB(const char *fpath,const struct stat *sb,int typeflag)
 								{
 									splitstr=strtok(NULL,"=");
 									entry.name=strdup(splitstr);
-									
 								}
 
 							if(strcmp(splitstr,"Icon")==0)

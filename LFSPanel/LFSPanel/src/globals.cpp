@@ -47,7 +47,6 @@ int					leftOffset=0;
 
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 {
-	
 	*w=panelHeight;
 	*h=panelHeight;
 	*size=(*w)-12;
@@ -85,3 +84,4 @@ void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 				break;
 		}
 }
+
