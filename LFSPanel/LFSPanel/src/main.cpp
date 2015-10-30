@@ -148,6 +148,7 @@ void printError(const char *err)
 
 void  alarmCallBack(int sig)
 {
+printf("XXX\n");
 	if(clockButton!=NULL)
 		updateClock();
 
@@ -177,6 +178,7 @@ int main(int argc, char **argv)
 	int				thold;
 	int				px,py;
 
+	useAlarm=false;
 	terminalCommand=strdup("xterm -e ");
 	logoutCommand=strdup("xterm");
 	restartCommand=strdup("xterm");
@@ -213,14 +215,14 @@ int main(int argc, char **argv)
 	addLeftGadgets();
 	addRightGadgets();
 
-
 	if((leftOffset==0) && (rightOffset==0))
 		{
 			fprintf(stderr,"Not using empty panel ...\n");
 			exit(0);
 		}
 
-	alarm(refreshRate);
+	if(useAlarm==true)
+		alarm(refreshRate);
 
 	psize=leftOffset+abs(rightOffset);
 

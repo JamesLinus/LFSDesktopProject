@@ -1,3 +1,6 @@
+0.0.16
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+
 0.0.15
 Appmenu correctly determines if .desktop file holds 'icon= ... ' line.
 Sets _NET_WM_DESKTOP correctly when moving window.

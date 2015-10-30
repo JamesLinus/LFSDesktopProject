@@ -179,5 +179,5 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 				sy+=height;
 			maxwidth+=width;
 		}
-	return(maxwidth);
+	return(maxwidth-width);
 }

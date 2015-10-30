@@ -1,3 +1,6 @@
+0.0.14
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+
 0.0.13
 Label is centred in popups if no icon available.
 Get themed icons for popups from lib class.

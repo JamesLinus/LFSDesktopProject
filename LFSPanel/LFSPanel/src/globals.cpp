@@ -38,6 +38,7 @@ const char			*panelID="";
 
 int					refreshRate=1;
 int					iconSize=16;
+bool				useAlarm=false;
 
 //panel window
 LFSTK_windowClass	*mainwind=NULL;

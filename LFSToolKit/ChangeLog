@@ -1,3 +1,6 @@
+0.0.10
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+
 0.0.9
 Fixed menu button popups appearing on wrong monitor.
 Added LFSTK_gadgetOnMonitor to gadget class.

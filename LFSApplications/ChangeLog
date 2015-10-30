@@ -1,4 +1,5 @@
 0.0.4
+Added intermediate file so no just do ./cnofigure instead of ./autogen.s
 Fixed backdrop prefs window not centering.
 Added lfspanelprefs.
 Fixed icon entries in .desktop files.
@@ -39,4 +40,4 @@ Save save to ~/.config/LFS/lfstooltik.rc.
 Added LFS Toolkit prefs.
 
 0.0.1
-First commit of lfs toolkit apps.
+First commit of lfs toolkit apps.Added intermediate file so no just do ./cnofigure instead of ./autogen.s

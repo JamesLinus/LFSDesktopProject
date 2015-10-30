@@ -96,5 +96,6 @@ int addDiskData(int x,int y,int grav)
 	oldWrite=getWriteStats();
 	diskButton=new LFSTK_labelClass(mainwind,"R=0Mb/s W=0Mb/s",xpos,0,width,panelHeight,grav);
 	diskButton->LFSTK_setLabelOriention(LEFT);
+	useAlarm=true;
 	return(retval);
 }

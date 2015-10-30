@@ -211,6 +211,7 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	windowListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
+	useAlarm=true;
 	return(width);
 }
 
@@ -244,6 +245,7 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 	windowListCnt=-1;
 	updateWindowCnt=WINDOWREFRESH;
 	updateWindowMenu();
+	useAlarm=true;
 	return(width);
 }
 

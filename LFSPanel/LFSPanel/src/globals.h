@@ -61,6 +61,7 @@ extern const char			*panelID;
 
 extern int					refreshRate;
 extern int					iconSize;
+extern bool					useAlarm;
 
 //panel window
 extern LFSTK_windowClass	*mainwind;
