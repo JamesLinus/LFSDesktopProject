@@ -503,6 +503,7 @@ void cpop(struct client *c)
 			LIST_REMOVE(&c->winstack);
 			LIST_INSERT_TAIL(&winstack,&c->winstack);
 			needrestack=True;
+			cfocus(c,CurrentTime);
 		}
 }
 

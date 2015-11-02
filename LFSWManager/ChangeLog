@@ -1,4 +1,5 @@
 0.0.16
+Window now focususing properly when being brought to front.
 Added intermediate file so no just do ./cnofigure instead of ./autogen.s
 
 0.0.15
