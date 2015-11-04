@@ -45,6 +45,30 @@ void setNewData(void)
 		}
 }
 
+void updateCpuStats(void)
+{
+	unsigned int	idle;
+	unsigned int	nonidle;
+	unsigned int	total;
+	unsigned int	totald;
+	unsigned int	idled;
+
+	setNewData();
+
+	idle=newData[CPUIDLE]+newData[CPUIOWAIT];
+	nonidle=newData[CPUUSER]+newData[CPUNICE]+newData[CPUSYSTEM]+newData[CPUIRQ]+newData[CPUSOFTIRQ]+newData[CPUSTEAL];
+
+	total=idle+nonidle;
+	totald=total-prevtotal;
+	idled=idle-previdle;
+
+	prevtotal=total;
+	previdle=idle;
+
+	sprintf(cpuStatBuffer,"CPU=%0.1f",((float)totald - (float)idled) / (float)totald *100.0);
+	cpuButton->LFSTK_setLabel(cpuStatBuffer);
+}
+
 int addCpuData(int x,int y,int grav)
 {
 	int	xpos=0;
@@ -71,32 +95,7 @@ int addCpuData(int x,int y,int grav)
 	setNewData();
 	cpuButton=new LFSTK_labelClass(mainwind,"CPU=0.0%",xpos,0,width,panelHeight,grav);
 	cpuButton->LFSTK_setLabelOriention(LEFT);
-	cpuButton->LFSTK_setTile(mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	useAlarm=true;
 	return(retval);
-}
-
-void updateCpuStats(void)
-{
-	unsigned int	idle;
-	unsigned int	nonidle;
-	unsigned int	total;
-	unsigned int	totald;
-	unsigned int	idled;
-
-	setNewData();
-
-	idle=newData[CPUIDLE]+newData[CPUIOWAIT];
-	nonidle=newData[CPUUSER]+newData[CPUNICE]+newData[CPUSYSTEM]+newData[CPUIRQ]+newData[CPUSOFTIRQ]+newData[CPUSTEAL];
-
-	total=idle+nonidle;
-	totald=total-prevtotal;
-	idled=idle-previdle;
-
-	prevtotal=total;
-	previdle=idle;
-
-	sprintf(cpuStatBuffer,"CPU=%0.1f",((float)totald - (float)idled) / (float)totald *100.0);
-	cpuButton->LFSTK_setLabel(cpuStatBuffer);
 }
 

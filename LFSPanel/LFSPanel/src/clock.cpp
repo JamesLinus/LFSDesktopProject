@@ -62,7 +62,6 @@ int addClock(int x,int y,int grav)
 		xpos=x-width;
 
 	clockButton=new LFSTK_labelClass(mainwind,"--:--:--",xpos,0,width,panelHeight,grav);
-	clockButton->LFSTK_setTile(mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	useAlarm=true;
 	return(retval);
 }

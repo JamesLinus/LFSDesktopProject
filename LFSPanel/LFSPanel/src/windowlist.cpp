@@ -200,7 +200,6 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
 	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
-	windowDeskMenu->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
 		windowDeskMenu->LFSTK_setIconFromPath(icon,iconsize);
@@ -235,7 +234,6 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 	setSizes(&xpos,&ypos,&width,&height,&iconsize,&thisgrav,fromleft);
 
 	windowMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
-	windowMenu->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
 	if(icon!=NULL)
 		windowMenu->LFSTK_setIconFromPath(icon,iconsize);

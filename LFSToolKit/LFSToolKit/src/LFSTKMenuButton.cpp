@@ -96,6 +96,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 	const monitorStruct 	*mons;
 	int 					xpos;
 	int 					ypos;
+	int						maxiconsize=0;
 
 	geometryStruct	geom={0,0,this->w,this->h};
 	bevelType		bv=BEVELIN;
@@ -115,17 +116,22 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 		{
 			itemfont=this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 			tfont=this->wc->globalLib->LFSTK_loadFont(this->display,this->screen,itemfont);
+			maxiconsize=0;
 			for(int j=0;j<this->menuCount;j++)
 				{
 					testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
 					if(this->menus[j].useIcon==true)
-						testwid+=this->iconSize;
+						{
+							if(maxiconsize<this->menus[j].iconSize)
+								maxiconsize=this->menus[j].iconSize;
+							testwid+=maxiconsize;
+						}
 					if(testwid>maxwid)
 						maxwid=testwid;
 				}
 
 			addto=tfont->ascent+tfont->descent+8;
-			maxwid+=this->iconSize;
+			maxwid+=maxiconsize+4;
 			subwc->LFSTK_resizeWindow(maxwid,this->menuCount*addto,true);
 			sy=0;
 
