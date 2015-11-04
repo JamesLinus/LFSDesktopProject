@@ -41,6 +41,7 @@ LFSTK_buttonClass		*normalbuttons[NOMOREBUTTONS]={NULL,};
 LFSTK_lineEditClass 	*normaledits[NOMOREBUTTONEDITS]={NULL,};
 LFSTK_labelClass		*labels[NOMORELABELS]={NULL,};
 LFSTK_toggleButtonClass	*autocolour=NULL;
+LFSTK_toggleButtonClass	*usetheme=NULL;
 
 bool					mainloop=false;
 const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
@@ -87,6 +88,13 @@ void setVars(void)
 			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
 			labels[j]->LFSTK_clearWindow();
 		}
+
+//themes
+	wc->globalLib->LFSTK_setGlobalString(-1,TYPEWINDOWTILE,normaledits[EWINDOWTILE]->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(-1,TYPEBUTTONTILE,normaledits[EBUTTONTILE]->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMTILE,normaledits[EMENUITEMTILE]->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_setUseTheme(usetheme->LFSTK_getValue());
+
 	autocolour->LFSTK_setLabelAutoColour(wc->autoLabelColour);
 	autocolour->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
 	autocolour->LFSTK_clearWindow();
@@ -254,17 +262,22 @@ int main(int argc, char **argv)
 	sy+=vspacing;
 
 //theme parts
+//use theme
+	usetheme=new LFSTK_toggleButtonClass(wc,"Use Theme",cols[0],sy,bwidth,24,NorthWestGravity);
+	usetheme->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
+	usetheme->LFSTK_setValue(wc->globalLib->LFSTK_getUseTheme());
+	sy+=vspacing;
 	labels[LWINDOWTILE]=new LFSTK_labelClass(wc,labelnames[LWINDOWTILE],cols[0],sy,bwidth,24,NorthWestGravity);
 	labels[LWINDOWTILE]->LFSTK_setLabelOriention(LEFT);	
-	normaledits[EWINDOWTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	normaledits[EWINDOWTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
 	labels[LBUTTONTILE]=new LFSTK_labelClass(wc,labelnames[LBUTTONTILE],cols[0],sy,bwidth,24,NorthWestGravity);
 	labels[LBUTTONTILE]->LFSTK_setLabelOriention(LEFT);	
-	normaledits[EBUTTONTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	normaledits[EBUTTONTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
 	labels[LMENUITEMTILE]=new LFSTK_labelClass(wc,labelnames[LMENUITEMTILE],cols[0],sy,bwidth,24,NorthWestGravity);
 	labels[LMENUITEMTILE]->LFSTK_setLabelOriention(LEFT);	
-	normaledits[EMENUITEMTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	normaledits[EMENUITEMTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)PRINT);
