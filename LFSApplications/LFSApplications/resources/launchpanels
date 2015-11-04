@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+#©keithhedger Wed 4 Nov 19:38:17 GMT 2015 kdhedger68713@gmail.com
+
+lfspanel &
+while read
+	do
+		rcfile=$(basename $REPLY .rc)
+		rcfile=${rcfile##?*-}
+		if [ "X$rcfile" != "Xlfspanel" ];then
+			lfspanel $rcfile &
+		fi
+	done < <(ls -1 ~/.config/LFS/lfspanel*)

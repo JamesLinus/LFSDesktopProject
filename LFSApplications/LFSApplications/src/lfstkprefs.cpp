@@ -82,7 +82,7 @@ void setVars(void)
 		}
 
 //reset label background colours
-	for(int j=LNORMBUTTONS;j<NOMORELABELS;j++)
+	for(int j=LNORMBUTTONS;j<LWINDOWTILE;j++)
 		{
 			labels[j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
 			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
 	usetheme->LFSTK_setValue(wc->globalLib->LFSTK_getUseTheme());
 	sy+=vspacing;
 	labels[LWINDOWTILE]=new LFSTK_labelClass(wc,labelnames[LWINDOWTILE],cols[0],sy,bwidth,24,NorthWestGravity);
-	labels[LWINDOWTILE]->LFSTK_setLabelOriention(LEFT);	
+	labels[LWINDOWTILE]->LFSTK_setLabelOriention(LEFT);
 	normaledits[EWINDOWTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
 	labels[LBUTTONTILE]=new LFSTK_labelClass(wc,labelnames[LBUTTONTILE],cols[0],sy,bwidth,24,NorthWestGravity);
