@@ -47,6 +47,7 @@ class LFSTK_lib
 		bool LFSTK_getAutoLabelColour(void);
 		void LFSTK_setAutoLabelColour(bool toset);
 		bool LFSTK_getUseTheme(void);
+		void LFSTK_setUseTheme(bool use);
 	
 		const char* bestFontColour(long pixel);
 		int LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);

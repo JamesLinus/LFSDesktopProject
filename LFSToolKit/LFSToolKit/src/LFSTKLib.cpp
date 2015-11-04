@@ -554,6 +554,15 @@ bool LFSTK_lib::LFSTK_getUseTheme(void)
 }
 
 /**
+* Set whether to use theme.
+*/
+void LFSTK_lib::LFSTK_setUseTheme(bool use)
+{
+	this->useTheme=use;
+}
+
+
+/**
 * Set Icon.
 * \param display Xlib display.
 * \param visual Xlib visual.
