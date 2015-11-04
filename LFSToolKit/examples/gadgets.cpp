@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
 
 	//wc->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/bc.png",-1);
-	wc->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+//	wc->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 //	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 //	iconButton->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
 //	quit->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);

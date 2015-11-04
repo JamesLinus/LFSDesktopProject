@@ -107,6 +107,7 @@ class LFSTK_windowClass
 //		int				inMonitorNumber;
 		int				x;
 		int				y;
+		Pixmap			tile[2];
 
 	private:
 		void initWindow(bool loadvars);
@@ -119,7 +120,6 @@ class LFSTK_windowClass
 		bool			isSticky;
 		int				monitorCount;
 		monitorStruct	*monitors;
-		Pixmap			tile[2];
 		bool			useTile;
 };
 

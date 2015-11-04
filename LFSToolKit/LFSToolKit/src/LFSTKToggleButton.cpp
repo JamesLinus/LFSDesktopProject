@@ -59,6 +59,11 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 	this->toggleState=false;
 	this->labelOffset=(this->h/2);
 	this->LFSTK_setLabelOriention(LEFT);
+		if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+	else
+		this->useTile=false;
+
 }
 
 /**
@@ -92,6 +97,15 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 			g->y=g->h-(g->h/2)-1;
 			this->LFSTK_setLabelOriention(LEFT);
 			this->labelOffset=(this->h/2);
+			if(this->useTile==true)
+				{
+					XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
+					XSetFillStyle(this->display,this->gc,FillTiled);
+					XSetTile(this->display,this->gc,this->wc->tile[0]);
+					XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+					XSetFillStyle(this->display,this->gc,FillSolid);
+				}
+
 			this->drawBox(g,state,bv);
 
 			g->x=2;

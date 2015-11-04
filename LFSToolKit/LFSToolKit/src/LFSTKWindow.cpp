@@ -552,7 +552,10 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	this->LFSTK_setDecorated(true);
 	this->initWindow(loadvars);
 
-	//inMonitorNumber=this->LFSTK_windowOnMonitor();
+	if(this->globalLib->LFSTK_getUseTheme()==true)
+		this->LFSTK_setTile(this->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+	else
+		this->useTile=false;
 }
 
 /**

@@ -577,7 +577,7 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 			XSetTSOrigin(this->display,this->gc,0,0);
 			XSetFillStyle(this->display,this->gc,FillTiled);
 			XSetTile(this->display,this->gc,this->tile[0]);
-			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
 			XSetFillStyle(this->display,this->gc,FillSolid);
 		}
 	else
