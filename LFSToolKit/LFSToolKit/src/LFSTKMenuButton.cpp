@@ -27,6 +27,12 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 	this->subwc=new LFSTK_windowClass(0,0,1,1,"menu window",true,true);
 	this->subwc->LFSTK_setWindowType("_NET_WM_WINDOW_TYPE_MENU");
 	this->builtMenu=false;
+
+	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+	else
+		this->useTile=false;
+
 }
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
@@ -68,7 +74,6 @@ void LFSTK_menuButtonClass::LFSTK_clearWindow()
 }
 
 
-//void LFSTK_windowClass::LFSTK_setAsMenu(bool set)
 /**
 * Mouse down callback.
 * \param e XButtonEvent passed from mainloop->listener.
@@ -114,13 +119,13 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 				{
 					testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
 					if(this->menus[j].useIcon==true)
-						testwid+=16;
+						testwid+=this->iconSize;
 					if(testwid>maxwid)
 						maxwid=testwid;
 				}
 
 			addto=tfont->ascent+tfont->descent+8;
-			maxwid+=4+6;
+			maxwid+=this->iconSize;
 			subwc->LFSTK_resizeWindow(maxwid,this->menuCount*addto,true);
 			sy=0;
 
@@ -135,6 +140,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							bc->LFSTK_setStyle(BEVELNONE);
 							bc->LFSTK_setFontString(itemfont);
 							bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
+							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 							if(this->menus[j].useIcon==true)
 								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 							for(int j=0;j<MAXCOLOURS;j++)
@@ -150,6 +157,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							mb->LFSTK_setFontString(itemfont);
 							mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
 							mb->LFSTK_setLabelOriention(LEFT);
+							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+								mb->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 							for(int k=0;k<MAXCOLOURS;k++)
 								{
 									mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));

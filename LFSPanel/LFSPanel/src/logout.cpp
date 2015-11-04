@@ -101,6 +101,6 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	logoutButton->LFSTK_setLabelOriention(CENTRE);
 	logoutButton->LFSTK_setCallBack(NULL,logoutCB,NULL);
 	logoutButton->LFSTK_addMenus(logoutItems,NUMLOGOUTENTRYS);
-
+	logoutButton->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
 	return(width);
 }

@@ -1,5 +1,9 @@
 0.0.10
-Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+Added usetheme to tk prefs.
+Added seperate tiles for window, button and menuitem.
+Added set gadget background to tile.
+Added set window background to tile.
+Added intermediate file so no just do ./cofigure instead of ./autogen.s
 
 0.0.9
 Fixed menu button popups appearing on wrong monitor.

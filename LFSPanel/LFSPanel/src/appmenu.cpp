@@ -316,5 +316,6 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(NULL,callback,NULL);
 	appButton->LFSTK_clearWindow();
+	appButton->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
 	return(width);
 }

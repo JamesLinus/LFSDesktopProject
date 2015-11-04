@@ -303,6 +303,7 @@ int main(int argc, char **argv)
 //	printf(">>panelGravity %i<<\n",panelGravity);
 //	printf(">>px %i py %i<<\n",px,py);
 
+	mainwind->LFSTK_setTile(mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
 	mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
 	mainwind->LFSTK_moveWindow(px,py,true);
 	mainwind->LFSTK_showWindow(true);

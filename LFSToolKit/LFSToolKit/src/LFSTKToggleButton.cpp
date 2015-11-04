@@ -114,8 +114,8 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 		{
 			g->x=0;
 			g->y=0;
-			g->w=this->w-1;
-			g->h=this->h-1;
+			g->w=this->w;
+			g->h=this->h;
 			this->LFSTK_setLabelOriention(CENTRE);
 			this->labelOffset=2;
 			this->drawBox(g,state,bv);

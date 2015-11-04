@@ -175,4 +175,9 @@ LFSTK_buttonClass::LFSTK_buttonClass(LFSTK_windowClass* parentwc,const char* lab
 	this->listen.type=BUTTONGADGET;
 
 	this->wc->LFSTK_setListener(this->window,this->getListen());
+	
+	if(this->wc->globalLib->LFSTK_getUseTheme()==true)
+		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+	else
+		this->useTile=false;
 }

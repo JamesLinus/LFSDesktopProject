@@ -1,4 +1,6 @@
 0.0.5
+Clock, disk and CPU usage now use window background.
+Panel now uses window tile image if available.
 Added intermediate file so no just do ./configure instead of ./autogen.s
 Stopped alarm being triggered if not needed.
 Added default icon for missing icon from .desktop files in launcher gadget.

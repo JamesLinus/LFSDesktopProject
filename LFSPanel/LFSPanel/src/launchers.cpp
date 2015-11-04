@@ -165,6 +165,7 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 		{
 			loopll->bc=new LFSTK_buttonClass(mainwind,"",sx,sy,width,height,thisgrav);
 			loopll->bc->LFSTK_setCallBack(NULL,launcherCB,(void*)loopll);
+			loopll->bc->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
 			if(loopll->icon!=NULL)
 				icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
 			if(icon!=NULL)

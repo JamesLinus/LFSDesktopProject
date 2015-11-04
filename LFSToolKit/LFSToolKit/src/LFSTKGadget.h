@@ -76,6 +76,7 @@ class LFSTK_gadgetClass
 		void LFSTK_setIcon(Pixmap image,Pixmap mask,int size=16);
 
 		int LFSTK_gadgetOnMonitor(void);
+		void LFSTK_setTile(const char *path,int size);
 
 		geometryStruct *LFSTK_getGeom(void);
 
@@ -132,6 +133,8 @@ class LFSTK_gadgetClass
 		bool				gotIcon;
 		bool				freeOnDelete;
 		Pixmap				icon[2];
+		Pixmap				tile[2];
+		bool				useTile;
 };
 
 #endif

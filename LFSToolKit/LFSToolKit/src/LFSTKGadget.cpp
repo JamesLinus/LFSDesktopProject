@@ -141,6 +141,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->gotIcon=false;
 	this->iconSize=16;
 	this->freeOnDelete=false;
+	this->useTile=false;
 }
 
 /**
@@ -545,6 +546,7 @@ bevelType LFSTK_gadgetClass::getActiveBevel(void)
 * \param g Geometry Struture.
 * \param state Gadget state.
 * \param bevel Bevel type.
+* \note If bevel=BEVELNONE doesn't draw bevel sic.
 */
 void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType bevel)
 {
@@ -570,21 +572,34 @@ void LFSTK_gadgetClass::drawBox(geometryStruct* g,gadgetState state,bevelType be
 
 	fillcolour=this->colourNames[state].pixel;
 
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
+	if(this->useTile==true)
+		{
+			XSetTSOrigin(this->display,this->gc,0,0);
+			XSetFillStyle(this->display,this->gc,FillTiled);
+			XSetTile(this->display,this->gc,this->tile[0]);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XSetFillStyle(this->display,this->gc,FillSolid);
+		}
+	else
+		{
+			XSetFillStyle(this->display,this->gc,FillSolid);
+			XSetClipMask(this->display,this->gc,None);
+			XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
+			XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
+		}
 
-	XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
-	XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
-
+	if(bevel!=BEVELNONE)
+		{
 //draw bottom rite
-	XSetForeground(this->display,this->gc,brcolour);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h-1,g->x+g->w-1,g->y+g->h-1);
-	XDrawLine(this->display,this->window,this->gc,g->x+g->w-1,g->y+g->h-1,g->x+g->w-1,g->y);
+			XSetForeground(this->display,this->gc,brcolour);
+			XDrawLine(this->display,this->window,this->gc,g->x,g->y+g->h-1,g->x+g->w-1,g->y+g->h-1);
+			XDrawLine(this->display,this->window,this->gc,g->x+g->w-1,g->y+g->h-1,g->x+g->w-1,g->y);
 
 //draw top left
-	XSetForeground(this->display,this->gc,tlcolour);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
-	XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
+			XSetForeground(this->display,this->gc,tlcolour);
+			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x,g->y+g->h-1);
+			XDrawLine(this->display,this->window,this->gc,g->x,g->y,g->x+g->w-1,g->y);
+		}
 }
 
 /**
@@ -670,4 +685,22 @@ int LFSTK_gadgetClass::LFSTK_gadgetOnMonitor(void)
 				return(j);
 		}
 	return(-1);
+}
+
+/**
+* Set gadget background tile.
+* \param path Path to image file.
+* \param size Size of image or -1.
+*/
+void LFSTK_gadgetClass::LFSTK_setTile(const char *path,int size)
+{
+	if(this->useTile==true)
+		{
+			this->useTile=false;
+			imlib_free_pixmap_and_mask(this->tile[0]);
+		}
+	if(this->wc->globalLib->LFSTK_setPixmapsFromPath(this->display,this->visual,this->cm,this->window,path,&this->tile[0],&this->tile[1],size)==true)
+		this->useTile=true;
+	else
+		this->useTile=false;
 }

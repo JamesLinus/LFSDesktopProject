@@ -25,7 +25,7 @@
 
 #define	MAXVARS 100
 #define MAXBUFFER 512
-enum	{TYPEWINDOW=0,TYPEBUTTON,TYPEMENUITEM,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT};
+enum	{TYPEWINDOW=0,TYPEWINDOWTILE,TYPEBUTTON,TYPEBUTTONTILE,TYPEMENUITEM,TYPEMENUITEMTILE,TYPEFONTCOLOUR,TYPEMENUITEMFONTCOLOUR,TYPEMENUITEMFONT,TYPEFONT};
 
 /**
  *
@@ -46,13 +46,14 @@ class LFSTK_lib
 		void LFSTK_setGlobalString(int state,int type,const char *str);
 		bool LFSTK_getAutoLabelColour(void);
 		void LFSTK_setAutoLabelColour(bool toset);
+		bool LFSTK_getUseTheme(void);
 	
 		const char* bestFontColour(long pixel);
 		int LFSTK_getTextwidth(Display *disp,XftFont *font,const char *str);
 		fontStruct* LFSTK_loadFont(Display *disp,int scr,const char *name);
 		static bool LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
-		void LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
+		bool LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
 		const char* LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
 		char* LFSTK_oneLiner(const char* fmt,...);
 
@@ -65,11 +66,16 @@ class LFSTK_lib
 		char	*globalButtonColours[MAXCOLOURS];
 		char	*globalMenuItemColours[MAXCOLOURS];
 		char	*globalFontString;
+		char	*globalWindowTile;
+		char	*globalButtonTile;
+		char	*globalMenuItemTile;
 
 //gadget strings
 		char	*globalFontColourNames[MAXCOLOURS];
 		char	*globalMenuItemFontString;
 		char	*globalMenuItemFontColourNames[MAXCOLOURS];
+//other
 		bool	autoLabelColour;
+		bool	useTheme;
 };
 #endif

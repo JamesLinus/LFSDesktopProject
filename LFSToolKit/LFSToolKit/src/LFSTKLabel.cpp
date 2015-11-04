@@ -28,7 +28,6 @@ LFSTK_labelClass::LFSTK_labelClass()
 {
 }
 
-
 /**
 * Clear the gadget window to the appropriate state.
 * \note Label background is set to the window normal colour unless the label is set as inactive,
@@ -36,14 +35,24 @@ LFSTK_labelClass::LFSTK_labelClass()
 */
 void LFSTK_labelClass::LFSTK_clearWindow(void)
 {
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
+	if(this->useTile==true)
+		{
+			XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
+			XSetFillStyle(this->display,this->gc,FillTiled);
+			XSetTile(this->display,this->gc,this->tile[0]);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+			XSetFillStyle(this->display,this->gc,FillSolid);
+		}
 	else
-		XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
-
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+		{
+			XSetFillStyle(this->display,this->gc,FillSolid);
+			XSetClipMask(this->display,this->gc,None);
+			if(this->isActive==true)
+				XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
+			else
+				XSetForeground(this->display,this->gc,this->colourNames[INACTIVECOLOUR].pixel);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+		}
 
 	if(this->isActive==true)
 		this->LFSTK_drawLabel(NORMALCOLOUR);

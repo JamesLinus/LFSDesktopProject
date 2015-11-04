@@ -64,6 +64,7 @@ void LFSTK_windowClass::initWindow(bool loadvars)
 	this->globalLib=new LFSTK_lib(loadvars);
 	this->loadGlobalColours();
 	this->isActive=true;
+	this->useTile=false;
 }
 /**
  * Reload colours from prefs.
@@ -140,14 +141,23 @@ unsigned long LFSTK_windowClass::LFSTK_setColour(const char *name)
 */
 void LFSTK_windowClass::LFSTK_clearWindow(void)
 {
-	XSetFillStyle(this->display,this->gc,FillSolid);
-	XSetClipMask(this->display,this->gc,None);
-	if(this->isActive==true)
-		XSetForeground(this->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
+	if(this->useTile==true)
+		{
+			XSetTSOrigin(this->display,this->gc,0,0);
+			XSetFillStyle(this->display,this->gc,FillTiled);
+			XSetTile(this->display,this->gc,this->tile[0]);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+		}
 	else
-		XSetForeground(this->display,this->gc,this->windowColourNames[INACTIVECOLOUR].pixel);
-		
-	XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+		{
+			XSetFillStyle(this->display,this->gc,FillSolid);
+			XSetClipMask(this->display,this->gc,None);
+			if(this->isActive==true)
+				XSetForeground(this->display,this->gc,this->windowColourNames[NORMALCOLOUR].pixel);
+			else
+				XSetForeground(this->display,this->gc,this->windowColourNames[INACTIVECOLOUR].pixel);
+			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
+	}
 }
 
 /**
@@ -590,3 +600,15 @@ const monitorStruct* LFSTK_windowClass::LFSTK_getMonitors(void)
 	return(this->monitors);
 }
 
+/**
+* Set window background tile.
+* \param path Path to image file.
+* \param size Size of image or -1.
+*/
+void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
+{
+	if(this->globalLib->LFSTK_setPixmapsFromPath(this->display,this->visual,this->cm,this->window,path,&this->tile[0],&this->tile[1],size)==true)
+		this->useTile=true;
+	else
+		this->useTile=false;
+}

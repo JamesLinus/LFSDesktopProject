@@ -192,6 +192,22 @@ int main(int argc, char **argv)
 	
 	quit=new LFSTK_buttonClass(wc,"Quit",BX,HITE-BHITE-BORDER,BWIDTH,BHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);
+
+	//wc->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/bc.png",-1);
+	wc->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+//	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+//	iconButton->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
+//	quit->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
+//	mbwithsubs->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/menus/menufill.png",-1);
+//	label->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/bc.png",-1);
+	//mb->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+//	mb->LFSTK_setTile("/home/keithhedger/.themes/OldBrownWood/gtk-2.0/buttons/button1.png",-1);
+
+//	label->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEWINDOWTILE),-1);
+//	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+//	mb->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+//	mbwithsubs->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
+
 	wc->LFSTK_showWindow();
 
 	mainLoop=true;

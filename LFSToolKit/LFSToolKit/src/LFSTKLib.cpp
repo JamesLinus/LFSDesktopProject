@@ -61,17 +61,35 @@ void LFSTK_lib::LFSTK_setGlobalString(int state,int type,const char *str)
 					free((void*)ptr);
 				this->globalWindowColours[state]=strdup(str);
 				break;
+			case TYPEWINDOWTILE:
+				ptr=this->globalWindowTile;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalWindowTile=strdup(str);
+				break;
 			case TYPEBUTTON:
 				ptr=this->globalButtonColours[state];
 				if(ptr!=NULL)
 					free((void*)ptr);
 				this->globalButtonColours[state]=strdup(str);
 				break;
+			case TYPEBUTTONTILE:
+				ptr=this->globalButtonTile;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalButtonTile=strdup(str);
+				break;
 			case TYPEMENUITEM:
 				ptr=this->globalMenuItemColours[state];
 				if(ptr!=NULL)
 					free((void*)ptr);
 				this->globalMenuItemColours[state]=strdup(str);
+				break;
+			case TYPEMENUITEMTILE:
+				ptr=this->globalMenuItemTile;
+				if(ptr!=NULL)
+					free((void*)ptr);
+				this->globalMenuItemTile=strdup(str);
 				break;
 			case TYPEFONTCOLOUR:
 				ptr=this->globalFontColourNames[state];
@@ -121,15 +139,24 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
+			case TYPEWINDOWTILE:
+				ptr=this->globalWindowTile;
+				break;
 			case TYPEBUTTON:
 				ptr=this->globalButtonColours[state];
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
 				break;
+			case TYPEBUTTONTILE:
+				ptr=this->globalButtonTile;
+				break;
 			case TYPEMENUITEM:
 				ptr=this->globalMenuItemColours[state];
 				if(ptr==NULL)
 					ptr=defaultColourStrings[state];
+				break;
+			case TYPEMENUITEMTILE:
+				ptr=this->globalMenuItemTile;
 				break;
 			case TYPEFONTCOLOUR:
 				ptr=this->globalFontColourNames[state];
@@ -166,11 +193,13 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"window_prelight",TYPESTRING,&(this->globalWindowColours[PRELIGHTCOLOUR])},
 		{"window_active",TYPESTRING,&(this->globalWindowColours[ACTIVECOLOUR])},
 		{"window_inactive",TYPESTRING,&(this->globalWindowColours[INACTIVECOLOUR])},
+		{"windowtile",TYPESTRING,&(this->globalWindowTile)},
 //button
 		{"button_normal",TYPESTRING,&(this->globalButtonColours[NORMALCOLOUR])},
 		{"button_prelight",TYPESTRING,&(this->globalButtonColours[PRELIGHTCOLOUR])},
 		{"button_active",TYPESTRING,&(this->globalButtonColours[ACTIVECOLOUR])},
 		{"button_inactive",TYPESTRING,&(this->globalButtonColours[INACTIVECOLOUR])},
+		{"buttontile",TYPESTRING,&(this->globalButtonTile)},
 //menu button
 		{"menuitem_normal",TYPESTRING,&(this->globalMenuItemColours[NORMALCOLOUR])},
 		{"menuitem_prelight",TYPESTRING,&(this->globalMenuItemColours[PRELIGHTCOLOUR])},
@@ -181,6 +210,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"menuitem_font_prelight",TYPESTRING,&(this->globalMenuItemFontColourNames[PRELIGHTCOLOUR])},
 		{"menuitem_font_active",TYPESTRING,&(this->globalMenuItemFontColourNames[ACTIVECOLOUR])},
 		{"menuitem_font_inactive",TYPESTRING,&(this->globalMenuItemFontColourNames[INACTIVECOLOUR])},
+		{"menuitemtile",TYPESTRING,&(this->globalMenuItemTile)},
 
 //font
 		{"font",TYPESTRING,&(this->globalFontString)},
@@ -190,6 +220,7 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 		{"font_inactive",TYPESTRING,&(this->globalFontColourNames[INACTIVECOLOUR])},
 //other
 		{"autotextcolour",TYPEBOOL,&(this->autoLabelColour)},
+		{"usetheme",TYPEBOOL,&(this->useTheme)},
 		{NULL,0,NULL},
 	};
 
@@ -209,8 +240,11 @@ LFSTK_lib::LFSTK_lib(bool loadvars)
 
 	this->globalFontString=NULL;
 	this->globalMenuItemFontString=NULL;
-
+	this->globalWindowTile=NULL;
+	this->globalButtonTile=NULL;
+	this->globalMenuItemTile=NULL;
 	this->autoLabelColour=false;
+	this->useTheme=false;
 
 	if(loadvars==true)
 		{
@@ -511,6 +545,15 @@ void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
 }
 
 /**
+* Get whether to use theme.
+* \return bool Use theme pixmaps in gadgets.
+*/
+bool LFSTK_lib::LFSTK_getUseTheme(void)
+{
+	return(this->useTheme);
+}
+
+/**
 * Set Icon.
 * \param display Xlib display.
 * \param visual Xlib visual.
@@ -520,22 +563,37 @@ void LFSTK_lib::LFSTK_setAutoLabelColour(bool toset)
 * \param image Return address for image pixmap.
 * \param mask Return address for image mask.
 * \param size Destination size.
+* \note If size=-1 then the size is set from the image file.
 */
-void LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size)
+bool LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size)
 {
 	Imlib_Image	data=NULL;
+	int			imagesizew;
+	int			imagesizeh;
 
 	data=imlib_load_image(file);
-	if(image!=NULL)
+	if(data!=NULL)
 		{
 			imlib_context_set_display(display);
 			imlib_context_set_visual(visual);
 			imlib_context_set_colormap(cm);
 			imlib_context_set_drawable(w);
 			imlib_context_set_image(data);
-			imlib_render_pixmaps_for_whole_image_at_size(image,mask,size,size);
+			if(size==-1)
+				{
+					imagesizew=imlib_image_get_width();
+					imagesizeh=imlib_image_get_height();
+				}
+			else
+				{
+					imagesizew=size;
+					imagesizeh=size;
+				}
+			imlib_render_pixmaps_for_whole_image_at_size(image,mask,imagesizew,imagesizeh);
 			imlib_free_image();
+			return(true);
 		}
+	return(false);
 }
 
 

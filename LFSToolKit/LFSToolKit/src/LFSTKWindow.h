@@ -83,6 +83,8 @@ class LFSTK_windowClass
 		geometryStruct	*LFSTK_getGeom(void);
 		int LFSTK_windowOnMonitor(void);
 
+		void LFSTK_setTile(const char *path,int size);
+
 		Display			*display;
 		Window			window;
 		GC				gc;
@@ -103,13 +105,13 @@ class LFSTK_windowClass
 
 		Window			parentWindow;
 //		int				inMonitorNumber;
+		int				x;
+		int				y;
 
 	private:
 		void initWindow(bool loadvars);
 		void loadGlobalColours(void);
 		void loadMonitorData(void);
-		int				x;
-		int				y;
 		int				w;
 		int				h;
 		char			*windowName;
@@ -117,6 +119,8 @@ class LFSTK_windowClass
 		bool			isSticky;
 		int				monitorCount;
 		monitorStruct	*monitors;
+		Pixmap			tile[2];
+		bool			useTile;
 };
 
 #endif
