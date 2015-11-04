@@ -32,8 +32,8 @@
 
 enum {EXIT=0,APPLY,PRINT,NOMOREGBS};
 enum {NORMAL=0,PRELIGHT,ACTIVE,INACTIVE,MENUNORMAL,MENUPRELIGHT,MENUACTIVE,MENUINACTIVE,NOMOREBUTTONS};
-enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,EFONTSTRING,EMENUFONTSTRING,NOMOREBUTTONEDITS};
-enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LFONTSTRING,LMENUFONTSTRING,NOMORELABELS};
+enum {ENORMAL=0,EPRELIGHT,EACTIVE,EINACTIVE,EFONTNORMAL,EFONTPRELIGHT,EFONTACTIVE,EFONTINACTIVE,EMENUNORMAL,EMENUPRELIGHT,EMENUACTIVE,EMENUINACTIVE,EMENUFONTNORMAL,EMENUFONTPRELIGHT,EMENUFONTACTIVE,EMENUFONTINACTIVE,EWINDOWCOLOUR,EFONTSTRING,EMENUFONTSTRING,EWINDOWTILE,EBUTTONTILE,EMENUITEMTILE,NOMOREBUTTONEDITS};
+enum {LNORMBUTTONS=0,LBACKCOLOUR,LFONTCOLOUR,LMENUBUTTONS,LMENUBACKCOLOUR,LMENUFONTCOLOUR,LWINDOWCOLOUR,LFONTSTRING,LMENUFONTSTRING,LWINDOWTILE,LBUTTONTILE,LMENUITEMTILE,NOMORELABELS};
 
 LFSTK_windowClass		*wc;
 LFSTK_buttonClass		*guibuttons[NOMOREGBS]={NULL,};
@@ -44,7 +44,7 @@ LFSTK_toggleButtonClass	*autocolour=NULL;
 
 bool					mainloop=false;
 const char				*buttonnames[]={"Button Normal","Button Prelight","Button Active","Button Inactive","Menu Normal","Menu Prelight","Menu Active","Menu Inactive"};
-const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font"};
+const char				*labelnames[]={"Normal Buttons","Back Colour","Font Colour","Menu Items","Back Colour","Font Colour","Window Colour","Font","Menu Item Font","Window Tile","Button Tile","Menu Item Tile"};
 
 void setVars(void)
 {
@@ -251,7 +251,21 @@ int main(int argc, char **argv)
 	autocolour=new LFSTK_toggleButtonClass(wc,"Auto Colour",cols[2],sy,bwidth,24,NorthWestGravity);
 	autocolour->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	autocolour->LFSTK_setValue(wc->autoLabelColour);
+	sy+=vspacing;
 
+//theme parts
+	labels[LWINDOWTILE]=new LFSTK_labelClass(wc,labelnames[LWINDOWTILE],cols[0],sy,bwidth,24,NorthWestGravity);
+	labels[LWINDOWTILE]->LFSTK_setLabelOriention(LEFT);	
+	normaledits[EWINDOWTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	sy+=vspacing;
+	labels[LBUTTONTILE]=new LFSTK_labelClass(wc,labelnames[LBUTTONTILE],cols[0],sy,bwidth,24,NorthWestGravity);
+	labels[LBUTTONTILE]->LFSTK_setLabelOriention(LEFT);	
+	normaledits[EBUTTONTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	sy+=vspacing;
+	labels[LMENUITEMTILE]=new LFSTK_labelClass(wc,labelnames[LMENUITEMTILE],cols[0],sy,bwidth,24,NorthWestGravity);
+	labels[LMENUITEMTILE]->LFSTK_setLabelOriention(LEFT);	
+	normaledits[EMENUITEMTILE]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
+	
 	printf("Current Settings:\n\n");
 	callback(NULL,(void*)PRINT);
 	printf("\n\n");

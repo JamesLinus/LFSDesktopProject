@@ -1,4 +1,5 @@
 0.0.4
+Added theme buttons to lfstkprefs.
 Added intermediate file so no just do ./cnofigure instead of ./autogen.s
 Fixed backdrop prefs window not centering.
 Added lfspanelprefs.
