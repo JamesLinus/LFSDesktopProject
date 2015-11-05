@@ -155,7 +155,7 @@ bool callback(void *p,void* ud)
 				system("lfsdesktop &>/dev/null &");
 				system("lfssetwallpaper &>/dev/null");
 				system("killall lfswmanager;sleep 1;nohup lfswmanager &>/dev/null &");
-				system("killall lfspanel;sleep 1;nohup lfspanel &>/dev/null &");
+				system("killall lfspanel;sleep 1;nohup lfslaunchpanels &>/dev/null &");
 				break;
 		}
 
