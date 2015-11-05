@@ -43,6 +43,8 @@ int						catPtr[MAXCATS];
 int						iconSize=16;
 char					*desktopTheme=NULL;
 LFSTK_menuButtonClass	*catButtons[MAXCATS];
+int						catagoryCnt=0;
+int						catcnt=0;
 
 bool callback(void *p,void* ud)
 {
@@ -68,8 +70,6 @@ bool callback(void *p,void* ud)
 	return(true);
 }
 
-int	catagoryCnt=0;
-int	catcnt=0;
 
 int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 {
@@ -195,6 +195,7 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 
 void sortEntries(void)
 {
+#if 0
 	bool			flag=true;
 	menuItemStruct	thold;	
 
@@ -217,6 +218,7 @@ void sortEntries(void)
 						}
 				}
 		}
+#endif
 }
 
 void addEntries(void)
@@ -247,6 +249,7 @@ void addEntries(void)
 
 void addCatagories(void)
 {
+#if 0
 	char		*tbuffer=NULL;
 	const char	*iconpath=NULL;
 	int			sy=0;
@@ -287,16 +290,20 @@ void addCatagories(void)
 				}
 			catcnt++;
 		}
+#endif
 }
 
 void refreshMenu(void)
 {
+#if 0
 	for(int j=0;j<catagoryCnt;j++)
 		catButtons[j]->LFSTK_clearWindow();
+#endif
 }
 
 void addAppmenu(void)
 {
+#if 0
 //	int addto=mainwind->font->ascent+mainwind->font->descent+8;
 	int maxwid=0;
 	int	catnum=0;
@@ -322,4 +329,5 @@ void addAppmenu(void)
 	//appButton->LFSTK_setCallBack(NULL,callback,NULL);
 	//appButton->LFSTK_clearWindow();
 	//return(retval);
+#endif
 }
