@@ -82,7 +82,7 @@ void setVars(void)
 		}
 
 //reset label background colours
-	for(int j=LNORMBUTTONS;j<LWINDOWTILE;j++)
+	for(int j=LNORMBUTTONS;j<NOMORELABELS;j++)
 		{
 			labels[j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
 			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
@@ -95,9 +95,14 @@ void setVars(void)
 	wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMTILE,normaledits[EMENUITEMTILE]->LFSTK_getBuffer()->c_str());
 	wc->globalLib->LFSTK_setUseTheme(usetheme->LFSTK_getValue());
 
+//auto label clour checkbox
 	autocolour->LFSTK_setLabelAutoColour(wc->autoLabelColour);
 	autocolour->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
 	autocolour->LFSTK_clearWindow();
+//use theme checkbox
+	usetheme->LFSTK_setLabelAutoColour(wc->autoLabelColour);
+	usetheme->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
+	usetheme->LFSTK_clearWindow();
 }
 
 bool callback(void *p,void* ud)
