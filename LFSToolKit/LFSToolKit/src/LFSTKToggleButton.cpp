@@ -97,13 +97,20 @@ void LFSTK_toggleButtonClass::drawButton(gadgetState state)
 			g->y=g->h-(g->h/2)-1;
 			this->LFSTK_setLabelOriention(LEFT);
 			this->labelOffset=(this->h/2);
-			if(this->useTile==true)
+
+			if(this->wc->useTile==true) 
 				{
 					XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
 					XSetFillStyle(this->display,this->gc,FillTiled);
 					XSetTile(this->display,this->gc,this->wc->tile[0]);
 					XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 					XSetFillStyle(this->display,this->gc,FillSolid);
+				}
+			else
+				{
+					XSetFillStyle(this->display,this->gc,FillSolid);
+					XSetForeground(this->display,this->gc,this->wc->windowColourNames[NORMALCOLOUR].pixel);
+					XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 				}
 
 			this->drawBox(g,state,bv);

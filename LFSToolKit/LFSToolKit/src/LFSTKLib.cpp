@@ -580,6 +580,9 @@ bool LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colorma
 	int			imagesizew;
 	int			imagesizeh;
 
+	if(file==NULL)
+		return(false);
+
 	data=imlib_load_image(file);
 	if(data!=NULL)
 		{

@@ -1,15 +1,16 @@
 0.0.10
-Added usetheme to tk prefs.
+Corrected menuitem tile not joining up.
+Added usetheme to toolkit prefs.
 Added seperate tiles for window, button and menuitem.
 Added set gadget background to tile.
 Added set window background to tile.
-Added intermediate file so no just do ./cofigure instead of ./autogen.s
+Added intermediate file so now just do ./configure instead of ./autogen.s
 
 0.0.9
 Fixed menu button popups appearing on wrong monitor.
 Added LFSTK_gadgetOnMonitor to gadget class.
 Improved themed icon search.
-Adde icon size to menuitemstruct - must be set if adding icon.
+Added icon size to menuitemstruct - must be set if adding icon.
 Added search in /usr/share/icons/gnome when searching for themed icon.
 Fixed menu button with sub menus not showing icon.
 Massive speed up looking up themed icon in libclass.

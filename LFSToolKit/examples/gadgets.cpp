@@ -30,7 +30,7 @@ exit $retval
 #define YSPACING		32
 #define BGRAV			NorthWestGravity
 
-#define MAXMAINMENUS	4
+#define MAXMAINMENUS	8
 #define MAXSUBMENUS		3
 
 LFSTK_windowClass		*wc=NULL;
@@ -47,7 +47,7 @@ menuItemStruct			*mainMenus;
 menuItemStruct			*mainMenusWithSubs;
 menuItemStruct			*subMenus;
 
-const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4"};
+const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","LFSTK_windowClass		*wc=NULL","bool					mainLoop=true;","menuItemStruct			*mainMenus;","LFSTK_menuButtonClass	*mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
 LFSTK_buttonClass		*quit=NULL;
 
@@ -207,7 +207,6 @@ int main(int argc, char **argv)
 //	iconButton->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 //	mb->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 //	mbwithsubs->LFSTK_setTile(wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
-
 	wc->LFSTK_showWindow();
 
 	mainLoop=true;

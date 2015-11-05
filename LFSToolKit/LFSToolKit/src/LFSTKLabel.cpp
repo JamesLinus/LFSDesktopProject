@@ -35,11 +35,11 @@ LFSTK_labelClass::LFSTK_labelClass()
 */
 void LFSTK_labelClass::LFSTK_clearWindow(void)
 {
-	if(this->useTile==true)
+	if(this->wc->useTile==true)
 		{
 			XSetTSOrigin(this->display,this->gc,0-this->x,0-this->y);
 			XSetFillStyle(this->display,this->gc,FillTiled);
-			XSetTile(this->display,this->gc,this->tile[0]);
+			XSetTile(this->display,this->gc,this->wc->tile[0]);
 			XFillRectangle(this->display,this->window,this->gc,0,0,this->w,this->h);
 			XSetFillStyle(this->display,this->gc,FillSolid);
 		}
