@@ -1,5 +1,6 @@
 0.0.4
-Added 'launchpanels' wrapper to launch all available panels at once.
+Minor tweaks to lfstkprefs.
+Added 'lfslaunchpanels' wrapper to launch all available panels at once.
 Added theme buttons to lfstkprefs.
 Added intermediate file so now just do ./configure instead of ./autogen.s
 Fixed backdrop prefs window not centering.
