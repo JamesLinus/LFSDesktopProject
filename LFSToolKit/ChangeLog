@@ -1,4 +1,5 @@
 0.0.10
+Fixed getting wrong font data for gadgets.
 Corrected menuitem tile not joining up.
 Added usetheme to toolkit prefs.
 Added seperate tiles for window, button and menuitem.

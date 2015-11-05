@@ -405,13 +405,13 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 	switch(this->labelOrientation)
 		{
 			case LEFT:
-				this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
+				this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
 				break;
 			case RIGHT:
-				this->drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
+				this->drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
 				break;
 			default://centre
-				this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)wc->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->wc->font->ascent-2)/2),state,this->label);
+				this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
 				break;
 		}
 

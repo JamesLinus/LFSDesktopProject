@@ -30,8 +30,6 @@
 
 #include "appmenu.h"
 
-//const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Audio","Video","Office","Shell","Game","System",NULL};
-//const char				*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-multimedia","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
 const char				*myCats[]= {"Settings","Utility","Development","Education","Graphics","Network","AudioVideo","Office","Shell","Game","System",NULL};
 const char				*catImageNames[]={"preferences-desktop","applications-utilities","applications-development","applications-science","applications-graphics","applications-internet","applications-multimedia","applications-office","applications-engineering","applications-games","applications-system",NULL};
 
@@ -49,6 +47,12 @@ bool callback(void *p,void* ud)
 	if(ud==NULL)
 		return(true);;
 
+	if(((menuItemStruct*)ud)->userData==NULL)
+		{
+			system("lfsabout &");
+			return(true);
+		}
+	
 	menu=(menuEntryStruct*)((menuItemStruct*)ud)->userData;
 	if(menu==NULL)
 		return(true);;
@@ -288,6 +292,28 @@ void addCatagories(void)
 		}
 }
 
+void addExtras(void)
+{
+	const char	*iconpath=NULL;
+
+	catagoryMenus[catagoryCnt].label="About LFS Desktop";
+	catagoryMenus[catagoryCnt].userData=NULL;
+	catagoryMenus[catagoryCnt].bc=NULL;
+	catagoryMenus[catagoryCnt].subMenus=NULL;
+	catagoryMenus[catagoryCnt].subMenuCnt=0;
+	catagoryMenus[catagoryCnt].useIcon=false;
+	catagoryMenus[catagoryCnt].iconSize=iconSize;
+
+	iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"help-about","");
+	if(iconpath!=NULL)
+		{
+			catagoryMenus[catagoryCnt].useIcon=true;
+			mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
+		}
+
+	catagoryCnt++;
+}
+
 int addAppmenu(int x,int y,int grav,bool fromleft)
 {
 	int maxwid=0;
@@ -312,6 +338,7 @@ int addAppmenu(int x,int y,int grav,bool fromleft)
 	appButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",iconsize);
 	addCatagories();
 	addEntries();
+	addExtras();
 	appButton->LFSTK_addMenus(catagoryMenus,catagoryCnt);
 	XMapWindow(mainwind->display,appButton->LFSTK_getWindow());
 	appButton->LFSTK_setCallBack(NULL,callback,NULL);
