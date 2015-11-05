@@ -1,6 +1,7 @@
 0.0.4
+Added 'launchpanels' wrapper to launch all available panels at once.
 Added theme buttons to lfstkprefs.
-Added intermediate file so no just do ./cnofigure instead of ./autogen.s
+Added intermediate file so now just do ./configure instead of ./autogen.s
 Fixed backdrop prefs window not centering.
 Added lfspanelprefs.
 Fixed icon entries in .desktop files.
