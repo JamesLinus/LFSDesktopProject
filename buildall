@@ -5,8 +5,7 @@
 PREFIX="/usr"
 STAGEING="/tmp/xxx"
 
-for arg in LFSToolKit
-# LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
+for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
 	do
 		tar -xvf ${arg}-*.tar.gz
 		pushd ${arg}
