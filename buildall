@@ -12,6 +12,6 @@ for arg in LFSToolKit
 		pushd ${arg}
 			./configure --prefix=${PREFIX}
 			make
-			make install DESTDIR=${STAGING}
+			make install DESTDIR=${STAGEING}
 		popd
 	done
