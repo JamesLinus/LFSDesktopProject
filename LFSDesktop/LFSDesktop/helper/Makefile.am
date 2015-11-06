@@ -5,8 +5,5 @@ include ../flagsandlibs
 lfshelper_SOURCES = lfshelper.cpp
 lfshelper_CFLAGS = -O3
 
-appmenu_SOURCES = appMenu.cpp
-appmenu_CFLAGS = -O3
-
 helperdir = $(libexecdir)/LFSDesktop
-helper_PROGRAMS = lfshelper appmenu
+helper_PROGRAMS = lfshelper

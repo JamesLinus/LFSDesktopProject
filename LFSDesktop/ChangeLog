@@ -1,4 +1,5 @@
 0.0.14
+Removed appMenu as it is now in window manager and available from the panel app.
 Added intermediate file so no just do ./cnofigure instead of ./autogen.s
 
 0.0.13

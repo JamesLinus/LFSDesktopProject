@@ -68,7 +68,6 @@ struct option		long_options[] =
 					{"back-colour",1,0,'b'},
 					{"back-alpha",1,0,'A'},
 					{"ignore",1,0,'i'},
-					{"appmenu",0,0,'m'},
 					{"debug",0,0,'d'},
 					{"version",0,0,'v'},
 					{"help",0,0,'?'},
@@ -97,7 +96,6 @@ void printhelp(void)
 			" -b,--back-colour		Back colour for label in RGB # notation ( default #000000 )\n"
 			" -A,--back-alpha		Alpha for label in # notation ( default #ff )\n"
 			" -i,--ignore			List of ';' seperated disk labels to NOT show on desktop\n"
-			" -m,--appmenu			Show the application menu when right clicking on desktop\n"
 			" -d,--debug			Debug\n"
 			" -v,--version			output version information and exit\n"
 			" -h,-?,--help			print this help\n\n"
@@ -421,7 +419,6 @@ int main(int argc,char **argv)
 	int					win_y_return;
 	unsigned int		mask_return;
 	bool				dotidy=false;
-	bool				doShowAppmenu=false;
 	const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 	const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};
 	char				*diskIconData[BUTTONREMOVEICON];
@@ -546,10 +543,6 @@ int main(int argc,char **argv)
 					if(ignores!=NULL)
 						free(ignores);
 					ignores=strdup(optarg);
-					break;
-
-				case 'm':
-					doShowAppmenu=true;
 					break;
 
 				case 'v':
@@ -826,20 +819,6 @@ int main(int argc,char **argv)
 				usleep(25000);
 
 			XCheckWindowEvent(display,rootWin,ButtonPress|ButtonReleaseMask|PointerMotionMask,&ev);
-			if(doShowAppmenu==true)
-				{
-					if(XQueryPointer(display,DefaultRootWindow(display),&root_return,&child_return,&root_x_return,&root_y_return,&win_x_return,&win_y_return, &mask_return)==true)
-						{
-							if(mask_return & Button3Mask)
-								{
-									if(child_return==0)
-										{
-											sprintf(buffer,"%s \"%s\"",MAINMENUAPP,terminalCommand);
-											system(buffer);
-										}
-								}
-						}
-				}
 
 			switch(ev.type)
 				{

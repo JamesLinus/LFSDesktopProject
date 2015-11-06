@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-helper_PROGRAMS = lfshelper$(EXEEXT) appmenu$(EXEEXT)
+helper_PROGRAMS = lfshelper$(EXEEXT)
 subdir = LFSDesktop/helper
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -99,9 +99,6 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(helperdir)"
 PROGRAMS = $(helper_PROGRAMS)
-am_appmenu_OBJECTS = appMenu.$(OBJEXT)
-appmenu_OBJECTS = $(am_appmenu_OBJECTS)
-appmenu_LDADD = $(LDADD)
 am_lfshelper_OBJECTS = lfshelper.$(OBJEXT)
 lfshelper_OBJECTS = $(am_lfshelper_OBJECTS)
 lfshelper_LDADD = $(LDADD)
@@ -134,8 +131,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(appmenu_SOURCES) $(lfshelper_SOURCES)
-DIST_SOURCES = $(appmenu_SOURCES) $(lfshelper_SOURCES)
+SOURCES = $(lfshelper_SOURCES)
+DIST_SOURCES = $(lfshelper_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -292,13 +289,10 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 			-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
 			-DLIBDIR=\""${libdir}/${PACKAGE}"\" \
 			-DHELPERDIR=\""${libexecdir}/${PACKAGE}"\" \
-			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\" \
-			-DMAINMENUAPP=\""${libexecdir}/${PACKAGE}/appmenu"\"
+			-DHELPERAPP=\""${libexecdir}/${PACKAGE}/lfshelper"\"
 
 lfshelper_SOURCES = lfshelper.cpp
 lfshelper_CFLAGS = -O3
-appmenu_SOURCES = appMenu.cpp
-appmenu_CFLAGS = -O3
 helperdir = $(libexecdir)/LFSDesktop
 all: all-am
 
@@ -377,10 +371,6 @@ uninstall-helperPROGRAMS:
 clean-helperPROGRAMS:
 	-test -z "$(helper_PROGRAMS)" || rm -f $(helper_PROGRAMS)
 
-appmenu$(EXEEXT): $(appmenu_OBJECTS) $(appmenu_DEPENDENCIES) $(EXTRA_appmenu_DEPENDENCIES) 
-	@rm -f appmenu$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(appmenu_OBJECTS) $(appmenu_LDADD) $(LIBS)
-
 lfshelper$(EXEEXT): $(lfshelper_OBJECTS) $(lfshelper_DEPENDENCIES) $(EXTRA_lfshelper_DEPENDENCIES) 
 	@rm -f lfshelper$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(lfshelper_OBJECTS) $(lfshelper_LDADD) $(LIBS)
@@ -391,7 +381,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/appMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lfshelper.Po@am__quote@
 
 .cpp.o:
