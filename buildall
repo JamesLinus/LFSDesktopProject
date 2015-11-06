@@ -3,7 +3,7 @@
 #©keithhedger Fri 6 Nov 11:13:35 GMT 2015 kdhedger68713@gmail.com
 
 PREFIX="/usr"
-STAGEING="/tmp/xxx"
+STAGING="/tmp/xxx"
 
 for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
 	do
@@ -11,6 +11,6 @@ for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplica
 		pushd ${arg}
 			./configure --prefix=${PREFIX}
 			make
-			make install DESTDIR=${STAGEING}
+			make install DESTDIR=${STAGING}
 		popd
 	done

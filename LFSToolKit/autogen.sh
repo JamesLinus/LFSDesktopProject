@@ -5,6 +5,6 @@ aclocal
 autoheader
 touch NEWS README AUTHORS ChangeLog
 automake --add-missing --copy
-autoconf
+autoreconf --force --install
 ./configure $@
 

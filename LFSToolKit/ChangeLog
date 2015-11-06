@@ -1,4 +1,5 @@
 0.0.10
+Changed autogen.sh to update libtool files if needed.
 Added seperator if label="--"
 Added imageClass to toolkit.
 Fixed getting wrong font data for gadgets.
