@@ -13,6 +13,7 @@ completeversion=0.0.1
 
 rm -r /tmp/tmp||true
 mkdir /tmp/tmp
+cp buildall /tmp/tmp
 pushd /tmp/tmp
 
 	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSDesktop
@@ -42,7 +43,7 @@ pushd /tmp/tmp
 	rm -r LFSPanel/.svn
 	tar -cvzf LFSPanel-$lfspanelversion.tar.gz LFSPanel
 
-	tar -cvzf LFSDesktopProject-$completeversion.tar.gz LFSDesktop-$desktopversion.tar.gz LFSSetWallpaper-$wallpaperversion.tar.gz LFSWManager-$wmversion.tar.gz LFSToolKit-$tkversion.tar.gz LFSApplications-$lfsappsversion.tar.gz LFSPanel-$lfspanelversion.tar.gz  /media/LinuxData/Development/Projects/LFSDesktopProject/buildall
+	tar -cvzf LFSDesktopProject-$completeversion.tar.gz LFSDesktop-$desktopversion.tar.gz LFSSetWallpaper-$wallpaperversion.tar.gz LFSWManager-$wmversion.tar.gz LFSToolKit-$tkversion.tar.gz LFSApplications-$lfsappsversion.tar.gz LFSPanel-$lfspanelversion.tar.gz buildall
 
 	md5sum *.tar.gz|sort -k 2 > md5sums
 	
