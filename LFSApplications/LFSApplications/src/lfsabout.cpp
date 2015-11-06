@@ -24,6 +24,7 @@
 #include <LFSTKWindow.h>
 #include <LFSTKButton.h>
 #include "LFSTKLabel.h"
+#include "LFSTKImage.h"
 
 #define		WINWIDTH 352
 #define		WINHITE 240
@@ -54,16 +55,14 @@ int main(int argc, char **argv)
 	XEvent	event;
 	int		sy=BORDER;
 	Pixmap	ic[2];
-	LFSTK_buttonClass	*icon;	
+	LFSTK_imageClass	*icon;	
 	LFSTK_windowClass	*wc;
 	LFSTK_buttonClass	*quit;
 	LFSTK_labelClass	*labels[LNOMORELABELS];
 	
 	wc=new LFSTK_windowClass(0,0,WINWIDTH,WINHITE,"About LFS Desktop",false);
 
-	icon=new LFSTK_buttonClass(wc,"",MIDWIN-(ICONBUTTON/2),sy,ICONBUTTON,ICONBUTTON,NorthGravity);
-	icon->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",ICONBUTTON-4);
-	icon->LFSTK_setActive(false);
+	icon=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",MIDWIN-(ICONBUTTON/2),sy,ICONBUTTON,NorthGravity);
 
 	quit=new LFSTK_buttonClass(wc,"Close",MIDWIN-(BUTTONWITDH/2),WINHITE-BUTTONHITE-BORDER,BUTTONWITDH,BUTTONHITE,SouthGravity);
 	quit->LFSTK_setCallBack(NULL,doQuit,NULL);

@@ -185,7 +185,8 @@ void LFSTK_gadgetClass::LFSTK_setCommon(LFSTK_windowClass* parentwc,const char* 
 	this->cm=this->wc->cm;
 	this->gc=this->wc->gc;
 
-	this->label=strdup(label);
+	if(label!=NULL)
+		this->label=strdup(label);
 	this->initGadget();
  	this->blackColour=BlackPixel(this->display,this->screen);
 	this->whiteColour=WhitePixel(this->display,this->screen);
@@ -399,28 +400,41 @@ void LFSTK_gadgetClass::drawString(XftFont* font,int x,int y,int state,const cha
 * Draw label.
 * \param p Button state.
 * \note State NORMALCOLOUR=0,PRELIGHTCOLOUR=1,ACTIVECOLOUR=2,INACTIVECOLOUR=3.
+* \note If this->label="--" then dra a seperator.
 */
 void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 {
-	switch(this->labelOrientation)
+	if(strcmp(this->label,"--")!=0)
 		{
-			case LEFT:
-				this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
-				break;
-			case RIGHT:
-				this->drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
-				break;
-			default://centre
-				this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
-				break;
-		}
+			switch(this->labelOrientation)
+				{
+					case LEFT:
+						this->drawString((XftFont*)(this->font->data),2+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
+						break;
+					case RIGHT:
+						this->drawString((XftFont*)(this->font->data),this->w-2-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(this->font->data),this->label))+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
+						break;
+					default://centre
+						this->drawString((XftFont*)(this->font->data),(this->w/2)-(this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)this->font->data,this->label)/2)+this->labelOffset,(this->h/2)+((this->font->ascent-2)/2),state,this->label);
+						break;
+				}
 
-	if(this->gotIcon==true)
+			if(this->gotIcon==true)
+				{
+					XSetClipMask(this->display,this->gc,this->icon[1]);
+					XSetClipOrigin(this->display,this->gc,4,(this->h/2)-(this->iconSize/2));
+					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->h/2)-(this->iconSize/2));
+					XSetClipMask(this->display,this->gc,None);
+				}
+		}
+	else
 		{
-			XSetClipMask(this->display,this->gc,this->icon[1]);
-			XSetClipOrigin(this->display,this->gc,4,(this->h/2)-(this->iconSize/2));
-			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->h/2)-(this->iconSize/2));
 			XSetClipMask(this->display,this->gc,None);
+			XSetFillStyle(this->display,this->gc,FillSolid);
+			XSetForeground(this->display,this->gc,this->blackColour);
+			XDrawLine(this->display,this->window,this->gc,this->x,this->h/2,this->x+this->w,this->h/2);
+			XSetForeground(this->display,this->gc,this->whiteColour);
+			XDrawLine(this->display,this->window,this->gc,this->x,(this->h/2)+1,this->x+this->w,(this->h/2)+1);
 		}
 }
 
@@ -621,6 +635,7 @@ void LFSTK_gadgetClass::LFSTK_setIcon(Pixmap image,Pixmap mask,int size)
 /**
 * Set Icon.
 * \param file Path to image file.
+* \param size Size of image.
 */
 void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 {
@@ -638,7 +653,6 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 			imlib_render_pixmaps_for_whole_image_at_size(&this->icon[0],&this->icon[1],this->iconSize,this->iconSize);
 			imlib_free_image();
 			this->gotIcon=true;
-			//this->labelOffset=this->iconSize/2;
 			this->labelOffset=this->iconSize+4;
 			this->freeOnDelete=true;
 		}

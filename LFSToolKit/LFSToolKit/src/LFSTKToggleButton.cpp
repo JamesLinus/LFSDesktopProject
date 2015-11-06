@@ -63,7 +63,6 @@ LFSTK_toggleButtonClass::LFSTK_toggleButtonClass(LFSTK_windowClass* parentwc,con
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
 		this->useTile=false;
-
 }
 
 /**

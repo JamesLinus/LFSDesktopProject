@@ -1,4 +1,6 @@
 0.0.10
+Added seperator if label="--"
+Added imageClass to toolkit.
 Fixed getting wrong font data for gadgets.
 Corrected menuitem tile not joining up.
 Added usetheme to toolkit prefs.

@@ -572,6 +572,7 @@ void LFSTK_lib::LFSTK_setUseTheme(bool use)
 * \param image Return address for image pixmap.
 * \param mask Return address for image mask.
 * \param size Destination size.
+* \return true on success or flase on fail.
 * \note If size=-1 then the size is set from the image file.
 */
 bool LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size)

@@ -19,6 +19,7 @@ exit $retval
 #include "LFSTKLineEdit.h"
 #include "LFSTKLabel.h"
 #include "LFSTKToggleButton.h"
+#include "LFSTKImage.h"
 
 #define WIDTH			400
 #define HITE			600
@@ -29,6 +30,7 @@ exit $retval
 #define BORDER			20
 #define YSPACING		32
 #define BGRAV			NorthWestGravity
+#define IMAGESIZE		64
 
 #define MAXMAINMENUS	8
 #define MAXSUBMENUS		3
@@ -42,12 +44,13 @@ LFSTK_toggleButtonClass *tb=NULL;
 LFSTK_toggleButtonClass *tbnormal=NULL;
 LFSTK_lineEditClass		*le=NULL;
 LFSTK_buttonClass		*iconButton=NULL;
+LFSTK_imageClass		*image=NULL;
 
 menuItemStruct			*mainMenus;
 menuItemStruct			*mainMenusWithSubs;
 menuItemStruct			*subMenus;
 
-const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","LFSTK_windowClass		*wc=NULL","bool					mainLoop=true;","menuItemStruct			*mainMenus;","LFSTK_menuButtonClass	*mb=NULL;"};
+const char				*mainMenuNames[]={"Menu 1","Menu 2","Menu 3","Menu 4","--","bool mainLoop=true;","menuItemStruct *mainMenus;","LFSTK_menuButtonClass *mb=NULL;"};
 const char				*subMenuNames[]={"Sub Menu 1","Sub Menu 2","Sub Menu 3","Sub Menu 4"};
 LFSTK_buttonClass		*quit=NULL;
 
@@ -185,7 +188,13 @@ int main(int argc, char **argv)
 	iconButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
 	iconButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",64);
-	sy+=68;
+	sy+=64;
+
+	sy+=16;
+	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+
+	sy+=IMAGESIZE;
+	sy+=12;
 
 //line edit
 	le=new LFSTK_lineEditClass(wc,"Hello World",BORDER,sy,BWIDTH*2,BHITE,BGRAV);

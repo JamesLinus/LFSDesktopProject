@@ -47,7 +47,7 @@ bool callback(void *p,void* ud)
 	if(ud==NULL)
 		return(true);;
 
-	if(((menuItemStruct*)ud)->userData==NULL)
+	if((long)((menuItemStruct*)ud)->userData==-1)
 		{
 			system("lfsabout &");
 			return(true);
@@ -296,8 +296,17 @@ void addExtras(void)
 {
 	const char	*iconpath=NULL;
 
-	catagoryMenus[catagoryCnt].label="About LFS Desktop";
+	catagoryMenus[catagoryCnt].label="--";
 	catagoryMenus[catagoryCnt].userData=NULL;
+	catagoryMenus[catagoryCnt].bc=NULL;
+	catagoryMenus[catagoryCnt].subMenus=NULL;
+	catagoryMenus[catagoryCnt].subMenuCnt=0;
+	catagoryMenus[catagoryCnt].useIcon=false;
+	catagoryMenus[catagoryCnt].iconSize=iconSize;
+	catagoryCnt++;
+
+	catagoryMenus[catagoryCnt].label="About LFS Desktop";
+	catagoryMenus[catagoryCnt].userData=(void*)-1;
 	catagoryMenus[catagoryCnt].bc=NULL;
 	catagoryMenus[catagoryCnt].subMenus=NULL;
 	catagoryMenus[catagoryCnt].subMenuCnt=0;
