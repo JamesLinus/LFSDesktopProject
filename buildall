@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+#©keithhedger Fri 6 Nov 11:13:35 GMT 2015 kdhedger68713@gmail.com
+
+PREFIX="/usr"
+STAGEING="/tmp/xxx"
+
+for arg in LFSToolKit
+# LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
+	do
+		tar -xvf ${arg}-*.tar.gz
+		pushd ${arg}
+			./configure --prefix=${PREFIX}
+			make
+			make install DESTDIR=${STAGING}
+		popd
+	done
