@@ -15934,7 +15934,7 @@ fi
 
 
 
-XFT_MODULES="xft >= 2.3.2"
+XFT_MODULES="xft >= 2.3.1"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XFT" >&5

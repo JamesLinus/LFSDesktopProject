@@ -295,6 +295,14 @@ void readDesktopFile(const char* name)
 	char	*tptr=NULL;
 	char	*ptr=NULL;
 
+	fileDiskLabel=NULL;
+	fileDiskMime=NULL;
+	fileDiskPath=NULL;
+	fileCustomIcon=NULL;
+	fileGotCustomIcon=false;
+	fileDiskUUID=NULL;
+	fileDiskType=NULL;
+
 	snprintf(buffer,2047,"%s/%s",cachePath,name);
 	fr=fopen(buffer,"r");
 	if(fr!=NULL)
@@ -318,24 +326,27 @@ void readDesktopFile(const char* name)
 			xySlot[fileDiskXPos][fileDiskYPos]=1;
 			snprintf(buffer,2047,"%s/%s",desktopPath,name);
 			tptr=getMimeType(buffer);
-			ptr=strchr(tptr,'/');
-			while(ptr!=NULL)
+			if(tptr!=NULL)
 				{
-					*ptr='-';
 					ptr=strchr(tptr,'/');
+					while(ptr!=NULL)
+						{
+							*ptr='-';
+							ptr=strchr(tptr,'/');
+						}
+					ptr=strstr(tptr,"text-x-shellscript");
+					if(ptr==NULL)
+						deskIconsArray[deskIconsCnt].mime=strdup(tptr);
+					else
+						deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
+					free(tptr);
+					fileDiskLabel=NULL;
+					fileDiskMime=NULL;
+					fileDiskPath=NULL;
+					fileCustomIcon=NULL;
+					fileGotCustomIcon=false;
+					deskIconsCnt++;
 				}
-			ptr=strstr(tptr,"text-x-shellscript");
-			if(ptr==NULL)
-				deskIconsArray[deskIconsCnt].mime=strdup(tptr);
-			else
-				deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
-			free(tptr);
-			fileDiskLabel=NULL;
-			fileDiskMime=NULL;
-			fileDiskPath=NULL;
-			fileCustomIcon=NULL;
-			fileGotCustomIcon=false;
-			deskIconsCnt++;
 			fclose(fr);
 		}
 }

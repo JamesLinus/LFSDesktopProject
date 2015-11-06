@@ -232,7 +232,6 @@ LIBS = -lmagic \
 			$(XINERAMA_LIBS) \
 			$(XEXT_LIBS) \
 			$(XFT_LIBS) \
-			-lXm \
 			$(LIBUDEV_LIBS) \
 			$(CAIRO_LIBS) \
 			-llfstoolkit 

@@ -1,4 +1,5 @@
 0.0.10
+Lowered xft version.
 Changed autogen.sh to update libtool files if needed.
 Added seperator if label="--"
 Added imageClass to toolkit.

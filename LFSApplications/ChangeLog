@@ -1,4 +1,5 @@
 0.0.4
+Lowered xft lib version.
 Added lfsabout dialog.
 Minor tweaks to lfstkprefs.
 Added 'lfslaunchpanels' wrapper to launch all available panels at once.

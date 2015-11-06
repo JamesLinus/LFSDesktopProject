@@ -4435,7 +4435,7 @@ CXXFLAGS=-Wall
 CFLAGS=-Wall
 
 
-XEXT_MODULES="xext >= 1.3.3"
+XEXT_MODULES="xext >= 1.3.2"
 
 
 
@@ -5125,7 +5125,7 @@ fi
 
 
 
-XFT_MODULES="xft >= 2.3.2"
+XFT_MODULES="xft >= 2.3.1"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XFT" >&5
@@ -5315,7 +5315,7 @@ fi
 
 
 
-CAIRO_MODULES="cairo >= 1.14.0"
+CAIRO_MODULES="cairo >= 1.13.1"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for CAIRO" >&5

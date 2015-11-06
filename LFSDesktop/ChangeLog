@@ -1,4 +1,8 @@
 0.0.14
+Code clean.
+Lowered xft, cairo and udev versions.
+Fixed segfault when can't find mime type of file/folder on desktop.
+Fixed nasty recursive bug when displaying desktop files.
 Removed appMenu as it is now in window manager and available from the panel app.
 Added intermediate file so no just do ./cnofigure instead of ./autogen.s
 

@@ -303,7 +303,7 @@ void fillDesk(void)
 	holdfilename=NULL;
 
 //desktop files
-	sprintf(buffer,"find %s -mindepth 1",desktopPath);
+	sprintf(buffer,"find %s -mindepth 1 -maxdepth 1",desktopPath);
 	char	buffer2[4096];
 	char	*tptr;
 	fp=popen(buffer,"r");

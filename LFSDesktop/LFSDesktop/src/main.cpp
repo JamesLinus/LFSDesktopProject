@@ -411,13 +411,6 @@ int main(int argc,char **argv)
 	int					oldboxx=-1,oldboxy=-1;
 	bool				dragging=false;
 	FILE				*fp;
-	Window				root_return;
-	Window				child_return;
-	int					root_x_return;
-	int					root_y_return;
-	int					win_x_return;
-	int					win_y_return;
-	unsigned int		mask_return;
 	bool				dotidy=false;
 	const char			*diskLabelData[]={"Mount","Unmount","Eject","Open","Custom Icon","Remove Icon",NULL};
 	const char			*diskThemeIconData[]={"drive-harddisk","media-eject","media-eject","document-open","list-add","list-remove"};

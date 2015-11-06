@@ -1,4 +1,5 @@
 0.0.5
+Lowered xft version.
 Added show about box to appmenu.
 Clock, disk and CPU usage now use window background.
 Panel now uses window tile image if available.
