@@ -3,7 +3,7 @@
 #©keithhedger Fri 6 Nov 11:13:35 GMT 2015 kdhedger68713@gmail.com
 
 PREFIX="/usr"
-STAGING="/tmp/xxx"
+STAGING=
 
 for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
 	do

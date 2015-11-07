@@ -38,6 +38,9 @@ menuItemStruct			*catagoryMenus;
 menuItemStruct			*catagorySubMenus[MAXCATS];
 int						subMenusCnt[MAXCATS];
 int						catPtr[MAXCATS];
+const char				*currentCatName=NULL;
+int						catagoryCnt=0;
+int						catcnt=0;
 
 bool callback(void *p,void* ud)
 {
@@ -66,9 +69,6 @@ bool callback(void *p,void* ud)
 	free(command);
 	return(true);
 }
-
-int	catagoryCnt=0;
-int	catcnt=0;
 
 int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 {
@@ -113,7 +113,7 @@ int ftwCallback(const char *fpath,const struct stat *sb,int typeflag)
 									splitstr=strtok(NULL,"=");
 									while(myCats[mycatcnt]!=NULL)
 										{
-											if(strstr(splitstr,myCats[mycatcnt])!=NULL)
+											if(strcasestr(splitstr,myCats[mycatcnt])!=NULL)
 												{
 													gotcat=true;
 													break;
@@ -253,9 +253,62 @@ void addEntries(void)
 	sortEntries();
 }
 
+int ftwCatCallback(const char *fpath,const struct stat *sb,int typeflag)
+{
+	FILE	*fp=NULL;
+	char	command[512];
+	bool	gotcat;
+	bool	gotnoshow;
+	char	*splitstr=NULL;
+	bool	foundshow;
+
+	if(typeflag!=FTW_F)
+		return(0);
+
+	fp=fopen(fpath,"r");
+	if(fp!=NULL)
+		{
+			gotnoshow=false;
+			gotcat=false;
+			foundshow=false;
+			while(fgets(command,512,fp))
+				{
+					if(command[strlen(command)-1]=='\n')
+						command[strlen(command)-1]=0;
+
+					splitstr=NULL;
+					splitstr=strtok(command,"=");
+					if(splitstr!=NULL)
+						{
+							if(strcmp(splitstr,"Categories")==0)
+								{
+									splitstr=strtok(NULL,"=");
+									if(strcasestr(splitstr,currentCatName)!=NULL)
+										gotcat=true;
+								}
+
+							if(strcmp(splitstr,"NoDisplay")==0)
+								{
+									foundshow=true;
+									splitstr=strtok(NULL,"=");
+									if(strcasecmp(splitstr,"true")==0)
+										gotnoshow=true;
+								}
+						}
+					if((foundshow==true) && (gotcat==true))
+						break;
+				}
+			fclose(fp);
+		}
+	else
+		return(0);
+	if((gotcat==true) && (gotnoshow==false))
+		return(1);
+	return(0);
+}
+
 void addCatagories(void)
 {
-	char	*tbuffer=NULL;
 	const char	*iconpath=NULL;
 
 	catagoryCnt=0;
@@ -263,30 +316,26 @@ void addCatagories(void)
 	catagoryMenus=new menuItemStruct[MAXCATS];
 	while(myCats[catcnt]!=NULL)
 		{
-			tbuffer=mainwind->globalLib->LFSTK_oneLiner("find /usr/share/applications -follow -type f -print0 |xargs -0 sed -n '/categories.*%s/Ip'",myCats[catcnt]);
-			if(tbuffer!=NULL)
+			currentCatName=myCats[catcnt];
+			if(ftw("/usr/share/applications",ftwCatCallback,16)==1)
 				{
-					if(strlen(tbuffer)>0)
+					catagorySubMenus[catagoryCnt]=new menuItemStruct[MAXENTRYS];
+					catagoryMenus[catagoryCnt].label=myCats[catcnt];
+					catagoryMenus[catagoryCnt].userData=NULL;
+					catagoryMenus[catagoryCnt].bc=NULL;
+					catagoryMenus[catagoryCnt].subMenus=NULL;
+					catagoryMenus[catagoryCnt].subMenuCnt=0;
+					catagoryMenus[catagoryCnt].useIcon=true;
+					catagoryMenus[catagoryCnt].iconSize=iconSize;
+					catPtr[catcnt]=catagoryCnt;
+					iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
+					if(iconpath!=NULL)
 						{
-							catagorySubMenus[catagoryCnt]=new menuItemStruct[MAXENTRYS];
-							catagoryMenus[catagoryCnt].label=myCats[catcnt];
-							catagoryMenus[catagoryCnt].userData=NULL;
-							catagoryMenus[catagoryCnt].bc=NULL;
-							catagoryMenus[catagoryCnt].subMenus=NULL;
-							catagoryMenus[catagoryCnt].subMenuCnt=0;
 							catagoryMenus[catagoryCnt].useIcon=true;
-							catagoryMenus[catagoryCnt].iconSize=iconSize;
-							catPtr[catcnt]=catagoryCnt;
-							iconpath=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,catImageNames[catcnt],"");
-							if(iconpath!=NULL)
-								{
-									catagoryMenus[catagoryCnt].useIcon=true;
-									mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
-								}
-
-							catagoryCnt++;
+							mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,iconpath,&(catagoryMenus[catagoryCnt].icon[0]),&(catagoryMenus[catagoryCnt].icon[1]),iconSize);
 						}
-					free(tbuffer);
+
+					catagoryCnt++;
 				}
 			catcnt++;
 		}

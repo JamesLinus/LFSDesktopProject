@@ -340,13 +340,13 @@ void readDesktopFile(const char* name)
 					else
 						deskIconsArray[deskIconsCnt].mime=strdup("application-x-shellscript");
 					free(tptr);
-					fileDiskLabel=NULL;
-					fileDiskMime=NULL;
-					fileDiskPath=NULL;
-					fileCustomIcon=NULL;
-					fileGotCustomIcon=false;
-					deskIconsCnt++;
 				}
+			fileDiskLabel=NULL;
+			fileDiskMime=NULL;
+			fileDiskPath=NULL;
+			fileCustomIcon=NULL;
+			fileGotCustomIcon=false;
+			deskIconsCnt++;
 			fclose(fr);
 		}
 }
