@@ -257,6 +257,11 @@ int main(int argc, char **argv)
 	FILE*			fp=NULL;
 	char			*command;
 
+	wallpaperPath=strdup("");
+	backdropMode=0;
+	mainColour=strdup("8421504");
+	multiMode=false;
+
 	asprintf(&prefsPath,"%s/.config/LFS/lfssetwallpaper.rc",getenv("HOME"));
 	asprintf(&monitorRCPath,"%s/.config/LFS/lfsmonitors.rc",getenv("HOME"));
 
