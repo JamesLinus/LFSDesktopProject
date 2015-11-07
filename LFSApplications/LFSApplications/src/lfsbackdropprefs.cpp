@@ -236,6 +236,14 @@ void loadMonitorData(void)
 				}
 			fclose(fd);
 		}
+	else
+		{
+			for(int j=0;j<wc->LFSTK_getMonitorCount();j++)
+				{
+					monitorData[j].monMode=0;
+					monitorData[j].monitorPath=strdup("");
+				}
+		}
 }
 
 int main(int argc, char **argv)

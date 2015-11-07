@@ -53,6 +53,7 @@ void setVars(void)
 	wc->LFSTK_setWindowColourName(NORMALCOLOUR,normaledits[EWINDOWCOLOUR]->LFSTK_getBuffer()->c_str());
 	wc->globalLib->LFSTK_setGlobalString(NORMALCOLOUR,TYPEWINDOW,wc->windowColourNames[NORMALCOLOUR].name);
 	wc->LFSTK_clearWindow();
+
 //auto label colour
 	wc->globalLib->LFSTK_setAutoLabelColour(autocolour->LFSTK_getValue());
 	wc->autoLabelColour=wc->globalLib->LFSTK_getAutoLabelColour();
@@ -81,11 +82,17 @@ void setVars(void)
 			normalbuttons[MENUNORMAL+j]->LFSTK_clearWindow();
 		}
 
+//auto label clour checkbox
+	autocolour->LFSTK_setLabelAutoColour(wc->autoLabelColour);
+	autocolour->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
+	autocolour->LFSTK_clearWindow();
+
 //reset label background colours
 	for(int j=LNORMBUTTONS;j<NOMORELABELS;j++)
 		{
 			labels[j]->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(j,TYPEBUTTON));
+			labels[j]->LFSTK_setColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEWINDOW));
+			labels[j]->LFSTK_setColourName(INACTIVECOLOUR,wc->globalLib->LFSTK_getGlobalString(INACTIVECOLOUR,TYPEWINDOW));
 			labels[j]->LFSTK_clearWindow();
 		}
 
@@ -95,14 +102,11 @@ void setVars(void)
 	wc->globalLib->LFSTK_setGlobalString(-1,TYPEMENUITEMTILE,normaledits[EMENUITEMTILE]->LFSTK_getBuffer()->c_str());
 	wc->globalLib->LFSTK_setUseTheme(usetheme->LFSTK_getValue());
 
-//auto label clour checkbox
-	autocolour->LFSTK_setLabelAutoColour(wc->autoLabelColour);
-	autocolour->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
-	autocolour->LFSTK_clearWindow();
 //use theme checkbox
 	usetheme->LFSTK_setLabelAutoColour(wc->autoLabelColour);
 	usetheme->LFSTK_setFontColourName(NORMALCOLOUR,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONTCOLOUR));
 	usetheme->LFSTK_clearWindow();
+	
 }
 
 bool callback(void *p,void* ud)
@@ -118,8 +122,7 @@ bool callback(void *p,void* ud)
 				mainloop=false;
 				return(false);
 				break;
-			
-			case PRINT:
+				case PRINT:
 				setVars();
 				wc->globalLib->LFSTK_saveVarsToFile("-",wc->globalLib->LFSTK_getTKArgs());
 				printf("\n");
@@ -209,7 +212,6 @@ int main(int argc, char **argv)
 	labels[LFONTSTRING]->LFSTK_setLabelOriention(LEFT);	
 	normaledits[EFONTSTRING]=new LFSTK_lineEditClass(wc,wc->globalLib->LFSTK_getGlobalString(NORMALCOLOUR,TYPEFONT),cols[1],sy,cols[3]-cols[1]-10,24,NorthWestGravity);
 	sy+=vspacing;
-
 
 //menu items labels
 	state=0;

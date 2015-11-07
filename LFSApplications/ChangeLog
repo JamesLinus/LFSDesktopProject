@@ -1,4 +1,5 @@
 0.0.4
+Fixed segfault when no prefs lfstoolkit.rc exists.
 Lowered xft lib version.
 Added lfsabout dialog.
 Minor tweaks to lfstkprefs.

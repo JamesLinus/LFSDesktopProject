@@ -186,11 +186,17 @@ int main(int argc, char **argv)
 	int				vspacing=bhite+10;
 	int				col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
 
-	fontColours[ACTIVEFRAME]=strdup("rgb:00/00/00");
-	fontColours[ACTIVEFRAMEFILL]=strdup("rgb:00/ff/ff");
-	fontColours[INACTIVEFRAME]=strdup("rgb:00/00/00");
-	fontColours[INACTIVEFRAMEFILL]=strdup("rgb:ff/ff/ff");
-	fontColours[TEXTCOLOUR]=strdup("rgb:ff/ff/ff");
+	fontColours[ACTIVEFRAME]=strdup("#000000");
+	fontColours[ACTIVEFRAMEFILL]=strdup("#00ffff");
+	fontColours[INACTIVEFRAME]=strdup("#000000");
+	fontColours[INACTIVEFRAMEFILL]=strdup("#ffffff");
+	fontColours[TEXTCOLOUR]=strdup("#ffffff");
+
+	titleFont=strdup("sans:size=10");
+	numberOfDesktops=strdup("12");
+	liveUpdate=strdup("5");
+	pathToTheme=strdup("");
+	terminalCommand=strdup("xterm -e ");
 
 	wc=new LFSTK_windowClass(sx,sy,800,600,"LFS WM Prefs",false);
 	wc->LFSTK_setDecorated(true);
@@ -205,7 +211,7 @@ int main(int argc, char **argv)
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
-	guibc[PRINT]=new LFSTK_buttonClass(wc,"Print",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
+	guibc[PRINT]=new LFSTK_buttonClass(wc,"Test",(geom->w/2)-(64/2),geom->h-32,64,24,SouthGravity);
 	guibc[PRINT]->LFSTK_setCallBack(NULL,callback,(void*)PRINT);
 	sx=col1;
 	sy=10;
@@ -216,6 +222,7 @@ int main(int argc, char **argv)
 			bc[j]->LFSTK_setActive(false);
 			bc[j]->LFSTK_setLabelAutoColour(true);
 			bc[j]->LFSTK_setColourName(INACTIVECOLOUR,fontColours[state]);
+			bc[j]->LFSTK_setTile("",-1);
 			sx+=spacing;
 			le[j]=new LFSTK_lineEditClass(wc,fontColours[state],sx,sy-1,bwidth,24,NorthWestGravity);
 			sy+=vspacing;
@@ -235,7 +242,6 @@ int main(int argc, char **argv)
 			sx=col1;
 			state++;
 		}
-
 	placeMenu=new menuItemStruct[NOMOREPLACES];
 	for(int j=0;j<NOMOREPLACES;j++)
 		{

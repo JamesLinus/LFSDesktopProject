@@ -29,11 +29,15 @@
 
 enum {DEFNORMAL,DEFPRELIE,DEFACTIVE,DEFINACTIVE,DEFFONTNORMAL,DEFFONTPRELIE,DEFFONTACTIVE,DEFFONTINACTIVE};
 
-const char *defaultColourStrings[]={"grey50","grey80","grey40","grey90"};
-const char *defaultFontColourStrings[]={"white","black","white","grey80"};
-const char *defaultFontString="sans-serif:size=10";
-const char *defaultThemePath="/usr/share/themes/Crux/xfwm4";
-const char *defaultFrameStrings[]={"black","#00ffff","black","white","white"};
+const char	*defaultColourStrings[]={"grey50","grey80","grey40","grey90"};
+const char	*defaultFontColourStrings[]={"white","black","white","grey80"};
+const char	*defaultFontString="sans-serif:size=10";
+const char	*defaultThemePath="/usr/share/themes/Crux/xfwm4";
+const char	*defaultFrameStrings[]={"black","#00ffff","black","white","white"};
+const char	*defaultWindowTile="";
+const char	*defaultButtonTile="";
+const char	*defaultMenuItemTile="";
+
 char		filterBuffer[256];
 char		retBuffer[512];
 
@@ -141,6 +145,8 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				break;
 			case TYPEWINDOWTILE:
 				ptr=this->globalWindowTile;
+				if(ptr==NULL)
+					ptr=defaultWindowTile;
 				break;
 			case TYPEBUTTON:
 				ptr=this->globalButtonColours[state];
@@ -149,6 +155,8 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				break;
 			case TYPEBUTTONTILE:
 				ptr=this->globalButtonTile;
+				if(ptr==NULL)
+					ptr=defaultButtonTile;
 				break;
 			case TYPEMENUITEM:
 				ptr=this->globalMenuItemColours[state];
@@ -157,6 +165,8 @@ const char *LFSTK_lib::LFSTK_getGlobalString(int state,int type)
 				break;
 			case TYPEMENUITEMTILE:
 				ptr=this->globalMenuItemTile;
+				if(ptr==NULL)
+					ptr=defaultMenuItemTile;
 				break;
 			case TYPEFONTCOLOUR:
 				ptr=this->globalFontColourNames[state];
