@@ -13,7 +13,7 @@ completeversion=0.0.1
 
 rm -r /tmp/tmp||true
 mkdir /tmp/tmp
-cp buildall /tmp/tmp
+cp buildall purgeall /tmp/tmp
 pushd /tmp/tmp
 
 	svn co file:///media/LinuxData/Development/SVN/LFSDesktopProject/LFSDesktop

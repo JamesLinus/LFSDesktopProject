@@ -7,14 +7,11 @@ STAGING=
 
 for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
 	do
-		tar -xvf ${arg}-*.tar.gz
 		pushd ${arg}
-			./configure --prefix=${PREFIX};make||./autogen.sh --prefix=${PREFIX};make||(echo "Configure Error...";exit 1)
-			make install DESTDIR=${STAGING}
-		
 			if [ $arg = "LFSToolKit" ];then
-				ldconfig
+				make purge||true
+			else
+				make uninstall||true
 			fi
-
 		popd
 	done
