@@ -40,6 +40,12 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 	if(this->freeOnDelete==true)
 		imlib_free_pixmap_and_mask(this->icon[0]);
 
+	if(this->image!=NULL)
+		{
+			imlib_context_set_image(this->image);
+			imlib_free_image();
+		}
+
 	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
 	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
 	XDestroyWindow(this->display,this->window);
@@ -142,6 +148,8 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->iconSize=16;
 	this->freeOnDelete=false;
 	this->useTile=false;
+	this->useImage=false;
+	this->image=NULL;
 }
 
 /**
@@ -426,6 +434,17 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 					XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,4,(this->h/2)-(this->iconSize/2));
 					XSetClipMask(this->display,this->gc,None);
 				}
+			else if(this->useImage==true)
+				{
+					imlib_context_set_display(this->display);
+					imlib_context_set_visual(this->visual);
+					imlib_context_set_colormap(this->cm);
+
+					imlib_context_set_drawable(this->window);
+					imlib_context_set_image(this->image);
+					imlib_context_set_blend(1);
+					imlib_render_image_on_drawable_at_size(4,(this->h/2)-(this->imageHeight/2),this->imageWidth,this->imageHeight); 
+				}
 		}
 	else
 		{
@@ -661,6 +680,26 @@ void LFSTK_gadgetClass::LFSTK_setIconFromPath(const char *file,int size)
 			this->gotIcon=false;
 			this->freeOnDelete=false;
 		}
+}
+
+/**
+* Set image and render with imlib2.
+* \param file Path to image file.
+* \param w,h Size of image.
+*/
+void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
+{
+	this->image=NULL;
+
+	this->image=imlib_load_image_immediately_without_cache(file);
+	if(image!=NULL)
+		{
+			this->imageWidth=w;
+			this->imageHeight=h;
+			this->useImage=true;
+		}
+	else
+		this->useImage=false;
 }
 
 /**

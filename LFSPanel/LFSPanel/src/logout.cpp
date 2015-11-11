@@ -73,7 +73,8 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
 	if(icon!=NULL)
-		logoutButton->LFSTK_setIconFromPath(icon,iconsize);
+//		logoutButton->LFSTK_setIconFromPath(icon,iconsize);
+		logoutButton->LFSTK_setImageFromPath(icon,iconsize,iconsize);
 	else
 		logoutButton->LFSTK_setIconFromPath(DATADIR "/pixmaps/exit.png",iconsize);
 

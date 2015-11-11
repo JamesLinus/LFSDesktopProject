@@ -22,6 +22,7 @@
 #define _LFSTK_LIB_
 
 #include "LFSTKGlobals.h"
+#include <Imlib2.h>
 
 #define	MAXVARS 100
 #define MAXBUFFER 512

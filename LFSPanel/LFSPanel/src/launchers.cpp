@@ -126,6 +126,7 @@ bool launcherCB(void *p,void* ud)
 	if(launcher==NULL)
 		return(true);
 
+	alarm(0);
 	if(launcher->entry.inTerm==false)
 		asprintf(&command,"%s &",launcher->entry.exec);
 	else
@@ -133,7 +134,7 @@ bool launcherCB(void *p,void* ud)
 
 	system(command);
 	free(command);
-
+	alarm(refreshRate);
 	return(true);
 }
 int addLaunchers(int x,int y,int grav,bool fromleft)
@@ -168,7 +169,7 @@ int addLaunchers(int x,int y,int grav,bool fromleft)
 			if(loopll->icon!=NULL)
 				icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,loopll->icon,"");
 			if(icon!=NULL)
-				loopll->bc->LFSTK_setIconFromPath(icon,iconsize);
+				loopll->bc->LFSTK_setImageFromPath(icon,iconsize,iconsize);
 			else
 				loopll->bc->LFSTK_setIconFromPath(DATADIR "/pixmaps/command.png",iconsize);
 			loopll=loopll->next;

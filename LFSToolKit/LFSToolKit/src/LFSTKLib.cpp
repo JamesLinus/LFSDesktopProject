@@ -619,7 +619,6 @@ bool LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colorma
 	return(false);
 }
 
-
 int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
 {
 	if(typeflag!=FTW_F)

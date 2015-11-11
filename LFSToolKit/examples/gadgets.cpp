@@ -20,6 +20,7 @@ exit $retval
 #include "LFSTKLabel.h"
 #include "LFSTKToggleButton.h"
 #include "LFSTKImage.h"
+#include "LFSTKLib.h"
 
 #define WIDTH			400
 #define HITE			600
@@ -45,7 +46,7 @@ LFSTK_toggleButtonClass *tbnormal=NULL;
 LFSTK_lineEditClass		*le=NULL;
 LFSTK_buttonClass		*iconButton=NULL;
 LFSTK_imageClass		*image=NULL;
-
+LFSTK_buttonClass		*imageButton;
 menuItemStruct			*mainMenus;
 menuItemStruct			*mainMenusWithSubs;
 menuItemStruct			*subMenus;
@@ -189,6 +190,13 @@ int main(int argc, char **argv)
 	iconButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
 	iconButton->LFSTK_setIconFromPath("/usr/share/pixmaps/LFSTux.png",64);
 	sy+=64;
+	sy+=12;
+
+//image button
+	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
+	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
+	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
+	sy+=64;
 
 	sy+=16;
 	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
@@ -232,6 +240,22 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
+//						XSetFillStyle(this->display,this->gc,FillSolid);
+//			XSetClipMask(this->display,this->gc,None);
+//			XSetForeground(this->display,this->gc,this->colourNames[state].pixel);
+//			XFillRectangle(this->display,this->window,this->gc,g->x,g->y,g->w,g->h);
+//						imagebutton->externalUpdate=false;
+//						imagebutton->LFSTK_clearWindow();
+//						imagebutton->externalUpdate=true;
+//						imlib_context_set_display(wc->display);
+//						imlib_context_set_visual(wc->visual);
+//						imlib_context_set_colormap(wc->cm);
+//
+//						imlib_context_set_drawable(imagebutton->window);
+//						imlib_context_set_image(data);
+//						imlib_context_set_blend(1);
+//
+//						imlib_render_image_on_drawable_at_size(2,2,64,64); 
 						break;
 
 					case ConfigureNotify:
