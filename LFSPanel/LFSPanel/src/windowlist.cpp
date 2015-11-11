@@ -94,127 +94,6 @@ int getCurrentDesktop(void)
 	else
 		currentDesktop=1;
 }
-#if 0
-void updateWindowMenu(void)
-{
-	FILE	*fp=NULL;
-
-	updateWindowCnt++;
-	if(updateWindowCnt>=WINDOWREFRESH)
-		updateWindowCnt=0;
-	else
-		return;
-	alarm(0);
-	if(windowListCnt>-1)
-		resetMenus();
-
-	getCurrentDesktop();
-	windowListCnt=0;
-	//fp=popen(WINHELPER,"r");
-//system("/media/LinuxData/Development/Projects/LFSDesktopProject/LFSPanel/LFSPanel/resources/scripts/PanelHelperWinList2 >/tmp/zxzx");
-	fp=popen("/media/LinuxData/Development/Projects/LFSDesktopProject/LFSPanel/LFSPanel/resources/scripts/PanelHelperWinList2","r");
-	usleep(500);
-	//fp=popen("cat /tmp/zxzx","r");
-	if(fp!=NULL)
-		{
-			windowBuffer[0]=0;
-			fgets(windowBuffer,4096,fp);
-			windowBuffer[strlen(windowBuffer)-1]=0;
-			windowListCnt=atoi(windowBuffer);
-			if(windowListCnt>MAXWINDOWSINLIST)
-				windowListCnt=MAXWINDOWSINLIST;
-
-			windowDeskListCnt=-1;
-			
-			for(int j=0; j<windowListCnt; j++)
-				{
-//					printf(">>>>j=%i windowDeskListCnt=%i<<<\n",j,windowDeskListCnt);
-////full window
-//					windowBuffer[0]=0;
-//					fgets(windowBuffer,4096,fp);//id
-//					windowBuffer[strlen(windowBuffer)-1]=0;
-//					windowList[j].userData=(void*)strtol(windowBuffer,NULL,16);
-////this desk
-//					windowDeskList[windowDeskListCnt].userData=(void*)strtol(windowBuffer,NULL,16);
-//
-////full window
-//					windowBuffer[0]=0;
-//					fgets(windowBuffer,4096,fp);//name
-//					windowBuffer[strlen(windowBuffer)-1]=0;
-//					windowList[j].label=strdup(windowBuffer);
-////this desk
-////					windowDeskListCnt++;
-////					windowDeskList[windowDeskListCnt].label=strdup(windowBuffer);
-//
-////full window
-//printf("aaaaaaa%saaaaaaa\n",windowBuffer);
-//					windowBuffer[0]=0;
-//					fgets(windowBuffer,4096,fp);//desktop -- TODO
-//printf("bbbbbbb%sbbbbbbbbb\n",windowBuffer);
-//					windowBuffer[strlen(windowBuffer)-1]=0;
-//					windowList[j].bc=NULL;
-//					windowList[j].subMenus=NULL;
-//					windowList[j].subMenuCnt=atoi(windowBuffer);
-////this desk
-//printf(">>>>>>>>>>>>>>>>>>>\n");
-					windowBuffer[0]=0;
-					fgets(windowBuffer,4096,fp);
-//printf("<<<<<<<<<<<<<<<<\n");
-					windowBuffer[strlen(windowBuffer)-1]=0;
-//					printf("desktop=%i\n",atoi(windowBuffer));
-					if(atoi(windowBuffer)==currentDesktop)
-						{
-//printf("---------------\n");
-							windowDeskListCnt++;
-						//	windowDeskListCnt=0;
-							fgets(windowBuffer,4096,fp);//id
-	//						printf("--buffer id=%s--\n",windowBuffer);
-							windowBuffer[strlen(windowBuffer)-1]=0;
-							windowDeskList[windowDeskListCnt].userData=(void*)strtol(windowBuffer,NULL,16);
-							fgets(windowBuffer,4096,fp);//name
-		//					printf("--buffer name=%s--\n",windowBuffer);
-							windowBuffer[strlen(windowBuffer)-1]=0;
-							windowDeskList[windowDeskListCnt].label=strdup(windowBuffer);
-							
-							//windowList[j].label=strdup(windowBuffer);
-						//	windowDeskList[windowDeskListCnt].label=windowList[j].label;
-							windowDeskList[windowDeskListCnt].bc=NULL;
-							windowDeskList[windowDeskListCnt].subMenus=NULL;
-							windowDeskList[windowDeskListCnt].subMenuCnt=currentDesktop;
-							windowDeskList[windowDeskListCnt].useIcon=false;
-							
-						}
-					else
-						{
-							fgets(windowBuffer,4096,fp);//id
-							fgets(windowBuffer,4096,fp);//id
-
-					//		//if(windowDeskList[windowDeskListCnt].label!=NULL)
-					//		//	free((char*)windowDeskList[windowDeskListCnt].label);
-					//		windowDeskList[windowDeskListCnt].label=NULL;
-						}
-				}
-			pclose(fp);
-//			if(windowMenu!=NULL)
-//				windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
-
-			if(windowDeskMenu!=NULL)
-				{
-					if(windowDeskListCnt>-1)
-						{
-							windowDeskMenu->LFSTK_updateMenus(windowDeskList,windowDeskListCnt+1);
-							windowDeskMenu->LFSTK_setActive(true);
-						}
-				//	else
-				///		{
-				//		windowDeskMenu->LFSTK_setActive(false);
-				//		}
-				//	windowDeskMenu->LFSTK_clearWindow();
-				}
-		}
-	alarm(refreshRate);
-}
-#else
 
 void updateWindowMenu(void)
 {
@@ -225,7 +104,7 @@ void updateWindowMenu(void)
 		updateWindowCnt=0;
 	else
 		return;
-//printf("0000000000\n");
+
 	alarm(0);
 	if(windowListCnt>-1)
 		resetMenus();
@@ -247,7 +126,6 @@ void updateWindowMenu(void)
 
 			for(int j=0; j<windowListCnt; j++)
 				{
-//				printf(">>>>%i<<<\n",j);
 //full window
 					windowBuffer[0]=0;
 					fgets(windowBuffer,511,fp);//id
@@ -268,7 +146,7 @@ void updateWindowMenu(void)
 
 //full window
 					windowBuffer[0]=0;
-					fgets(windowBuffer,511,fp);//desktop -- TODO
+					fgets(windowBuffer,511,fp);//desktop
 	usleep(100);
 					windowBuffer[strlen(windowBuffer)-1]=0;
 					windowList[j].bc=NULL;
@@ -276,7 +154,6 @@ void updateWindowMenu(void)
 					windowList[j].subMenuCnt=atoi(windowBuffer);
 					windowList[j].useIcon=false;
 //this desk
-//printf("111111111111\n");
 					if(atoi(windowBuffer)==currentDesktop)
 						{
 							windowDeskList[windowDeskListCnt].bc=NULL;
@@ -295,11 +172,10 @@ void updateWindowMenu(void)
 							windowDeskList[windowDeskListCnt].bc=NULL;
 						}
 				}
-//printf("2222222222222\n");
-fflush(fp);
+			fflush(fp);
 			pclose(fp);
-		usleep(100);
-//printf("333333333333\n");
+			usleep(100);
+
 			if(windowMenu!=NULL)
 				windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
 			if(windowDeskMenu!=NULL)
@@ -311,13 +187,10 @@ fflush(fp);
 						}
 					else
 						windowDeskMenu->LFSTK_setActive(false);
-				//	windowDeskMenu->LFSTK_clearWindow();
 				}
 		}
 	alarm(refreshRate);
 }
-
-#endif
 
 int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 {
@@ -341,9 +214,7 @@ int addWindowDeskMenu(int x,int y,int grav,bool fromleft)
 	windowDeskMenu=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"remote-desktop","");
 	if(icon!=NULL)
-		//windowDeskMenu->LFSTK_setIconFromPath(icon,iconsize);
-		//windowDeskMenu->LFSTK_setImageFromPath(icon,iconsize,iconsize);
-		windowDeskMenu->LFSTK_setImageFromPath(DATADIR "/pixmaps/windows.png",16,16);
+		windowDeskMenu->LFSTK_setImageFromPath(icon,iconsize,iconsize);
 	else
 		windowDeskMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
 	windowDeskMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
@@ -378,7 +249,6 @@ int addWindowMenu(int x,int y,int grav,bool fromleft)
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,"computer","");
 	if(icon!=NULL)
 		windowMenu->LFSTK_setIconFromPath(icon,iconsize);
-	//	windowMenu->LFSTK_setImageFromPath(icon,iconsize,iconsize);
 	else
 		windowMenu->LFSTK_setIconFromPath(DATADIR "/pixmaps/windows.png",iconsize);
 	windowMenu->LFSTK_setCallBack(NULL,windowMenuCB,NULL);
