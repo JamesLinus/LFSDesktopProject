@@ -189,7 +189,6 @@ Window doTreeWalk(Window wind)
 
 			/* Got one */
 			thewin=children[j];
-			//goto done;
 			printf("window=%p",children[j]);
 			char *wname;
 			wname=NULL;
@@ -213,9 +212,6 @@ Window doTreeWalk(Window wind)
 			if (thewin != None)
 				break;
 		}
-
-done:
-
 
 	XFree(children);
 
