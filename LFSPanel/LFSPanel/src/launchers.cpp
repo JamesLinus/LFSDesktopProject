@@ -126,7 +126,6 @@ bool launcherCB(void *p,void* ud)
 	if(launcher==NULL)
 		return(true);
 
-//	alarm(0);
 	if(launcher->entry.inTerm==false)
 		asprintf(&command,"%s &",launcher->entry.exec);
 	else
@@ -134,9 +133,9 @@ bool launcherCB(void *p,void* ud)
 
 	system(command);
 	free(command);
-//	alarm(refreshRate);
 	return(true);
 }
+
 int addLaunchers(int x,int y,int grav,bool fromleft)
 {
 	char			*launchers;

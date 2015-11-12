@@ -73,6 +73,7 @@ extern Atom					WM_STATE;
 extern Atom					NET_WM_WINDOW_TYPE_NORMAL;
 extern Atom					NET_WM_WINDOW_TYPE_DIALOG;
 extern Atom					NET_WM_DESKTOP;
+extern Atom					NET_WM_WINDOW_TYPE;
 
 void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);

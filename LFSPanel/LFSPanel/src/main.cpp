@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <signal.h>
 #include <sys/time.h>
 
 #include "globals.h"
@@ -147,7 +146,6 @@ void printError(const char *err)
 	fprintf(stderr,">>>%s<<<\n",err);
 }
 
-//void  alarmCallBack(int sig)
 void  alarmCallBack(void)
 {
 	if(clockButton!=NULL)
@@ -161,6 +159,7 @@ void  alarmCallBack(void)
 
 	if((windowMenu!=NULL) || (windowDeskMenu!=NULL))
 		updateWindowMenu();
+
 	XFlush(mainwind->display);
 }
 
@@ -169,57 +168,21 @@ bool XNextEventTimed(Display *dsp,XEvent *event_return,timeval *tv)
 	if (tv== NULL)
 		{
 			XNextEvent(dsp,event_return);
-			return True;
+			return(true);
 		}
 
-	// the real deal
-
-	if (XPending(dsp) == 0)
+	if (XPending(dsp)==0)
 		{
 			int fd=ConnectionNumber(dsp);
 			fd_set readset;
 			FD_ZERO(&readset);
 			FD_SET(fd,&readset);
 			if (select(fd+1,&readset,NULL,NULL,tv) == 0)
-				{
-					return False;
-				}
-			else
-				{
-//   			listener *l=mainwind->LFSTK_getListener(event_return->xany.window);
-//
-//		if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-//				l->function(l->pointer,event_return,l->type);
-
-					XNextEvent(dsp,event_return);
-//    			listener *l=mainwind->LFSTK_getListener(event_return->xany.window);
-//
-//			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-//				l->function(l->pointer,event_return,l->type);
-//
-//			XNextEvent(mainwind->display,event_return);
-//			switch(event_return->type)
-//				{
-//					case Expose:
-//						mainwind->LFSTK_setActive(true);
-//						break;
-//					case ConfigureNotify:
-//						mainwind->LFSTK_resizeWindow(event_return->xconfigurerequest.width,event_return->xconfigurerequest.height,false);
-//						break;
-//				}
-
-					return True;
-				}
+				return false;
 		}
-	else
-		{
-			XNextEvent(dsp,event_return);
-			return True;
-		}
+	XNextEvent(dsp,event_return);
+	return(true);
 }
-
-
-
 
 int main(int argc,char **argv)
 {
@@ -242,10 +205,6 @@ int main(int argc,char **argv)
 	rightGadgets=strdup("L");
 	panelPos=PANELCENTRE;
 
-	//fclose(stdin);
-	//fclose(stdout);
-	//fclose(stderr);
-
 	XSetErrorHandler(errHandler);
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
@@ -253,6 +212,7 @@ int main(int argc,char **argv)
 	NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
 	NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
 	NET_WM_DESKTOP=XInternAtom(mainwind->display,"_NET_WM_DESKTOP",False);
+	NET_WM_WINDOW_TYPE=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE",False);
 
 	itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 	tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
@@ -274,7 +234,6 @@ int main(int argc,char **argv)
 	rightOffset=0;
 	leftOffset=0;
 
-	//signal(SIGALRM,alarmCallBack);
 	addLeftGadgets();
 	addRightGadgets();
 
@@ -284,16 +243,7 @@ int main(int argc,char **argv)
 			exit(0);
 		}
 
-//	if(useAlarm==true)
-//		alarm(refreshRate);
-
 	psize=leftOffset+abs(rightOffset);
-
-//	printf(">>psize %i<<\n",psize);
-//	printf(">>panelWidth %i<<\n",panelWidth);
-//	printf(">>panelHeight %i<<\n",panelHeight);
-//	printf(">>panelGravity %i<<\n",panelGravity);
-
 	px=mons->x;
 	py=mons->y;
 	switch(panelGravity)
@@ -359,13 +309,6 @@ int main(int argc,char **argv)
 				}
 			break;
 		}
-
-//	printf("-------\n");
-//	printf(">>psize %i<<\n",psize);
-//	printf(">>panelWidth %i<<\n",panelWidth);
-//	printf(">>panelHeight %i<<\n",panelHeight);
-//	printf(">>panelGravity %i<<\n",panelGravity);
-//	printf(">>px %i py %i<<\n",px,py);
 
 	mainwind->LFSTK_resizeWindow(panelWidth,panelHeight,true);
 	mainwind->LFSTK_moveWindow(px,py,true);

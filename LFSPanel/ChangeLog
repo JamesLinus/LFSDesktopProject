@@ -1,4 +1,5 @@
 0.0.5
+Removed need for external script to get window lists.
 Changed to using imlib2 image for button icons.
 Fixed not showing empty catagory.
 Lowered xft version.
