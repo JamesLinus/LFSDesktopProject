@@ -250,6 +250,9 @@ int main(int argc,char **argv)
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
 	WM_STATE=XInternAtom(mainwind->display,"WM_STATE",False);
+	NET_WM_WINDOW_TYPE_NORMAL=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE_NORMAL",False);
+	NET_WM_WINDOW_TYPE_DIALOG=XInternAtom(mainwind->display,"_NET_WM_WINDOW_TYPE_DIALOG",False);
+	NET_WM_DESKTOP=XInternAtom(mainwind->display,"_NET_WM_DESKTOP",False);
 
 	itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 	tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
