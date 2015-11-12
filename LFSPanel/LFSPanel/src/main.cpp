@@ -6,7 +6,7 @@
 
  * LFSApplications is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation,either version 3 of the License,or
  * at your option) any later version.
 
  * LFSApplications is distributed in the hope that it will be useful,
@@ -15,13 +15,14 @@
    GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with LFSApplications.  If not, see <http://www.gnu.org/licenses/>.
+ * along with LFSApplications.  If not,see <http://www.gnu.org/licenses/>.
  */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <sys/time.h>
 
 #include "globals.h"
 #include "appmenu.h"
@@ -56,37 +57,37 @@ void addLeftGadgets(void)
 {
 	int	offset=mons->x+leftOffset;
 
-	for(int j=0;j<strlen(leftGadgets);j++)
+	for(int j=0; j<strlen(leftGadgets); j++)
 		{
 			switch(leftGadgets[j])
 				{
-					case 'A':
-						offset+=addAppmenu(offset,mons->y,panelGravity,true);
-						break;
-					case 'W':
-						offset+=addWindowMenu(offset,mons->y,panelGravity,true);
-						break;
-					case 'w':
-						offset+=addWindowDeskMenu(offset,mons->y,panelGravity,true);
-						break;
-					case 'L':
-						offset+=addLogout(offset,mons->y,panelGravity,true);
-						break;
-					case 'C':
-						offset+=addClock(offset,mons->y,NorthWestGravity);
-						break;
-					case 'D':
-						offset+=addDiskData(offset,mons->y,NorthWestGravity);
-						break;
-					case 'M':
-						offset+=addCpuData(offset,mons->y,NorthWestGravity);
-						break;
-					case 'S':
-						offset+=SPACING;
-						break;
-					case 'l':
-						offset+=addLaunchers(offset,mons->y,panelGravity,true);
-						break;
+				case 'A':
+					offset+=addAppmenu(offset,mons->y,panelGravity,true);
+					break;
+				case 'W':
+					offset+=addWindowMenu(offset,mons->y,panelGravity,true);
+					break;
+				case 'w':
+					offset+=addWindowDeskMenu(offset,mons->y,panelGravity,true);
+					break;
+				case 'L':
+					offset+=addLogout(offset,mons->y,panelGravity,true);
+					break;
+				case 'C':
+					offset+=addClock(offset,mons->y,NorthWestGravity);
+					break;
+				case 'D':
+					offset+=addDiskData(offset,mons->y,NorthWestGravity);
+					break;
+				case 'M':
+					offset+=addCpuData(offset,mons->y,NorthWestGravity);
+					break;
+				case 'S':
+					offset+=SPACING;
+					break;
+				case 'l':
+					offset+=addLaunchers(offset,mons->y,panelGravity,true);
+					break;
 				}
 		}
 	leftOffset=offset;
@@ -95,37 +96,37 @@ void addLeftGadgets(void)
 void addRightGadgets(void)
 {
 	int	offset=rightOffset;
-	for(int j=strlen(rightGadgets)-1;j>=0;j--)
+	for(int j=strlen(rightGadgets)-1; j>=0; j--)
 		{
 			switch(rightGadgets[j])
 				{
-					case 'A':
-						offset-=addAppmenu(offset,mons->y,panelGravity,false);
-						break;
-					case 'W':
-						offset-=addWindowMenu(offset,mons->y,panelGravity,false);
-						break;
-					case 'w':
-						offset-=addWindowDeskMenu(offset,mons->y,panelGravity,false);
-						break;
-					case 'L':
-						offset-=addLogout(offset,mons->y,panelGravity,false);
-						break;
-					case 'C':
-						offset-=addClock(offset,mons->y,NorthEastGravity);
-						break;
-					case 'D':
-						offset-=addDiskData(offset,mons->y,NorthEastGravity);
-						break;
-					case 'M':
-						offset-=addCpuData(offset,mons->y,NorthEastGravity);
-						break;
-					case 'S':
-						offset-=SPACING;
-						break;
-					case 'l':
-						offset+=addLaunchers(offset,mons->y,panelGravity,true);
-						break;
+				case 'A':
+					offset-=addAppmenu(offset,mons->y,panelGravity,false);
+					break;
+				case 'W':
+					offset-=addWindowMenu(offset,mons->y,panelGravity,false);
+					break;
+				case 'w':
+					offset-=addWindowDeskMenu(offset,mons->y,panelGravity,false);
+					break;
+				case 'L':
+					offset-=addLogout(offset,mons->y,panelGravity,false);
+					break;
+				case 'C':
+					offset-=addClock(offset,mons->y,NorthEastGravity);
+					break;
+				case 'D':
+					offset-=addDiskData(offset,mons->y,NorthEastGravity);
+					break;
+				case 'M':
+					offset-=addCpuData(offset,mons->y,NorthEastGravity);
+					break;
+				case 'S':
+					offset-=SPACING;
+					break;
+				case 'l':
+					offset+=addLaunchers(offset,mons->y,panelGravity,true);
+					break;
 				}
 		}
 	rightOffset=offset;
@@ -146,7 +147,8 @@ void printError(const char *err)
 	fprintf(stderr,">>>%s<<<\n",err);
 }
 
-void  alarmCallBack(int sig)
+//void  alarmCallBack(int sig)
+void  alarmCallBack(void)
 {
 	if(clockButton!=NULL)
 		updateClock();
@@ -159,14 +161,67 @@ void  alarmCallBack(int sig)
 
 	if((windowMenu!=NULL) || (windowDeskMenu!=NULL))
 		updateWindowMenu();
-
-	signal(SIGALRM,SIG_IGN);
-	signal(SIGALRM,alarmCallBack);
 	XFlush(mainwind->display);
-	alarm(refreshRate);
 }
 
-int main(int argc, char **argv)
+bool XNextEventTimed(Display *dsp,XEvent *event_return,timeval *tv)
+{
+	if (tv== NULL)
+		{
+			XNextEvent(dsp,event_return);
+			return True;
+		}
+
+	// the real deal
+
+	if (XPending(dsp) == 0)
+		{
+			int fd=ConnectionNumber(dsp);
+			fd_set readset;
+			FD_ZERO(&readset);
+			FD_SET(fd,&readset);
+			if (select(fd+1,&readset,NULL,NULL,tv) == 0)
+				{
+					return False;
+				}
+			else
+				{
+//   			listener *l=mainwind->LFSTK_getListener(event_return->xany.window);
+//
+//		if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+//				l->function(l->pointer,event_return,l->type);
+
+					XNextEvent(dsp,event_return);
+//    			listener *l=mainwind->LFSTK_getListener(event_return->xany.window);
+//
+//			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+//				l->function(l->pointer,event_return,l->type);
+//
+//			XNextEvent(mainwind->display,event_return);
+//			switch(event_return->type)
+//				{
+//					case Expose:
+//						mainwind->LFSTK_setActive(true);
+//						break;
+//					case ConfigureNotify:
+//						mainwind->LFSTK_resizeWindow(event_return->xconfigurerequest.width,event_return->xconfigurerequest.height,false);
+//						break;
+//				}
+
+					return True;
+				}
+		}
+	else
+		{
+			XNextEvent(dsp,event_return);
+			return True;
+		}
+}
+
+
+
+
+int main(int argc,char **argv)
 {
 	char			*env;
 	XEvent			event;
@@ -176,6 +231,7 @@ int main(int argc, char **argv)
 	int				psize;
 	int				thold;
 	int				px,py;
+	timeval			tv={0,0};
 
 	useAlarm=false;
 	terminalCommand=strdup("xterm -e ");
@@ -186,9 +242,14 @@ int main(int argc, char **argv)
 	rightGadgets=strdup("L");
 	panelPos=PANELCENTRE;
 
+	//fclose(stdin);
+	//fclose(stdout);
+	//fclose(stderr);
+
 	XSetErrorHandler(errHandler);
 
 	mainwind=new LFSTK_windowClass(0,0,1,1,"lfs",true);
+	WM_STATE=XInternAtom(mainwind->display,"WM_STATE",False);
 
 	itemfont=mainwind->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMFONT);
 	tfont=mainwind->globalLib->LFSTK_loadFont(mainwind->display,mainwind->screen,itemfont);
@@ -210,7 +271,7 @@ int main(int argc, char **argv)
 	rightOffset=0;
 	leftOffset=0;
 
-	signal(SIGALRM,alarmCallBack);
+	//signal(SIGALRM,alarmCallBack);
 	addLeftGadgets();
 	addRightGadgets();
 
@@ -220,8 +281,8 @@ int main(int argc, char **argv)
 			exit(0);
 		}
 
-	if(useAlarm==true)
-		alarm(refreshRate);
+//	if(useAlarm==true)
+//		alarm(refreshRate);
 
 	psize=leftOffset+abs(rightOffset);
 
@@ -234,66 +295,66 @@ int main(int argc, char **argv)
 	py=mons->y;
 	switch(panelGravity)
 		{
-			case PANELSOUTH:
-				py=mons->y+mons->h-panelHeight;
-			case PANELNORTH:
-				switch(panelWidth)
-					{
-						case PANELFULL:
-							panelWidth=mons->w;
-							panelPos=PANELLEFT;
-							break;
-						case PANELSHRINK:
-							panelWidth=psize;
-							break;
-					}
-				switch(panelPos)
-					{
-						case PANELLEFT:
-							px=mons->x;
-							break;
-						case PANELCENTRE:
-							px=((mons->w/2)-(psize/2))+mons->x;
-							break;
-						case PANELRIGHT:
-							px=mons->x+mons->w-psize;
-							break;
-					}
-				break;
+		case PANELSOUTH:
+			py=mons->y+mons->h-panelHeight;
+		case PANELNORTH:
+			switch(panelWidth)
+				{
+				case PANELFULL:
+					panelWidth=mons->w;
+					panelPos=PANELLEFT;
+					break;
+				case PANELSHRINK:
+					panelWidth=psize;
+					break;
+				}
+			switch(panelPos)
+				{
+				case PANELLEFT:
+					px=mons->x;
+					break;
+				case PANELCENTRE:
+					px=((mons->w/2)-(psize/2))+mons->x;
+					break;
+				case PANELRIGHT:
+					px=mons->x+mons->w-psize;
+					break;
+				}
+			break;
 
-			case PANELEAST:
-				px=mons->x+mons->w-panelHeight;
-			case PANELWEST:
-				switch(panelWidth)
-					{
-						case PANELFULL:
-							panelWidth=panelHeight;
-							panelHeight=mons->h;
-							panelPos=PANELLEFT;
-							break;
-						case PANELSHRINK:
-							panelWidth=panelHeight;
-							panelHeight=psize;
-							break;
-						default:
-							thold=panelWidth;
-							panelWidth=panelHeight;
-							panelHeight=thold;
-							break;
-					}
-				switch(panelPos)
-					{
-						case PANELLEFT:
-							py=mons->y;
-							break;
-						case PANELCENTRE:
-							py=((mons->h/2)-(panelHeight/2))+mons->y;
-							break;
-						case PANELRIGHT:
-							py=mons->y+mons->h-panelHeight;
-							break;
-					}
-				break;
+		case PANELEAST:
+			px=mons->x+mons->w-panelHeight;
+		case PANELWEST:
+			switch(panelWidth)
+				{
+				case PANELFULL:
+					panelWidth=panelHeight;
+					panelHeight=mons->h;
+					panelPos=PANELLEFT;
+					break;
+				case PANELSHRINK:
+					panelWidth=panelHeight;
+					panelHeight=psize;
+					break;
+				default:
+					thold=panelWidth;
+					panelWidth=panelHeight;
+					panelHeight=thold;
+					break;
+				}
+			switch(panelPos)
+				{
+				case PANELLEFT:
+					py=mons->y;
+					break;
+				case PANELCENTRE:
+					py=((mons->h/2)-(panelHeight/2))+mons->y;
+					break;
+				case PANELRIGHT:
+					py=mons->y+mons->h-panelHeight;
+					break;
+				}
+			break;
 		}
 
 //	printf("-------\n");
@@ -312,20 +373,30 @@ int main(int argc, char **argv)
 	mainLoop=true;
 	while(mainLoop==true)
 		{
-			listener *l=mainwind->LFSTK_getListener(event.xany.window);
-
-			if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
-				l->function(l->pointer,&event,l->type);
-
-			XNextEvent(mainwind->display,&event);
-			switch(event.type)
+			if (XNextEventTimed(mainwind->display,&event,&tv) == True)
 				{
-					case Expose:
-						mainwind->LFSTK_setActive(true);
-						break;
-					case ConfigureNotify:
-						mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
-						break;
+					tv.tv_sec=refreshRate;
+					tv.tv_usec=0;
+					listener *l=mainwind->LFSTK_getListener(event.xany.window);
+
+					if((l!=NULL) && (l->pointer!=NULL) && (l->function!=NULL) )
+						l->function(l->pointer,&event,l->type);
+					switch(event.type)
+						{
+						case Expose:
+							mainwind->LFSTK_setActive(true);
+							break;
+						case ConfigureNotify:
+							mainwind->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
+							break;
+						}
+				}
+			else
+				{
+					tv.tv_sec=refreshRate;
+					tv.tv_usec=0;
+					if(useAlarm==true)
+						alarmCallBack();
 				}
 		}
 

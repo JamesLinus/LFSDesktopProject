@@ -68,6 +68,9 @@ extern LFSTK_windowClass	*mainwind;
 extern int					rightOffset;
 extern int					leftOffset;
 
+//atoms
+extern Atom					WM_STATE;
+
 void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
 

@@ -45,6 +45,9 @@ LFSTK_windowClass	*mainwind=NULL;
 int					rightOffset=0;
 int					leftOffset=0;
 
+//atoms
+Atom				WM_STATE=None;
+
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 {
 	*w=panelHeight;
