@@ -1,5 +1,6 @@
 0.0.10
-Fixed tile strings rerurning null instaead of string.
+Image class now uses LFSTK_setImageFromPath instead of LFSTK_setIconFromPath.
+Fixed tile strings returning null instaead of string.
 Lowered xft version.
 Changed autogen.sh to update libtool files if needed.
 Added seperator if label="--"

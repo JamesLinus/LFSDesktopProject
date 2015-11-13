@@ -52,6 +52,17 @@ void LFSTK_imageClass::LFSTK_clearWindow(void)
 			XCopyArea(this->display,this->icon[0],this->window,this->gc,0,0,this->iconSize,this->iconSize,0,0);
 			XSetClipMask(this->display,this->gc,None);
 		}
+	else if(this->useImage==true)
+		{
+			imlib_context_set_display(this->display);
+			imlib_context_set_visual(this->visual);
+			imlib_context_set_colormap(this->cm);
+
+			imlib_context_set_drawable(this->window);
+			imlib_context_set_image(this->image);
+			imlib_context_set_blend(1);
+			imlib_render_image_on_drawable_at_size(4,(this->h/2)-(this->imageHeight/2),this->imageWidth,this->imageHeight); 
+		}
 }
 
 /**
@@ -79,5 +90,5 @@ LFSTK_imageClass::LFSTK_imageClass(LFSTK_windowClass* parentwc,const char* image
 
 	this->wc->LFSTK_setListener(this->window,this->getListen());
 
-	this->LFSTK_setIconFromPath(imagepath,w);
+	this->LFSTK_setImageFromPath(imagepath,w,h);
 }

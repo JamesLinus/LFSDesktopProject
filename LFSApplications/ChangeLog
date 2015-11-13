@@ -1,4 +1,5 @@
 0.0.4
+Set "About box" to keep above.
 Fixed segfault when no prefs files exists.
 Lowered xft lib version.
 Added lfsabout dialog.

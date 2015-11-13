@@ -78,6 +78,7 @@ int main(int argc, char **argv)
 	labels[LDESCRIPTION]->LFSTK_setFontString("sans-serif:size=12");
 
 	wc->LFSTK_showWindow();
+	wc->LFSTK_setKeepAbove(true);
 
 	mainLoop=true;
 	while(mainLoop==true)
