@@ -33,10 +33,11 @@
 #define MAXPANELS 20
 
 enum {EXIT=0,APPLY,NOMOREBUTTONS};
-enum {PANELWIDTH=0,PANELPOS,PANELGRAV,OPTIONSCNT};
+enum {PANELWIDTH=0,PANELPOS,PANELGRAV,PANELHITE,OPTIONSCNT};
 enum {WIDTHFILL=-1,WIDTHSHRINK=-2,WIDTHCNT=3};
 enum {LEFTPOS=-1,CENTREPOS=-2,RIGHTPOS=-3,POSCNT=4};
 enum {NORTHGRAV=1,EASTGRAV=2,SOUTHGRAV=3,WESTGRAV=4,GRAVCNT=4};
+enum {LPANELHITE=0,MAXLABELS};
 
 LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
 LFSTK_windowClass		*wc;
@@ -44,20 +45,23 @@ LFSTK_lineEditClass		*currentPanel=NULL;
 LFSTK_menuButtonClass	*panelSelect=NULL;
 LFSTK_menuButtonClass	*panelOptionsMenus[OPTIONSCNT]={NULL,};
 LFSTK_lineEditClass		*panelOptionsEdit[OPTIONSCNT]={NULL,};
+LFSTK_labelClass		*labels[MAXLABELS];
+
 const char				*panelOptionString[OPTIONSCNT][4]={{"Fill","Shrink","Custom",""},{"Left","Centre","Right","Custom"},{"North","East","South","West"}};
+const char				*labelNames[MAXLABELS]={"Panel Height"};
 
 menuItemStruct			*panels;
 menuItemStruct			panelWidth[3];
 menuItemStruct			panelPos[4];
 menuItemStruct			panelgrav[4];
 
-int					bwidth=96;
-int					bigbwidth=128;
-int					spacing=bwidth+10;
-int					col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
-bool				mainloop=false;
-int					numGroups=0;
-char				currentBuffer[256];
+int						bwidth=96;
+int						bigbwidth=128;
+int						spacing=bwidth+10;
+int						col1=10,col2=col1+bwidth+spacing+20,col3=col2+bwidth+spacing+20,col4;
+bool					mainloop=false;
+int						numGroups=0;
+char					currentBuffer[256];
 
 bool callback(void *p,void* ud)
 {
@@ -94,6 +98,18 @@ bool setWidthCB(void *p,void* ud)
 	return(true);
 }
 
+bool setPosCB(void *p,void* ud)
+{
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
+	char			buffer[16];
+	if(menuitem==NULL)
+		return(true);
+
+	snprintf(buffer,16,"%i",(long)menuitem->userData);
+	panelOptionsEdit[PANELPOS]->LFSTK_setBuffer(buffer);
+	panelOptionsEdit[PANELPOS]->LFSTK_clearWindow();
+	return(true);
+}
 
 int main(int argc, char **argv)
 {
@@ -142,6 +158,7 @@ int main(int argc, char **argv)
 					panels[cnt].userData=(void*)(long)cnt;
 					panels[cnt].subMenus=NULL;
 					panels[cnt].useIcon=false;
+					panels[cnt].useImage=false;
 					panels[cnt].bc=NULL;
 					cnt++;
 				}
@@ -157,6 +174,7 @@ int main(int argc, char **argv)
 			panelWidth[j].label=panelOptionString[PANELWIDTH][j];
 			panelWidth[j].subMenus=NULL;
 			panelWidth[j].useIcon=false;
+			panelWidth[j].useImage=false;
 			panelWidth[j].bc=NULL;
 		}
 	panelWidth[0].userData=(void*)-1;
@@ -170,6 +188,37 @@ int main(int argc, char **argv)
 	sx+=spacing;
 	panelOptionsEdit[PANELWIDTH]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
 	sy+=vspacing;
+
+//panel height
+	sx=col1;
+	labels[LPANELHITE]=new LFSTK_labelClass(wc,labelNames[LPANELHITE],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[PANELHITE]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+	
+//panel position
+	for(int j=0;j<POSCNT;j++)
+		{
+			panelPos[j].label=panelOptionString[PANELPOS][j];
+			panelPos[j].subMenus=NULL;
+			panelPos[j].useIcon=false;
+			panelPos[j].useImage=false;
+			panelPos[j].bc=NULL;
+		}
+	panelPos[0].userData=(void*)LEFTPOS;
+	panelPos[1].userData=(void*)CENTREPOS;
+	panelPos[2].userData=(void*)RIGHTPOS;
+	panelPos[3].userData=(void*)0;
+
+	sx=col1;
+	panelOptionsMenus[PANELPOS]=new LFSTK_menuButtonClass(wc,"Panel Position",sx,sy,bwidth,24,NorthWestGravity);
+	panelOptionsMenus[PANELPOS]->LFSTK_addMenus(panelPos,POSCNT);
+	panelOptionsMenus[PANELPOS]->LFSTK_setCallBack(NULL,setPosCB,NULL);
+	sx+=spacing;
+	panelOptionsEdit[PANELPOS]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+
+//panel grav
 
 	sy+=vspacing;
 	sy+=vspacing;
