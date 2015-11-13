@@ -225,6 +225,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GREP = @GREP@
+IMLIB_CFLAGS = @IMLIB_CFLAGS@
+IMLIB_LIBS = @IMLIB_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -234,6 +236,7 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = $(X11_LIBS) \
 				$(XFT_LIBS) \
+				$(IMLIB_LIBS) \
 				-llfstoolkit
 
 LTLIBOBJS = @LTLIBOBJS@
@@ -306,6 +309,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -I$(top_srcdir) \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
+				$(IMLIB_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \

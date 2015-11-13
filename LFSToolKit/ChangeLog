@@ -1,4 +1,6 @@
 0.0.10
+Menu buttons now use image instead of icons.
+Library version bump.
 Image class now uses LFSTK_setImageFromPath instead of LFSTK_setIconFromPath.
 Fixed tile strings returning null instaead of string.
 Lowered xft version.

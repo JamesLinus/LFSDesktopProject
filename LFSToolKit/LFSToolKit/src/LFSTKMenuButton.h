@@ -24,6 +24,14 @@
 
 #include "LFSTKButton.h"
 
+/**
+ *
+ * Menu structure for menuItemClass.
+ * \note Menu data passed to gadget is NOT owned by gadgetEvent
+ * \note and MUST be freed by application.
+ * \note Including image and icon data.
+ */
+
 struct menuItemStruct
 {
 	const char			*label;
@@ -34,6 +42,10 @@ struct menuItemStruct
 	bool				useIcon;
 	Pixmap				icon[2];
 	int					iconSize;
+	bool				useImage;
+	Imlib_Image			image;
+	int					imageWidth;
+	int					imageHeight;
 };
 
 

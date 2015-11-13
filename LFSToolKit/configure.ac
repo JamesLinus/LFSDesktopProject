@@ -3,7 +3,7 @@
 
 m4_define([LFSTOOLKIT_MAJ_N],[0])
 m4_define([LFSTOOLKIT_MIN_N],[0])
-m4_define([LFSTOOLKIT_REV_N],[4])
+m4_define([LFSTOOLKIT_REV_N],[5])
 
 AC_INIT([LFSToolKit],[0.0.10],[PROJ],[LFSToolKit])
 

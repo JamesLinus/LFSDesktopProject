@@ -618,6 +618,33 @@ bool LFSTK_lib::LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colorma
 		}
 	return(false);
 }
+//
+///**
+//* Set Icon.
+//* \param display Xlib display.
+//* \param visual Xlib visual.
+//* \param cm Xlib colormap.
+//* \param w Xlib window.
+//* \param file Path to image file.
+//* \param image Return address for image pixmap.
+//* \param mask Return address for image mask.
+//* \param size Destination size.
+//* \return true on success or flase on fail.
+//* \note If size=-1 then the size is set from the image file.
+//*/
+//bool LFSTK_lib::LFSTK_setImageFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Imlib_Image *image,int w,int h)
+//{
+//	image=imlib_load_image_immediately_without_cache(file);
+//	if(image!=NULL)
+//		{
+//			this->imageWidth=w;
+//			this->imageHeight=h;
+//			this->useImage=true;
+//		}
+//	else
+//		this->useImage=false;
+//
+//}
 
 int LFSTK_lib::callback(const char *fpath,const struct stat *sb,int typeflag)
 {

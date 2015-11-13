@@ -129,7 +129,13 @@ int main(int argc, char **argv)
 			mainMenus[j].iconSize=iconSize;
 		}
 
-	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./ROOTKKEdit.png",&mainMenus[2].icon[0],&mainMenus[2].icon[1],16);
+	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"system-lock-screen.png",&mainMenus[0].icon[0],&mainMenus[0].icon[1],iconSize);
+	mainMenus[1].useIcon=false;
+	mainMenus[1].useImage=true;
+	mainMenus[1].image=imlib_load_image_immediately_without_cache("system-lock-screen.png");
+	mainMenus[1].imageWidth=iconSize;
+	mainMenus[1].imageHeight=iconSize;
+	//wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"./ROOTKKEdit.png",&mainMenus[2].icon[0],&mainMenus[2].icon[1],48);
 
 	mb=new LFSTK_menuButtonClass(wc,"Main Menu",BORDER,sy,BWIDTH,BHITE,BGRAV);
 	mb->LFSTK_setIconFromPath("./BookMark.png");

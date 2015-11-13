@@ -120,7 +120,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 			for(int j=0;j<this->menuCount;j++)
 				{
 					testwid=this->wc->globalLib->LFSTK_getTextwidth(this->display,(XftFont*)(tfont->data),this->menus[j].label);
-					if(this->menus[j].useIcon==true)
+					if((this->menus[j].useIcon==true) || (this->menus[j].useImage==true))
 						{
 							if(maxiconsize<this->menus[j].iconSize)
 								maxiconsize=this->menus[j].iconSize;
@@ -150,6 +150,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 							if(this->menus[j].useIcon==true)
 								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
+							else if(this->menus[j].useImage==true)
+								bc->LFSTK_setImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
 							for(int j=0;j<MAXCOLOURS;j++)
 								{
 									bc->LFSTK_setColourName(j,this->wc->globalLib->LFSTK_getGlobalString(j,TYPEMENUITEM));
@@ -174,8 +176,11 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
 							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
 							mb->LFSTK_setIgnoreCB(true);
+
 							if(this->menus[j].useIcon==true)
 								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
+							else if(this->menus[j].useImage==true)
+								mb->LFSTK_setImage(this->menus[j].image,this->menus[j].imageWidth,this->menus[j].imageHeight);
 
 							mb->isSubmenu=true;
 						}

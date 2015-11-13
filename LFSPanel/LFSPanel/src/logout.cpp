@@ -73,7 +73,6 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 	logoutButton=new LFSTK_menuButtonClass(mainwind,"",xpos,ypos,width,height,thisgrav);
 	icon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[NUMLOGOUTENTRYS],"");
 	if(icon!=NULL)
-//		logoutButton->LFSTK_setIconFromPath(icon,iconsize);
 		logoutButton->LFSTK_setImageFromPath(icon,iconsize,iconsize);
 	else
 		logoutButton->LFSTK_setIconFromPath(DATADIR "/pixmaps/exit.png",iconsize);
@@ -88,14 +87,23 @@ int  addLogout(int x,int y,int grav,bool fromleft)
 			logoutItems[j].bc=NULL;
 			logoutItems[j].subMenus=NULL;
 			logoutItems[j].subMenuCnt=0;
-			logoutItems[j].useIcon=true;
+			logoutItems[j].useIcon=false;
+			logoutItems[j].useImage=true;
 			logoutItems[j].iconSize=iconSize;
 
 			themedicon=mainwind->globalLib->LFSTK_findThemedIcon(desktopTheme,logoutIconNames[j],"");
 			if(themedicon!=NULL)
-				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,themedicon,&logoutItems[j].icon[0],&logoutItems[j].icon[1],iconSize);
+				{
+					logoutItems[j].image=imlib_load_image_immediately_without_cache(themedicon);
+					logoutItems[j].imageWidth=iconSize;
+					logoutItems[j].imageHeight=iconSize;
+				}
 			else
-				mainwind->globalLib->LFSTK_setPixmapsFromPath(mainwind->display,mainwind->visual,mainwind->cm,mainwind->window,logoutImages[j],&logoutItems[j].icon[0],&logoutItems[j].icon[1],iconSize);
+				{
+					logoutItems[j].image=imlib_load_image_immediately_without_cache(logoutImages[j]);
+					logoutItems[j].imageWidth=iconSize;
+					logoutItems[j].imageHeight=iconSize;
+				}
 		}
 
 	logoutButton->LFSTK_setStyle(BEVELOUT);

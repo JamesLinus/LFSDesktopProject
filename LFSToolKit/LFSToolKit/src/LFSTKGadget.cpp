@@ -652,6 +652,22 @@ void LFSTK_gadgetClass::LFSTK_setIcon(Pixmap image,Pixmap mask,int size)
 }
 
 /**
+* Set Image.
+* \param image Imlib_Image.
+* \param w,h dimensions.
+* \note Image is owned by caller.
+*/
+void LFSTK_gadgetClass::LFSTK_setImage(Imlib_Image image,int w,int h)
+{
+	this->image=image;
+	this->useImage=true;
+	this->imageWidth=w;
+	this->imageHeight=h;
+	this->labelOffset=w+4;
+	this->freeOnDelete=false;
+}
+
+/**
 * Set Icon.
 * \param file Path to image file.
 * \param size Size of image.
@@ -697,6 +713,7 @@ void LFSTK_gadgetClass::LFSTK_setImageFromPath(const char *file,int w,int h)
 			this->imageWidth=w;
 			this->imageHeight=h;
 			this->useImage=true;
+			this->labelOffset=w+4;
 		}
 	else
 		this->useImage=false;

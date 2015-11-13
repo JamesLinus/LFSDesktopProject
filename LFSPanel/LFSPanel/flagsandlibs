@@ -2,6 +2,7 @@
 AM_CPPFLAGS =	-I$(top_srcdir) \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
+				$(IMLIB_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \
@@ -10,6 +11,7 @@ AM_CPPFLAGS =	-I$(top_srcdir) \
 
 LIBS =			$(X11_LIBS) \
 				$(XFT_LIBS) \
+				$(IMLIB_LIBS) \
 				-llfstoolkit
 				-lm
 
