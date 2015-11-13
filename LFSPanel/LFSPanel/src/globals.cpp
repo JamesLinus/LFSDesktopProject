@@ -33,6 +33,7 @@ char				*rightGadgets=NULL;
 char				*leftGadgets=NULL;
 int					panelPos=PANELCENTRE;
 int					panelGravity=PANELNORTH;
+
 char				*desktopTheme=NULL;
 const char			*panelID="";
 

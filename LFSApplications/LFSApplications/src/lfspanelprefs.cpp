@@ -32,12 +32,12 @@
 #define BIG col2-col1+bwidth
 #define MAXPANELS 20
 
-enum {EXIT=0,APPLY,NOMOREBUTTONS};
-enum {PANELWIDTH=0,PANELPOS,PANELGRAV,PANELHITE,OPTIONSCNT};
+enum {EXIT=0,DEFAULT,APPLY,NOMOREBUTTONS};
+enum {PANELWIDTH=0,PANELPOS,PANELGRAV,PANELHITE,PANELMONITOR,TERMCOMMAND,LOGOUTCOMMAND,RESTARTCOMMAND,SHUTDOWNCOMMAND,LEFTGADGETS,RITEGADGETS,OPTIONSCNT};
 enum {WIDTHFILL=-1,WIDTHSHRINK=-2,WIDTHCNT=3};
 enum {LEFTPOS=-1,CENTREPOS=-2,RIGHTPOS=-3,POSCNT=4};
 enum {NORTHGRAV=1,EASTGRAV=2,SOUTHGRAV=3,WESTGRAV=4,GRAVCNT=4};
-enum {LPANELHITE=0,MAXLABELS};
+enum {LPANELHITE=0,LONMONITOR,LTERMCOMMAND,LLOGOUT,LRESTART,LSHUTDOWN,LLEFTGADGETS,LRITEGADGETS,LBAR,MAXLABELS};
 
 LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
 LFSTK_windowClass		*wc;
@@ -48,12 +48,12 @@ LFSTK_lineEditClass		*panelOptionsEdit[OPTIONSCNT]={NULL,};
 LFSTK_labelClass		*labels[MAXLABELS];
 
 const char				*panelOptionString[OPTIONSCNT][4]={{"Fill","Shrink","Custom",""},{"Left","Centre","Right","Custom"},{"North","East","South","West"}};
-const char				*labelNames[MAXLABELS]={"Panel Height"};
+const char				*labelNames[MAXLABELS]={"Panel Height","On Monitor","Terminal","Logout","Restart","Shutdown","Left Gadgets","Right Gadgets","--"};
 
 menuItemStruct			*panels;
-menuItemStruct			panelWidth[3];
-menuItemStruct			panelPos[4];
-menuItemStruct			panelgrav[4];
+menuItemStruct			panelWidthMenu[WIDTHCNT];
+menuItemStruct			panelPosMenu[POSCNT];
+menuItemStruct			panelGravMenu[GRAVCNT];
 
 int						bwidth=96;
 int						bigbwidth=128;
@@ -63,17 +63,212 @@ bool					mainloop=false;
 int						numGroups=0;
 char					currentBuffer[256];
 
-bool callback(void *p,void* ud)
+const monitorStruct		*mons=NULL;
+//prefs
+char					*terminalCommand=NULL;
+int						panelHeight;
+int						panelWidth;
+int						onMonitor;
+char					*logoutCommand=NULL;
+char					*restartCommand=NULL;
+char					*shutdownCommand=NULL;
+char					*rightGadgets=NULL;
+char					*leftGadgets=NULL;
+int						panelPos;
+int						panelGravity;
+
+args	panelPrefs[]=
 {
-	printf(">>%p<<\n",ud);
-	if((long)ud==EXIT)
-		{
-			mainloop=false;
-			return(false);
-		}
+	{"panelheight",TYPEINT,&panelHeight},
+	{"panelwidth",TYPEINT,&panelWidth},
+	{"onmonitor",TYPEINT,&onMonitor},
+	{"termcommand",TYPESTRING,&terminalCommand},
+	{"logoutcommand",TYPESTRING,&logoutCommand},
+	{"restartcommand",TYPESTRING,&restartCommand},
+	{"shutdowncommand",TYPESTRING,&shutdownCommand},
+	{"gadgetsright",TYPESTRING,&rightGadgets},
+	{"gadgetsleft",TYPESTRING,&leftGadgets},
+	{"panelpos",TYPEINT,&panelPos},
+	{"panelgrav",TYPEINT,&panelGravity},
+	{NULL,0,NULL}
+};
+
+void clearPrefs(void)
+{
+	if(terminalCommand!=NULL)
+		free(terminalCommand);
+	terminalCommand=NULL;
+	if(logoutCommand!=NULL)
+		free(logoutCommand);
+	logoutCommand=NULL;
+	if(restartCommand!=NULL)
+		free(restartCommand);
+	restartCommand=NULL;
+	if(shutdownCommand!=NULL)
+		free(shutdownCommand);
+	shutdownCommand=NULL;
+	if(rightGadgets!=NULL)
+		free(rightGadgets);
+	rightGadgets=NULL;
+	if(leftGadgets!=NULL)
+		free(leftGadgets);
+	leftGadgets=NULL;
+
+	panelOptionsEdit[PANELWIDTH]->LFSTK_setBuffer("");
+	panelOptionsEdit[PANELHITE]->LFSTK_setBuffer("");
+	panelOptionsEdit[PANELPOS]->LFSTK_setBuffer("");
+	panelOptionsEdit[PANELGRAV]->LFSTK_setBuffer("");
+	panelOptionsEdit[PANELMONITOR]->LFSTK_setBuffer("");
+	panelOptionsEdit[TERMCOMMAND]->LFSTK_setBuffer("");
+	panelOptionsEdit[LOGOUTCOMMAND]->LFSTK_setBuffer("");
+	panelOptionsEdit[RESTARTCOMMAND]->LFSTK_setBuffer("");
+	panelOptionsEdit[SHUTDOWNCOMMAND]->LFSTK_setBuffer("");
+	panelOptionsEdit[LEFTGADGETS]->LFSTK_setBuffer("");
+	panelOptionsEdit[RITEGADGETS]->LFSTK_setBuffer("");
 }
 
-bool bcb(void *p,void* ud)
+void setEdits(void)
+{
+	char	buffer[512];
+
+	sprintf(buffer,"%i",panelWidth);
+	panelOptionsEdit[PANELWIDTH]->LFSTK_setBuffer(buffer);
+	sprintf(buffer,"%i",panelHeight);
+	panelOptionsEdit[PANELHITE]->LFSTK_setBuffer(buffer);
+	sprintf(buffer,"%i",panelPos);
+	panelOptionsEdit[PANELPOS]->LFSTK_setBuffer(buffer);
+	sprintf(buffer,"%i",panelGravity);
+	panelOptionsEdit[PANELGRAV]->LFSTK_setBuffer(buffer);
+	sprintf(buffer,"%i",onMonitor);
+	panelOptionsEdit[PANELMONITOR]->LFSTK_setBuffer(buffer);
+	if(terminalCommand!=NULL)
+		panelOptionsEdit[TERMCOMMAND]->LFSTK_setBuffer(terminalCommand);
+	if(logoutCommand!=NULL)
+		panelOptionsEdit[LOGOUTCOMMAND]->LFSTK_setBuffer(logoutCommand);
+	if(restartCommand!=NULL)
+		panelOptionsEdit[RESTARTCOMMAND]->LFSTK_setBuffer(restartCommand);
+	if(shutdownCommand!=NULL)
+		panelOptionsEdit[SHUTDOWNCOMMAND]->LFSTK_setBuffer(shutdownCommand);
+	if(leftGadgets!=NULL)
+		panelOptionsEdit[LEFTGADGETS]->LFSTK_setBuffer(leftGadgets);
+	if(rightGadgets!=NULL)
+		panelOptionsEdit[RITEGADGETS]->LFSTK_setBuffer(rightGadgets);
+}
+
+void getPrefs(void)
+{
+	char	*env=NULL;
+
+	asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),currentPanel->LFSTK_getBuffer()->c_str());
+	wc->globalLib->LFSTK_loadVarsFromFile(env,panelPrefs);
+	free(env);
+	setEdits();
+}
+
+void setDefaults(void)
+{
+	clearPrefs();
+
+	terminalCommand=strdup("xterm -e ");
+	logoutCommand=strdup("xterm");
+	restartCommand=strdup("xterm");
+	shutdownCommand=strdup("xterm");
+	leftGadgets=strdup("A");
+	rightGadgets=strdup("L");
+
+	panelHeight=16;
+	panelWidth=-1;
+	onMonitor=0;
+	panelPos=CENTREPOS;
+	panelGravity=NORTHGRAV;
+}
+
+void setPrefs(void)
+{
+	if(panelOptionsEdit[PANELWIDTH]->LFSTK_getBuffer()->length()>0)
+		panelWidth=atoi(panelOptionsEdit[PANELWIDTH]->LFSTK_getBuffer()->c_str());
+
+	if(panelOptionsEdit[PANELHITE]->LFSTK_getBuffer()->length()>0)
+		panelHeight=atoi(panelOptionsEdit[PANELHITE]->LFSTK_getBuffer()->c_str());
+
+	if(panelOptionsEdit[PANELPOS]->LFSTK_getBuffer()->length()>0)
+		panelPos=atoi(panelOptionsEdit[PANELPOS]->LFSTK_getBuffer()->c_str());
+
+	if(panelOptionsEdit[PANELGRAV]->LFSTK_getBuffer()->length()>0)
+		panelGravity=atoi(panelOptionsEdit[PANELGRAV]->LFSTK_getBuffer()->c_str());
+
+	if(panelOptionsEdit[PANELMONITOR]->LFSTK_getBuffer()->length()>0)
+		onMonitor=atoi(panelOptionsEdit[PANELMONITOR]->LFSTK_getBuffer()->c_str());
+
+	if(terminalCommand!=NULL)
+		free(terminalCommand);
+	if(panelOptionsEdit[TERMCOMMAND]->LFSTK_getBuffer()->length()>0)
+		terminalCommand=strdup(panelOptionsEdit[TERMCOMMAND]->LFSTK_getBuffer()->c_str());
+	else
+		terminalCommand=NULL;
+
+	if(logoutCommand!=NULL)
+		free(logoutCommand);
+	if(panelOptionsEdit[LOGOUTCOMMAND]->LFSTK_getBuffer()->length()>0)
+		logoutCommand=strdup(panelOptionsEdit[LOGOUTCOMMAND]->LFSTK_getBuffer()->c_str());
+	else
+		logoutCommand=NULL;
+
+	if(restartCommand!=NULL)
+		free(restartCommand);
+	if(panelOptionsEdit[RESTARTCOMMAND]->LFSTK_getBuffer()->length()>0)
+		restartCommand=strdup(panelOptionsEdit[RESTARTCOMMAND]->LFSTK_getBuffer()->c_str());
+	else
+		restartCommand=NULL;
+
+	if(shutdownCommand!=NULL)
+		free(shutdownCommand);
+	if(panelOptionsEdit[SHUTDOWNCOMMAND]->LFSTK_getBuffer()->length()>0)
+		shutdownCommand=strdup(panelOptionsEdit[SHUTDOWNCOMMAND]->LFSTK_getBuffer()->c_str());
+	else
+		shutdownCommand=NULL;
+
+	if(rightGadgets!=NULL)
+		free(rightGadgets);
+	if(panelOptionsEdit[RITEGADGETS]->LFSTK_getBuffer()->length()>0)
+		rightGadgets=strdup(panelOptionsEdit[RITEGADGETS]->LFSTK_getBuffer()->c_str());
+	else
+		rightGadgets=NULL;
+
+	if(leftGadgets!=NULL)
+		free(leftGadgets);
+	if(panelOptionsEdit[LEFTGADGETS]->LFSTK_getBuffer()->length()>0)
+		leftGadgets=strdup(panelOptionsEdit[LEFTGADGETS]->LFSTK_getBuffer()->c_str());
+	else
+		leftGadgets=NULL;
+}
+
+bool callback(void *p,void* ud)
+{
+	char	*env=NULL;
+
+	switch((long)ud)
+		{
+			case EXIT:
+				mainloop=false;
+				return(false);
+				break;
+			case DEFAULT:
+				setDefaults();
+				setEdits();
+				break;
+			case APPLY:
+				setPrefs();
+				asprintf(&env,"%s/.config/LFS/%s",getenv("HOME"),currentPanel->LFSTK_getBuffer()->c_str());
+				wc->globalLib->LFSTK_saveVarsToFile("-",panelPrefs);
+				wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
+				free(env);
+				break;
+		}
+	return(true);
+}
+
+bool panelSelectCB(void *p,void* ud)
 {
 	menuItemStruct	*menuitem=(menuItemStruct*)ud;
 
@@ -81,6 +276,8 @@ bool bcb(void *p,void* ud)
 		return(true);
 
 	currentPanel->LFSTK_setBuffer(menuitem->label);
+	clearPrefs();
+	getPrefs();
 	currentPanel->LFSTK_clearWindow();
 	return(true);
 }
@@ -111,6 +308,19 @@ bool setPosCB(void *p,void* ud)
 	return(true);
 }
 
+bool setGravCB(void *p,void* ud)
+{
+	menuItemStruct	*menuitem=(menuItemStruct*)ud;
+	char			buffer[16];
+	if(menuitem==NULL)
+		return(true);
+
+	snprintf(buffer,16,"%i",(long)menuitem->userData);
+	panelOptionsEdit[PANELGRAV]->LFSTK_setBuffer(buffer);
+	panelOptionsEdit[PANELGRAV]->LFSTK_clearWindow();
+	return(true);
+}
+
 int main(int argc, char **argv)
 {
 	XEvent			event;
@@ -131,6 +341,9 @@ int main(int argc, char **argv)
 	guibc[EXIT]=new LFSTK_buttonClass(wc,"Exit",10,geom->h-32,64,24,SouthWestGravity);
 	guibc[EXIT]->LFSTK_setCallBack(NULL,callback,(void*)EXIT);
 
+	guibc[DEFAULT]=new LFSTK_buttonClass(wc,"Defaults",(geom->w/2)-32,geom->h-32,64,24,SouthGravity);
+	guibc[DEFAULT]->LFSTK_setCallBack(NULL,callback,(void*)DEFAULT);
+
 	guibc[APPLY]=new LFSTK_buttonClass(wc,"Apply",geom->w-74,geom->h-32,64,24,SouthEastGravity);
 	guibc[APPLY]->LFSTK_setCallBack(NULL,callback,(void*)APPLY);
 
@@ -141,7 +354,7 @@ int main(int argc, char **argv)
 	panelSelect->LFSTK_setStyle(BEVELOUT);
 	panelSelect->LFSTK_setLabelOriention(CENTRE);
 	panels=new menuItemStruct[MAXPANELS];
-	panelSelect->LFSTK_setCallBack(NULL,bcb,NULL);
+	panelSelect->LFSTK_setCallBack(NULL,panelSelectCB,NULL);
 	
 	sx+=spacing;;
 	currentPanel=new LFSTK_lineEditClass(wc,"lfspanel.rc",sx,sy-1,BIG,24,NorthWestGravity);
@@ -171,19 +384,19 @@ int main(int argc, char **argv)
 //panel width
 	for(int j=0;j<WIDTHCNT;j++)
 		{
-			panelWidth[j].label=panelOptionString[PANELWIDTH][j];
-			panelWidth[j].subMenus=NULL;
-			panelWidth[j].useIcon=false;
-			panelWidth[j].useImage=false;
-			panelWidth[j].bc=NULL;
+			panelWidthMenu[j].label=panelOptionString[PANELWIDTH][j];
+			panelWidthMenu[j].subMenus=NULL;
+			panelWidthMenu[j].useIcon=false;
+			panelWidthMenu[j].useImage=false;
+			panelWidthMenu[j].bc=NULL;
 		}
-	panelWidth[0].userData=(void*)-1;
-	panelWidth[1].userData=(void*)-2;
-	panelWidth[2].userData=(void*)0;
+	panelWidthMenu[0].userData=(void*)-1;
+	panelWidthMenu[1].userData=(void*)-2;
+	panelWidthMenu[2].userData=(void*)0;
 
 	sx=col1;
 	panelOptionsMenus[PANELWIDTH]=new LFSTK_menuButtonClass(wc,"Panel Width",sx,sy,bwidth,24,NorthWestGravity);
-	panelOptionsMenus[PANELWIDTH]->LFSTK_addMenus(panelWidth,WIDTHCNT);
+	panelOptionsMenus[PANELWIDTH]->LFSTK_addMenus(panelWidthMenu,WIDTHCNT);
 	panelOptionsMenus[PANELWIDTH]->LFSTK_setCallBack(NULL,setWidthCB,NULL);
 	sx+=spacing;
 	panelOptionsEdit[PANELWIDTH]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
@@ -199,29 +412,100 @@ int main(int argc, char **argv)
 //panel position
 	for(int j=0;j<POSCNT;j++)
 		{
-			panelPos[j].label=panelOptionString[PANELPOS][j];
-			panelPos[j].subMenus=NULL;
-			panelPos[j].useIcon=false;
-			panelPos[j].useImage=false;
-			panelPos[j].bc=NULL;
+			panelPosMenu[j].label=panelOptionString[PANELPOS][j];
+			panelPosMenu[j].subMenus=NULL;
+			panelPosMenu[j].useIcon=false;
+			panelPosMenu[j].useImage=false;
+			panelPosMenu[j].bc=NULL;
 		}
-	panelPos[0].userData=(void*)LEFTPOS;
-	panelPos[1].userData=(void*)CENTREPOS;
-	panelPos[2].userData=(void*)RIGHTPOS;
-	panelPos[3].userData=(void*)0;
+	panelPosMenu[0].userData=(void*)LEFTPOS;
+	panelPosMenu[1].userData=(void*)CENTREPOS;
+	panelPosMenu[2].userData=(void*)RIGHTPOS;
+	panelPosMenu[3].userData=(void*)0;
 
 	sx=col1;
 	panelOptionsMenus[PANELPOS]=new LFSTK_menuButtonClass(wc,"Panel Position",sx,sy,bwidth,24,NorthWestGravity);
-	panelOptionsMenus[PANELPOS]->LFSTK_addMenus(panelPos,POSCNT);
+	panelOptionsMenus[PANELPOS]->LFSTK_addMenus(panelPosMenu,POSCNT);
 	panelOptionsMenus[PANELPOS]->LFSTK_setCallBack(NULL,setPosCB,NULL);
 	sx+=spacing;
 	panelOptionsEdit[PANELPOS]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
 	sy+=vspacing;
 
 //panel grav
+	for(int j=0;j<GRAVCNT;j++)
+		{
+			panelGravMenu[j].label=panelOptionString[PANELGRAV][j];
+			panelGravMenu[j].subMenus=NULL;
+			panelGravMenu[j].useIcon=false;
+			panelGravMenu[j].useImage=false;
+			panelGravMenu[j].bc=NULL;
+		}
+	panelGravMenu[0].userData=(void*)NORTHGRAV;
+	panelGravMenu[1].userData=(void*)EASTGRAV;
+	panelGravMenu[2].userData=(void*)SOUTHGRAV;
+	panelGravMenu[3].userData=(void*)WESTGRAV;
 
+	sx=col1;
+	panelOptionsMenus[PANELGRAV]=new LFSTK_menuButtonClass(wc,"Panel Gravity",sx,sy,bwidth,24,NorthWestGravity);
+	panelOptionsMenus[PANELGRAV]->LFSTK_addMenus(panelGravMenu,GRAVCNT);
+	panelOptionsMenus[PANELGRAV]->LFSTK_setCallBack(NULL,setGravCB,NULL);
+	sx+=spacing;
+	panelOptionsEdit[PANELGRAV]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
 	sy+=vspacing;
+
+//on monitor
+	sx=col1;
+	labels[LONMONITOR]=new LFSTK_labelClass(wc,labelNames[LONMONITOR],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[PANELMONITOR]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
 	sy+=vspacing;
+
+//term command
+	sx=col1;
+	labels[LTERMCOMMAND]=new LFSTK_labelClass(wc,labelNames[LTERMCOMMAND],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[TERMCOMMAND]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+
+//logout command
+	sx=col1;
+	labels[LLOGOUT]=new LFSTK_labelClass(wc,labelNames[LLOGOUT],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[LOGOUTCOMMAND]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+//restart command
+	sx=col1;
+	labels[LRESTART]=new LFSTK_labelClass(wc,labelNames[LRESTART],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[RESTARTCOMMAND]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+//shutdown command
+	sx=col1;
+	labels[LSHUTDOWN]=new LFSTK_labelClass(wc,labelNames[LSHUTDOWN],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[SHUTDOWNCOMMAND]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+//gadgets left
+	sx=col1;
+	labels[LLEFTGADGETS]=new LFSTK_labelClass(wc,labelNames[LLEFTGADGETS],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[LEFTGADGETS]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+//gadgets rite
+	sx=col1;
+	labels[LRITEGADGETS]=new LFSTK_labelClass(wc,labelNames[LRITEGADGETS],sx,sy,bwidth,24,NorthWestGravity);
+	sx+=spacing;
+	panelOptionsEdit[RITEGADGETS]=new LFSTK_lineEditClass(wc,"",sx,sy,BIG,24,NorthWestGravity);
+	sy+=vspacing;
+
+	setDefaults();
+	getPrefs();
+
+	sx=col1;
+	labels[LBAR]=new LFSTK_labelClass(wc,labelNames[LBAR],0,sy,col3,8,NorthWestGravity);
+	sy+=vspacing;
+	sy+=16;
+	
 	wc->LFSTK_resizeWindow(col3-10,sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
@@ -259,6 +543,14 @@ int main(int argc, char **argv)
 
 	delete currentPanel;
 	delete panelSelect;
+
+	for(int j=0;j<MAXLABELS;j++)
+		if(labels[j]!=NULL)
+			delete labels[j];
+
+	for(int j=0;j<OPTIONSCNT;j++)
+		if(panelOptionsEdit[j]!=NULL)
+			delete panelOptionsEdit[j];
 
 	delete wc;
 	return(0);

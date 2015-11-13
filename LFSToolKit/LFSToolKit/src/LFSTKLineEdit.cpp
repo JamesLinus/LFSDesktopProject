@@ -190,6 +190,7 @@ void LFSTK_lineEditClass::LFSTK_setBuffer(const char *str)
 {
 	this->buffer=str;
 	this->cursorPos=strlen(str);
+	this->LFSTK_clearWindow();
 }
 
 /**
