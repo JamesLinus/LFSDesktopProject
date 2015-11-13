@@ -1,4 +1,5 @@
 0.0.14
+Context menu icons now use image instead of icon.
 Code clean.
 Lowered xft, cairo and udev versions.
 Fixed segfault when can't find mime type of file/folder on desktop.
