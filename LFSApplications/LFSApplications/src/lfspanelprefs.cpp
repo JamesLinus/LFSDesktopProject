@@ -263,6 +263,8 @@ bool callback(void *p,void* ud)
 				wc->globalLib->LFSTK_saveVarsToFile("-",panelPrefs);
 				wc->globalLib->LFSTK_saveVarsToFile(env,panelPrefs);
 				free(env);
+				system("killall lfspanel");
+				system("lfslaunchpanels");
 				break;
 		}
 	return(true);

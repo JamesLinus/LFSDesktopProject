@@ -32,7 +32,6 @@ void LFSTK_menuButtonClass::initMenuButton(void)
 		this->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEBUTTONTILE),-1);
 	else
 		this->useTile=false;
-
 }
 
 LFSTK_menuButtonClass::~LFSTK_menuButtonClass()
@@ -148,6 +147,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							bc->LFSTK_setLabelAutoColour(this->autoLabelColour);
 							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 								bc->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
+
 							if(this->menus[j].useIcon==true)
 								bc->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 							else if(this->menus[j].useImage==true)
@@ -164,7 +164,7 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 							mb->LFSTK_setStyle(BEVELNONE);
 							mb->LFSTK_setFontString(itemfont);
 							mb->LFSTK_setLabelAutoColour(this->autoLabelColour);
-							mb->LFSTK_setLabelOriention(LEFT);
+
 							if(this->wc->globalLib->LFSTK_getUseTheme()==true)
 								mb->LFSTK_setTile(this->wc->globalLib->LFSTK_getGlobalString(-1,TYPEMENUITEMTILE),-1);
 							for(int k=0;k<MAXCOLOURS;k++)
@@ -172,11 +172,10 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 									mb->LFSTK_setColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEM));
 									mb->LFSTK_setFontColourName(k,this->wc->globalLib->LFSTK_getGlobalString(k,TYPEMENUITEMFONTCOLOUR));
 								}
+
 							this->menus[j].bc=static_cast<LFSTK_buttonClass*>(mb);
 							mb->LFSTK_addMenus(this->menus[j].subMenus,this->menus[j].subMenuCnt);
 							mb->LFSTK_setCallBack(NULL,this->callback.releaseCallback,(void*)&(this->menus[j]));
-							mb->LFSTK_setIgnoreCB(true);
-
 							if(this->menus[j].useIcon==true)
 								mb->LFSTK_setIcon(this->menus[j].icon[0],this->menus[j].icon[1],this->menus[j].iconSize);
 							else if(this->menus[j].useImage==true)
@@ -207,8 +206,8 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 	subwc->LFSTK_showWindow(true);
-	subwc->LFSTK_hideWindow();
-	subwc->LFSTK_showWindow(true);
+//	subwc->LFSTK_hideWindow();
+//	subwc->LFSTK_showWindow(true);
 
 	while (run==true)
 		{
@@ -328,12 +327,12 @@ LFSTK_menuButtonClass::LFSTK_menuButtonClass(LFSTK_windowClass* parentwc,const c
 	wa.win_gravity=gravity;
 
 	this->window=XCreateWindow(this->display,this->parent,x,y,w,h,0,CopyFromParent,InputOutput,CopyFromParent,CWWinGravity,&wa);
-	XSelectInput(this->display,this->window,Button1MotionMask|ButtonReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
+	XSelectInput(this->display,this->window,ButtonReleaseMask | ButtonPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask);
 
 	this->initMenuButton();
 
 	this->style=BEVELOUT;
-	this->LFSTK_setLabelOriention(CENTRE);
+	this->LFSTK_setLabelOriention(LEFT);
 
 	this->listen.function=&(this->wc->globalLib->LFSTK_gadgetEvent);
 	this->listen.pointer=this;

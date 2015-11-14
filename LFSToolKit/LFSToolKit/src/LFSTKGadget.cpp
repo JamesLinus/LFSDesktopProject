@@ -46,6 +46,12 @@ LFSTK_gadgetClass::~LFSTK_gadgetClass()
 			imlib_free_image();
 		}
 
+	if(this->scaledImage!=NULL)
+		{
+			imlib_context_set_image(this->scaledImage);
+			imlib_free_image();
+		}
+
 	XftColorFree(this->display,this->visual,this->cm,&(this->blackXftColour));
 	XftColorFree(this->display,this->visual,this->cm,&(this->whiteXftColour));
 	XDestroyWindow(this->display,this->window);
@@ -150,6 +156,7 @@ void LFSTK_gadgetClass::initGadget(void)
 	this->useTile=false;
 	this->useImage=false;
 	this->image=NULL;
+	this->scaledImage=NULL;
 }
 
 /**
@@ -439,11 +446,15 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 					imlib_context_set_display(this->display);
 					imlib_context_set_visual(this->visual);
 					imlib_context_set_colormap(this->cm);
-
+					if(this->scaledImage==NULL)
+						{
+						printf("make scle\n");
+							imlib_context_set_image(this->image);
+							this->scaledImage=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
+						}
 					imlib_context_set_drawable(this->window);
-					imlib_context_set_image(this->image);
-					imlib_context_set_blend(1);
-					imlib_render_image_on_drawable_at_size(4,(this->h/2)-(this->imageHeight/2),this->imageWidth,this->imageHeight); 
+					imlib_context_set_image(this->scaledImage);
+					imlib_render_image_on_drawable(4,(this->h/2)-(this->imageHeight/2)); 
 				}
 		}
 	else

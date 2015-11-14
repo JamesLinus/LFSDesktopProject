@@ -564,7 +564,7 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 */
 void LFSTK_windowClass::LFSTK_showWindow(bool all)
 {
-	XMapWindow(this->display,this->window);
+	//XMapWindow(this->display,this->window);
 	if(all==true)
 		XMapSubwindows(this->display,this->window);
 	XMapRaised(this->display,this->window);

@@ -34,7 +34,7 @@ exit $retval
 #define IMAGESIZE		64
 
 #define MAXMAINMENUS	8
-#define MAXSUBMENUS		3
+#define MAXSUBMENUS		30
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_labelClass		*label=NULL;
@@ -124,6 +124,7 @@ int main(int argc, char **argv)
 			mainMenus[j].bc=NULL;
 			mainMenus[j].subMenus=NULL;
 			mainMenus[j].useIcon=true;
+			mainMenus[j].useImage=false;
 			mainMenus[j].icon[0]=ic[0];
 			mainMenus[j].icon[1]=ic[1];
 			mainMenus[j].iconSize=iconSize;
@@ -153,12 +154,13 @@ int main(int argc, char **argv)
 			mainMenusWithSubs[j].bc=NULL;
 			mainMenusWithSubs[j].subMenus=NULL;
 			mainMenusWithSubs[j].useIcon=false;
+			mainMenusWithSubs[j].useImage=false;
 		}
 //sub menus
 	subMenus=new menuItemStruct[MAXSUBMENUS];
 	for(int j=0;j<MAXSUBMENUS;j++)
 		{
-			subMenus[j].label=subMenuNames[j];
+			subMenus[j].label=subMenuNames[0];
 			subMenus[j].userData=NULL;
 			subMenus[j].bc=NULL;
 			subMenus[j].subMenus=NULL;
@@ -166,6 +168,16 @@ int main(int argc, char **argv)
 			subMenus[j].icon[0]=ic[0];
 			subMenus[j].icon[1]=ic[1];
 			subMenus[j].iconSize=iconSize;
+
+	subMenus[j].useIcon=false;
+	subMenus[j].useImage=true;
+	subMenus[j].image=imlib_load_image_immediately_without_cache("system-lock-screen.png");
+	subMenus[j].imageWidth=iconSize;
+	subMenus[j].imageHeight=iconSize;
+
+
+
+
 		}
 	wc->globalLib->LFSTK_setPixmapsFromPath(wc->display,wc->visual,wc->cm,wc->window,"/usr/share/icons/gnome/48x48/devices/audio-speakers.png",&subMenus[2].icon[0],&subMenus[2].icon[1],16);
 //add sub menus
@@ -173,9 +185,11 @@ int main(int argc, char **argv)
 	mainMenusWithSubs[3].subMenuCnt=MAXSUBMENUS;
 
 	mainMenusWithSubs[0].useIcon=true;
+	mainMenusWithSubs[0].useImage=false;
 	mainMenusWithSubs[0].icon[0]=ic[0];
 	mainMenusWithSubs[0].icon[1]=ic[1];
 	mainMenusWithSubs[0].iconSize=iconSize;
+	mainMenusWithSubs[1].useImage=false;
 	mainMenusWithSubs[1].useIcon=true;
 	mainMenusWithSubs[1].icon[0]=ic[0];
 	mainMenusWithSubs[1].icon[1]=ic[1];

@@ -96,6 +96,7 @@ class LFSTK_gadgetClass
 
 	private:
 		void initGadget(void);
+		Imlib_Image			scaledImage;
 
 	protected:
 		void drawString(XftFont* font,int x,int y,int state,const char *s);
