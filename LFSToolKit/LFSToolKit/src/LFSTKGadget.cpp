@@ -448,7 +448,6 @@ void LFSTK_gadgetClass::LFSTK_drawLabel(int state)
 					imlib_context_set_colormap(this->cm);
 					if(this->scaledImage==NULL)
 						{
-						printf("make scle\n");
 							imlib_context_set_image(this->image);
 							this->scaledImage=imlib_create_cropped_scaled_image(0,0,imlib_image_get_width(),imlib_image_get_height(),this->imageWidth,this->imageHeight);
 						}
