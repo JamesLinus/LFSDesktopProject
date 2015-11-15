@@ -190,6 +190,8 @@ void loadGroups()
 			groups[j].bc=NULL;
 			groups[j].subMenus=NULL;
 			groups[j].subMenuCnt=0;
+			groups[j].useIcon=false;
+			groups[j].useImage=false;
 		}
 
 	asprintf(&groupfolder,"%s/.config/LFS/lfsgroupsprefs",getenv("HOME"));

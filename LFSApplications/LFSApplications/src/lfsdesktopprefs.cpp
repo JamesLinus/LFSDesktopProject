@@ -36,6 +36,7 @@ enum {EXIT=0,APPLY,PRINT,NOMOREBUTTONS};
 LFSTK_windowClass		*wc;
 LFSTK_lineEditClass		*le[NUMPREFS]={NULL,};
 LFSTK_labelClass		*lb[NUMPREFS]={NULL,};
+LFSTK_labelClass		*spacer=NULL;
 LFSTK_buttonClass		*guibc[NOMOREBUTTONS]={NULL,};
 LFSTK_toggleButtonClass	*showExt=NULL;
 
@@ -199,6 +200,8 @@ int main(int argc, char **argv)
 			sx=col1;
 		}
 
+	spacer=new LFSTK_labelClass(wc,"--",0,sy,col3,8,NorthWestGravity);
+	sy+=16;
 	sy+=vspacing;
 	wc->LFSTK_resizeWindow(col2+BIG-bwidth-10,sy);
 	wc->LFSTK_showWindow();
@@ -245,6 +248,7 @@ int main(int argc, char **argv)
 		if(prefs[j]!=NULL)
 			free(prefs[j]);
 
+	delete spacer;
 	delete wc;
 	free(env);
 	return(0);

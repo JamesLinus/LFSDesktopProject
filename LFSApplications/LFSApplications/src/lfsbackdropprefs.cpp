@@ -30,11 +30,11 @@
 #include <LFSTKLabel.h>
 #include <LFSTKLib.h>
 
-enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,NOMORELABELS};
+enum labels {BACKDROP=0,MAINCOLOUR,MONITORBACKDROP,LSPACER,NOMORELABELS};
 enum {EXIT=0,PRINT,APPLY,NOMOREGUIS};
 enum {STRETCHMODE=0,TILEMODE,CENTREMODE,SCALEDMODE,ZOOMEDMODE,NOMOREMODES};
 
-const char				*labelNames[]={"Main Backdrop","Root Colour","Monitor Backdrop"};
+const char				*labelNames[]={"Main Backdrop","Root Colour","Monitor Backdrop","--"};
 
 LFSTK_windowClass		*wc=NULL;
 LFSTK_lineEditClass		*backdropPath=NULL;
@@ -304,6 +304,8 @@ int main(int argc, char **argv)
 			modeMenus[j].bc=NULL;
 			modeMenus[j].subMenus=NULL;
 			modeMenus[j].subMenuCnt=0;
+			modeMenus[j].useIcon=false;
+			modeMenus[j].useImage=false;
 		}
 
 	mainMode=new LFSTK_menuButtonClass(wc,"Main Mode",sx,sy,bwidth,24,NorthWestGravity);
@@ -328,6 +330,8 @@ int main(int argc, char **argv)
 			monitorMenus[j].bc=NULL;
 			monitorMenus[j].subMenus=NULL;
 			monitorMenus[j].subMenuCnt=0;
+			monitorMenus[j].useIcon=false;
+			monitorMenus[j].useImage=false;
 		}
 
 	monitorNumber=new LFSTK_menuButtonClass(wc,"Monitor 0",sx,sy,bwidth,24,NorthWestGravity);
@@ -349,7 +353,10 @@ int main(int argc, char **argv)
 	monitorModeEdit=new LFSTK_lineEditClass(wc,modeName[monitorData[0].monMode],sx,sy,bwidth,24,NorthWestGravity);
 	sy+=vspacing;
 
+	labels[LSPACER]=new LFSTK_labelClass(wc,labelNames[LSPACER],0,sy,col1+BIG+bwidth+20,8,NorthWestGravity);
 	sy+=vspacing;
+	sy+=16;
+
 	wc->LFSTK_resizeWindow(col1+BIG+bwidth+20,sy,true);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);

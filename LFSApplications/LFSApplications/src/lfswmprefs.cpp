@@ -35,11 +35,11 @@ enum {BACTIVEFRAME=0,BACTIVEFILL,BINACTIVEFRAME,BINACTIVEFILL,BWIDGETCOLOUR,NOMO
 enum {EACTIVEFRAME=0,EACTIVEFILL,EINACTIVEFRAME,EINACTIVEFILL,EWIDGETCOLOUR,ETHEMEPATH,ETERMCOMMAND,ETITLEFONT,EPLACEMENT,ENUMDESKS,ELIVEUPDATE,NOMOREEDITS};
 enum {ACTIVEFRAME=0,ACTIVEFRAMEFILL,INACTIVEFRAME,INACTIVEFRAMEFILL,TEXTCOLOUR};
 enum {EXIT=0,APPLY,PRINT,RESTARTWM,PLACEMENT,NOMORE};
-enum {THEMELABEL=0,TERMLABEL,FONTLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,NOMORELABELS};
+enum {THEMELABEL=0,TERMLABEL,FONTLABEL,PLACELABEL,DESKLABEL,UPDATELABEL,LSPACER,NOMORELABELS};
 enum places {NOPLACE=0,UNDERMOUSE,CENTREMMONITOR,CENTRESCREEN,MOUSEMONITOR,NOMOREPLACES};
 
 const char			*buttonnames[]= {"Active Frame","Active Fill","Inactive Frame","Inactive Fill","Text Colour"};
-const char			*labelnames[]= {"Theme Path","Term Command","Font"," Place Windows","Desktops", "Update"};
+const char			*labelnames[]= {"Theme Path","Term Command","Font"," Place Windows","Desktops", "Update","--"};
 const char			*placeNames[]={"Smart Place On Screen","Under Mouse","Centre On Monitor With Mouse","Centre On Screen","Smart Place On Monitor With Mouse"};
 
 //prefs
@@ -250,6 +250,8 @@ int main(int argc, char **argv)
 			placeMenu[j].bc=NULL;
 			placeMenu[j].subMenus=NULL;
 			placeMenu[j].subMenuCnt=0;
+			placeMenu[j].useIcon=false;
+			placeMenu[j].useImage=false;
 		}
 
 	mb=new LFSTK_menuButtonClass(wc,labelnames[PLACELABEL],sx,sy,bwidth,24,NorthWestGravity);
@@ -260,7 +262,7 @@ int main(int argc, char **argv)
 
 	sy+=vspacing;
 
-	for(int j=DESKLABEL; j<NOMORELABELS; j++)
+	for(int j=DESKLABEL; j<LSPACER; j++)
 		{
 			lb[j]=new LFSTK_labelClass(wc,labelnames[j],sx,sy,bwidth,24,NorthWestGravity);
 			lb[j]->LFSTK_setLabelAutoColour(true);
@@ -278,7 +280,11 @@ int main(int argc, char **argv)
 	le[ETERMCOMMAND]->LFSTK_setBuffer(terminalCommand);
 	sy-=vspacing;
 
-	sy+=(vspacing*2);
+	sy+=vspacing;
+	lb[LSPACER]=new LFSTK_labelClass(wc,labelnames[LSPACER],0,sy,col3,8,NorthWestGravity);
+	sy+=16;
+	sy+=vspacing;
+
 	wc->LFSTK_resizeWindow(col3-10-bwidth,sy);
 	wc->LFSTK_showWindow();
 	wc->LFSTK_setKeepAbove(true);
