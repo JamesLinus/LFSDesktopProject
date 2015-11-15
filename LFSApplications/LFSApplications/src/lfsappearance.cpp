@@ -40,6 +40,7 @@ LFSTK_menuButtonClass *mb=NULL;
 LFSTK_buttonClass	*guibc[NOMOREBUTTONS]={NULL,};
 LFSTK_buttonClass	*launch[NOMORELAUNCHERS]={NULL,};
 LFSTK_labelClass	*label[NOMORELAUNCHERS]={NULL,};
+LFSTK_labelClass	*spacer=NULL;
 
 int					bwidth=96;
 int					bigbwidth=128;
@@ -336,6 +337,8 @@ int main(int argc, char **argv)
 	newgroup=new LFSTK_lineEditClass(wc,"",sx,sy-1,BIG,24,NorthWestGravity);
 
 	sy+=vspacing;
+	spacer=new LFSTK_labelClass(wc,"--",0,sy,col3,8,NorthWestGravity);
+	sy+=16;
 	sy+=vspacing;
 	wc->LFSTK_resizeWindow(col3-10,sy);
 	wc->LFSTK_showWindow();
