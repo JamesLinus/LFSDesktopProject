@@ -206,8 +206,6 @@ bool LFSTK_menuButtonClass::mouseDown(XButtonEvent *e)
 
 	subwc->LFSTK_moveWindow(xpos,ypos,true);
 	subwc->LFSTK_showWindow(true);
-//	subwc->LFSTK_hideWindow();
-//	subwc->LFSTK_showWindow(true);
 
 	while (run==true)
 		{

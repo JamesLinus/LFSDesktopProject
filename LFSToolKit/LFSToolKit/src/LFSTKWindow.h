@@ -79,6 +79,7 @@ class LFSTK_windowClass
 	
 		void LFSTK_reloadGlobals(void);
 		void LFSTK_setXProperty(Atom property,Atom type,int format,void *dataptr,int propcnt);
+		void LFSTK_sendMessage(const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4);
 
 		geometryStruct	*LFSTK_getGeom(void);
 		int LFSTK_windowOnMonitor(void);

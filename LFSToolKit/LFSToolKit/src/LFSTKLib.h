@@ -56,7 +56,6 @@ class LFSTK_lib
 		static bool LFSTK_gadgetEvent(void *self,XEvent *e,int type);
 
 		bool LFSTK_setPixmapsFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Pixmap *image,Pixmap *mask,int size);
-		//bool LFSTK_setImageFromPath(Display *display,Visual *visual,Colormap cm,Window w,const char *file,Imlib_Image *image,int w,int h);
 		const char* LFSTK_findThemedIcon(const char *theme,const char *icon,const char *catagory);
 		char* LFSTK_oneLiner(const char* fmt,...);
 

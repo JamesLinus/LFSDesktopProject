@@ -1,4 +1,5 @@
 0.0.10
+Main window does not now lose focus when selecting menu.
 Menu buttons now use image instead of icons.
 Library version bump.
 Image class now uses LFSTK_setImageFromPath instead of LFSTK_setIconFromPath.

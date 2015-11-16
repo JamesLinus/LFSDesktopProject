@@ -615,3 +615,28 @@ void LFSTK_windowClass::LFSTK_setTile(const char *path,int size)
 	else
 		this->useTile=false;
 }
+
+/**
+* Send WM message to window.
+* \param msg Message atome eg "_NET_ACTIVE_WINDOW".
+* \param data0..data4 Data to send or 0.
+*/
+void LFSTK_windowClass::LFSTK_sendMessage(const char *msg,unsigned long data0,unsigned long data1,unsigned long data2,unsigned long data3,unsigned long data4)
+{
+	XEvent	event;
+	long	mask=SubstructureRedirectMask|SubstructureNotifyMask;
+
+	event.xclient.type=ClientMessage;
+	event.xclient.serial=0;
+	event.xclient.send_event=True;
+	event.xclient.message_type=XInternAtom(this->display,msg,False);
+	event.xclient.window=this->window;
+	event.xclient.format=32;
+	event.xclient.data.l[0]=data0;
+	event.xclient.data.l[1]=data1;
+	event.xclient.data.l[2]=data2;
+	event.xclient.data.l[3]=data3;
+	event.xclient.data.l[4]=data4;
+	XSendEvent(this->display,this->rootWindow,False,mask,&event);
+}
+

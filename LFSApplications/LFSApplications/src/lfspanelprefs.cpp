@@ -529,6 +529,7 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
+						wc->LFSTK_sendMessage("_NET_ACTIVE_WINDOW",0,0,0,0,0);
 						break;
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);

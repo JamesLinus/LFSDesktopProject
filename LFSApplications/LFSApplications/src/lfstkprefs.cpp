@@ -296,7 +296,7 @@ int main(int argc, char **argv)
 
 	sy+=(vspacing);
 	wc->LFSTK_resizeWindow(cols[3],sy);
-	wc->LFSTK_showWindow();
+	wc->LFSTK_showWindow(true);
 	wc->LFSTK_setKeepAbove(true);
 
 	mainloop=true;
@@ -314,6 +314,7 @@ int main(int argc, char **argv)
 					case Expose:
 						wc->LFSTK_setActive(true);
 						wc->LFSTK_clearWindow();
+						wc->LFSTK_sendMessage("_NET_ACTIVE_WINDOW",0,0,0,0,0);
 						break;
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
