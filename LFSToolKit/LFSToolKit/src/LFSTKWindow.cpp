@@ -529,11 +529,26 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
+/*
+, ,, , , , , , , _, 
 
+*/
 	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
 	xa_prop[0]=XInternAtom(this->display,"_NET_WM_STATE_STICKY",False);
 	xa_prop[1]=XInternAtom(this->display,"_NET_WM_STATE_ABOVE",False);
 	xa_prop[2]=XInternAtom(this->display,"_NET_WM_ACTION_CHANGE_DESKTOP",False);
+
+//	xa_prop[3]=XInternAtom(this->display,"_NET_WM_ACTION_CLOSE",False);
+//	xa_prop[4]=XInternAtom(this->display,"_NET_WM_ACTION_BELOW",False);
+//	xa_prop[5]=XInternAtom(this->display," _NET_WM_ACTION_FULLSCREEN",False);
+//	xa_prop[6]=XInternAtom(this->display,"_NET_WM_ACTION_MOVE",False);
+//	xa_prop[7]=XInternAtom(this->display,"_NET_WM_ACTION_RESIZE",False);
+//	xa_prop[8]=XInternAtom(this->display,"_NET_WM_ACTION_MAXIMIZE_HORZ",False);
+//	xa_prop[9]=XInternAtom(this->display,"_NET_WM_ACTION_MAXIMIZE_VERT",False);
+//	xa_prop[10]=XInternAtom(this->display,"_NET_WM_ACTION_SHADE",False);
+//	xa_prop[11]=XInternAtom(this->display,"_NET_WM_ACTION_MINIMIZE",False);
+//	xa_prop[12]=XInternAtom(this->display,"_NET_WM_ACTION_STICK",False);
+//	xa_prop[13]=XInternAtom(this->display,"_NET_WM_STATE_HIDDEN",False);
 	if(xa!=None)
 		XChangeProperty(this->display,this->window,xa,XA_ATOM,32,PropModeAppend,(unsigned char *)&xa_prop,3);
 

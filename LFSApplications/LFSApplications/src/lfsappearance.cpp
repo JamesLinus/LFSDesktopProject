@@ -110,27 +110,33 @@ bool callback(void *p,void* ud)
 			case LAUNCHWALLPAPER:
 				wc->LFSTK_hideWindow();
 				system("lfsbackdropprefs");
+				usleep(350000);
 				wc->LFSTK_showWindow(false);
+
 				break;
 			case LAUNCHTOOLKIT:
 				wc->LFSTK_hideWindow();
 				system("lfstkprefs");
+				usleep(350000);
 				wc->LFSTK_showWindow(false);
 				break;
 			case LAUNCHDESKTOP:
 				wc->LFSTK_hideWindow();
 				system("lfsdesktopprefs");
+				usleep(350000);
 				wc->LFSTK_showWindow(false);
 				break;
 			case LAUNCHWMANAGER:
 				wc->LFSTK_hideWindow();
 				system("lfswmprefs");
+				usleep(350000);
 				wc->LFSTK_showWindow(false);
 				break;
 
 			case LAUNCHPANEL:
 				wc->LFSTK_hideWindow();
 				system("lfspanelprefs");
+				usleep(350000);
 				wc->LFSTK_showWindow(false);
 				break;
 
@@ -361,6 +367,7 @@ int main(int argc, char **argv)
 						break;
 					case Expose:
 						wc->LFSTK_clearWindow();
+						XSetInputFocus(wc->display,wc->window,RevertToPointerRoot,CurrentTime);
 						break;
 					case ConfigureNotify:
 						wc->LFSTK_resizeWindow(event.xconfigurerequest.width,event.xconfigurerequest.height,false);
