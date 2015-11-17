@@ -20,5 +20,6 @@ remake:
 	$(shell ./remakesourcelist)
 
 purge:
-	rm $(DESTDIR)${libdir}/liblfstoolkit.*
+	rm $(DESTDIR)${libdir}/liblfstoolkit.*||true
+	rm $(DESTDIR)${includedir}/LFS*.h||true
 

@@ -10,6 +10,9 @@ for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplica
 		tar -xvf ${arg}-*.tar.gz
 		pushd ${arg}
 			./configure --prefix=${PREFIX};make||./autogen.sh --prefix=${PREFIX};make||(echo "Configure Error...";exit 1)
+			if [ $arg = "LFSToolKit" ];then
+				make purge DESTDIR=${STAGING}
+			fi
 			make install DESTDIR=${STAGING}
 		
 			if [ $arg = "LFSToolKit" ];then

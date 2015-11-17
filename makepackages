@@ -43,7 +43,7 @@ pushd /tmp/tmp
 	rm -r LFSPanel/.svn
 	tar -cvzf LFSPanel-$lfspanelversion.tar.gz LFSPanel
 
-	tar -cvzf LFSDesktopProject-$completeversion.tar.gz LFSDesktop-$desktopversion.tar.gz LFSSetWallpaper-$wallpaperversion.tar.gz LFSWManager-$wmversion.tar.gz LFSToolKit-$tkversion.tar.gz LFSApplications-$lfsappsversion.tar.gz LFSPanel-$lfspanelversion.tar.gz buildall
+	tar -cvzf LFSDesktopProject-$completeversion.tar.gz LFSDesktop-$desktopversion.tar.gz LFSSetWallpaper-$wallpaperversion.tar.gz LFSWManager-$wmversion.tar.gz LFSToolKit-$tkversion.tar.gz LFSApplications-$lfsappsversion.tar.gz LFSPanel-$lfspanelversion.tar.gz buildall purgeall
 
 	md5sum *.tar.gz|sort -k 2 > md5sums
 	

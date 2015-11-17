@@ -529,10 +529,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 	XSelectInput(this->display,this->window,StructureNotifyMask|ButtonPressMask | ButtonReleaseMask | ExposureMask|LeaveWindowMask|FocusChangeMask);
 
 	XSetWMProtocols(this->display,this->window,&wm_delete_window,1);
-/*
-, ,, , , , , , , _, 
-
-*/
 	xa=XInternAtom(this->display,"_NET_WM_ALLOWED_ACTIONS",False);
 	xa_prop[0]=XInternAtom(this->display,"_NET_WM_STATE_STICKY",False);
 	xa_prop[1]=XInternAtom(this->display,"_NET_WM_STATE_ABOVE",False);
@@ -579,7 +575,6 @@ LFSTK_windowClass::LFSTK_windowClass(int x,int y,int w,int h,const char* name,bo
 */
 void LFSTK_windowClass::LFSTK_showWindow(bool all)
 {
-	//XMapWindow(this->display,this->window);
 	if(all==true)
 		XMapSubwindows(this->display,this->window);
 	XMapRaised(this->display,this->window);
