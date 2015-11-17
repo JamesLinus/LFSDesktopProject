@@ -110,34 +110,22 @@ bool callback(void *p,void* ud)
 			case LAUNCHWALLPAPER:
 				wc->LFSTK_hideWindow();
 				system("lfsbackdropprefs");
-				usleep(350000);
-				wc->LFSTK_showWindow(false);
-
 				break;
 			case LAUNCHTOOLKIT:
 				wc->LFSTK_hideWindow();
 				system("lfstkprefs");
-				usleep(350000);
-				wc->LFSTK_showWindow(false);
 				break;
 			case LAUNCHDESKTOP:
 				wc->LFSTK_hideWindow();
 				system("lfsdesktopprefs");
-				usleep(350000);
-				wc->LFSTK_showWindow(false);
 				break;
 			case LAUNCHWMANAGER:
 				wc->LFSTK_hideWindow();
 				system("lfswmprefs");
-				usleep(350000);
-				wc->LFSTK_showWindow(false);
 				break;
-
 			case LAUNCHPANEL:
 				wc->LFSTK_hideWindow();
 				system("lfspanelprefs");
-				usleep(350000);
-				wc->LFSTK_showWindow(false);
 				break;
 
 			case UPDATEGROUP:
@@ -177,6 +165,8 @@ bool callback(void *p,void* ud)
 		guibc[j]->LFSTK_reloadColours();
 	mb->LFSTK_reloadColours();
 
+	usleep(350000);
+	wc->LFSTK_showWindow(false);
 	return(true);
 }
 
@@ -385,6 +375,7 @@ int main(int argc, char **argv)
 		if(groups[j].label!=NULL)
 			free((char*)groups[j].label);
 
+	delete spacer;
 	delete wc;
 	return(0);
 }
