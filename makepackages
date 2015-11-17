@@ -2,6 +2,8 @@
 
 #©keithhedger Mon 18 May 11:32:59 BST 2015 kdhedger68713@gmail.com
 
+svn commit -m ""
+
 wallpaperversion=$(sed -n '/#define VERSION/p' LFSSetWallpaper/config.h|awk '{print $3}'|sed 's/"//g')
 desktopversion=$(sed -n '/#define VERSION/p' LFSDesktop/config.h|awk '{print $3}'|sed 's/"//g')
 wmversion=$(sed -n '/#define VERSION/p' LFSWManager/config.h|awk '{print $3}'|sed 's/"//g')
