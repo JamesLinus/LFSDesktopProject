@@ -5315,7 +5315,7 @@ fi
 
 
 
-CAIRO_MODULES="cairo >= 1.13.1"
+CAIRO_MODULES="cairo >= 1.12.16"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for CAIRO" >&5
