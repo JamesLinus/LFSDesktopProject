@@ -1,4 +1,5 @@
 0.0.14
+Fixed unneeded window attr causing crash on some distros.
 Context menu icons now use image instead of icon.
 Code clean.
 Lowered xft, cairo and udev versions.

@@ -282,8 +282,7 @@ void createDesktopWindow(void)
 			attr.border_pixel=0;
 			attr.background_pixel=0;
 
-			rootWin=XCreateWindow(display,DefaultRootWindow(display),0,0,displayWidth,displayHeight,0,depth,InputOutput,visual,CWEventMask |CWColormap | CWBorderPixel | CWBackPixel ,&attr);
-
+			rootWin=XCreateWindow(display,DefaultRootWindow(display),0,0,displayWidth,displayHeight,0,depth,InputOutput,visual,CWColormap | CWBorderPixel | CWBackPixel ,&attr);
 
 			xa=XInternAtom(display,"_NET_WM_WINDOW_TYPE",False);
 			xa_prop[0]=XInternAtom(display,"_NET_WM_WINDOW_TYPE_DESKTOP",False);
