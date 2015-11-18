@@ -4,6 +4,7 @@
 
 PREFIX="/usr"
 STAGING=
+LDCONFIG="/sbin/ldconfig"
 
 for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplications
 	do
@@ -17,7 +18,7 @@ for arg in LFSToolKit LFSSetWallpaper LFSDesktop LFSWManager LFSPanel LFSApplica
 			make install DESTDIR=${STAGING}
 		
 			if [ $arg = "LFSToolKit" ];then
-				ldconfig
+				$LDCONFIG
 			fi
 
 		popd
