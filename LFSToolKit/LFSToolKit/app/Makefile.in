@@ -226,6 +226,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -264,6 +266,7 @@ LIBS = $(X11_LIBS) \
 				$(XFT_LIBS) \
 				$(XINERAMA_LIBS) \
 				$(IMLIB_LIBS) \
+				$(CAIRO_LIBS) \
 				-lm
 
 LIBTOOL = @LIBTOOL@
@@ -362,6 +365,7 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				$(XFT_CFLAGS) \
 				$(XINERAMA_CFLAGS) \
 				$(IMLIB_CFLAGS) \
+				$(CAIRO_CFLAGS) \
 				-DPREFIX=\""${prefix}\"" \
 				-DDATADIR=\""${pkgdatadir}"\" \
 				-DSYSCONFDIR=\""${sysconfdir}/${PACKAGE}"\" \

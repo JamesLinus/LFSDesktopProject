@@ -210,6 +210,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -838,7 +840,8 @@ remake:
 	$(shell ./remakesourcelist)
 
 purge:
-	rm $(DESTDIR)${libdir}/liblfstoolkit.*
+	rm $(DESTDIR)${libdir}/liblfstoolkit.*||true
+	rm $(DESTDIR)${includedir}/LFS*.h||true
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

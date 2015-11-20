@@ -2,7 +2,7 @@
 
 #©keithhedger Fri 7 Aug 15:57:52 BST 2015 kdhedger68713@gmail.com
 
-g++ "$0" -O3 -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft ) -llfstoolkit -lImlib2||exit 1
+g++ "$0" -O3 -I../LFSToolKit/src -L../LFSToolKit/app/.libs $(pkg-config --cflags --libs x11 xft cairo ) -llfstoolkit -lImlib2||exit 1
 LD_LIBRARY_PATH=../LFSToolKit/app/.libs ./a.out "$@"
 retval=$?
 rm ./a.out
@@ -216,10 +216,12 @@ int main(int argc, char **argv)
 	imageButton=new LFSTK_buttonClass(wc,"",BORDER,sy,68,64+4,NorthWestGravity);
 	imageButton->LFSTK_setCallBack(NULL,buttonCB,(void*)iconButton->LFSTK_getLabel());
 	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/LFSTux.png",IMAGESIZE,IMAGESIZE);
+	imageButton->LFSTK_setImageFromPath("/usr/share/pixmaps/AspellGUI.png",IMAGESIZE,IMAGESIZE);
 	sy+=64;
 
 	sy+=16;
-	image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+	//image=new LFSTK_imageClass(wc,"/usr/share/pixmaps/LFSTux.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
+	image=new LFSTK_imageClass(wc,"/usr/lib64/firefox-36.0.1/browser/icons/mozicon128.png",BORDER,sy,IMAGESIZE,NorthWestGravity);
 
 	sy+=IMAGESIZE;
 	sy+=12;
