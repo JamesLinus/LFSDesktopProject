@@ -2,8 +2,6 @@
 
 action="$@"
 
-svn commit -m ""
-
 for app in "LFSToolKit" "LFSWManager" "LFSDesktop" "LFSSetWallpaper" "LFSApplications" "LFSPanel"
 	do
 		pushd $app
