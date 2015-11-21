@@ -1,3 +1,7 @@
+0.1.0
+Synched versions to "0.1.0".
+Commited to github.
+
 0.0.14
 Fixed unneeded window attr causing crash on some distros.
 Context menu icons now use image instead of icon.
