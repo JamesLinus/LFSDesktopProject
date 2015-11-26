@@ -1,3 +1,6 @@
+0.1.1
+Fixed infinite loop with two windows from same app trying to be above each other at the same time.
+
 0.1.0
 Synched versions to "0.1.0".
 Commited to github.

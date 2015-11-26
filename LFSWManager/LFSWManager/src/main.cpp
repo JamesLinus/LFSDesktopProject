@@ -740,8 +740,11 @@ printf(">>winid=%p<<\n",evente.xany.window);
 						redirect(&e,root);
 				}
 
-			shuffle();
-			restack();
+		if(needrestack==true)
+			{
+				shuffle();
+				restack();
+			}
 		}
 
 	runlevel=RL_SHUTDOWN;

@@ -227,7 +227,6 @@ bool shuffleDownUp(void)
 	return(false);
 }
 
-
 void shuffle(void)
 {
 	CHECKPOINT
@@ -239,7 +238,6 @@ void shuffle(void)
 			c->checked=false;
 		}
 	while(shuffleDownUp()==true);
-
 	LIST_FOREACH(lp,&winstack)
 		{
 			struct client *c=LIST_ITEM(lp,struct client,winstack);
@@ -503,7 +501,8 @@ void cpop(struct client *c)
 			LIST_REMOVE(&c->winstack);
 			LIST_INSERT_TAIL(&winstack,&c->winstack);
 			needrestack=True;
-			cfocus(c,CurrentTime);
+			if(c->isAbove==true)
+				cfocus(c,CurrentTime);
 		}
 }
 
@@ -1619,6 +1618,7 @@ struct client *manage(Window window)
 				{
 					//printf("below-%s\n",c->wmname);
 					c->isBelow=true;
+					c->isAbove=false;
 					down=true;
 				}
 
@@ -1626,6 +1626,7 @@ struct client *manage(Window window)
 				{
 					//printf("above-%s\n",c->wmname);
 					c->isAbove=true;
+					c->isBelow=false;
 					up=true;
 				}
 		}

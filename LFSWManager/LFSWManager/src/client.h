@@ -66,6 +66,7 @@ struct client
 	bool canMaximize;
 	bool canMinimize;
 	bool isIcon;
+	bool beenShuffled;
 
 	unsigned int monitorNumber;
 };
