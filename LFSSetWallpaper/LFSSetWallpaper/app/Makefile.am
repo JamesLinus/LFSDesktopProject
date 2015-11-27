@@ -4,7 +4,6 @@ include ../flagsandlibs
 include ../sources
 
 lfssetwallpaper_SOURCES = $(COMMONSRC)
-lfssetwallpaper_CFLAGS = -O3
 
 man1_MANS = ../resources/man/lfssetwallpaper.1
 
