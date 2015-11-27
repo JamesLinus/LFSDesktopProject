@@ -103,45 +103,27 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_lfsabout_OBJECTS = ../src/lfsabout-lfsabout.$(OBJEXT)
+am_lfsabout_OBJECTS = ../src/lfsabout.$(OBJEXT)
 lfsabout_OBJECTS = $(am_lfsabout_OBJECTS)
 lfsabout_LDADD = $(LDADD)
-lfsabout_LINK = $(CXXLD) $(lfsabout_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_lfsappearance_OBJECTS =  \
-	../src/lfsappearance-lfsappearance.$(OBJEXT)
+am_lfsappearance_OBJECTS = ../src/lfsappearance.$(OBJEXT)
 lfsappearance_OBJECTS = $(am_lfsappearance_OBJECTS)
 lfsappearance_LDADD = $(LDADD)
-lfsappearance_LINK = $(CXXLD) $(lfsappearance_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_lfsbackdropprefs_OBJECTS =  \
-	../src/lfsbackdropprefs-lfsbackdropprefs.$(OBJEXT)
+am_lfsbackdropprefs_OBJECTS = ../src/lfsbackdropprefs.$(OBJEXT)
 lfsbackdropprefs_OBJECTS = $(am_lfsbackdropprefs_OBJECTS)
 lfsbackdropprefs_LDADD = $(LDADD)
-lfsbackdropprefs_LINK = $(CXXLD) $(lfsbackdropprefs_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_lfsdesktopprefs_OBJECTS =  \
-	../src/lfsdesktopprefs-lfsdesktopprefs.$(OBJEXT)
+am_lfsdesktopprefs_OBJECTS = ../src/lfsdesktopprefs.$(OBJEXT)
 lfsdesktopprefs_OBJECTS = $(am_lfsdesktopprefs_OBJECTS)
 lfsdesktopprefs_LDADD = $(LDADD)
-lfsdesktopprefs_LINK = $(CXXLD) $(lfsdesktopprefs_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_lfspanelprefs_OBJECTS =  \
-	../src/lfspanelprefs-lfspanelprefs.$(OBJEXT)
+am_lfspanelprefs_OBJECTS = ../src/lfspanelprefs.$(OBJEXT)
 lfspanelprefs_OBJECTS = $(am_lfspanelprefs_OBJECTS)
 lfspanelprefs_LDADD = $(LDADD)
-lfspanelprefs_LINK = $(CXXLD) $(lfspanelprefs_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_lfstkprefs_OBJECTS = ../src/lfstkprefs-lfstkprefs.$(OBJEXT)
+am_lfstkprefs_OBJECTS = ../src/lfstkprefs.$(OBJEXT)
 lfstkprefs_OBJECTS = $(am_lfstkprefs_OBJECTS)
 lfstkprefs_LDADD = $(LDADD)
-lfstkprefs_LINK = $(CXXLD) $(lfstkprefs_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_lfswmprefs_OBJECTS = ../src/lfswmprefs-lfswmprefs.$(OBJEXT)
+am_lfswmprefs_OBJECTS = ../src/lfswmprefs.$(OBJEXT)
 lfswmprefs_OBJECTS = $(am_lfswmprefs_OBJECTS)
 lfswmprefs_LDADD = $(LDADD)
-lfswmprefs_LINK = $(CXXLD) $(lfswmprefs_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -158,10 +140,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 AM_V_CXX = $(am__v_CXX_@AM_V@)
@@ -351,26 +329,12 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 				-DLIBDIR=\""${libdir}/${PACKAGE}"\"
 
 lfstkprefs_SOURCES = ../src/lfstkprefs.cpp
-lfstkprefs_CFLAGS = -O3
-lfstkprefs_CXXFLAGS = -O3
 lfswmprefs_SOURCES = ../src/lfswmprefs.cpp
-lfswmprefs_CFLAGS = -O3
-lfswmprefs_CXXFLAGS = -O3
 lfsdesktopprefs_SOURCES = ../src/lfsdesktopprefs.cpp
-lfsdesktopprefs_CFLAGS = -O3
-lfsdesktopprefs_CXXFLAGS = -O3
 lfsappearance_SOURCES = ../src/lfsappearance.cpp
-lfsappearance_CFLAGS = -O3
-lfsappearance_CXXFLAGS = -O3
 lfsbackdropprefs_SOURCES = ../src/lfsbackdropprefs.cpp
-lfsbackdropprefs_CFLAGS = -O3 
-lfsbackdropprefs_CXXFLAGS = -O3
 lfspanelprefs_SOURCES = ../src/lfspanelprefs.cpp
-lfspanelprefs_CFLAGS = -O3 
-lfspanelprefs_CXXFLAGS = -O3
 lfsabout_SOURCES = ../src/lfsabout.cpp
-lfsabout_CFLAGS = -O3 
-lfsabout_CXXFLAGS = -O3
 man1_MANS = ../resources/man/lfsapplications.1
 all: all-am
 
@@ -454,48 +418,48 @@ clean-binPROGRAMS:
 ../src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../src/$(DEPDIR)
 	@: > ../src/$(DEPDIR)/$(am__dirstamp)
-../src/lfsabout-lfsabout.$(OBJEXT): ../src/$(am__dirstamp) \
+../src/lfsabout.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfsabout$(EXEEXT): $(lfsabout_OBJECTS) $(lfsabout_DEPENDENCIES) $(EXTRA_lfsabout_DEPENDENCIES) 
 	@rm -f lfsabout$(EXEEXT)
-	$(AM_V_CXXLD)$(lfsabout_LINK) $(lfsabout_OBJECTS) $(lfsabout_LDADD) $(LIBS)
-../src/lfsappearance-lfsappearance.$(OBJEXT): ../src/$(am__dirstamp) \
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsabout_OBJECTS) $(lfsabout_LDADD) $(LIBS)
+../src/lfsappearance.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfsappearance$(EXEEXT): $(lfsappearance_OBJECTS) $(lfsappearance_DEPENDENCIES) $(EXTRA_lfsappearance_DEPENDENCIES) 
 	@rm -f lfsappearance$(EXEEXT)
-	$(AM_V_CXXLD)$(lfsappearance_LINK) $(lfsappearance_OBJECTS) $(lfsappearance_LDADD) $(LIBS)
-../src/lfsbackdropprefs-lfsbackdropprefs.$(OBJEXT):  \
-	../src/$(am__dirstamp) ../src/$(DEPDIR)/$(am__dirstamp)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsappearance_OBJECTS) $(lfsappearance_LDADD) $(LIBS)
+../src/lfsbackdropprefs.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfsbackdropprefs$(EXEEXT): $(lfsbackdropprefs_OBJECTS) $(lfsbackdropprefs_DEPENDENCIES) $(EXTRA_lfsbackdropprefs_DEPENDENCIES) 
 	@rm -f lfsbackdropprefs$(EXEEXT)
-	$(AM_V_CXXLD)$(lfsbackdropprefs_LINK) $(lfsbackdropprefs_OBJECTS) $(lfsbackdropprefs_LDADD) $(LIBS)
-../src/lfsdesktopprefs-lfsdesktopprefs.$(OBJEXT):  \
-	../src/$(am__dirstamp) ../src/$(DEPDIR)/$(am__dirstamp)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsbackdropprefs_OBJECTS) $(lfsbackdropprefs_LDADD) $(LIBS)
+../src/lfsdesktopprefs.$(OBJEXT): ../src/$(am__dirstamp) \
+	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfsdesktopprefs$(EXEEXT): $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_DEPENDENCIES) $(EXTRA_lfsdesktopprefs_DEPENDENCIES) 
 	@rm -f lfsdesktopprefs$(EXEEXT)
-	$(AM_V_CXXLD)$(lfsdesktopprefs_LINK) $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_LDADD) $(LIBS)
-../src/lfspanelprefs-lfspanelprefs.$(OBJEXT): ../src/$(am__dirstamp) \
+	$(AM_V_CXXLD)$(CXXLINK) $(lfsdesktopprefs_OBJECTS) $(lfsdesktopprefs_LDADD) $(LIBS)
+../src/lfspanelprefs.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfspanelprefs$(EXEEXT): $(lfspanelprefs_OBJECTS) $(lfspanelprefs_DEPENDENCIES) $(EXTRA_lfspanelprefs_DEPENDENCIES) 
 	@rm -f lfspanelprefs$(EXEEXT)
-	$(AM_V_CXXLD)$(lfspanelprefs_LINK) $(lfspanelprefs_OBJECTS) $(lfspanelprefs_LDADD) $(LIBS)
-../src/lfstkprefs-lfstkprefs.$(OBJEXT): ../src/$(am__dirstamp) \
+	$(AM_V_CXXLD)$(CXXLINK) $(lfspanelprefs_OBJECTS) $(lfspanelprefs_LDADD) $(LIBS)
+../src/lfstkprefs.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfstkprefs$(EXEEXT): $(lfstkprefs_OBJECTS) $(lfstkprefs_DEPENDENCIES) $(EXTRA_lfstkprefs_DEPENDENCIES) 
 	@rm -f lfstkprefs$(EXEEXT)
-	$(AM_V_CXXLD)$(lfstkprefs_LINK) $(lfstkprefs_OBJECTS) $(lfstkprefs_LDADD) $(LIBS)
-../src/lfswmprefs-lfswmprefs.$(OBJEXT): ../src/$(am__dirstamp) \
+	$(AM_V_CXXLD)$(CXXLINK) $(lfstkprefs_OBJECTS) $(lfstkprefs_LDADD) $(LIBS)
+../src/lfswmprefs.$(OBJEXT): ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 lfswmprefs$(EXEEXT): $(lfswmprefs_OBJECTS) $(lfswmprefs_DEPENDENCIES) $(EXTRA_lfswmprefs_DEPENDENCIES) 
 	@rm -f lfswmprefs$(EXEEXT)
-	$(AM_V_CXXLD)$(lfswmprefs_LINK) $(lfswmprefs_OBJECTS) $(lfswmprefs_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(lfswmprefs_OBJECTS) $(lfswmprefs_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -504,13 +468,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsabout-lfsabout.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsappearance-lfsappearance.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsabout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsappearance.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsbackdropprefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfsdesktopprefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfspanelprefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfstkprefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/lfswmprefs.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -527,104 +491,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-../src/lfsabout-lfsabout.o: ../src/lfsabout.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsabout_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsabout-lfsabout.o -MD -MP -MF ../src/$(DEPDIR)/lfsabout-lfsabout.Tpo -c -o ../src/lfsabout-lfsabout.o `test -f '../src/lfsabout.cpp' || echo '$(srcdir)/'`../src/lfsabout.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsabout-lfsabout.Tpo ../src/$(DEPDIR)/lfsabout-lfsabout.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsabout.cpp' object='../src/lfsabout-lfsabout.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsabout_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsabout-lfsabout.o `test -f '../src/lfsabout.cpp' || echo '$(srcdir)/'`../src/lfsabout.cpp
-
-../src/lfsabout-lfsabout.obj: ../src/lfsabout.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsabout_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsabout-lfsabout.obj -MD -MP -MF ../src/$(DEPDIR)/lfsabout-lfsabout.Tpo -c -o ../src/lfsabout-lfsabout.obj `if test -f '../src/lfsabout.cpp'; then $(CYGPATH_W) '../src/lfsabout.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsabout.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsabout-lfsabout.Tpo ../src/$(DEPDIR)/lfsabout-lfsabout.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsabout.cpp' object='../src/lfsabout-lfsabout.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsabout_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsabout-lfsabout.obj `if test -f '../src/lfsabout.cpp'; then $(CYGPATH_W) '../src/lfsabout.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsabout.cpp'; fi`
-
-../src/lfsappearance-lfsappearance.o: ../src/lfsappearance.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsappearance_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsappearance-lfsappearance.o -MD -MP -MF ../src/$(DEPDIR)/lfsappearance-lfsappearance.Tpo -c -o ../src/lfsappearance-lfsappearance.o `test -f '../src/lfsappearance.cpp' || echo '$(srcdir)/'`../src/lfsappearance.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsappearance-lfsappearance.Tpo ../src/$(DEPDIR)/lfsappearance-lfsappearance.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsappearance.cpp' object='../src/lfsappearance-lfsappearance.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsappearance_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsappearance-lfsappearance.o `test -f '../src/lfsappearance.cpp' || echo '$(srcdir)/'`../src/lfsappearance.cpp
-
-../src/lfsappearance-lfsappearance.obj: ../src/lfsappearance.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsappearance_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsappearance-lfsappearance.obj -MD -MP -MF ../src/$(DEPDIR)/lfsappearance-lfsappearance.Tpo -c -o ../src/lfsappearance-lfsappearance.obj `if test -f '../src/lfsappearance.cpp'; then $(CYGPATH_W) '../src/lfsappearance.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsappearance.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsappearance-lfsappearance.Tpo ../src/$(DEPDIR)/lfsappearance-lfsappearance.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsappearance.cpp' object='../src/lfsappearance-lfsappearance.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsappearance_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsappearance-lfsappearance.obj `if test -f '../src/lfsappearance.cpp'; then $(CYGPATH_W) '../src/lfsappearance.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsappearance.cpp'; fi`
-
-../src/lfsbackdropprefs-lfsbackdropprefs.o: ../src/lfsbackdropprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsbackdropprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsbackdropprefs-lfsbackdropprefs.o -MD -MP -MF ../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Tpo -c -o ../src/lfsbackdropprefs-lfsbackdropprefs.o `test -f '../src/lfsbackdropprefs.cpp' || echo '$(srcdir)/'`../src/lfsbackdropprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Tpo ../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsbackdropprefs.cpp' object='../src/lfsbackdropprefs-lfsbackdropprefs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsbackdropprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsbackdropprefs-lfsbackdropprefs.o `test -f '../src/lfsbackdropprefs.cpp' || echo '$(srcdir)/'`../src/lfsbackdropprefs.cpp
-
-../src/lfsbackdropprefs-lfsbackdropprefs.obj: ../src/lfsbackdropprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsbackdropprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsbackdropprefs-lfsbackdropprefs.obj -MD -MP -MF ../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Tpo -c -o ../src/lfsbackdropprefs-lfsbackdropprefs.obj `if test -f '../src/lfsbackdropprefs.cpp'; then $(CYGPATH_W) '../src/lfsbackdropprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsbackdropprefs.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Tpo ../src/$(DEPDIR)/lfsbackdropprefs-lfsbackdropprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsbackdropprefs.cpp' object='../src/lfsbackdropprefs-lfsbackdropprefs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsbackdropprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsbackdropprefs-lfsbackdropprefs.obj `if test -f '../src/lfsbackdropprefs.cpp'; then $(CYGPATH_W) '../src/lfsbackdropprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsbackdropprefs.cpp'; fi`
-
-../src/lfsdesktopprefs-lfsdesktopprefs.o: ../src/lfsdesktopprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsdesktopprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsdesktopprefs-lfsdesktopprefs.o -MD -MP -MF ../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Tpo -c -o ../src/lfsdesktopprefs-lfsdesktopprefs.o `test -f '../src/lfsdesktopprefs.cpp' || echo '$(srcdir)/'`../src/lfsdesktopprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Tpo ../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsdesktopprefs.cpp' object='../src/lfsdesktopprefs-lfsdesktopprefs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsdesktopprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsdesktopprefs-lfsdesktopprefs.o `test -f '../src/lfsdesktopprefs.cpp' || echo '$(srcdir)/'`../src/lfsdesktopprefs.cpp
-
-../src/lfsdesktopprefs-lfsdesktopprefs.obj: ../src/lfsdesktopprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsdesktopprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfsdesktopprefs-lfsdesktopprefs.obj -MD -MP -MF ../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Tpo -c -o ../src/lfsdesktopprefs-lfsdesktopprefs.obj `if test -f '../src/lfsdesktopprefs.cpp'; then $(CYGPATH_W) '../src/lfsdesktopprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsdesktopprefs.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Tpo ../src/$(DEPDIR)/lfsdesktopprefs-lfsdesktopprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfsdesktopprefs.cpp' object='../src/lfsdesktopprefs-lfsdesktopprefs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfsdesktopprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfsdesktopprefs-lfsdesktopprefs.obj `if test -f '../src/lfsdesktopprefs.cpp'; then $(CYGPATH_W) '../src/lfsdesktopprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfsdesktopprefs.cpp'; fi`
-
-../src/lfspanelprefs-lfspanelprefs.o: ../src/lfspanelprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfspanelprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfspanelprefs-lfspanelprefs.o -MD -MP -MF ../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Tpo -c -o ../src/lfspanelprefs-lfspanelprefs.o `test -f '../src/lfspanelprefs.cpp' || echo '$(srcdir)/'`../src/lfspanelprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Tpo ../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfspanelprefs.cpp' object='../src/lfspanelprefs-lfspanelprefs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfspanelprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfspanelprefs-lfspanelprefs.o `test -f '../src/lfspanelprefs.cpp' || echo '$(srcdir)/'`../src/lfspanelprefs.cpp
-
-../src/lfspanelprefs-lfspanelprefs.obj: ../src/lfspanelprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfspanelprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfspanelprefs-lfspanelprefs.obj -MD -MP -MF ../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Tpo -c -o ../src/lfspanelprefs-lfspanelprefs.obj `if test -f '../src/lfspanelprefs.cpp'; then $(CYGPATH_W) '../src/lfspanelprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfspanelprefs.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Tpo ../src/$(DEPDIR)/lfspanelprefs-lfspanelprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfspanelprefs.cpp' object='../src/lfspanelprefs-lfspanelprefs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfspanelprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfspanelprefs-lfspanelprefs.obj `if test -f '../src/lfspanelprefs.cpp'; then $(CYGPATH_W) '../src/lfspanelprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfspanelprefs.cpp'; fi`
-
-../src/lfstkprefs-lfstkprefs.o: ../src/lfstkprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfstkprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfstkprefs-lfstkprefs.o -MD -MP -MF ../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Tpo -c -o ../src/lfstkprefs-lfstkprefs.o `test -f '../src/lfstkprefs.cpp' || echo '$(srcdir)/'`../src/lfstkprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Tpo ../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfstkprefs.cpp' object='../src/lfstkprefs-lfstkprefs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfstkprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfstkprefs-lfstkprefs.o `test -f '../src/lfstkprefs.cpp' || echo '$(srcdir)/'`../src/lfstkprefs.cpp
-
-../src/lfstkprefs-lfstkprefs.obj: ../src/lfstkprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfstkprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfstkprefs-lfstkprefs.obj -MD -MP -MF ../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Tpo -c -o ../src/lfstkprefs-lfstkprefs.obj `if test -f '../src/lfstkprefs.cpp'; then $(CYGPATH_W) '../src/lfstkprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfstkprefs.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Tpo ../src/$(DEPDIR)/lfstkprefs-lfstkprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfstkprefs.cpp' object='../src/lfstkprefs-lfstkprefs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfstkprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfstkprefs-lfstkprefs.obj `if test -f '../src/lfstkprefs.cpp'; then $(CYGPATH_W) '../src/lfstkprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfstkprefs.cpp'; fi`
-
-../src/lfswmprefs-lfswmprefs.o: ../src/lfswmprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfswmprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfswmprefs-lfswmprefs.o -MD -MP -MF ../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Tpo -c -o ../src/lfswmprefs-lfswmprefs.o `test -f '../src/lfswmprefs.cpp' || echo '$(srcdir)/'`../src/lfswmprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Tpo ../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfswmprefs.cpp' object='../src/lfswmprefs-lfswmprefs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfswmprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfswmprefs-lfswmprefs.o `test -f '../src/lfswmprefs.cpp' || echo '$(srcdir)/'`../src/lfswmprefs.cpp
-
-../src/lfswmprefs-lfswmprefs.obj: ../src/lfswmprefs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfswmprefs_CXXFLAGS) $(CXXFLAGS) -MT ../src/lfswmprefs-lfswmprefs.obj -MD -MP -MF ../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Tpo -c -o ../src/lfswmprefs-lfswmprefs.obj `if test -f '../src/lfswmprefs.cpp'; then $(CYGPATH_W) '../src/lfswmprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfswmprefs.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Tpo ../src/$(DEPDIR)/lfswmprefs-lfswmprefs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/lfswmprefs.cpp' object='../src/lfswmprefs-lfswmprefs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lfswmprefs_CXXFLAGS) $(CXXFLAGS) -c -o ../src/lfswmprefs-lfswmprefs.obj `if test -f '../src/lfswmprefs.cpp'; then $(CYGPATH_W) '../src/lfswmprefs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/lfswmprefs.cpp'; fi`
 install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	@list1='$(man1_MANS)'; \

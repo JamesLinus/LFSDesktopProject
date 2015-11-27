@@ -133,25 +133,16 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pixfilesdir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 liblfstoolkit_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = ../src/liblfstoolkit_la-LFSTKButton.lo \
-	../src/liblfstoolkit_la-LFSTKGadget.lo \
-	../src/liblfstoolkit_la-LFSTKImage.lo \
-	../src/liblfstoolkit_la-LFSTKLabel.lo \
-	../src/liblfstoolkit_la-LFSTKLib.lo \
-	../src/liblfstoolkit_la-LFSTKLineEdit.lo \
-	../src/liblfstoolkit_la-LFSTKMenuButton.lo \
-	../src/liblfstoolkit_la-LFSTKToggleButton.lo \
-	../src/liblfstoolkit_la-LFSTKWindow.lo
+am__objects_1 = ../src/LFSTKButton.lo ../src/LFSTKGadget.lo \
+	../src/LFSTKImage.lo ../src/LFSTKLabel.lo ../src/LFSTKLib.lo \
+	../src/LFSTKLineEdit.lo ../src/LFSTKMenuButton.lo \
+	../src/LFSTKToggleButton.lo ../src/LFSTKWindow.lo
 am_liblfstoolkit_la_OBJECTS = $(am__objects_1)
 liblfstoolkit_la_OBJECTS = $(am_liblfstoolkit_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-liblfstoolkit_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) \
-	$(liblfstoolkit_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -360,6 +351,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
+AM_CXXFLAGS = -Wl,--version-script=../src/exportmap
+AM_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 AM_CPPFLAGS = -I$(top_srcdir) \
 				$(X11_CFLAGS) \
 				$(XFT_CFLAGS) \
@@ -376,8 +369,9 @@ APIHEADERS = ../src/LFSTKButton.h ../src/LFSTKGadget.h ../src/LFSTKGlobals.h ../
 include_HEADERS = $(APIHEADERS)
 lib_LTLIBRARIES = liblfstoolkit.la
 liblfstoolkit_la_SOURCES = $(COMMONSRC)
-liblfstoolkit_la_CXXFLAGS = -Wl,--version-script=../src/exportmap
-liblfstoolkit_la_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
+
+#liblfstoolkit_la_CXXFLAGS = -Wl,--version-script=../src/exportmap
+#liblfstoolkit_la_LDFLAGS = -version-info $(LFSTOOLKIT_LIBTOOL_VERSION)
 pixfilesdir = ${prefix}/share/pixmaps
 pixfiles_DATA = ../resources/pixmaps/*
 all: all-am
@@ -455,27 +449,27 @@ clean-libLTLIBRARIES:
 ../src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ../src/$(DEPDIR)
 	@: > ../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKButton.lo: ../src/$(am__dirstamp) \
+../src/LFSTKButton.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKGadget.lo: ../src/$(am__dirstamp) \
+../src/LFSTKGadget.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKImage.lo: ../src/$(am__dirstamp) \
+../src/LFSTKImage.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKLabel.lo: ../src/$(am__dirstamp) \
+../src/LFSTKLabel.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKLib.lo: ../src/$(am__dirstamp) \
+../src/LFSTKLib.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKLineEdit.lo: ../src/$(am__dirstamp) \
+../src/LFSTKLineEdit.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKMenuButton.lo: ../src/$(am__dirstamp) \
+../src/LFSTKMenuButton.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKToggleButton.lo: ../src/$(am__dirstamp) \
+../src/LFSTKToggleButton.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
-../src/liblfstoolkit_la-LFSTKWindow.lo: ../src/$(am__dirstamp) \
+../src/LFSTKWindow.lo: ../src/$(am__dirstamp) \
 	../src/$(DEPDIR)/$(am__dirstamp)
 
 liblfstoolkit.la: $(liblfstoolkit_la_OBJECTS) $(liblfstoolkit_la_DEPENDENCIES) $(EXTRA_liblfstoolkit_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(liblfstoolkit_la_LINK) -rpath $(libdir) $(liblfstoolkit_la_OBJECTS) $(liblfstoolkit_la_LIBADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) -rpath $(libdir) $(liblfstoolkit_la_OBJECTS) $(liblfstoolkit_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -485,15 +479,15 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKGadget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKImage.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLabel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLib.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLineEdit.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKMenuButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKToggleButton.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/liblfstoolkit_la-LFSTKWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKGadget.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKImage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKLabel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKLib.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKLineEdit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKMenuButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKToggleButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../src/$(DEPDIR)/LFSTKWindow.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -518,69 +512,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-../src/liblfstoolkit_la-LFSTKButton.lo: ../src/LFSTKButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKButton.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKButton.Tpo -c -o ../src/liblfstoolkit_la-LFSTKButton.lo `test -f '../src/LFSTKButton.cpp' || echo '$(srcdir)/'`../src/LFSTKButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKButton.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKButton.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKButton.cpp' object='../src/liblfstoolkit_la-LFSTKButton.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKButton.lo `test -f '../src/LFSTKButton.cpp' || echo '$(srcdir)/'`../src/LFSTKButton.cpp
-
-../src/liblfstoolkit_la-LFSTKGadget.lo: ../src/LFSTKGadget.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKGadget.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKGadget.Tpo -c -o ../src/liblfstoolkit_la-LFSTKGadget.lo `test -f '../src/LFSTKGadget.cpp' || echo '$(srcdir)/'`../src/LFSTKGadget.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKGadget.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKGadget.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKGadget.cpp' object='../src/liblfstoolkit_la-LFSTKGadget.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKGadget.lo `test -f '../src/LFSTKGadget.cpp' || echo '$(srcdir)/'`../src/LFSTKGadget.cpp
-
-../src/liblfstoolkit_la-LFSTKImage.lo: ../src/LFSTKImage.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKImage.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKImage.Tpo -c -o ../src/liblfstoolkit_la-LFSTKImage.lo `test -f '../src/LFSTKImage.cpp' || echo '$(srcdir)/'`../src/LFSTKImage.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKImage.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKImage.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKImage.cpp' object='../src/liblfstoolkit_la-LFSTKImage.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKImage.lo `test -f '../src/LFSTKImage.cpp' || echo '$(srcdir)/'`../src/LFSTKImage.cpp
-
-../src/liblfstoolkit_la-LFSTKLabel.lo: ../src/LFSTKLabel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKLabel.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLabel.Tpo -c -o ../src/liblfstoolkit_la-LFSTKLabel.lo `test -f '../src/LFSTKLabel.cpp' || echo '$(srcdir)/'`../src/LFSTKLabel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLabel.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLabel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKLabel.cpp' object='../src/liblfstoolkit_la-LFSTKLabel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKLabel.lo `test -f '../src/LFSTKLabel.cpp' || echo '$(srcdir)/'`../src/LFSTKLabel.cpp
-
-../src/liblfstoolkit_la-LFSTKLib.lo: ../src/LFSTKLib.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKLib.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLib.Tpo -c -o ../src/liblfstoolkit_la-LFSTKLib.lo `test -f '../src/LFSTKLib.cpp' || echo '$(srcdir)/'`../src/LFSTKLib.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLib.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLib.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKLib.cpp' object='../src/liblfstoolkit_la-LFSTKLib.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKLib.lo `test -f '../src/LFSTKLib.cpp' || echo '$(srcdir)/'`../src/LFSTKLib.cpp
-
-../src/liblfstoolkit_la-LFSTKLineEdit.lo: ../src/LFSTKLineEdit.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKLineEdit.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLineEdit.Tpo -c -o ../src/liblfstoolkit_la-LFSTKLineEdit.lo `test -f '../src/LFSTKLineEdit.cpp' || echo '$(srcdir)/'`../src/LFSTKLineEdit.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLineEdit.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKLineEdit.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKLineEdit.cpp' object='../src/liblfstoolkit_la-LFSTKLineEdit.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKLineEdit.lo `test -f '../src/LFSTKLineEdit.cpp' || echo '$(srcdir)/'`../src/LFSTKLineEdit.cpp
-
-../src/liblfstoolkit_la-LFSTKMenuButton.lo: ../src/LFSTKMenuButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKMenuButton.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKMenuButton.Tpo -c -o ../src/liblfstoolkit_la-LFSTKMenuButton.lo `test -f '../src/LFSTKMenuButton.cpp' || echo '$(srcdir)/'`../src/LFSTKMenuButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKMenuButton.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKMenuButton.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKMenuButton.cpp' object='../src/liblfstoolkit_la-LFSTKMenuButton.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKMenuButton.lo `test -f '../src/LFSTKMenuButton.cpp' || echo '$(srcdir)/'`../src/LFSTKMenuButton.cpp
-
-../src/liblfstoolkit_la-LFSTKToggleButton.lo: ../src/LFSTKToggleButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKToggleButton.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKToggleButton.Tpo -c -o ../src/liblfstoolkit_la-LFSTKToggleButton.lo `test -f '../src/LFSTKToggleButton.cpp' || echo '$(srcdir)/'`../src/LFSTKToggleButton.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKToggleButton.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKToggleButton.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKToggleButton.cpp' object='../src/liblfstoolkit_la-LFSTKToggleButton.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKToggleButton.lo `test -f '../src/LFSTKToggleButton.cpp' || echo '$(srcdir)/'`../src/LFSTKToggleButton.cpp
-
-../src/liblfstoolkit_la-LFSTKWindow.lo: ../src/LFSTKWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -MT ../src/liblfstoolkit_la-LFSTKWindow.lo -MD -MP -MF ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKWindow.Tpo -c -o ../src/liblfstoolkit_la-LFSTKWindow.lo `test -f '../src/LFSTKWindow.cpp' || echo '$(srcdir)/'`../src/LFSTKWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKWindow.Tpo ../src/$(DEPDIR)/liblfstoolkit_la-LFSTKWindow.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/LFSTKWindow.cpp' object='../src/liblfstoolkit_la-LFSTKWindow.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liblfstoolkit_la_CXXFLAGS) $(CXXFLAGS) -c -o ../src/liblfstoolkit_la-LFSTKWindow.lo `test -f '../src/LFSTKWindow.cpp' || echo '$(srcdir)/'`../src/LFSTKWindow.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

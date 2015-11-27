@@ -326,7 +326,6 @@ AM_CPPFLAGS = -I$(top_srcdir) \
 
 COMMONSRC = ../src/disks.cpp ../src/files.cpp ../src/globals.cpp ../src/graphics.cpp ../src/main.cpp ../src/prefs.cpp
 lfsdesktop_SOURCES = $(COMMONSRC)
-lfsdesktop_CFLAGS = -O3
 man1_MANS = ../resources/man/lfsdesktop.1
 all: all-am
 
