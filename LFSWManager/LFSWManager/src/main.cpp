@@ -742,8 +742,8 @@ printf(">>winid=%p<<\n",evente.xany.window);
 
 		if(needrestack==true)
 			{
-				shuffle();
 				restack();
+				shuffle();
 			}
 		}
 
