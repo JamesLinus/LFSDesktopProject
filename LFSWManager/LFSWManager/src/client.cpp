@@ -501,7 +501,7 @@ void cpop(struct client *c)
 			LIST_REMOVE(&c->winstack);
 			LIST_INSERT_TAIL(&winstack,&c->winstack);
 			needrestack=True;
-			if((c->isAbove==false) && (c->isBelow==false))
+			if(c->isAbove==true)
 				cfocus(c,CurrentTime);
 		}
 }
@@ -535,78 +535,30 @@ void cpopapp(struct client *c)
 
 	getclientstack(&v,&n);
 
-if (c->wmtransientfor != None)
-		{
-		printf("here\n");
-		}
-	else
-	{
-//	cpop(c);
-
-for (int i=0; i<n; i++)
-{
-				if (v[i]->wmtransientfor==c->window)
-					cpop(v[i]);
+	for (int i=0; i<n; i++)
 		if (v[i]->app==c->app)
 			cpop(v[i]);
-		if(c->isAbove==true)
-		 cpush(c);
-}
+
+	if (c->wmtransientfor != None)
+		{
+			for (int i=0; i<n; i++)
+				if (v[i]->window==c->wmtransientfor)
+					{
+						cpop(v[i]);
+						break;
+					}
+			for (int i=0; i<n; i++)
+				if (v[i]->wmtransientfor==c->wmtransientfor)
+					cpop(v[i]);
+			cpop(c);
 		}
-	
-
-//	for (int i=0; i<n; i++)
-//	{
-//	printf(">>>>>>>>>\n");
-//		if (v[i]->app==c->app)
-//			{
-//			printf(">>netwmname=%s<<\n",v[i]->netwmname);
-//			cpop(v[i]);
-//			}
-//	printf("<<<<<<<<<<<<\n");
-//}
-
-
-
-
-
-
-
-
-//
-//printf("list num=%i\n",n);
-//
-//	for (int i=0; i<n; i++)
-//	{
-//	printf(">>>>>>>>>\n");
-//		if (v[i]->app==c->app)
-//			{
-//			printf(">>netwmname=%s<<\n",v[i]->netwmname);
-//			cpop(v[i]);
-//			}
-//	printf("<<<<<<<<<<<<\n");
-//}
-//	if (c->wmtransientfor != None)
-//		{
-//			for (int i=0; i<n; i++)
-//				if (v[i]->window==c->wmtransientfor)
-//					{
-//			printf(">>wmtransientfor - netwmname=%s<<\n",v[i]->netwmname);
-//						cpop(v[i]);
-//						break;
-//					}
-//			for (int i=0; i<n; i++)
-//				if (v[i]->wmtransientfor==c->wmtransientfor)
-//					cpop(v[i]);
-//			cpop(c);
-//		}
-//	else
-//		{
-//			cpop(c);
-//			for (int i=0; i<n; i++)
-//				if (v[i]->wmtransientfor==c->window)
-//					cpop(v[i]);
-//		}
+	else
+		{
+			cpop(c);
+			for (int i=0; i<n; i++)
+				if (v[i]->wmtransientfor==c->window)
+					cpop(v[i]);
+		}
 
 	free(v);
 }
@@ -1595,7 +1547,6 @@ struct client *manage(Window window)
 	c->canMaximize=true;
 	c->canMinimize=true;
 	c->isIcon=false;
-	c->checked=false;
 
 	csetgeom(c,(struct geometry)
 	{
