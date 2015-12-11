@@ -501,8 +501,12 @@ void cpop(struct client *c)
 			LIST_REMOVE(&c->winstack);
 			LIST_INSERT_TAIL(&winstack,&c->winstack);
 			needrestack=True;
-			if(c->isAbove==true)
-				cfocus(c,CurrentTime);
+			//if(c->isAbove==true)
+			if(c->beenPopped==false)
+				{
+					cfocus(c,CurrentTime);
+					c->beenPopped=true;
+				}
 		}
 }
 
@@ -518,6 +522,7 @@ void cpopapp(struct client *c)
 	unsigned long	items_read,items_left;
 	int				result=1;
 
+	c->beenPopped=false;
 	status=XGetWindowProperty(dpy,c->window,NET_WM_WINDOW_TYPE,0L,1L,False,XA_ATOM,&real_type,&real_format,&items_read,&items_left,&data);
 	if(status==Success)
 		{
@@ -560,6 +565,7 @@ void cpopapp(struct client *c)
 					cpop(v[i]);
 		}
 
+	c->beenPopped=false;
 	free(v);
 }
 
@@ -1547,6 +1553,7 @@ struct client *manage(Window window)
 	c->canMaximize=true;
 	c->canMinimize=true;
 	c->isIcon=false;
+	c->beenPopped=false;
 
 	csetgeom(c,(struct geometry)
 	{

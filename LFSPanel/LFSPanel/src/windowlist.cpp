@@ -67,7 +67,8 @@ bool windowDeskMenuCB(void *p,void* ud)
 
 void resetMenus(void)
 {
-	for(int j=0; j<windowListCnt+1; j++)
+	//for(int j=0; j<windowListCnt+1; j++)
+	for(int j=0; j<MAXWINDOWSINLIST; j++)
 		if(windowList[j].label!=NULL)
 			{
 				free((char*)windowList[j].label);
@@ -98,6 +99,37 @@ bool hasProp(Display *dpy,Window win,Atom atom)
 	return(false);
 }
 
+bool hasWindowProp(Window wind,Atom atom,Atom atomtype)
+{
+	int				n;
+	unsigned char	*data;
+	Atom			*atoms;
+	int				status,real_format;
+	Atom			real_type;
+	unsigned long	items_read,items_left;
+	bool			result=false;
+
+	status=XGetWindowProperty(mainwind->display,wind,atomtype,0L,1L,false,XA_ATOM,&real_type,&real_format,&items_read,&items_left,&data);
+	if(status==Success)
+		{
+			atoms=(Atom *)data;
+			if(items_read && (atoms[0]==atom))
+				result=true;
+			XFree(data);
+		}
+	return(result);
+}
+
+/*
+ * Check if window is iconized
+ */
+bool isHidden(Window win)
+{
+	if( hasWindowProp(win,NET_WM_STATE,NET_WM_STATE_HIDDEN) )
+		return(true);
+	return(false);
+
+}
 
 /*
  * Check if window is viewable
@@ -112,27 +144,6 @@ bool isVisible(Display *dpy,Window win)
 	ok=(xwa.classe==InputOutput) && (xwa.map_state==IsViewable);
 
 	return ok;
-}
-
-bool hasWindowProp(Window wind,Atom atom)
-{
-	int				n;
-	unsigned char	*data;
-	Atom			*atoms;
-	int				status,real_format;
-	Atom			real_type;
-	unsigned long	items_read,items_left;
-	bool			result=false;
-
-	status=XGetWindowProperty(mainwind->display,wind,NET_WM_WINDOW_TYPE,0L,1L,false,XA_ATOM,&real_type,&real_format,&items_read,&items_left,&data);
-	if(status==Success)
-		{
-			atoms=(Atom *)data;
-			if(items_read && (atoms[0]==NET_WM_WINDOW_TYPE_NORMAL))
-				result=true;
-			XFree(data);
-		}
-	return(result);
 }
 
 Window doTreeWalk(Window wind,bool thisdesktop)
@@ -166,7 +177,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 	desktop=-1;
 	for (int j=n_children-1; j>=0; j--)
 		{
-			if((thisdesktop==true) &&(isVisible(mainwind->display, children[j])==false))
+			if((thisdesktop==true) && (isVisible(mainwind->display, children[j])==false))
 				{
 					children[j]=None; /* Don't bother descending into this one */
 					continue;
@@ -174,7 +185,7 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 			if (!hasProp(mainwind->display, children[j],WM_STATE))
 				continue;
 
-			if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL))
+			if (!hasWindowProp(children[j],NET_WM_WINDOW_TYPE_NORMAL,NET_WM_WINDOW_TYPE))
 				continue;
 
 			/* Got one */
@@ -199,6 +210,9 @@ Window doTreeWalk(Window wind,bool thisdesktop)
 		{
 			if (children[i]==None)
 				continue;
+			if (isHidden(children[i])==true)
+				continue;
+			
 			thewin=doTreeWalk(children[i],thisdesktop);
 			if (thewin != None)
 				break;
@@ -293,7 +307,7 @@ void updateWindowMenu(void)
 			win=mainwind->rootWindow;
 			while(win!=None)
 				win=doTreeWalk(win,false);
-			windowMenu->LFSTK_updateMenus(windowList,windowListCnt);
+			windowMenu->LFSTK_updateMenus(windowList,windowListCnt-1);
 		}
 }
 

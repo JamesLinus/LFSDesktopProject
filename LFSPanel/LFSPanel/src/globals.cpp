@@ -49,9 +49,11 @@ int					leftOffset=0;
 //atoms
 Atom				WM_STATE=None;
 Atom				NET_WM_WINDOW_TYPE_NORMAL=None;
+Atom				NET_WM_STATE_HIDDEN=None;
 Atom				NET_WM_WINDOW_TYPE_DIALOG=None;
 Atom				NET_WM_DESKTOP=None;
 Atom				NET_WM_WINDOW_TYPE=None;
+Atom				NET_WM_STATE=None;
 
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft)
 {

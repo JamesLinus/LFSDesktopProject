@@ -71,9 +71,11 @@ extern int					leftOffset;
 //atoms
 extern Atom					WM_STATE;
 extern Atom					NET_WM_WINDOW_TYPE_NORMAL;
+extern Atom					NET_WM_STATE_HIDDEN;
 extern Atom					NET_WM_WINDOW_TYPE_DIALOG;
 extern Atom					NET_WM_DESKTOP;
 extern Atom					NET_WM_WINDOW_TYPE;
+extern Atom					NET_WM_STATE;
 
 void printError(const char *err);
 void setSizes(int *x,int *y,int *w,int *h,int *size,int *grav,bool fromleft);
