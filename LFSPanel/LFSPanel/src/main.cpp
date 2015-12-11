@@ -89,6 +89,7 @@ void addLeftGadgets(void)
 					break;
 				}
 		}
+	offset++;
 	leftOffset=offset;
 }
 
