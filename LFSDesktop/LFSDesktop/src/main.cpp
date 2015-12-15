@@ -92,9 +92,9 @@ void printhelp(void)
 			" -x,--term-command		Set terminal command ( default xterm -e )\n"
 			" -s,--show-extension	Show desktop file extension ( default no show )\n"
 			" -f,--font				Font face ( Sans;0;0;10 - Fontname;Weight(0/1);Slant(0/1/2);Fontsize )\n"
-			" -4,--fore-colour		Fore colour for label in RGB # notation ( default #ffffff )\n"
-			" -b,--back-colour		Back colour for label in RGB # notation ( default #000000 )\n"
-			" -A,--back-alpha		Alpha for label in # notation ( default #ff )\n"
+			" -4,--fore-colour		Fore colour for label in RGB # notation, or colour name ( default #ffffff, '#' is compulsory for hex numbers )\n"
+			" -b,--back-colour		Back colour for label in RGB # notation, or colour name ( default #000000, '#' is compulsory for hex numbers )\n"
+			" -A,--back-alpha		Alpha for label between 0.0 and 1.0 ( default 1.0 )\n"
 			" -i,--ignore			List of ';' seperated disk labels to NOT show on desktop\n"
 			" -d,--debug			Debug\n"
 			" -v,--version			output version information and exit\n"
@@ -345,7 +345,7 @@ void doPopUp(int x,int y)
 void setFontEtc(void)
 {
 	char	*ptr;
-	XColor	colour;
+	XColor	tc,sc;
 
 	ptr=strtok(fontFace,";");
 	if(ptr!=NULL)
@@ -368,14 +368,10 @@ void setFontEtc(void)
 	else
 		fontSize=10;
 
-
-	XParseColor(display,DefaultColormap(display,screen),backCol,&colour);
-	XAllocColor(display,DefaultColormap(display,screen),&colour);
-	labelBackground=colour.pixel;
-
-	XParseColor(display,DefaultColormap(display,screen),foreCol,&colour);
-	XAllocColor(display,DefaultColormap(display,screen),&colour);
-	labelForeground=colour.pixel;
+	XAllocNamedColor(display,DefaultColormap(display,screen),backCol,&sc,&tc);
+	labelBackground=sc.pixel;
+	XAllocNamedColor(display,DefaultColormap(display,screen),foreCol,&sc,&tc);
+	labelForeground=sc.pixel;
 
 	backColour.r=((labelBackground>>16) & 0xff)/256.0;
 	backColour.g=((labelBackground>>8) & 0xff)/256.0;
