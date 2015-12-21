@@ -68,6 +68,7 @@ int		newwid,newhite;
 int		updatecnt=0;
 int		maxupdatecnt=10;
 bool	fromDragger=false;
+int		lastbuttonx;
 
 /*
  * Move and resize the frame,and update the client window.
@@ -368,6 +369,7 @@ void repaint(struct frame *f)
 	int					ends;
 	int					titlewidth;
 	int					framecenter;
+	int					titlespacecentre;
 	int					maxtitlewidthllowed;
 	int					title1width;
 	int					title5width;
@@ -379,6 +381,13 @@ void repaint(struct frame *f)
 	int					title5x;
 	char				*wintitle;
 	struct fontcolor	*usecolour;
+//TODO//
+//clean this
+	int					titleblock;
+	int					titleblockstart;
+	int					titleblockcentre;
+	int					txtwidth;
+	char				*txt;
 
 	if(f==NULL)
 		return;
@@ -538,26 +547,27 @@ void repaint(struct frame *f)
 					XCopyArea(dpy,theme.masks[TITLE4ACTIVE+partoffset],f->mask,f->maskGC,0,0,theme.partsWidth[TITLE4ACTIVE+partoffset],theme.partsHeight[TITLE4ACTIVE+partoffset],title4x,0);
 				}
 
-
 //title3 main centre bit
 			if(theme.gotPart[TITLE3ACTIVE+partoffset]==true)
 				{
 					XSetTile(dpy,gc,theme.pixmaps[TITLE3ACTIVE+partoffset]);
 					XFillRectangle(dpy,f->window,gc,title3x,0,titlewidth,theme.partsHeight[TITLE3ACTIVE+partoffset]);
 
-					wintitle=getMaxString(font,f->client,titlewidth);
-					if(wintitle!=NULL)
+					titleblock=f->width-theme.partsWidth[TITLE2ACTIVE+partoffset]-theme.partsWidth[TOPLEFTACTIVE+partoffset]-theme.partsWidth[TITLE4ACTIVE+partoffset]-lastbuttonx;
+					txt=getMaxString(font,f->client,titleblock);
+					txtwidth=fttextwidth_utf8(font,txt);
+					titleblockcentre=(titleblock/2)+theme.partsWidth[TOPLEFTACTIVE+partoffset]+theme.partsWidth[TITLE2ACTIVE+partoffset];
+					if(txt!=NULL)
 						{
 							if(partoffset==0)
 								usecolour=fhighlight;
 							else
 								usecolour=fnormal;
 							if (f->client->netwmname != NULL)
-								ftdrawstring_utf8(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,wintitle);
+								ftdrawstring_utf8(f->window,font,usecolour,titleblockcentre-(txtwidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,txt);
 							else if (f->client->wmname != NULL)
-								ftdrawstring(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,wintitle);
-
-							free(wintitle);
+								ftdrawstring(f->window,font,usecolour,titleblockcentre-(txtwidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,txt);
+							free(txt);
 						}
 
 					XSetTile(dpy,f->maskGC,theme.masks[TITLE3ACTIVE]);
@@ -743,7 +753,7 @@ void fupdate(struct frame *f)
 				{
 					if (f->deletebutton==NULL)
 						{
-							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size- buttonx,0,sz,sz,NorthEastGravity,CLOSEACTIVE,f);
+							f->deletebutton=bcreate(mydelete,f->client,deletebitmap,f->window,f->width-1-font->size-buttonx,0,sz,sz,NorthEastGravity,CLOSEACTIVE,f);
 							buttonx+=sz;
 						}
 				}
@@ -757,7 +767,7 @@ void fupdate(struct frame *f)
 				{
 					if (f->maximize==NULL)
 						{
-							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size- buttonx,0,sz,sz,NorthEastGravity,MAXACTIVE,f);
+							f->maximize=bcreate(maximizeWindow,f->client,maximizeBitmap,f->window,f->width-font->size-buttonx,0,sz,sz,NorthEastGravity,MAXACTIVE,f);
 							buttonx+=sz;
 						}
 				}
@@ -766,14 +776,14 @@ void fupdate(struct frame *f)
 				{
 					if (f->minimize==NULL)
 						{
-							f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width- buttonx-font->size,0,sz,sz,NorthEastGravity,MINACTIVE,f);
+							f->minimize=bcreate(minimizeWindow,f->client,minimizeBitmap,f->window,f->width-buttonx-font->size,0,sz,sz,NorthEastGravity,MINACTIVE,f);
 							buttonx+=sz;
 						}
 				}
 
 			if (f->shade==NULL)
 				{
-					f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width- buttonx-font->size,0,sz,sz,NorthEastGravity,SHADEACTIVE,f);
+					f->shade=bcreate(shadeWindow,f->client,shadeBitmap,f->window,f->width-buttonx-font->size,0,sz,sz,NorthEastGravity,SHADEACTIVE,f);
 				}
 		}
 
@@ -789,6 +799,7 @@ void fupdate(struct frame *f)
 		update(f->minimize);
 	if(f->shade!=NULL)
 		update(f->shade);
+	lastbuttonx=buttonx;
 	repaint(f);
 }
 
