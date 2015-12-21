@@ -553,9 +553,9 @@ void repaint(struct frame *f)
 							else
 								usecolour=fnormal;
 							if (f->client->netwmname != NULL)
-								ftdrawstring_utf8(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2),wintitle);
+								ftdrawstring_utf8(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,wintitle);
 							else if (f->client->wmname != NULL)
-								ftdrawstring(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2),wintitle);
+								ftdrawstring(f->window,font,usecolour,framecenter-(f->maxNameWidth/2),(theme.titleBarHeight/2)+((font->ascent-2)/2)+theme.titleOffset,wintitle);
 
 							free(wintitle);
 						}

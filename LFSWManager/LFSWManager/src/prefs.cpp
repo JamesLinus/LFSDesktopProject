@@ -37,6 +37,7 @@ args	themeRC[]=
 	{"button_spacing",TYPEINT,&theme.buttonSpacing},
 	{"active_text_color",TYPESTRING,&fontColours[TEXTCOLOUR]},
 	{"inactive_text_color",TYPESTRING,&fontColours[INACTIVEFRAME]},
+	{"title_vertical_offset_active",TYPEINT,&theme.titleOffset},
 	{NULL,0,NULL}
 };
 

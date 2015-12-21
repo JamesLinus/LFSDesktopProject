@@ -155,6 +155,7 @@ struct	themeStruct
 	Pixmap			masks[NUMBEROFPARTS];
 	int				buttonOffset;
 	int				buttonSpacing;
+	int				titleOffset;
 };
 
 extern enum runlevel

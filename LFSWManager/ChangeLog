@@ -1,4 +1,5 @@
 0.1.1
+Added title offset from theme.rc if exists.
 Fixed window not getting focus when poped to front.
 Fixed infinite loop with two windows from same app trying to be above each other at the same time.
 

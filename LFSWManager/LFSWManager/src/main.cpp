@@ -418,6 +418,7 @@ int main(int argc,char *argv[])
 			char	*themercpath;
 			theme.buttonOffset=40;
 			theme.useTheme=true;
+			theme.titleOffset=0;
 			loadTheme();
 			asprintf(&themercpath,"%s/xfwm4/themerc",theme.pathToTheme);
 			loadVarsFromFile(themercpath,themeRC,"=");
@@ -604,10 +605,7 @@ int main(int argc,char *argv[])
 	manageall();
 
 	refocus(CurrentTime);
-
 	runlevel=RL_NORMAL;
-
-	//addAppmenu();
 
 	CHECKPOINT
 	Window			root_return;
@@ -619,7 +617,6 @@ int main(int argc,char *argv[])
 	unsigned int	mask_return;
 #define MAXBUFFER 512
 	char			buffer[MAXBUFFER];
-
 
 	while (waitevent() != -1)
 		{
